@@ -1,0 +1,57 @@
+# AGENTS.md — Guardrails for AI Coding Assistants
+
+Welcome, AI agent. You are pair-programming on **Skill Lens**, a local diagnostics and resolution CLI tool for AI agent capabilities (`SKILL.md`).
+
+The developer driving you has zero coding experience and is vibe-coding this project. Your job is to be disciplined, reliable, and strictly follow the specification in `SKILL_LENS_SPECIFICATION.md`.
+
+---
+
+## 1. Absolute Golden Rules
+
+1. **Strictly Read-Only Target Execution:**
+   - Skill Lens never writes, modifies, moves, or deletes user skills on their machine. It is 100% read-only.
+2. **Never Touch Real `$HOME` in Tests:**
+   - All tests must use `tmp_path` fixtures and monkeypatched `HOME` via `skill_lens/core/paths.py`.
+   - Never run tests against live `~/.claude`, `~/.agents`, or `~/.codex`.
+3. **No Lazy Module-Level Path Expansion:**
+   - Do NOT write `DEFAULT_DIR = Path("~/.claude").expanduser()` at the module top level. It will evaluate at import time and bypass test monkeypatching. Always resolve paths inside functions via `paths.py`.
+4. **Machine-Readable JSON First:**
+   - All core features must output valid dataclasses and JSON models. Rich formatting is strictly a presentation layer on top of the data.
+5. **No System Bloat or Creep:**
+   - NO full-screen TUI (Textual). Line-oriented CLI only.
+   - NO SQLite or databases in v1.
+   - NO AI API calls or telemetry.
+   - NO Windows support in v1. macOS and Linux only.
+
+---
+
+## 2. Test & Verification Protocol
+
+- **Linter & Formatter:** `ruff check .` and `ruff format .`
+- **Test Runner:** `pytest`
+- Before finishing any task, run:
+  ```bash
+  pytest -v
+  ruff check .
+  ```
+- Commit only when all tests pass cleanly.
+
+---
+
+## 3. Architecture Overview
+
+```text
+skill_lens/
+├── __init__.py
+├── cli.py                  # Typer commands (scan, why, compare, diff, doctor)
+├── models/                 # Frozen dataclasses (SkillInstallation, ResolutionReport, etc.)
+├── core/
+│   ├── paths.py            # Lazy environment & path resolution
+│   ├── parser.py           # Frontmatter extraction & streaming SHA-256 hasher
+│   ├── resolver.py         # 3-axis resolution engine
+│   ├── doctor.py           # Diagnostics & hygiene checks
+│   ├── differ.py           # Side-by-side Rich diff renderer
+│   └── system.py           # TCC-resilient live directory scanner
+└── registry/
+    └── agents/             # Agent definition TOML files (codex.toml, claude.toml, etc.)
+```

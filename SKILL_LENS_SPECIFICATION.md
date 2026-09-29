@@ -2,283 +2,254 @@
 
 > **"Your AI skills, in one place. And why each one is there."**
 
-**Technical Positioning:** A local diagnostics and resolution engine for AI agent capabilities (`SKILL.md`).  
+**Technical Positioning:** A local diagnostics and resolution engine for AI agent capabilities (`SKILL.md` and file-based skills).  
 **Primary Interface:** Line-oriented Python CLI with `Rich` terminal formatting (explicitly NO full-screen TUI).  
 **Supported Platforms:** macOS and Linux (Windows is out of scope for v1).  
-**Target Audience:** Developers using AI coding agents (OpenAI Codex, Claude Code, Antigravity CLI, OpenCode, Pi, OMP, DSH, Cursor).  
+**Target Audience:** Multi-agent developers using AI coding assistants (Codex, Claude Code, Antigravity, OpenCode, Pi, OMP, DSH, Cursor).  
 **Execution Strategy:** 100% Vibe-Coding Ready — Modular, Golden Fixture-Driven, Zero Systems-Language Overhead.
 
 ---
 
 ## 1. Executive Summary & Core Thesis
 
-As developers adopt multiple AI coding agents, their workstations accumulate capability directories (`SKILL.md` folders) scattered across global user directories, project repositories, monorepo subdirectories, and tool plugins.
+As developers adopt multiple AI coding agents, their machines accumulate skill capabilities scattered across global directories, project roots, monorepo subdirectories, and tool plugins.
 
-Today, developers face three compounding frustrations:
-1. **Capability Blindness:** "What skills exist on my machine, and which agents can access them?"
-2. **Shadowing & Precedence Drift:** "Why did Claude run an outdated global `browser` prompt instead of the custom skill in my repository?"
-3. **Variant Divergence:** "Do these three folders named `deploy` contain the same instructions, or did one branch silently diverge?"
+Developers face three critical problems:
+1. **Capability Blindness:** "What skills exist on my machine, and which agents can actually access them?"
+2. **Precedence & Collision Confusion:** "Why is Claude running an outdated global skill, while Codex is listing two copies of the same prompt?"
+3. **Symlink Farm & Variant Divergence:** "Is this skill an identical symlink to my shared library, or did someone edit a local copy?"
 
-**Skill Lens** is the `which` and `brew doctor` for AI agent skills. It discovers, fingerprints, and explains agent skill resolution on a developer's machine using 100% local, offline, deterministic logic.
+**Skill Lens** is the `which`, `brew doctor`, and capability inspector for AI agent skills. It discovers, fingerprints, and explains agent skill resolution using 100% local, offline, deterministic logic grounded in empirical agent behavior.
 
 ---
 
-## 2. Core Mental Model & Resolution States
+## 2. Core Mental Model & The 3-Axis Resolver
 
-Skill Lens rejects the assumption that a skill permanently "belongs" to a single agent. Instead, it models capability execution as:
+Skill Lens models capability execution dynamically:
 
 ```text
-       Skill Name
-           ↓
-   Physical Installation (folder on disk containing SKILL.md)
-           ↓
-    Runtime Resolution   (computed for: Agent + Working Directory + Settings)
-           ↓
-      Target Agent
+       Skill Identifier (Directory Name or Frontmatter Name)
+                               ↓
+   Physical Installation (Folder with SKILL.md or standalone .md file)
+                               ↓
+    Runtime Resolution   (Computed for: Agent + Working Directory + Settings)
+                               ↓
+                          Target Agent
 ```
 
-### Resolution Outcomes (`skill-lens why`)
-For any query: `skill-lens why <skill_name> --agent <agent> [--cwd <path>]`, the Resolver assigns each discovered installation one of seven mutually exclusive states:
+### The 3-Axis Resolution Model
+Underneath the UI, Skill Lens evaluates every discovered skill installation along three independent axes, deriving a deterministic headline state:
 
-1. **`[ACTIVE]`**: The eligible winning copy for this skill name, for this specific agent and directory. (Does not guarantee execution; indicates this copy wins the name).
-2. **`[SHADOWED]`**: A valid copy that this agent searches, but was suppressed because another copy of the same name outranks it under this agent's precedence rules.
-3. **`[DISABLED]`**: Exists in an active discovery path, but is explicitly switched off by the agent's configuration or CLI settings.
-4. **`[UNSEARCHED]`**: Discovered in another agent's root or a user-added source, but this specific agent's search rules never look in that location.
-5. **`[INVALID]`**: Found in a searched path, but rejected by parser/rules (malformed YAML frontmatter, missing required description, or illegal directory/name mismatch).
-6. **`[AMBIGUOUS]`**: Two copies tie in precedence rank or the agent's documentation does not specify a deterministic winner.
-7. **`[COEXISTS]`**: Same short name, but non-colliding namespace (e.g., Claude plugin skills that load as `/plugin-name:skill-name`).
+```text
+Parse Status   (valid | malformed_yaml | missing_description | unreadable)
+      ×
+Visibility     (active_root | unsearched_root | outside_walk_boundary | disabled)
+      ×
+Collision      (winning_entry | suppressed_shadow | coexisting_merged | qualified_namespace | ambiguous_tie)
+```
 
-### Identity, Symlinks, and Fingerprinting Rules
-- **Identity:** The skill name is taken from frontmatter `name` if present; otherwise defaults to the parent directory name. Doctor reports any mismatch.
-- **Symlinks (Shortcuts):**
-  - **Resolution Precedence** evaluates the **entrypoint path** (e.g. a project symlink pointing to a global skill retains project-level precedence).
-  - **Fingerprinting & Inventory** evaluates the **canonical target path** (one canonical skill with multiple entrypoints, never counted as duplicate installations).
-  - **Cycles & Dangling Links:** Tracked via a visited-inode set. Cycles and broken symlinks are flagged as `[INVALID]` in `doctor`, never causing infinite loops or crashes.
-- **Content Fingerprint:**
-  - Sorted relative file paths.
-  - Text files normalized to `\n` line endings. Binaries hashed raw.
-  - Ignored: `.git/`, `.DS_Store`, AppleDouble `._*`, `node_modules/`.
-  - File size cap: Files > 1 MiB are hashed up to 1 MiB and marked `truncated`.
-- **Variants vs. Versions:** If two installations share the same name but have different hashes, they are labeled `Variant A` and `Variant B` (with diff support). A version number is displayed only if explicitly declared in frontmatter.
+### Derived Headline Output States (`skill-lens why`)
+1. **`[ACTIVE]`**: The eligible winning copy for this name under the agent's precedence rules.
+2. **`[SHADOWED]`**: Valid copy in a searched path, but suppressed because a higher-priority location outranked it (e.g. Antigravity project over global).
+3. **`[COEXISTS]`**: Multiple copies share a name and both are actively available:
+   - **Merged:** The agent displays both in its picker (e.g. OpenAI Codex).
+   - **Qualified / Namespaced:** The agent distinguishes them by path or plugin prefix (e.g. Claude `apps/web:deploy` or `/plugin:skill`).
+4. **`[DISABLED]`**: Discovered in an active path, but explicitly turned off by agent configuration (e.g. Claude `skillOverrides`, Antigravity `/skills disable`, or Codex `skills.config enabled=false`).
+5. **`[UNSEARCHED]`**: Exists on disk, but this specific agent's search rules never look in that location.
+6. **`[INVALID]`**: Discovered in a searched path, but rejected by parser rules (malformed YAML, missing required description, or unknown frontmatter keys where strictly validated).
+7. **`[AMBIGUOUS]`**: Two copies tie in rank and the agent's published documentation does not specify a winner (e.g. OpenCode duplicate names in same tier).
 
 ---
 
-## 3. Technology Stack & Vibe-Coding Guardrails
+## 3. Ground-Truth Agent Discovery Matrix
 
-- **Language:** **Python 3.11+** (Clean type hints, universal across Unix, zero compiler friction).
-- **CLI Framework:** **`Typer`** (Ergonomic command structure, automated `--help`).
-- **Terminal Formatting:** **`Rich`** (Line-oriented tables, panels, syntax diffs. Strings escaped with `rich.markup.escape()`).
-- **Data & Parsing:** **`tomllib`** (Standard library TOML) + **`PyYAML`** (`yaml.safe_load` on the initial frontmatter block only).
-- **Code Quality:** **`ruff`** (Auto-formatting and linting) + **`pytest`** (Golden fixture-based testing).
-- **Distribution:** Standard `pyproject.toml` (Executable directly via `pip` or `uvx skill-lens`).
+*Verified empirically against live CLI binaries and agent configurations on macOS.*
 
-### Strict Non-Goals (Forbidden in v1)
+| Agent | Global Search Roots | Project Search Roots | Collision Policy | Identity Source | Walk Boundary |
+|---|---|---|---|---|---|
+| **OpenAI Codex** | `~/.codex/skills`, `~/.agents/skills`, `/etc/codex/skills` | `.agents/skills` (upward traversal) | **Merge** (both appear in picker; rank sets display order) | Frontmatter `name` | Git root (`.git` dir or file) |
+| **Claude Code** | `~/.claude/skills` (Personal), Enterprise managed | `.claude/skills` | **Personal > Project** (Personal wins `/command`; nested qualify as `dir:cmd`) | **Directory Name** (frontmatter `name` is display label) | Git worktree root |
+| **Antigravity CLI** | `~/.gemini/config/skills/`, `~/.gemini/antigravity-cli/skills/` | `.agents/skills`, `.agent/skills` (legacy) | **Shadow** (Project > User > Plugins; supports standalone `.md`) | Hybrid | Git repository root |
+| **OpenCode** | `~/.config/opencode/skills/`, `~/.claude/skills`, `~/.agents/skills` | `.opencode/skills`, `.claude/skills`, `.agents/skills` | **Ambiguous** on duplicate; searches upward | Frontmatter `name` | Git worktree root |
+| **Pi Agent (`pi`)** | `~/.pi/agent/skills` (live 83-link farm), `~/.pi/skills` | `.pi/skills`, `.agents/skills` | **Shadow** (Project `.pi` > Project `.agents` > Global) | Directory Name | Git repository root |
+| **Oh My Pi (`omp`)** | `~/.omp/agent/managed-skills`, `~/.agents/skills` | `.omp/skills`, `.agents/skills`, `.claude/skills`, `.codex/skills` | **Shadow** (Project `.omp` > Cross-agent project > Global) | Frontmatter `name` | Git repository root |
+| **DeepSeek Harness (`dsh`)** | `~/.dsh/skills`, profile plugin modules | `.dsh/skills`, `.agents/skills` | **Shadow** (Project > Global) | Directory Name | Git repository root |
+| **Cursor (Tier 2)** | `~/.cursor/skills`, `~/.agents/skills` | `.cursor/skills`, `.agents/skills` | Shadow | Hybrid | Git repository root |
+
+---
+
+## 4. Filesystem, Symlinks, & Fingerprinting Rules
+
+### Symlinks: Entrypoint vs. Canonical Target
+On modern developer setups, agents frequently share a canonical library via symlinks (e.g. `~/.pi/agent/skills/* -> ~/.agents/skills/*`).
+* **Precedence & Collision:** Evaluated against the **entrypoint path** (a project symlink `./.agents/skills/deploy` wins project precedence even if pointing to a global file).
+* **Inventory & Identity:** Evaluated against the **canonical target path** (an 83-link symlink farm is reported as **1 canonical library with 3 agent entrypoints**, never 249 duplicate installations).
+* **Cycle & Exhaustion Guard:** Traversal tracks visited `(st_dev, st_ino)` tuples. Cycles and broken symlinks are flagged as `[INVALID]` dangling links without crashing or hanging.
+
+### Streaming Content Fingerprint (SHA-256)
+* Sorted relative file paths with forward slashes `/`.
+* **Text normalization:** Text files decoded as UTF-8 with `\r\n` normalized to `\n`.
+* **Binaries:** Hashed raw without alteration.
+* **Streamed full-file hashing:** Hashes the entire file in chunks to eliminate false prefix collisions (no 1 MiB truncation).
+* **Exclusions:** Excludes `.git/`, `.DS_Store`, AppleDouble `._*`.
+
+### Discovery vs. Hashing Rule for `node_modules/`
+* **During Fingerprinting:** `node_modules/` is strictly ignored so dependency churn does not alter skill identity.
+* **During Discovery (`doctor`):** The scanner inspects project directories to flag recursive nested `SKILL.md` files (the known Codex traversal limit bug) and reports them in `skill-lens doctor`.
+
+### macOS TCC & Walk Resilience
+* All filesystem walks catch `OSError` at the **per-directory iteration layer**.
+* If a protected directory (Desktop/Documents) is denied by macOS TCC permissions, Skill Lens records that root as `unreadable` and continues scanning remaining paths.
+
+---
+
+## 5. Technology Stack & Architecture
+
+- **Language:** **Python 3.11+**
+- **CLI Framework:** **`Typer`**
+- **Terminal UI & Output:** **`Rich`** (line-oriented tables, trees, syntax diffs. Descriptions escaped with `rich.markup.escape()`).
+- **Data & Config:** Standard library **`tomllib`** + **`PyYAML`** (`yaml.safe_load`).
+- **Path Isolation:** Central `skill_lens/core/paths.py` resolving `os.environ["HOME"]` at call-time (enables 100% leak-proof test monkeypatching).
+- **Code Quality:** **`ruff`** + **`pytest`** (placed in `[project.optional-dependencies] dev`).
+
+### Forbidden in v1
 - ❌ **NO Full-Screen TUI / Textual:** Strictly line-oriented CLI.
-- ❌ **NO Write Operations:** Zero file installation, deletion, moving, or updating. 100% read-only.
-- ❌ **NO Script Execution:** Never executes bash/python scripts found inside skills.
-- ❌ **NO Full-Disk Crawling:** Scans are strictly bounded to registry roots and `$HOME/.*/skills/` (depth 1).
-- ❌ **NO Windows Support in v1:** macOS and Linux only.
-- ❌ **NO Cloud / Telemetry / AI APIs:** 100% offline and private.
+- ❌ **NO Write Operations:** Zero file installations, deletions, or modifications.
+- ❌ **NO Script Execution:** Never runs executable scripts inside skill folders.
+- ❌ **NO Unbounded Crawling:** Strictly registry roots and `$HOME/.*/skills` / `$HOME/.*/config/skills`.
 
 ---
 
-## 4. Agent Discovery Registry
+## 6. CLI Command Specifications
 
-Discovery rules live in modular TOML files in `skill_lens/registry/agents/*.toml`. Each agent defines its own precedence ordering, upward search behavior, and explicit blind spots.
-
-### Supported Agents & Registry Matrix
-1. **OpenAI Codex:**
-   - Precedence: Project `.agents/skills` (searches upward to git root) > Global `~/.agents/skills` > Admin `/etc/codex/skills`.
-   - Environment overrides: `CODEX_HOME`.
-2. **Claude Code:**
-   - Precedence: Enterprise > Personal `~/.claude/skills` > Project `.claude/skills`.
-   - Plugin skills coexist via namespacing.
-   - Stop walk: Stops at git worktree boundary.
-3. **Antigravity CLI (Modern Gemini CLI replacement):**
-   - Precedence: Project `.agents/skills` > User `~/.gemini/antigravity-cli/skills` > Plugin skills.
-   - Stop walk: Git repository root.
-4. **OpenCode:**
-   - Searches `.opencode/skills`, `.claude/skills`, `.agents/skills` upward to git worktree.
-   - Duplicate names in same tier produce `[AMBIGUOUS]`.
-5. **Pi Agent (`pi`):**
-   - Config directory: `~/.pi`.
-   - Precedence: Project `.pi/skills` (Rank 100) > Project `.agents/skills` (Rank 90) > Global `~/.pi/skills` (Rank 50) > Universal `~/.agents/skills` (Rank 40).
-   - Stop walk: Stops at git root.
-6. **Oh My Pi (`omp`):**
-   - Config directory: `~/.omp`.
-   - Precedence: Project `.omp/skills` (Rank 100) > Project `.agents/skills` (Rank 90) > Global `~/.omp/skills` (Rank 50) > Universal `~/.agents/skills` (Rank 40).
-   - Stop walk: Stops at git root.
-7. **DeepSeek Harness (`dsh`):**
-   - Config directory: `~/.dsh` (supports `$DSH_HOME`).
-   - Precedence: Project `.dsh/skills` (Rank 100) > Project `.agents/skills` (Rank 90) > Global `~/.dsh/skills` (Rank 50) > Universal `~/.agents/skills` (Rank 40).
-   - Supports profile-level plugin skills.
-8. **Ecosystem Registry Profiles (Tier 2):**
-   - **Cursor:** `.cursor/skills`, `~/.cursor/skills`, `.agents/skills`.
-   - **GitHub Copilot:** `.github/skills`, `~/.copilot/skills`, `~/.claude/skills`.
-   - **Cline & Windsurf:** Included as configurable `.toml` definitions.
-9. **Legacy Gemini CLI:** Maintained as `experimental`.
-
-### Registry Schema (`skill_lens/registry/agents/codex.toml`)
-```toml
-id = "codex"
-name = "OpenAI Codex"
-status = "verified"
-evidence_url = "https://platform.openai.com/docs/guides/agent-skills"
-verified_at = "2026-09-29"
-
-[detection]
-executable = "codex"
-config_dir = "~/.codex"
-env_override = "CODEX_HOME"
-
-[search_behavior]
-walk_rule = "git-root"  # Stop at git root; cwd-only if no git
-
-[[sources]]
-path = ".agents/skills"
-scope = "project"
-agent_rank = 100
-
-[[sources]]
-path = "~/.agents/skills"
-scope = "global"
-agent_rank = 50
-
-[[sources]]
-path = "/etc/codex/skills"
-scope = "system"
-agent_rank = 10
-
-[disable_rules]
-mode = "config_entry"
-config_path = "~/.codex/config.toml"
-
-[blind_spots]
-items = [
-  "Built-in system skills compiled into the binary",
-  "Session-specific CLI flags (--add-dir)"
-]
-```
-
----
-
-## 5. CLI Command Specifications
-
-All commands support both human-friendly `Rich` output and machine-readable `--json` output.
+Every command supports `--json` returning structured data models.
 
 ### 1. `skill-lens scan [--sandbox <dir>] [--json]`
-Inventories skills across detected agents. Note: Does **not** report "shadowed" counts, because shadowing is relative to a specific agent and working directory.
+Inventories skills across detected agents and reports canonical counts.
 ```text
 $ skill-lens scan
 
 ╭─────────────────────────── Skill Lens: Discovered Skills ───────────────────────────╮
-│ Detected Agents: Codex, Claude Code, Antigravity CLI, OpenCode, Pi, OMP, DSH        │
-│ Unique Skills: 28  •  Total Installations: 36  •  Variants: 4  •  Invalid: 1        │
+│ Detected Agents: Codex, Claude Code, Antigravity, OpenCode, Pi, OMP, DSH            │
+│ Unique Skills: 28  •  Canonical Installations: 31  •  Variants: 2  •  Invalid: 1    │
+│ Symlink Farms: 1 detected (~/.agents/skills shared across Claude, Pi, Antigravity)  │
 ╰─────────────────────────────────────────────────────────────────────────────────────╯
 
 ┌────────────────────┬──────────┬───────────────────────────────┬─────────────────────┐
-│ Skill Name         │ Scope    │ Path                          │ Found In Roots      │
+│ Skill Name         │ Scope    │ Canonical Path                │ Active Entrypoints  │
 ├────────────────────┼──────────┼───────────────────────────────┼─────────────────────┤
 │ browser            │ Project  │ ./my-app/.agents/skills/bro…  │ Codex, Antigravity  │
-│ browser [Var B]    │ Global   │ ~/.agents/skills/browser      │ Codex, Antigravity  │
+│ browser [Var B]    │ Global   │ ~/.agents/skills/browser      │ Codex, Pi, Claude   │
 │ playwright-expert  │ Global   │ ~/.claude/skills/playwright   │ Claude Code         │
 │ deploy [INVALID]   │ Global   │ ~/.claude/skills/deploy       │ Missing description │
 └────────────────────┴──────────┴───────────────────────────────┴─────────────────────┘
 ```
 
 ### 2. `skill-lens why <skill_name> --agent <agent_id> [--cwd <dir>] [--json]`
-The core resolver. Explains which copy wins in a directory and why. Requires `--agent`. Defaults `--cwd` to current working directory.
+Explains runtime resolution for a specific agent and directory.
 ```text
 $ skill-lens why browser --agent codex --cwd ~/Projects/my-app
 
 ╭──────────────────────── Resolution: 'browser' for Codex ─────────────────────────╮
-│ Agent:        OpenAI Codex                                                        │
-│ Working Dir:  /Users/dev/Projects/my-app                                          │
+│ Agent:            OpenAI Codex                                                    │
+│ Working Dir:      /Users/dev/Projects/my-app                                      │
+│ Collision Policy: Merge (both entries remain accessible in picker)               │
 ╰───────────────────────────────────────────────────────────────────────────────────╯
 
-● [ACTIVE] (Winning Copy)
+● [ACTIVE] (Primary Display Copy)
   Path:   /Users/dev/Projects/my-app/.agents/skills/browser
-  Reason: Project-level skill (.agents/skills) outranks global (Rank 100 > 50).
+  Reason: Project-level skill (.agents/skills) has higher display priority.
+  Rule:   codex_project_agents_skills (Rank 100)
   Hash:   sha256:7f83b1...
 
-○ [SHADOWED]
+● [COEXISTS] (Merged Secondary Copy)
   Path:   /Users/dev/.agents/skills/browser
-  Reason: Suppressed by project-level copy. Different content (Variant B).
-  Hash:   sha256:1a49c2...
-
-○ [UNSEARCHED]
-  Path:   /Users/dev/.claude/skills/browser
-  Reason: Exists on disk, but Codex search rules never scan ~/.claude/skills.
+  Reason: Codex collision policy is 'merge'; global copy remains available.
+  Rule:   codex_global_agents_skills (Rank 50)
+  Hash:   sha256:1a49c2... (Variant B)
 ```
 
-### 3. `skill-lens diff <skill_name> [--json]`
-Renders a side-by-side terminal diff between two detected variants of the same skill name.
+### 3. `skill-lens compare --agent <agent_a> --agent <agent_b> [--cwd <dir>] [--json]`
+Compares capability surfaces between two agents. Pinpoints which skills are shared via symlink farms vs where their capabilities diverge.
 
-### 4. `skill-lens doctor [--json]`
-Performs hygiene and integrity diagnostics:
-- ❌ Broken symlinks (links pointing to missing directories).
+### 4. `skill-lens diff <skill_name> [--json]`
+Side-by-side terminal syntax diff between differing variants sharing the same name.
+
+### 5. `skill-lens doctor [--json]`
+Performs hygiene and ecosystem health diagnostics:
+- ❌ Dangling symlinks and symlink cycles.
 - ❌ Malformed frontmatter (invalid YAML or missing required `description`).
-- ⚠️ Skill name and directory name mismatches.
-- ⚠️ Shadowing warnings where a global skill differs in content from a winning project skill.
-- ℹ️ Permission / TCC unreadable directories (reported without crashing).
+- ⚠️ TCC permission-blocked search roots.
+- ⚠️ Nested traversal hazards (e.g. `node_modules/**/SKILL.md` poisoning Codex).
+- ℹ️ Multi-agent symlink farm health and installer lockfile (`.skill-lock.json`) status.
 
 ---
 
-## 6. Implementation Roadmap & Acceptance Gates
+## 7. Implementation Roadmap & Acceptance Gates
 
-Development follows a strict test-first protocol. **Tests never touch the real `$HOME` directory.** All testing uses monkeypatched `tmp_path` fixtures with golden `expected.json` validation.
+Development follows a strict test-first protocol. Tests run against mock fixtures inside `tmp_path`.
 
-### Phase 1: Foundation, Dataclasses & Golden Fixtures
-- Setup `pyproject.toml` with pinned dependencies (`typer`, `rich`, `pyyaml`, `ruff`, `pytest`).
-- Freeze core data structures (`SkillInstallation`, `CandidateResolution`, `ResolutionReport`, `DoctorFinding`).
-- Build `tests/fixtures/` with isolated scenarios and golden `expected.json` files:
-  1. `codex_project_over_global`: Project copy beats global for Codex.
-  2. `claude_personal_over_project`: Personal copy beats project for Claude Code.
-  3. `two_project_levels`: Subdirectory skill beats parent monorepo skill.
-  4. `symlink_entrypoint_and_canonical`: Project symlink wins precedence; canonical path dedupes hash.
-  5. `symlink_cycle_and_dangling`: Cycle detected safely; broken link flagged `[INVALID]`.
-  6. `variant_detection`: Same name, differing content hashes labeled Variant A/B.
-  7. `opencode_ambiguous`: Two identical rank locations flag `[AMBIGUOUS]`.
-  8. `tcc_unreadable_root`: Permission error logs unreadable status without scan crash.
-- **Gate:** `pytest` passes validating that test harnesses load fixtures cleanly.
+### Phase 0: Contracts, Frozen Models & Fixtures
+- Setup `pyproject.toml` with `typer`, `rich`, `pyyaml`, and dev dependencies (`ruff`, `pytest`).
+- Create `skill_lens/core/paths.py` with lazy, monkeypatch-safe path resolution.
+- Define frozen dataclasses in `skill_lens/models/`:
+  - `SkillInstallation`, `CandidateResolution`, `ResolutionReport`, `DoctorFinding`.
+- Build `tests/fixtures/` with hand-written golden `expected.json` files for 10 core scenarios:
+  1. `codex_merge_policy`: Project and global both co-exist with rank-ordered display.
+  2. `claude_personal_beats_project`: Personal directory copy overrides project copy.
+  3. `claude_nested_qualification`: Monorepo subdirectory skill loads as `dir:skill`.
+  4. `symlink_farm_multi_agent`: 1 canonical target with 3 entrypoints.
+  5. `symlink_cycle_guard`: Circular link flagged `[INVALID]` without infinite loop.
+  6. `antigravity_file_based`: Standalone `.md` skill loaded alongside directory skills.
+  7. `tcc_permission_error`: Blocked directory logged as `unreadable` without scan failure.
+  8. `opencode_ambiguous`: Two identical rank locations flag `[AMBIGUOUS]`.
+  9. `variant_hash_detection`: Differing bytes produce Variant A/B labels.
+  10. `worktree_dotgit_file`: Walk stops correctly when `.git` is a worktree file.
+- **Gate:** Tests verify all 10 fixture environments exist and load expected JSON contracts.
 
-### Phase 2: Metadata Parser & Fingerprint Engine
+### Phase 1: Metadata Parser & Streaming Hasher
 - Implement `skill_lens/core/parser.py`:
-  - `yaml.safe_load` on the first frontmatter block.
-  - Identity rules (frontmatter name vs directory name).
-  - Normalized SHA-256 fingerprint (newline normalization, binary passthrough, skip `.git`/`.DS_Store`).
-  - Symlink canonicalization with visited-inode cycle detection.
-- **Gate:** Parser passes 100% of unit tests against all mock `SKILL.md` fixtures.
+  - Frontmatter extraction via `yaml.safe_load`.
+  - Directory-based and frontmatter-based identity extraction.
+  - Streaming SHA-256 hasher with newline normalization.
+  - Symlink canonicalization with visited-inode tracking.
+- **Gate:** Parser passes 100% of unit tests against all mock fixtures.
 
-### Phase 3: Registry Loader & The Resolver (`why` & `scan --sandbox`)
-- Implement `skill_lens/registry/` TOML loader.
+### Phase 2: Registry Loader & 3-Axis Resolver
+- Implement TOML loader reading `skill_lens/registry/agents/*.toml`.
 - Implement `skill_lens/core/resolver.py`:
-  - Directory upward walk honoring `walk_rule` (`git-root`, `git-worktree`, `cwd-only`).
-  - Precedence evaluation emitting `ACTIVE`, `SHADOWED`, `DISABLED`, `UNSEARCHED`, `INVALID`, `AMBIGUOUS`.
+  - Upward directory walk stopping at git root / worktree.
+  - 3-axis resolution engine emitting `ACTIVE`, `COEXISTS`, `SHADOWED`, `DISABLED`, `UNSEARCHED`, `INVALID`, `AMBIGUOUS`.
+  - Machine-checkable `rule_id` attached to every candidate resolution reason.
 - Build CLI commands:
-  - `skill-lens why <skill> --agent <agent> --cwd <dir> --json`
+  - `skill-lens why <skill> --agent <agent> [--cwd <dir>] --json`
   - `skill-lens scan --sandbox <dir> --json`
-  - Add `Rich` formatting over JSON models.
-- **Gate:** JSON output from `why` and `scan --sandbox` matches golden `expected.json` files character-for-character.
+- **Gate:** Semantic JSON output (`json.dumps(sort_keys=True)`) matches golden `expected.json` across all 10 fixtures.
 
-### Phase 4: Doctor, Diff & Safe Live System Adapter
+### Phase 3: Rich Terminal Presentation Layer
+- Build Rich output formatters for `scan` and `why`.
+- Implement safe markup escaping (`rich.markup.escape()`) for descriptions.
+- Add Rich diff renderer for `skill-lens diff`.
+- **Gate:** Rich snapshot tests pass with clean formatting.
+
+### Phase 4: Doctor, Multi-Agent Compare & Safe Live Adapter
 - Implement `skill_lens/core/doctor.py`:
-  - Evaluate resolver results for broken links, malformed metadata, and content divergences.
-- Implement `skill_lens/core/differ.py`: Side-by-side terminal diff of variants.
+  - Broken symlink detection, TCC unreadable reporting, nested `node_modules` warnings.
+- Implement `skill-lens compare --agent A --agent B`.
 - Implement `skill_lens/core/system.py`:
-  - Safe adapter reading real user home paths (`~/.agents/skills`, etc.).
-  - Wrapped in `try/except PermissionError` for macOS TCC resilience.
-- **Gate:** Live smoke test monkeypatching `HOME` to fixtures succeeds without touching real configurations.
+  - Live discovery adapter querying actual user directories with per-directory `OSError` guards.
+- **Gate:** Live smoke test monkeypatching `HOME` to fixtures runs with zero regressions.
 
 ### Phase 5: Packaging & Release
-- Verify installation via `pip install .` and `uvx --from . skill-lens --help`.
-- Document commands and explicit agent blind spots in `README.md`.
-- **Gate:** Clean lint pass with `ruff check .` and 100% green `pytest`.
+- Setup console script entrypoint `skill-lens`.
+- Verify execution via `pip install .` and `uvx --from . skill-lens --help`.
+- Create repository `AGENTS.md` documenting architecture rules.
+- **Gate:** `ruff check .` passes with zero warnings, 100% green `pytest`.
 
 ---
 
-## 7. Safety & Trust Contract
+## 8. Safety & Explainability Contract
 
 1. **Strictly Read-Only:** Skill Lens never modifies, creates, moves, or deletes user files.
-2. **Deterministic & Explainable:** Every resolution reason cites the matching agent rule and rank.
-3. **Transparent Blind Spots:** Skill Lens openly reports uninspected vectors (like built-ins) rather than making false claims of completeness.
+2. **Deterministic & Machine-Checkable:** Every resolution reason cites a specific `rule_id` from the verified registry.
+3. **Transparent Divergence:** Skill Lens clearly flags documented vs observed agent quirks rather than making false claims of perfection.
