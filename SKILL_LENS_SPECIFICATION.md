@@ -201,10 +201,11 @@ Development follows a strict test-first protocol. Tests run against mock fixture
 
 ### Phase 0: Contracts, Frozen Models & Fixtures
 - Setup `pyproject.toml` with `typer`, `rich`, `pyyaml`, and dev dependencies (`ruff`, `pytest`).
-- Create `skill_lens/core/paths.py` with lazy, monkeypatch-safe path resolution.
+- Create `skill_lens/core/paths.py` with lazy, call-time resolution of `os.environ["HOME"]` and `os.environ["XDG_CONFIG_HOME"]` (for OpenCode `~/.config/opencode`).
+- Define `--sandbox <dir>` explicitly as a mock `$HOME` directory root for tests and safe demos.
 - Define frozen dataclasses in `skill_lens/models/`:
   - `SkillInstallation`, `CandidateResolution`, `ResolutionReport`, `DoctorFinding`.
-- Build `tests/fixtures/` with hand-written golden `expected.json` files for 10 core scenarios:
+- Build `tests/fixtures/` with hand-written golden `expected.json` files for 12 core scenarios:
   1. `claude_personal_beats_project`: Personal directory copy overrides project copy (empirically grounded).
   2. `claude_nested_qualification`: Monorepo subdirectory skill loads as `dir:skill`.
   3. `symlink_farm_multi_agent`: 1 canonical target with 3 entrypoints.
@@ -215,8 +216,10 @@ Development follows a strict test-first protocol. Tests run against mock fixture
   8. `variant_hash_detection`: Differing bytes produce Variant A/B labels.
   9. `worktree_dotgit_file`: Walk stops correctly when `.git` is a worktree file.
   10. `system_container_traversal`: Hidden container `.system/` parsed transparently.
-- **Phase 0.5 Acceptance Gate (Live Inventory Reconciliation):**
-  - Run read-only scan against test harness proving the tool accurately groups canonical libraries vs entrypoints.
+  11. `disabled_override`: Agent settings file turns off a skill, resulting in `[DISABLED]`.
+  12. `malformed_frontmatter`: Invalid YAML syntax or missing required `description`, resulting in `[INVALID]`.
+- **Phase 0.5 Acceptance Gate (Fixture Inventory Reconciliation):**
+  - Run `scan --sandbox <fixture-farm> --json` proving the tool accurately groups canonical libraries vs entrypoints.
 
 ### Phase 1: Metadata Parser & Streaming Hasher
 - Implement `skill_lens/core/parser.py`:
