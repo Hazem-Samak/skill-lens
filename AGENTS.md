@@ -22,6 +22,8 @@ The developer driving you has zero coding experience and is vibe-coding this pro
    - NO SQLite or databases in v1.
    - NO AI API calls or telemetry.
    - NO Windows support in v1. macOS and Linux only.
+6. **Provenance Over Hallucination:**
+   - Never invent or guess an agent's collision or precedence behavior. Every rule in `registry/agents/*.toml` must declare its evidence kind (`documented`, `empirical`, `inferred`). If undocumented, emit `ambiguous` or `unverified`.
 
 ---
 
