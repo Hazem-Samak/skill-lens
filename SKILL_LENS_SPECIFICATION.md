@@ -5,7 +5,7 @@
 **Technical Positioning:** A local diagnostics and resolution engine for AI agent capabilities (`SKILL.md`).  
 **Primary Interface:** Line-oriented Python CLI with `Rich` terminal formatting (explicitly NO full-screen TUI).  
 **Supported Platforms:** macOS and Linux (Windows is out of scope for v1).  
-**Target Audience:** Developers using AI coding agents (OpenAI Codex, Claude Code, Antigravity CLI, OpenCode).  
+**Target Audience:** Developers using AI coding agents (OpenAI Codex, Claude Code, Antigravity CLI, OpenCode, Pi, OMP, DSH, Cursor).  
 **Execution Strategy:** 100% Vibe-Coding Ready — Modular, Golden Fixture-Driven, Zero Systems-Language Overhead.
 
 ---
@@ -86,7 +86,7 @@ For any query: `skill-lens why <skill_name> --agent <agent> [--cwd <path>]`, the
 
 Discovery rules live in modular TOML files in `skill_lens/registry/agents/*.toml`. Each agent defines its own precedence ordering, upward search behavior, and explicit blind spots.
 
-### Initial Supported Agents (Tier 1)
+### Supported Agents & Registry Matrix
 1. **OpenAI Codex:**
    - Precedence: Project `.agents/skills` (searches upward to git root) > Global `~/.agents/skills` > Admin `/etc/codex/skills`.
    - Environment overrides: `CODEX_HOME`.
@@ -100,7 +100,23 @@ Discovery rules live in modular TOML files in `skill_lens/registry/agents/*.toml
 4. **OpenCode:**
    - Searches `.opencode/skills`, `.claude/skills`, `.agents/skills` upward to git worktree.
    - Duplicate names in same tier produce `[AMBIGUOUS]`.
-5. **Legacy Gemini CLI:** Maintained as `experimental`.
+5. **Pi Agent (`pi`):**
+   - Config directory: `~/.pi`.
+   - Precedence: Project `.pi/skills` (Rank 100) > Project `.agents/skills` (Rank 90) > Global `~/.pi/skills` (Rank 50) > Universal `~/.agents/skills` (Rank 40).
+   - Stop walk: Stops at git root.
+6. **Oh My Pi (`omp`):**
+   - Config directory: `~/.omp`.
+   - Precedence: Project `.omp/skills` (Rank 100) > Project `.agents/skills` (Rank 90) > Global `~/.omp/skills` (Rank 50) > Universal `~/.agents/skills` (Rank 40).
+   - Stop walk: Stops at git root.
+7. **DeepSeek Harness (`dsh`):**
+   - Config directory: `~/.dsh` (supports `$DSH_HOME`).
+   - Precedence: Project `.dsh/skills` (Rank 100) > Project `.agents/skills` (Rank 90) > Global `~/.dsh/skills` (Rank 50) > Universal `~/.agents/skills` (Rank 40).
+   - Supports profile-level plugin skills.
+8. **Ecosystem Registry Profiles (Tier 2):**
+   - **Cursor:** `.cursor/skills`, `~/.cursor/skills`, `.agents/skills`.
+   - **GitHub Copilot:** `.github/skills`, `~/.copilot/skills`, `~/.claude/skills`.
+   - **Cline & Windsurf:** Included as configurable `.toml` definitions.
+9. **Legacy Gemini CLI:** Maintained as `experimental`.
 
 ### Registry Schema (`skill_lens/registry/agents/codex.toml`)
 ```toml
@@ -156,8 +172,8 @@ Inventories skills across detected agents. Note: Does **not** report "shadowed" 
 $ skill-lens scan
 
 ╭─────────────────────────── Skill Lens: Discovered Skills ───────────────────────────╮
-│ Detected Agents: Codex, Claude Code, Antigravity CLI, OpenCode                      │
-│ Unique Skills: 18  •  Total Installations: 24  •  Variants: 3  •  Invalid: 1        │
+│ Detected Agents: Codex, Claude Code, Antigravity CLI, OpenCode, Pi, OMP, DSH        │
+│ Unique Skills: 28  •  Total Installations: 36  •  Variants: 4  •  Invalid: 1        │
 ╰─────────────────────────────────────────────────────────────────────────────────────╯
 
 ┌────────────────────┬──────────┬───────────────────────────────┬─────────────────────┐
