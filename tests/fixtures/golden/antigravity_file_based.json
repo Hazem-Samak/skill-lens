@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "scenario": "antigravity_file_based",
+  "description": "Antigravity loads a standalone .md skill alongside directory skills.",
+  "installations": [
+    {
+      "name": "deploy",
+      "canonical_path": ".gemini/config/skills/deploy.md",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [".gemini/config/skills/deploy.md"]
+    },
+    {
+      "name": "other",
+      "canonical_path": ".gemini/config/skills/other",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [".gemini/config/skills/other"]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "deploy",
+      "agent": "antigravity",
+      "cwd": ".",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": ".gemini/config/skills/deploy.md",
+          "rule_id": "antigravity_standalone_md"
+        }
+      ]
+    }
+  ]
+}

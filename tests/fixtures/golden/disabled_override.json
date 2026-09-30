@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "scenario": "disabled_override",
+  "description": "Agent settings explicitly turn off a discovered skill: DISABLED.",
+  "installations": [
+    {
+      "name": "legacy",
+      "canonical_path": ".claude/skills/legacy",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [".claude/skills/legacy"]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "legacy",
+      "agent": "claude",
+      "cwd": ".",
+      "headline": "DISABLED",
+      "candidates": [
+        {
+          "state": "DISABLED",
+          "canonical_path": ".claude/skills/legacy",
+          "rule_id": "claude_skill_override_disabled"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "scenario": "claude_personal_beats_project",
+  "description": "Claude personal ~/.claude/skills copy overrides the project copy (documented).",
+  "installations": [
+    {
+      "name": "deploy",
+      "canonical_path": ".claude/skills/deploy",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [".claude/skills/deploy"]
+    },
+    {
+      "name": "deploy",
+      "canonical_path": "project/.claude/skills/deploy",
+      "scope": "project",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "B",
+      "agent_entrypoints": ["project/.claude/skills/deploy"]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "deploy",
+      "agent": "claude",
+      "cwd": "project",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": ".claude/skills/deploy",
+          "rule_id": "claude_personal_beats_project"
+        },
+        {
+          "state": "SHADOWED",
+          "canonical_path": "project/.claude/skills/deploy",
+          "rule_id": "claude_personal_beats_project"
+        }
+      ]
+    }
+  ]
+}

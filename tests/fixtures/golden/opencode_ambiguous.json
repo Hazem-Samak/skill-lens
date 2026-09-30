@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "scenario": "opencode_ambiguous",
+  "description": "Two same-rank searched roots collide with no documented winner: AMBIGUOUS.",
+  "installations": [
+    {
+      "name": "dup",
+      "canonical_path": ".agents/skills/dup",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [".agents/skills/dup"]
+    },
+    {
+      "name": "dup",
+      "canonical_path": ".config/opencode/skills/dup",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "B",
+      "agent_entrypoints": [".config/opencode/skills/dup"]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "dup",
+      "agent": "opencode",
+      "cwd": ".",
+      "headline": "AMBIGUOUS",
+      "candidates": [
+        {
+          "state": "AMBIGUOUS",
+          "canonical_path": ".agents/skills/dup",
+          "rule_id": "opencode_duplicate_ambiguous"
+        },
+        {
+          "state": "AMBIGUOUS",
+          "canonical_path": ".config/opencode/skills/dup",
+          "rule_id": "opencode_duplicate_ambiguous"
+        }
+      ]
+    }
+  ]
+}

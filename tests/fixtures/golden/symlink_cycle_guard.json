@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "scenario": "symlink_cycle_guard",
+  "description": "A two-node symlink cycle is flagged INVALID without an infinite loop.",
+  "installations": [
+    {
+      "name": "cycle_a",
+      "canonical_path": ".agents/skills/cycle_a",
+      "scope": "user",
+      "parse_status": "unreadable",
+      "is_symlink": true,
+      "variant_label": null,
+      "agent_entrypoints": [".agents/skills/cycle_a"],
+      "errors": ["symlink_cycle"]
+    },
+    {
+      "name": "cycle_b",
+      "canonical_path": ".agents/skills/cycle_b",
+      "scope": "user",
+      "parse_status": "unreadable",
+      "is_symlink": true,
+      "variant_label": null,
+      "agent_entrypoints": [".agents/skills/cycle_b"],
+      "errors": ["symlink_cycle"]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "cycle_a",
+      "agent": "codex",
+      "cwd": ".",
+      "headline": "INVALID",
+      "candidates": [
+        {
+          "state": "INVALID",
+          "canonical_path": ".agents/skills/cycle_a",
+          "rule_id": "symlink_cycle_guard"
+        }
+      ]
+    }
+  ]
+}

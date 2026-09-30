@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "scenario": "malformed_frontmatter",
+  "description": "Invalid YAML and a missing required description both yield INVALID.",
+  "installations": [
+    {
+      "name": "broken",
+      "canonical_path": ".claude/skills/broken",
+      "scope": "user",
+      "parse_status": "malformed_yaml",
+      "is_symlink": false,
+      "variant_label": null,
+      "agent_entrypoints": [".claude/skills/broken"],
+      "errors": ["malformed_yaml"]
+    },
+    {
+      "name": "nodesc",
+      "canonical_path": ".claude/skills/nodesc",
+      "scope": "user",
+      "parse_status": "missing_description",
+      "is_symlink": false,
+      "variant_label": null,
+      "agent_entrypoints": [".claude/skills/nodesc"],
+      "errors": ["missing_description"]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "broken",
+      "agent": "claude",
+      "cwd": ".",
+      "headline": "INVALID",
+      "candidates": [
+        {
+          "state": "INVALID",
+          "canonical_path": ".claude/skills/broken",
+          "rule_id": "parser_requires_valid_frontmatter"
+        }
+      ]
+    },
+    {
+      "skill": "nodesc",
+      "agent": "claude",
+      "cwd": ".",
+      "headline": "INVALID",
+      "candidates": [
+        {
+          "state": "INVALID",
+          "canonical_path": ".claude/skills/nodesc",
+          "rule_id": "parser_requires_valid_frontmatter"
+        }
+      ]
+    }
+  ]
+}

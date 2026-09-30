@@ -1,9 +1,37 @@
 [project]
-name = "skill-lens"
+name = "skill-lens-cli"
 version = "0.1.0"
-description = "A local diagnostics and resolution CLI tool for AI agent capabilities"
-readme = "SKILL_LENS_SPECIFICATION.md"
+description = "A local, read-only diagnostics and resolution engine for AI agent skills (SKILL.md)."
+readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Hazem Samak" }]
+keywords = [
+    "ai",
+    "agents",
+    "skills",
+    "skill.md",
+    "cli",
+    "diagnostics",
+    "claude-code",
+    "codex",
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Debuggers",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
 dependencies = [
     "typer>=0.12.0",
     "rich>=13.0.0",
@@ -16,9 +44,28 @@ dev = [
     "ruff>=0.5.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/Hazem-Samak/skill-lens"
+Repository = "https://github.com/Hazem-Samak/skill-lens"
+Issues = "https://github.com/Hazem-Samak/skill-lens/issues"
+
 [project.scripts]
 skill-lens = "skill_lens.cli:app"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["skill_lens"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

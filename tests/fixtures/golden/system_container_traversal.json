@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "scenario": "system_container_traversal",
+  "description": "Hidden .system/ is a transparent container: the skill name is imagegen, scope system.",
+  "installations": [
+    {
+      "name": "imagegen",
+      "canonical_path": ".codex/skills/.system/imagegen",
+      "scope": "system",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [".codex/skills/.system/imagegen"]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "imagegen",
+      "agent": "codex",
+      "cwd": ".",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": ".codex/skills/.system/imagegen",
+          "rule_id": "codex_system_container"
+        }
+      ]
+    }
+  ]
+}

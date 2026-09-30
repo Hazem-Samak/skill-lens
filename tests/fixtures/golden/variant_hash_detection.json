@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "scenario": "variant_hash_detection",
+  "description": "Differing bytes for one name yield Variant A / Variant B labels; unsearched roots are reported as such.",
+  "installations": [
+    {
+      "name": "deploy",
+      "canonical_path": ".agents/skills/deploy",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [".agents/skills/deploy"]
+    },
+    {
+      "name": "deploy",
+      "canonical_path": ".claude/skills/deploy",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "B",
+      "agent_entrypoints": [".claude/skills/deploy"]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "deploy",
+      "agent": "claude",
+      "cwd": ".",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "UNSEARCHED",
+          "canonical_path": ".agents/skills/deploy",
+          "rule_id": "claude_search_roots"
+        },
+        {
+          "state": "ACTIVE",
+          "canonical_path": ".claude/skills/deploy",
+          "rule_id": "claude_search_roots"
+        }
+      ]
+    }
+  ]
+}

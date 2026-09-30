@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "scenario": "tcc_permission_error",
+  "description": "A permission-blocked directory is recorded unreadable; the scan still returns results.",
+  "installations": [
+    {
+      "name": "blocked",
+      "canonical_path": ".claude/skills/blocked",
+      "scope": "user",
+      "parse_status": "unreadable",
+      "is_symlink": false,
+      "variant_label": null,
+      "agent_entrypoints": [".claude/skills/blocked"],
+      "errors": ["permission_denied"]
+    },
+    {
+      "name": "ok",
+      "canonical_path": ".claude/skills/ok",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [".claude/skills/ok"]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "ok",
+      "agent": "claude",
+      "cwd": ".",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": ".claude/skills/ok",
+          "rule_id": "claude_personal_beats_project"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "scenario": "symlink_farm_multi_agent",
+  "description": "One canonical library with three agent entrypoints, reported as a single installation.",
+  "installations": [
+    {
+      "name": "shared",
+      "canonical_path": ".agents/skills/shared",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": true,
+      "variant_label": "A",
+      "agent_entrypoints": [
+        ".claude/skills/shared",
+        ".pi/agent/skills/shared",
+        ".qoder/skills/shared"
+      ]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "shared",
+      "agent": "pi",
+      "cwd": ".",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": ".agents/skills/shared",
+          "rule_id": "pi_global_symlink_farm"
+        }
+      ]
+    }
+  ]
+}
