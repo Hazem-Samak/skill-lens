@@ -7,7 +7,12 @@
 > **Reviewed by:** orchestrator self-review + an independent read-only review
 > delegated to Gemini 3.8 Flash High (`agy`, 2026-09-30).
 > **Commits reviewed:** `4a7a03c` (Phase 2), `eae309f` (self-review fix).
-> **Gate now:** `311 passed`, `ruff check` clean.
+> **Gate after those fixes:** `311 passed`, `ruff check` clean.
+>
+> **This is a point-in-time record of Phase 2.** Phases since then have moved the
+> gate on — Phase 3 is documented in [`PHASE3_FINDINGS.md`](./PHASE3_FINDINGS.md),
+> and the current test count lives in the [README](./README.md). The counts below
+> are what was true when each part of this document was written.
 
 ---
 
@@ -517,7 +522,7 @@ repo and confirming the named test turned red. Two "caught" results in the first
 audit were re-checked because the mutation had weakened the guard itself rather
 than the code — a mutation that proves nothing.
 
-**Gate:** `311 passed`, `ruff check` clean.
+**Gate after the audit:** `311 passed`, `ruff check` clean.
 
 ---
 
@@ -537,4 +542,4 @@ surfaced the `omp` omission in F-01, and re-verification during the fix is what
 surfaced F-15.
 
 **Gate when the review was written:** `243 passed`, `ruff check` clean.
-**Gate now:** `311 passed`, `ruff check` clean.
+**Gate after the fixes:** `311 passed`, `ruff check` clean.
