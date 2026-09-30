@@ -78,7 +78,8 @@ proceeds by phase:
 
 - [x] **Phase 0** — frozen models, lazy path resolution, 12 golden fixtures
 - [x] **Phase 1** — metadata parser, streaming SHA-256 hasher, symlink canonicalization
-- [ ] **Phase 2** — registry loader, 3-axis resolver, `scan` / `why` commands
+- [x] **Phase 2** — registry loader, 3-axis resolver, `scan` / `why` / `agents` commands
+  — ⚠️ **built and tested, but known open defects**: see [`PHASE2_FINDINGS.md`](./PHASE2_FINDINGS.md)
 - [ ] **Phase 3** — Rich presentation layer and `diff`
 - [ ] **Phase 4** — `doctor`, multi-agent `compare`, live scanner
 - [ ] **Phase 5** — packaging and release
