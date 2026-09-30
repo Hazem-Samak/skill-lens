@@ -6,6 +6,19 @@ The developer driving you has zero coding experience and is vibe-coding this pro
 
 ---
 
+## 0. Communication Rules (READ FIRST)
+
+- **The developer has zero coding experience. Explain everything in plain, simple English.**
+- **No unexplained jargon.** If a technical term is unavoidable, define it in one short sentence the first time you use it.
+- **Lead with the outcome, not the mechanics.** Say what changed and why it matters to the user before listing files or code details.
+- **Use everyday analogies** for technical concepts (e.g. "a symlink is like a shortcut icon").
+- **When reporting a task:** what I did, why it helps, whether it works, and what (if anything) you need from the developer — in that order, in short bullets.
+- **When something breaks:** explain it in one plain sentence, then the fix, then confirm it is resolved. Never dump a raw stack trace without a plain-English translation.
+- **Ask before assuming.** If a decision affects behaviour or the user's machine, ask in plain language rather than guessing.
+- **No walls of text.** Prefer short paragraphs and tight bullet lists over long technical essays.
+
+---
+
 ## 1. Absolute Golden Rules
 
 1. **Strictly Read-Only Target Execution:**
