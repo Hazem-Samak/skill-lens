@@ -10,8 +10,12 @@
       "parse_status": "unreadable",
       "is_symlink": true,
       "variant_label": null,
-      "agent_entrypoints": [".agents/skills/cycle_a"],
-      "errors": ["symlink_cycle"]
+      "agent_entrypoints": [
+        ".agents/skills/cycle_a"
+      ],
+      "errors": [
+        "symlink_cycle"
+      ]
     },
     {
       "name": "cycle_b",
@@ -20,8 +24,12 @@
       "parse_status": "unreadable",
       "is_symlink": true,
       "variant_label": null,
-      "agent_entrypoints": [".agents/skills/cycle_b"],
-      "errors": ["symlink_cycle"]
+      "agent_entrypoints": [
+        ".agents/skills/cycle_b"
+      ],
+      "errors": [
+        "symlink_cycle"
+      ]
     }
   ],
   "resolutions": [
@@ -34,7 +42,13 @@
         {
           "state": "INVALID",
           "canonical_path": ".agents/skills/cycle_a",
-          "rule_id": "symlink_cycle_guard"
+          "entrypoint_path": ".agents/skills/cycle_a",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "unverified_policy",
+          "variant_label": null,
+          "rule_id": "symlink_cycle_guard",
+          "reason": "Symlink cycle detected; traversal stopped safely."
         }
       ]
     }

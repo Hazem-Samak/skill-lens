@@ -10,7 +10,9 @@
       "parse_status": "valid",
       "is_symlink": false,
       "variant_label": "A",
-      "agent_entrypoints": [".claude/skills/legacy"]
+      "agent_entrypoints": [
+        ".claude/skills/legacy"
+      ]
     }
   ],
   "resolutions": [
@@ -23,7 +25,13 @@
         {
           "state": "DISABLED",
           "canonical_path": ".claude/skills/legacy",
-          "rule_id": "claude_skill_override_disabled"
+          "entrypoint_path": ".claude/skills/legacy",
+          "scope": "user",
+          "visibility": "disabled",
+          "collision": "unverified_policy",
+          "variant_label": "A",
+          "rule_id": "claude_skill_override_disabled",
+          "reason": "Disabled by agent configuration override."
         }
       ]
     }

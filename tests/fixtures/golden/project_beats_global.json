@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "scenario": "project_beats_global",
+  "description": "A project copy outranks the global copy for every agent that declares Shadow (Project > Global).",
+  "installations": [
+    {
+      "name": "pg_antigravity",
+      "canonical_path": "project/.agents/skills/pg_antigravity",
+      "scope": "project",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [
+        "project/.agents/skills/pg_antigravity"
+      ]
+    },
+    {
+      "name": "pg_antigravity",
+      "canonical_path": ".gemini/config/skills/pg_antigravity",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "B",
+      "agent_entrypoints": [
+        ".gemini/config/skills/pg_antigravity"
+      ]
+    },
+    {
+      "name": "pg_grok",
+      "canonical_path": "project/.agents/skills/pg_grok",
+      "scope": "project",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [
+        "project/.agents/skills/pg_grok"
+      ]
+    },
+    {
+      "name": "pg_grok",
+      "canonical_path": ".grok/skills/pg_grok",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "B",
+      "agent_entrypoints": [
+        ".grok/skills/pg_grok"
+      ]
+    },
+    {
+      "name": "pg_omp",
+      "canonical_path": "project/.omp/skills/pg_omp",
+      "scope": "project",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [
+        "project/.omp/skills/pg_omp"
+      ]
+    },
+    {
+      "name": "pg_omp",
+      "canonical_path": ".omp/agent/pg_omp",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "B",
+      "agent_entrypoints": [
+        ".omp/agent/pg_omp"
+      ]
+    },
+    {
+      "name": "pg_pi",
+      "canonical_path": "project/.pi/skills/pg_pi",
+      "scope": "project",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [
+        "project/.pi/skills/pg_pi"
+      ]
+    },
+    {
+      "name": "pg_pi",
+      "canonical_path": ".pi/agent/skills/pg_pi",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "B",
+      "agent_entrypoints": [
+        ".pi/agent/skills/pg_pi"
+      ]
+    },
+    {
+      "name": "pg_qoder",
+      "canonical_path": "project/.qoder/skills/pg_qoder",
+      "scope": "project",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [
+        "project/.qoder/skills/pg_qoder"
+      ]
+    },
+    {
+      "name": "pg_qoder",
+      "canonical_path": ".qoder/skills/pg_qoder",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "B",
+      "agent_entrypoints": [
+        ".qoder/skills/pg_qoder"
+      ]
+    },
+    {
+      "name": "pg_windsurf",
+      "canonical_path": "project/.windsurf/skills/pg_windsurf",
+      "scope": "project",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "A",
+      "agent_entrypoints": [
+        "project/.windsurf/skills/pg_windsurf"
+      ]
+    },
+    {
+      "name": "pg_windsurf",
+      "canonical_path": ".codeium/windsurf/skills/pg_windsurf",
+      "scope": "user",
+      "parse_status": "valid",
+      "is_symlink": false,
+      "variant_label": "B",
+      "agent_entrypoints": [
+        ".codeium/windsurf/skills/pg_windsurf"
+      ]
+    }
+  ],
+  "resolutions": [
+    {
+      "skill": "pg_antigravity",
+      "agent": "antigravity",
+      "cwd": "project",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": "project/.agents/skills/pg_antigravity",
+          "entrypoint_path": "project/.agents/skills/pg_antigravity",
+          "scope": "project",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "antigravity_project_shadow",
+          "reason": "Highest-priority copy (Project copy.)."
+        },
+        {
+          "state": "SHADOWED",
+          "canonical_path": ".gemini/config/skills/pg_antigravity",
+          "entrypoint_path": ".gemini/config/skills/pg_antigravity",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "suppressed_shadow",
+          "variant_label": "B",
+          "rule_id": "antigravity_project_shadow",
+          "reason": "Suppressed by the higher-priority copy in the project root .agents/skills."
+        }
+      ]
+    },
+    {
+      "skill": "pg_pi",
+      "agent": "pi",
+      "cwd": "project",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": "project/.pi/skills/pg_pi",
+          "entrypoint_path": "project/.pi/skills/pg_pi",
+          "scope": "project",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "pi_project_shadow",
+          "reason": "Highest-priority copy (Project copy.)."
+        },
+        {
+          "state": "SHADOWED",
+          "canonical_path": ".pi/agent/skills/pg_pi",
+          "entrypoint_path": ".pi/agent/skills/pg_pi",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "suppressed_shadow",
+          "variant_label": "B",
+          "rule_id": "pi_project_shadow",
+          "reason": "Suppressed by the higher-priority copy in the project root .pi/skills."
+        }
+      ]
+    },
+    {
+      "skill": "pg_grok",
+      "agent": "grok",
+      "cwd": "project",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": "project/.agents/skills/pg_grok",
+          "entrypoint_path": "project/.agents/skills/pg_grok",
+          "scope": "project",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "grok_project_shadow",
+          "reason": "Highest-priority copy (Project copy.)."
+        },
+        {
+          "state": "SHADOWED",
+          "canonical_path": ".grok/skills/pg_grok",
+          "entrypoint_path": ".grok/skills/pg_grok",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "suppressed_shadow",
+          "variant_label": "B",
+          "rule_id": "grok_project_shadow",
+          "reason": "Suppressed by the higher-priority copy in the project root .agents/skills."
+        }
+      ]
+    },
+    {
+      "skill": "pg_qoder",
+      "agent": "qoder",
+      "cwd": "project",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": "project/.qoder/skills/pg_qoder",
+          "entrypoint_path": "project/.qoder/skills/pg_qoder",
+          "scope": "project",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "qoder_project_shadow",
+          "reason": "Highest-priority copy (Project copy.)."
+        },
+        {
+          "state": "SHADOWED",
+          "canonical_path": ".qoder/skills/pg_qoder",
+          "entrypoint_path": ".qoder/skills/pg_qoder",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "suppressed_shadow",
+          "variant_label": "B",
+          "rule_id": "qoder_project_shadow",
+          "reason": "Suppressed by the higher-priority copy in the project root .qoder/skills."
+        }
+      ]
+    },
+    {
+      "skill": "pg_windsurf",
+      "agent": "windsurf",
+      "cwd": "project",
+      "headline": "ACTIVE",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": "project/.windsurf/skills/pg_windsurf",
+          "entrypoint_path": "project/.windsurf/skills/pg_windsurf",
+          "scope": "project",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "windsurf_project_shadow",
+          "reason": "Highest-priority copy (Project copy.)."
+        },
+        {
+          "state": "SHADOWED",
+          "canonical_path": ".codeium/windsurf/skills/pg_windsurf",
+          "entrypoint_path": ".codeium/windsurf/skills/pg_windsurf",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "suppressed_shadow",
+          "variant_label": "B",
+          "rule_id": "windsurf_project_shadow",
+          "reason": "Suppressed by the higher-priority copy in the project root .windsurf/skills."
+        }
+      ]
+    },
+    {
+      "skill": "pg_omp",
+      "agent": "omp",
+      "cwd": "project",
+      "headline": "COEXISTS",
+      "candidates": [
+        {
+          "state": "ACTIVE",
+          "canonical_path": "project/.omp/skills/pg_omp",
+          "entrypoint_path": "project/.omp/skills/pg_omp",
+          "scope": "project",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "omp_inferred_project",
+          "reason": "Highest-priority copy (Project copy.)."
+        },
+        {
+          "state": "COEXISTS",
+          "canonical_path": ".omp/agent/pg_omp",
+          "entrypoint_path": ".omp/agent/pg_omp",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "coexisting_merged",
+          "variant_label": "B",
+          "rule_id": "omp_inferred_global",
+          "reason": "Listed alongside another copy; collision policy is undocumented."
+        }
+      ]
+    }
+  ]
+}

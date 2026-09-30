@@ -9,8 +9,10 @@
       "scope": "user",
       "parse_status": "valid",
       "is_symlink": false,
-      "variant_label": "A",
-      "agent_entrypoints": [".claude/skills/deploy"]
+      "variant_label": "B",
+      "agent_entrypoints": [
+        ".claude/skills/deploy"
+      ]
     },
     {
       "name": "deploy",
@@ -18,8 +20,10 @@
       "scope": "project",
       "parse_status": "valid",
       "is_symlink": false,
-      "variant_label": "B",
-      "agent_entrypoints": ["project/.claude/skills/deploy"]
+      "variant_label": "A",
+      "agent_entrypoints": [
+        "project/.claude/skills/deploy"
+      ]
     }
   ],
   "resolutions": [
@@ -32,12 +36,24 @@
         {
           "state": "ACTIVE",
           "canonical_path": ".claude/skills/deploy",
-          "rule_id": "claude_personal_beats_project"
+          "entrypoint_path": ".claude/skills/deploy",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "B",
+          "rule_id": "claude_personal_beats_project",
+          "reason": "Highest-priority copy (Personal deploy helper.)."
         },
         {
           "state": "SHADOWED",
           "canonical_path": "project/.claude/skills/deploy",
-          "rule_id": "claude_personal_beats_project"
+          "entrypoint_path": "project/.claude/skills/deploy",
+          "scope": "project",
+          "visibility": "active_root",
+          "collision": "suppressed_shadow",
+          "variant_label": "A",
+          "rule_id": "claude_personal_beats_project",
+          "reason": "Suppressed by the higher-priority copy in the global root ~/.claude/skills."
         }
       ]
     }

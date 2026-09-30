@@ -8,12 +8,13 @@ walk_boundary = "git_root"
 unsearched_rule_id = "grok_search_roots"
 source = "https://docs.x.ai/grok-cli/skills"
 
+# Precedence is Project > Global (see collision_policy).
 [[roots]]
 id = "grok_global"
 kind = "global"
 path = ".grok/skills"
 scope = "user"
-rank = 90
+rank = 70
 rule_id = "grok_global_symlink_farm"
 evidence = "empirical"
 
@@ -22,7 +23,7 @@ id = "grok_bundled"
 kind = "global"
 path = ".grok/bundled/skills"
 scope = "system"
-rank = 40
+rank = 30
 rule_id = "grok_bundled"
 evidence = "empirical"
 
@@ -31,6 +32,6 @@ id = "grok_project"
 kind = "project"
 path = ".agents/skills"
 scope = "project"
-rank = 70
+rank = 90
 rule_id = "grok_project_shadow"
 evidence = "empirical"

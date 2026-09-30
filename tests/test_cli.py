@@ -13,6 +13,12 @@ from tests.fixtures.scenarios import build_scenario
 runner = CliRunner()
 
 
+def _make_skill(directory, name, description):
+    from tests.fixtures.builders import make_skill
+
+    return make_skill(directory, name, description)
+
+
 def test_version() -> None:
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0
@@ -118,3 +124,134 @@ def test_markup_is_escaped_in_output(mock_home: Path) -> None:
     assert result.exit_code == 0
     # No exception raised and the literal text survives.
     assert "evil" in result.stdout
+
+
+def test_why_defaults_to_the_terminal_folder(mock_home: Path, monkeypatch) -> None:
+    """F-09: without ``--cwd``, the project inside the current folder is found.
+
+    Defaulting to ``$HOME`` meant project roots were silently skipped, because
+    there is no git boundary at the home directory.
+
+    The sandbox stays on (so ``/etc/codex`` remains unread, per AGENTS.md rule
+    2) and only ``terminal_cwd`` is redirected -- the CLI's job is to use it,
+    and ``tests/test_paths.py`` pins what it returns in each mode.
+    """
+    from skill_lens.core import paths
+    from tests.fixtures.builders import make_skill
+
+    project = mock_home / "project"
+    (project / ".git").mkdir(parents=True)
+    make_skill(mock_home / ".claude" / "skills" / "deploy", "deploy", "Personal copy.")
+    make_skill(
+        project / ".claude" / "skills" / "deploy",
+        "deploy",
+        "Project copy.",
+        body="# Instructions\n\nProject body.\n",
+    )
+    monkeypatch.setattr(paths, "terminal_cwd", lambda: project)
+    result = runner.invoke(app, ["why", "deploy", "--agent", "claude", "--json"])
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert payload["cwd"] == str(project)
+    assert {c["installation"]["scope"] for c in payload["candidates"]} == {"user", "project"}
+
+
+def test_sandbox_refuses_a_cwd_outside_itself(mock_home: Path, tmp_path: Path) -> None:
+    """A sandboxed run must not be walked outside its own directory.
+
+    Relative ``--cwd`` values were already clamped; an absolute one was not.
+    """
+    outside = tmp_path / "outside"
+    (outside / ".agents" / "skills" / "leak").mkdir(parents=True)
+    _make_skill(outside / ".agents" / "skills" / "leak", "leak", "Must not be seen.")
+
+    result = runner.invoke(
+        app, ["scan", "--sandbox", str(mock_home), "--cwd", str(outside), "--json"]
+    )
+    assert result.exit_code != 0
+    assert "sandbox" in result.stdout.lower() + result.stderr.lower()
+
+
+def test_sandbox_allows_a_cwd_inside_itself(mock_home: Path) -> None:
+    """The normal ``--sandbox H --cwd H/project`` invocation still works."""
+    from tests.fixtures.builders import make_skill
+
+    project = mock_home / "project"
+    (project / ".git").mkdir(parents=True)
+    make_skill(project / ".claude" / "skills" / "deploy", "deploy", "Project copy.")
+    result = runner.invoke(
+        app,
+        ["why", "deploy", "--agent", "claude", "--sandbox", str(mock_home), "--cwd", str(project)],
+    )
+    assert result.exit_code == 0
+    assert "Project copy." in result.stdout
+
+
+def test_sandbox_refuses_an_outside_cwd_for_why_too(mock_home: Path, tmp_path: Path) -> None:
+    """The guard covers ``why`` as well as ``scan``."""
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    result = runner.invoke(
+        app, ["why", "x", "--agent", "claude", "--sandbox", str(mock_home), "--cwd", str(outside)]
+    )
+    assert result.exit_code != 0
+    assert "sandbox" in (result.stdout + result.stderr).lower()
+
+
+def test_relative_cwd_stays_inside_the_sandbox(mock_home: Path, monkeypatch) -> None:
+    """A relative ``--cwd`` is home-relative under a sandbox, not process-relative.
+
+    It is clamped into the sandbox rather than refused, so the documented
+    ``--sandbox H --cwd project`` form keeps working, and it can never be
+    resolved against the folder the user happens to be standing in.
+    """
+    from tests.fixtures.builders import make_skill
+
+    project = mock_home / "project"
+    (project / ".git").mkdir(parents=True)
+    make_skill(project / ".claude" / "skills" / "deploy", "deploy", "Project copy.")
+
+    elsewhere = mock_home.parent / "unrelated"
+    elsewhere.mkdir(exist_ok=True)
+    monkeypatch.chdir(elsewhere)  # a real folder that is *not* the sandbox
+
+    result = runner.invoke(
+        app,
+        ["scan", "--sandbox", str(mock_home), "--cwd", "project", "--json"],
+    )
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert payload["cwd"] == str(project)
+    assert not payload["cwd"].startswith(str(elsewhere))
+
+
+def test_sandboxed_run_cannot_escape_into_the_real_terminal_folder(
+    mock_home: Path, monkeypatch, tmp_path: Path
+) -> None:
+    """F-09 safety: ``--sandbox`` must not read the folder the test runs from."""
+    elsewhere = tmp_path / "elsewhere"
+    (elsewhere / ".git").mkdir(parents=True)
+    monkeypatch.chdir(elsewhere)
+    result = runner.invoke(app, ["scan", "--sandbox", str(mock_home), "--json"])
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert payload["cwd"] == str(mock_home.resolve())
+    assert not str(payload["cwd"]).startswith(str(elsewhere))
+
+
+def test_why_reports_a_missing_skill_clearly(mock_home: Path) -> None:
+    """F-10: a name that exists nowhere must not read as 'outside the roots'."""
+    from tests.fixtures.builders import make_skill
+
+    make_skill(mock_home / ".claude" / "skills" / "deploy", "deploy", "Personal copy.")
+    result = runner.invoke(
+        app, ["why", "nope", "--agent", "claude", "--sandbox", str(mock_home), "--json"]
+    )
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert payload["found"] is False
+    assert payload["candidates"] == []
+    assert payload["notes"]
+
+    human = runner.invoke(app, ["why", "nope", "--agent", "claude", "--sandbox", str(mock_home)])
+    assert "No copies of this skill name" in human.stdout

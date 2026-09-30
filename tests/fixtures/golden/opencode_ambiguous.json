@@ -10,7 +10,9 @@
       "parse_status": "valid",
       "is_symlink": false,
       "variant_label": "A",
-      "agent_entrypoints": [".agents/skills/dup"]
+      "agent_entrypoints": [
+        ".agents/skills/dup"
+      ]
     },
     {
       "name": "dup",
@@ -19,7 +21,9 @@
       "parse_status": "valid",
       "is_symlink": false,
       "variant_label": "B",
-      "agent_entrypoints": [".config/opencode/skills/dup"]
+      "agent_entrypoints": [
+        ".config/opencode/skills/dup"
+      ]
     }
   ],
   "resolutions": [
@@ -32,12 +36,24 @@
         {
           "state": "AMBIGUOUS",
           "canonical_path": ".agents/skills/dup",
-          "rule_id": "opencode_duplicate_ambiguous"
+          "entrypoint_path": ".agents/skills/dup",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "ambiguous_tie",
+          "variant_label": "A",
+          "rule_id": "opencode_duplicate_ambiguous",
+          "reason": "Ties with another copy; OpenCode's collision policy is undocumented."
         },
         {
           "state": "AMBIGUOUS",
           "canonical_path": ".config/opencode/skills/dup",
-          "rule_id": "opencode_duplicate_ambiguous"
+          "entrypoint_path": ".config/opencode/skills/dup",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "ambiguous_tie",
+          "variant_label": "B",
+          "rule_id": "opencode_duplicate_ambiguous",
+          "reason": "Ties with another copy; OpenCode's collision policy is undocumented."
         }
       ]
     }

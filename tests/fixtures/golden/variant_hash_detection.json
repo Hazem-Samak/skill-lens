@@ -9,8 +9,10 @@
       "scope": "user",
       "parse_status": "valid",
       "is_symlink": false,
-      "variant_label": "A",
-      "agent_entrypoints": [".agents/skills/deploy"]
+      "variant_label": "B",
+      "agent_entrypoints": [
+        ".agents/skills/deploy"
+      ]
     },
     {
       "name": "deploy",
@@ -18,8 +20,10 @@
       "scope": "user",
       "parse_status": "valid",
       "is_symlink": false,
-      "variant_label": "B",
-      "agent_entrypoints": [".claude/skills/deploy"]
+      "variant_label": "A",
+      "agent_entrypoints": [
+        ".claude/skills/deploy"
+      ]
     }
   ],
   "resolutions": [
@@ -32,12 +36,24 @@
         {
           "state": "ACTIVE",
           "canonical_path": ".claude/skills/deploy",
-          "rule_id": "claude_personal_beats_project"
+          "entrypoint_path": ".claude/skills/deploy",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "claude_personal_beats_project",
+          "reason": "Highest-priority copy (Personal deploy.)."
         },
         {
           "state": "UNSEARCHED",
           "canonical_path": ".agents/skills/deploy",
-          "rule_id": "claude_search_roots"
+          "entrypoint_path": ".agents/skills/deploy",
+          "scope": "user",
+          "visibility": "unsearched_root",
+          "collision": "unverified_policy",
+          "variant_label": "B",
+          "rule_id": "claude_search_roots",
+          "reason": "Not searched by Claude Code (found via another agent's root)."
         }
       ]
     }

@@ -11,16 +11,18 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from skill_lens.core.discovery import DiscoveredEntry, DiscoveryIndex, discover
-from skill_lens.models.enums import Scope
+from skill_lens.core.discovery import (
+    SCOPE_SPECIFICITY,
+    DiscoveredEntry,
+    DiscoveryIndex,
+    discover,
+    entry_scope,
+    variant_labels,
+)
+from skill_lens.models.enums import ParseStatus, Scope
 from skill_lens.registry.loader import AgentDefinition, load_registry
 
-_SCOPE_ORDER = {
-    Scope.PROJECT: 0,
-    Scope.USER: 1,
-    Scope.SYSTEM: 2,
-    Scope.PLUGIN: 3,
-}
+_SCOPE_ORDER = SCOPE_SPECIFICITY
 
 
 @dataclass(frozen=True, slots=True)
@@ -36,6 +38,7 @@ class ScanEntry:
     is_symlink: bool
     content_hash: str | None
     description: str | None = None
+    variant_label: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -48,6 +51,7 @@ class ScanEntry:
             "is_symlink": self.is_symlink,
             "content_hash": self.content_hash,
             "description": self.description,
+            "variant_label": self.variant_label,
         }
 
 
@@ -60,6 +64,10 @@ class ScanSummary:
     project_skills: int
     system_skills: int
     plugin_skills: int
+    #: Size of the **canonical library** -- the shared, user-scoped skills the
+    #: symlink farms point at. This is the user-scope count only: plugin and
+    #: system skills are indexed separately and must never inflate it (spec
+    #: section 4). The grand total is :attr:`total_skills`.
     canonical_skill_count: int
     symlink_entrypoints: int
 
@@ -100,15 +108,6 @@ class ScanReport:
         }
 
 
-def _scope_of(entry: DiscoveredEntry) -> Scope:
-    """Pick the most project-specific scope any reaching root assigns."""
-    scopes = {hit.scope for hit in entry.hits}
-    for scope in (Scope.PROJECT, Scope.SYSTEM, Scope.PLUGIN, Scope.USER):
-        if scope in scopes:
-            return scope
-    return Scope.USER
-
-
 def _agents_of(entry: DiscoveredEntry) -> tuple[str, ...]:
     return tuple(sorted({hit.agent_id for hit in entry.hits}))
 
@@ -124,6 +123,27 @@ def _symlink_entrypoint_count(entry: DiscoveredEntry) -> int:
     )
 
 
+def _variant_labels(indexed: list[tuple[DiscoveredEntry, Scope]]) -> dict[str, str]:
+    """Label same-named copies as Variant A / B, using the shared rule.
+
+    See :func:`skill_lens.core.discovery.variant_labels` -- ``scan`` and ``why``
+    must agree, so a copy is never "Variant A" in one command and "B" in the
+    other.
+    """
+    by_name: dict[str, list[tuple[str, str, str | None, Scope, int]]] = {}
+    for position, (entry, scope) in enumerate(indexed):
+        if entry.parse_status != ParseStatus.VALID.value or entry.content_hash is None:
+            continue
+        key = entry.canonical_path or entry.entrypoint_path
+        by_name.setdefault(entry.name, []).append(
+            (entry.name, key, entry.content_hash, scope, position)
+        )
+    labels: dict[str, str] = {}
+    for items in by_name.values():
+        labels.update(variant_labels(items))
+    return labels
+
+
 def build_scan_report(
     home: Path,
     cwd: Path,
@@ -134,20 +154,24 @@ def build_scan_report(
     agents = registry if registry is not None else load_registry()
     discovery = index if index is not None else discover(home, cwd, agents)
 
+    indexed = [(entry, entry_scope(entry)) for entry in discovery.entries]
+    labels = _variant_labels(indexed)
+
     skills: list[ScanEntry] = []
-    for entry in discovery.entries:
-        scope = _scope_of(entry)
+    for entry, scope in indexed:
+        canonical = entry.canonical_path or entry.entrypoint_path
         skills.append(
             ScanEntry(
                 name=entry.name,
                 scope=scope,
-                canonical_path=entry.canonical_path or entry.entrypoint_path,
+                canonical_path=canonical,
                 parse_status=entry.parse_status,
                 agents=_agents_of(entry),
                 entrypoint_count=len(entry.entrypoint_paths) or len(entry.hits),
                 is_symlink=entry.is_symlink,
                 content_hash=entry.content_hash,
                 description=entry.parse.description if entry.parse else None,
+                variant_label=labels.get(canonical),
             )
         )
     skills.sort(key=lambda s: (_SCOPE_ORDER.get(s.scope, 9), s.name))
@@ -163,7 +187,7 @@ def build_scan_report(
         project_skills=counts[Scope.PROJECT],
         system_skills=counts[Scope.SYSTEM],
         plugin_skills=counts[Scope.PLUGIN],
-        canonical_skill_count=len(skills),
+        canonical_skill_count=counts[Scope.USER],
         symlink_entrypoints=sum(_symlink_entrypoint_count(entry) for entry in discovery.entries),
     )
     unreadable = tuple(

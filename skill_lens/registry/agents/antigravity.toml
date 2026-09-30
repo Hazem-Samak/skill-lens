@@ -8,13 +8,16 @@ walk_boundary = "git_root"
 unsearched_rule_id = "antigravity_search_roots"
 source = "https://antigravity.google/docs/skills"
 
+# Precedence is Project > User > Builtin (see collision_policy), so every
+# project root outranks every global root. Higher rank == wins.
+#
 # Global user skills may be a directory or a standalone ``.md`` file.
 [[roots]]
 id = "antigravity_global"
 kind = "global"
 path = ".gemini/config/skills"
 scope = "user"
-rank = 90
+rank = 70
 rule_id = "antigravity_global_skills"
 file_rule_id = "antigravity_standalone_md"
 evidence = "empirical"
@@ -24,7 +27,7 @@ id = "antigravity_builtin"
 kind = "global"
 path = ".gemini/antigravity/builtin/skills"
 scope = "system"
-rank = 40
+rank = 30
 rule_id = "antigravity_builtin"
 evidence = "documented"
 
@@ -33,7 +36,7 @@ id = "antigravity_project_agents"
 kind = "project"
 path = ".agents/skills"
 scope = "project"
-rank = 80
+rank = 90
 rule_id = "antigravity_project_shadow"
 evidence = "empirical"
 
@@ -42,6 +45,6 @@ id = "antigravity_project_agent"
 kind = "project"
 path = ".agent/skills"
 scope = "project"
-rank = 78
+rank = 85
 rule_id = "antigravity_project_shadow"
 evidence = "documented"

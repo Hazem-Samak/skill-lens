@@ -76,10 +76,12 @@ Early development. The specification lives in
 [`SKILL_LENS_SPECIFICATION.md`](./SKILL_LENS_SPECIFICATION.md) and the build
 proceeds by phase:
 
-- [x] **Phase 0** — frozen models, lazy path resolution, 12 golden fixtures
+- [x] **Phase 0** — frozen models, lazy path resolution, 13 golden fixtures
 - [x] **Phase 1** — metadata parser, streaming SHA-256 hasher, symlink canonicalization
 - [x] **Phase 2** — registry loader, 3-axis resolver, `scan` / `why` / `agents` commands
-  — ⚠️ **built and tested, but known open defects**: see [`PHASE2_FINDINGS.md`](./PHASE2_FINDINGS.md)
+  — ✅ **reviewed and corrected**: all 20 findings in
+  [`PHASE2_FINDINGS.md`](./PHASE2_FINDINGS.md) (F-01 … F-20) are fixed and each is
+  guarded by a regression test (311 passing, `ruff check` clean)
 - [ ] **Phase 3** — Rich presentation layer and `diff`
 - [ ] **Phase 4** — `doctor`, multi-agent `compare`, live scanner
 - [ ] **Phase 5** — packaging and release

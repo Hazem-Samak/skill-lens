@@ -216,6 +216,19 @@ def is_unreadable_directory(path: Path) -> bool:
 # --- Symlink canonicalization ---------------------------------------------
 
 
+def _physical(path: Path) -> str:
+    """The fully resolved physical path, normalized.
+
+    A symlink farm commonly uses *relative* targets
+    (``~/.pi/agent/skills/../.agents/skills/x``), so the walked path still
+    contains ``..`` segments. Without normalization every agent's link into the
+    same shared library yields a different string, and the library stops being
+    reported as one canonical skill with N entrypoints. ``realpath`` also
+    resolves any remaining symlinked parent directories.
+    """
+    return os.path.realpath(str(path))
+
+
 def canonicalize(entrypoint: Path) -> CanonicalResult:
     """Follow ``entrypoint`` to its real target, guarding against cycles.
 
@@ -252,7 +265,7 @@ def canonicalize(entrypoint: Path) -> CanonicalResult:
             return CanonicalResult(
                 status=CanonicalStatus.OK,
                 entrypoint_path=str(entrypoint),
-                resolved_path=str(path),
+                resolved_path=_physical(path),
                 is_symlink=is_symlink,
             )
 

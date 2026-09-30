@@ -59,7 +59,13 @@ class CandidateResolution:
 
 @dataclass(frozen=True, slots=True)
 class ResolutionReport:
-    """Full resolution answer for one skill name, one agent, one working dir."""
+    """Full resolution answer for one skill name, one agent, one working dir.
+
+    ``found`` separates the two very different situations that both produce an
+    ``UNSEARCHED`` headline: ``found=False`` means *no copy of this name exists
+    anywhere on disk*, while ``found=True`` with ``UNSEARCHED`` means the copy
+    exists but this agent's search rules never look there.
+    """
 
     skill_name: str
     agent: str
@@ -70,6 +76,7 @@ class ResolutionReport:
     headline: HeadlineState
     candidates: tuple[CandidateResolution, ...] = field(default_factory=tuple)
     notes: tuple[str, ...] = field(default_factory=tuple)
+    found: bool = True
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -80,6 +87,7 @@ class ResolutionReport:
             "collision_policy": self.collision_policy,
             "policy_evidence": self.policy_evidence.value,
             "headline": self.headline.value,
+            "found": self.found,
             "candidates": [c.to_dict() for c in self.candidates],
             "notes": list(self.notes),
         }
@@ -96,4 +104,5 @@ class ResolutionReport:
             headline=HeadlineState(data["headline"]),
             candidates=tuple(CandidateResolution.from_dict(c) for c in data.get("candidates", ())),
             notes=tuple(data.get("notes", ())),
+            found=bool(data.get("found", True)),
         )

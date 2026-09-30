@@ -19,6 +19,12 @@ from tests.fixtures.scenarios import SCENARIO_NAMES, build_scenario, teardown_sc
 GOLDEN_DIR = Path(__file__).parent / "fixtures" / "golden"
 
 
+def _identity(entry, home: Path) -> tuple[str, Path]:
+    """The (name, home-relative canonical path) key of a discovered entry."""
+    target = entry.canonical_path or entry.entrypoint_path
+    return (entry.name, Path(target).relative_to(home))
+
+
 @pytest.mark.parametrize("name", SCENARIO_NAMES)
 def test_scenario_builds_without_error(name: str, mock_home: Path) -> None:
     build_scenario(name, mock_home)
@@ -34,8 +40,8 @@ def test_scenario_never_escapes_mock_home(name: str, mock_home: Path) -> None:
         assert str(path).startswith(str(mock_home))
 
 
-def test_all_twelve_scenarios_present() -> None:
-    assert len(SCENARIO_NAMES) == 12
+def test_all_scenarios_present() -> None:
+    assert len(SCENARIO_NAMES) == 13
     golden = {p.stem for p in GOLDEN_DIR.glob("*.json")}
     assert golden == set(SCENARIO_NAMES)
 
@@ -46,6 +52,62 @@ def test_golden_file_is_valid_and_named(name: str) -> None:
     assert data["scenario"] == name
     assert data["schema_version"] == 1
     assert "installations" in data and "resolutions" in data
+
+
+@pytest.mark.parametrize("name", SCENARIO_NAMES)
+def test_golden_installations_match_the_scan(name: str, mock_home: Path) -> None:
+    """The golden ``installations`` blocks must agree with a real scan.
+
+    Otherwise they are documentation that can drift: the ``agent_entrypoints``
+    path contract and the variant labels are both stated there, and both were
+    wrong for a long time without any test noticing.
+    """
+    from skill_lens.core import paths
+    from skill_lens.core.discovery import discover
+    from skill_lens.core.scanner import build_scan_report
+
+    data = json.loads((GOLDEN_DIR / f"{name}.json").read_text(encoding="utf-8"))
+    build_scenario(name, mock_home)
+    try:
+        home = mock_home.resolve()
+        cwd = (home / data["resolutions"][0]["cwd"]).resolve()
+        report = build_scan_report(home, cwd)
+        index = discover(home, cwd)
+
+        rows = {
+            (row.name, Path(row.canonical_path).relative_to(home)): row for row in report.skills
+        }
+        for expected in data["installations"]:
+            key = (expected["name"], Path(expected["canonical_path"]))
+            assert key in rows, f"{name}: {key} missing from scan output"
+            row = rows[key]
+            assert row.scope.value == expected["scope"], key
+            assert row.is_symlink == expected["is_symlink"], key
+            assert row.variant_label == expected["variant_label"], key
+            # Every entrypoint is a *path*, never an agent id (F-11 contract).
+            for endpoint in expected["agent_entrypoints"]:
+                assert "/" in endpoint, f"{name}: {endpoint} is not a path"
+                # A standalone-file skill's entrypoint is ``<name>.md``.
+                assert Path(endpoint).name in {expected["name"], f"{expected['name']}.md"}, (
+                    f"{name}: {endpoint}"
+                )
+            # And every path the golden claims really does reach this library.
+            reached = {
+                str(Path(p).relative_to(home))
+                for entry in index.entries
+                for p in (entry.entrypoint_paths or (entry.entrypoint_path,))
+                if _identity(entry, home) == key
+            }
+            assert set(expected["agent_entrypoints"]) <= reached, (
+                f"{name}: {key} claims entrypoints that do not reach it"
+            )
+        # Every installation the golden claims must be one the scanner found.
+        assert {k for k in rows} >= {
+            (i["name"], Path(i["canonical_path"])) for i in data["installations"]
+        }
+    finally:
+        teardown_scenario(name, mock_home)
+        paths.set_sandbox(None)
 
 
 def test_claude_precedence_fixture_shape(mock_home: Path) -> None:
@@ -124,6 +186,27 @@ def test_malformed_fixture_contains_both_failures(mock_home: Path) -> None:
     assert "[unclosed" in broken
     nodesc_frontmatter = nodesc.split("---")[1]
     assert "description" not in nodesc_frontmatter
+
+
+def test_project_beats_global_fixture_uses_real_roots(mock_home: Path) -> None:
+    """Each agent's global and project copy must sit in that agent's *own* roots.
+
+    An early check of the inverted-rank defect appeared to pass because the
+    "global" copy was placed in ``.agents/skills``, which is not the global root
+    for those agents. The fixture therefore names each agent's real roots.
+    """
+    build_scenario("project_beats_global", mock_home)
+    expected = (
+        ".gemini/config/skills/pg_antigravity",
+        ".pi/agent/skills/pg_pi",
+        ".grok/skills/pg_grok",
+        ".qoder/skills/pg_qoder",
+        ".codeium/windsurf/skills/pg_windsurf",
+        ".omp/agent/pg_omp",
+    )
+    for relative in expected:
+        assert (mock_home / relative / "SKILL.md").is_file(), relative
+    assert (mock_home / "project/.git").is_dir()
 
 
 # --- Acceptance farm -------------------------------------------------------

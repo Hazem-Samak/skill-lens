@@ -49,6 +49,29 @@ def test_symlink_farm_merges_to_one_entry(mock_home: Path) -> None:
     assert len(shared[0].entrypoint_paths) == 4
 
 
+def test_relative_symlinks_still_merge_to_one_canonical_library(mock_home: Path) -> None:
+    """Regression: an unnormalized canonical path splits one library into many.
+
+    Real farms use relative targets (``x -> ../../../.agents/skills/x``). The
+    walked path still contained ``..``, so every agent's link hashed to a
+    different "canonical" string and the farm stopped being reported as one
+    library with N entrypoints -- on a live machine this reported 502 global
+    skills where only 84 distinct libraries exist.
+    """
+    from tests.fixtures.builders import make_skill, relative_symlink
+
+    canonical = mock_home / ".agents" / "skills" / "shared"
+    make_skill(canonical, "shared", "Shared capability.")
+    for root in (".claude/skills", ".pi/agent/skills", ".qoder/skills"):
+        relative_symlink(canonical, mock_home / root / "shared")
+
+    index = discover(mock_home, mock_home)
+    shared = [entry for entry in index.entries if entry.name == "shared"]
+    assert len(shared) == 1, f"library split into {len(shared)} canonical skills"
+    assert shared[0].canonical_path == str(canonical.resolve())
+    assert len(shared[0].entrypoint_paths) == 4  # 3 links + the library itself
+
+
 def test_symlink_entrypoint_count_counts_paths_not_hits(mock_home: Path) -> None:
     """Regression: the count must equal real symlinks, not (agent, root) hits.
 

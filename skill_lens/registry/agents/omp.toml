@@ -10,12 +10,18 @@ ambiguous_rule_id = "omp_duplicate_ambiguous"
 source = ""
 
 # Tier 2: inferred from sibling agent behaviour; not yet empirically verified.
+#
+# The "project beats global" ordering is INFERRED (every sibling agent with
+# documented or empirical evidence does this), so ``evidence`` stays
+# ``inferred`` and ``coexist_policy`` stays ``ambiguous``: with no documented
+# winner, the lower-ranked copy is reported as COEXISTS rather than SHADOWED.
+# See AGENTS.md rule 6 -- provenance over hallucination.
 [[roots]]
 id = "omp_agent"
 kind = "global"
 path = ".omp/agent"
 scope = "user"
-rank = 80
+rank = 70
 rule_id = "omp_inferred_global"
 evidence = "inferred"
 
@@ -24,7 +30,7 @@ id = "omp_shared_global"
 kind = "global"
 path = ".agents/skills"
 scope = "user"
-rank = 75
+rank = 65
 rule_id = "omp_inferred_shared"
 evidence = "inferred"
 
@@ -33,7 +39,7 @@ id = "omp_project"
 kind = "project"
 path = ".omp/skills"
 scope = "project"
-rank = 65
+rank = 90
 rule_id = "omp_inferred_project"
 evidence = "inferred"
 
@@ -42,6 +48,6 @@ id = "omp_project_agents"
 kind = "project"
 path = ".agents/skills"
 scope = "project"
-rank = 60
+rank = 85
 rule_id = "omp_inferred_project"
 evidence = "inferred"

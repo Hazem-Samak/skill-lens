@@ -10,7 +10,9 @@
       "parse_status": "valid",
       "is_symlink": false,
       "variant_label": "A",
-      "agent_entrypoints": [".gemini/config/skills/deploy.md"]
+      "agent_entrypoints": [
+        ".gemini/config/skills/deploy.md"
+      ]
     },
     {
       "name": "other",
@@ -19,7 +21,9 @@
       "parse_status": "valid",
       "is_symlink": false,
       "variant_label": "A",
-      "agent_entrypoints": [".gemini/config/skills/other"]
+      "agent_entrypoints": [
+        ".gemini/config/skills/other"
+      ]
     }
   ],
   "resolutions": [
@@ -32,7 +36,13 @@
         {
           "state": "ACTIVE",
           "canonical_path": ".gemini/config/skills/deploy.md",
-          "rule_id": "antigravity_standalone_md"
+          "entrypoint_path": ".gemini/config/skills/deploy.md",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "antigravity_standalone_md",
+          "reason": "Highest-priority copy (Standalone deploy skill.)."
         }
       ]
     }

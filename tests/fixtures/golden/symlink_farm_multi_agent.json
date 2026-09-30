@@ -27,7 +27,13 @@
         {
           "state": "ACTIVE",
           "canonical_path": ".agents/skills/shared",
-          "rule_id": "pi_global_symlink_farm"
+          "entrypoint_path": ".pi/agent/skills/shared",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "pi_global_symlink_farm",
+          "reason": "Canonical symlink entrypoint is the winning copy."
         }
       ]
     }

@@ -112,18 +112,22 @@ def opencode_ambiguous(home: Path) -> None:
 
 
 def variant_hash_detection(home: Path) -> None:
-    """Differing bytes for one name produce Variant A / Variant B labels."""
+    """Differing bytes for one name produce Variant A / Variant B labels.
+
+    The descriptions deliberately do not claim a letter: the label is assigned
+    by scope, not by the order they are written here.
+    """
     make_skill(
         home / ".agents" / "skills" / "deploy",
         "deploy",
-        "Variant A deploy.",
-        body="# Instructions\n\nVariant A body.\n",
+        "Shared-library deploy.",
+        body="# Instructions\n\nShared-library body.\n",
     )
     make_skill(
         home / ".claude" / "skills" / "deploy",
         "deploy",
-        "Variant B deploy.",
-        body="# Instructions\n\nVariant B body.\n",
+        "Personal deploy.",
+        body="# Instructions\n\nPersonal body.\n",
     )
 
 
@@ -178,6 +182,43 @@ def malformed_frontmatter(home: Path) -> None:
     )
 
 
+# --- 13. project_beats_global ---------------------------------------------
+
+
+def project_beats_global(home: Path) -> None:
+    """A project copy outranks the global copy for every agent that says so.
+
+    Regression scenario for the inverted-rank defect: six agents declare
+    ``Shadow (Project > Global)`` in their own registry, so each of them must
+    resolve the *project* copy ACTIVE. Each agent gets its own skill name so
+    every resolution has exactly two clean candidates and cannot be confused
+    with another agent's roots.
+    """
+    (home / "project" / ".git").mkdir(parents=True, exist_ok=True)
+    # (global root, project root, skill name) -- the agent's *real* roots.
+    cases: tuple[tuple[str, str, str], ...] = (
+        (".gemini/config/skills", ".agents/skills", "pg_antigravity"),
+        (".pi/agent/skills", ".pi/skills", "pg_pi"),
+        (".grok/skills", ".agents/skills", "pg_grok"),
+        (".qoder/skills", ".qoder/skills", "pg_qoder"),
+        (".codeium/windsurf/skills", ".windsurf/skills", "pg_windsurf"),
+        (".omp/agent", ".omp/skills", "pg_omp"),
+    )
+    for global_root, project_root, name in cases:
+        make_skill(
+            home / global_root / name,
+            name,
+            "Global copy.",
+            body="# Instructions\n\nGlobal body.\n",
+        )
+        make_skill(
+            home / "project" / project_root / name,
+            name,
+            "Project copy.",
+            body="# Instructions\n\nProject body.\n",
+        )
+
+
 # --- Registry --------------------------------------------------------------
 
 _SCENARIOS: dict[str, Callable[[Path], None]] = {
@@ -193,6 +234,7 @@ _SCENARIOS: dict[str, Callable[[Path], None]] = {
     "system_container_traversal": system_container_traversal,
     "disabled_override": disabled_override,
     "malformed_frontmatter": malformed_frontmatter,
+    "project_beats_global": project_beats_global,
 }
 
 _TEARDOWN: dict[str, Callable[[Path], None]] = {

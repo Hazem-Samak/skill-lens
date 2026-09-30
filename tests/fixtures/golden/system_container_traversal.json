@@ -10,7 +10,9 @@
       "parse_status": "valid",
       "is_symlink": false,
       "variant_label": "A",
-      "agent_entrypoints": [".codex/skills/.system/imagegen"]
+      "agent_entrypoints": [
+        ".codex/skills/.system/imagegen"
+      ]
     }
   ],
   "resolutions": [
@@ -23,7 +25,13 @@
         {
           "state": "ACTIVE",
           "canonical_path": ".codex/skills/.system/imagegen",
-          "rule_id": "codex_system_container"
+          "entrypoint_path": ".codex/skills/.system/imagegen",
+          "scope": "system",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "codex_system_container",
+          "reason": "Highest-priority copy (Bundled imagegen.)."
         }
       ]
     }

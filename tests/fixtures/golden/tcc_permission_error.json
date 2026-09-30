@@ -10,8 +10,12 @@
       "parse_status": "unreadable",
       "is_symlink": false,
       "variant_label": null,
-      "agent_entrypoints": [".claude/skills/blocked"],
-      "errors": ["permission_denied"]
+      "agent_entrypoints": [
+        ".claude/skills/blocked"
+      ],
+      "errors": [
+        "permission_denied"
+      ]
     },
     {
       "name": "ok",
@@ -20,7 +24,9 @@
       "parse_status": "valid",
       "is_symlink": false,
       "variant_label": "A",
-      "agent_entrypoints": [".claude/skills/ok"]
+      "agent_entrypoints": [
+        ".claude/skills/ok"
+      ]
     }
   ],
   "resolutions": [
@@ -33,7 +39,13 @@
         {
           "state": "ACTIVE",
           "canonical_path": ".claude/skills/ok",
-          "rule_id": "claude_personal_beats_project"
+          "entrypoint_path": ".claude/skills/ok",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "claude_personal_beats_project",
+          "reason": "Highest-priority copy (Accessible skill.)."
         }
       ]
     }

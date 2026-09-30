@@ -58,12 +58,11 @@ def render_scan(report: ScanReport, console: Console | None = None) -> None:
     agents = ", ".join(summary.detected_agents) or "none"
     body = (
         f"[bold]Detected Agents:[/bold] {escape(agents)}\n"
-        f"[bold]Canonical Skills:[/bold] {summary.canonical_skill_count} "
+        f"[bold]Canonical Library:[/bold] {summary.canonical_skill_count} skills "
         f"([bold]{summary.symlink_entrypoints}[/bold] symlink entrypoints)\n"
-        f"[bold]Global:[/bold] {summary.user_skills}  "
-        f"[bold]Project:[/bold] {summary.project_skills}  "
-        f"[bold]System:[/bold] {summary.system_skills}  "
-        f"[bold]Plugin:[/bold] {summary.plugin_skills}"
+        f"[bold]Local Project Skills:[/bold] {summary.project_skills}  "
+        f"[bold]System/Bundled:[/bold] {summary.system_skills}  "
+        f"[bold]Plugin Skills:[/bold] {summary.plugin_skills}"
     )
     console.print(Panel(body, title="Skill Lens: Discovered Skills", expand=False))
 
@@ -106,6 +105,13 @@ def render_why(report: ResolutionReport, console: Console | None = None) -> None
     console.print(f"Headline: [{_STATE_STYLE[report.headline]}]{report.headline.value}[/]")
     console.print()
 
+    if not report.candidates:
+        console.print(
+            "[yellow]No copies of this skill name were found in any of "
+            f"{escape(report.agent_name)}'s search roots.[/yellow]"
+        )
+        console.print()
+
     for candidate in report.candidates:
         style = _STATE_STYLE[candidate.state]
         mark = _STATE_MARK[candidate.state]
@@ -113,9 +119,14 @@ def render_why(report: ResolutionReport, console: Console | None = None) -> None
         title = Text()
         title.append(f"{mark} ", style=style)
         title.append(f"[{candidate.state.value}]", style=style)
+        if installation.variant_label:
+            title.append(f"  Variant {installation.variant_label}", style=style)
         console.print(title)
         console.print(f"  Path:   {escape(paths.display(installation.canonical_path))}")
-        if installation.entrypoint_path != installation.canonical_path:
+        # Only worth a second line when the entrypoint is genuinely a *different*
+        # path -- comparing resolved paths avoids printing a link to the same
+        # file twice when a parent directory is a symlink.
+        if not paths.same_location(installation.entrypoint_path, installation.canonical_path):
             console.print(f"  Link:   {escape(paths.display(installation.entrypoint_path))}")
         console.print(f"  Reason: {escape(candidate.reason)}")
         console.print(

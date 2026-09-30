@@ -46,6 +46,21 @@ def xdg_config_home() -> Path:
     return home() / ".config"
 
 
+def terminal_cwd() -> Path:
+    """The folder the user is standing in, for the default ``--cwd``.
+
+    Under a sandbox the real terminal folder is meaningless -- it would point
+    outside the mock home and let a sandboxed run read the real filesystem --
+    so the sandbox root is used instead. Resolved at call time, never at import.
+    """
+    if _SANDBOX is not None:
+        return _SANDBOX
+    try:
+        return Path.cwd()
+    except OSError:  # pragma: no cover - deleted cwd is vanishingly rare
+        return home()
+
+
 def resolve(*parts: str | os.PathLike[str]) -> Path:
     """Join ``parts`` onto the effective home directory (lazy, not expanded)."""
     path = home()
@@ -54,15 +69,50 @@ def resolve(*parts: str | os.PathLike[str]) -> Path:
     return path
 
 
+def _home_variants() -> tuple[Path, ...]:
+    """The effective home as written, and as fully resolved.
+
+    A home directory can sit behind a symlink (macOS ``/tmp`` is
+    ``/private/tmp``). ``canonicalize()`` returns resolved paths while
+    entrypoints keep the path as written, so both forms are needed to collapse
+    either one to ``~``.
+    """
+    root = home()
+    resolved = root.resolve()
+    return (root,) if resolved == root else (root, resolved)
+
+
 def display(path: str | os.PathLike[str]) -> str:
     """Render ``path`` with the effective home collapsed to ``~`` for output.
 
     Keeps terminal output readable without ever exposing full absolute paths
-    for the common case.
+    for the common case. Both sides are tried as-written and fully resolved,
+    so a path reached through a symlinked home still collapses.
     """
     target = Path(path)
     try:
-        relative = target.relative_to(home())
-    except ValueError:
-        return str(target)
-    return "~" if relative == Path(".") else f"~/{relative}"
+        resolved = target.resolve()
+    except OSError:  # pragma: no cover - unresolvable path
+        resolved = target
+    targets = (target,) if resolved == target else (target, resolved)
+    for root in _home_variants():
+        for candidate in targets:
+            try:
+                relative = candidate.relative_to(root)
+            except ValueError:
+                continue
+            return "~" if relative == Path(".") else f"~/{relative}"
+    return str(target)
+
+
+def same_location(left: str | os.PathLike[str], right: str | os.PathLike[str]) -> bool:
+    """True when two paths name the same place on disk.
+
+    Compares resolved paths, so an entrypoint and its canonical target are
+    recognised as one file even when one of them still carries symlinked
+    parent directories.
+    """
+    try:
+        return Path(left).resolve() == Path(right).resolve()
+    except OSError:  # pragma: no cover - unresolvable path
+        return False

@@ -50,13 +50,26 @@ def make_skill(
 
 
 def symlink(target: Path, link: Path) -> Path:
-    """Create a directory symlink at ``link`` pointing to ``target``.
+    """Create a directory symlink at ``link`` pointing at ``target``.
 
-    Relative targets are preserved verbatim so the farm mirrors the real
-    ``~/.agents/skills`` layout used on developer machines.
+    ``target`` is written verbatim, so callers choose whether the link holds an
+    absolute or a relative path.
     """
     link.parent.mkdir(parents=True, exist_ok=True)
     os.symlink(target, link, target_is_directory=True)
+    return link
+
+
+def relative_symlink(target: Path, link: Path) -> Path:
+    """Create a directory symlink whose target is relative to ``link``'s folder.
+
+    This is how the real farms are built on a developer machine
+    (``~/.pi/agent/skills/x -> ../../../.agents/skills/x``). Absolute links hide
+    a class of bug: an unnormalized canonical path makes every agent's link look
+    like a separate library.
+    """
+    link.parent.mkdir(parents=True, exist_ok=True)
+    os.symlink(os.path.relpath(target, link.parent), link, target_is_directory=True)
     return link
 
 

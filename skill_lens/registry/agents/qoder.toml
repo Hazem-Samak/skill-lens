@@ -8,12 +8,14 @@ walk_boundary = "git_root"
 unsearched_rule_id = "qoder_search_roots"
 source = "https://docs.qoder.com/skills"
 
+# Precedence is Project > Global (see collision_policy). Within a project, the
+# agent-specific root outranks the shared ``.agents`` root.
 [[roots]]
 id = "qoder_global"
 kind = "global"
 path = ".qoder/skills"
 scope = "user"
-rank = 90
+rank = 70
 rule_id = "qoder_global_symlink_farm"
 evidence = "empirical"
 
@@ -22,7 +24,7 @@ id = "qoder_project"
 kind = "project"
 path = ".qoder/skills"
 scope = "project"
-rank = 70
+rank = 90
 rule_id = "qoder_project_shadow"
 evidence = "empirical"
 
@@ -31,6 +33,6 @@ id = "qoder_project_agents"
 kind = "project"
 path = ".agents/skills"
 scope = "project"
-rank = 65
+rank = 85
 rule_id = "qoder_project_shadow"
 evidence = "empirical"

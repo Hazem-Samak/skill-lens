@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tests.fixtures.builders import make_skill, symlink
+from tests.fixtures.builders import make_skill, relative_symlink
 
 CANONICAL_SKILLS: tuple[str, ...] = ("alpha", "beta", "gamma", "delta", "epsilon")
 AGENT_FARMS: tuple[str, ...] = (".claude/skills", ".pi/agent/skills", ".qoder/skills")
@@ -28,7 +28,9 @@ def build_acceptance_farm(home: Path) -> None:
 
     for root in AGENT_FARMS:
         for name in CANONICAL_SKILLS:
-            symlink(canonical_root / name, home / root / name)
+            # Relative targets, exactly as a real farm is built, so the
+            # canonical path must be normalized for these to merge.
+            relative_symlink(canonical_root / name, home / root / name)
 
     make_skill(
         home / ".codex" / "skills" / ".system" / SYSTEM_SKILL,

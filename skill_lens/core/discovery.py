@@ -12,6 +12,7 @@ agent's search rules.
 from __future__ import annotations
 
 import os
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -30,10 +31,87 @@ from skill_lens.registry.loader import AgentDefinition, AgentRoot, load_registry
 
 MAX_WALK_DEPTH = 4
 
+#: Most specific scope first. Used for stable ordering of scan rows and of
+#: Variant A / B labels, so both commands agree on what "first" means.
+SCOPE_SPECIFICITY = {
+    Scope.PROJECT: 0,
+    Scope.USER: 1,
+    Scope.SYSTEM: 2,
+    Scope.PLUGIN: 3,
+}
+
+#: Variant labels, in the order they are handed out. Copies beyond this many
+#: are left unlabelled rather than given an invented letter.
+VARIANT_LABELS = ("A", "B", "C", "D", "E", "F")
+
+
+def entry_scope(entry: DiscoveredEntry) -> Scope:
+    """The most project-specific scope any reaching root assigns to ``entry``.
+
+    Deliberately a property of the *entry*, not of the agent asking about it:
+    a library reachable both as a project root and as a user root has one
+    inventory scope, and every consumer must agree on it.
+    """
+    scopes = {hit.scope for hit in entry.hits}
+    for scope in (Scope.PROJECT, Scope.SYSTEM, Scope.PLUGIN, Scope.USER):
+        if scope in scopes:
+            return scope
+    return Scope.USER
+
+
+def variant_labels(items: Iterable[tuple[str, str, str | None, Scope, int]]) -> dict[str, str]:
+    """Label same-named copies whose bytes differ as Variant A / B / ...
+
+    **One rule, one set of inputs, used by both ``why`` and ``scan``.** Two
+    earlier attempts were wrong in different ways: first the two commands
+    ordered differently (scope vs an agent's rank), then they shared the
+    ordering but still disagreed because they passed *different scopes* in --
+    ``scan`` reported the most project-specific scope any root assigns, while
+    ``why`` passed the scope of the one root the requested agent uses. The
+    scope must come from :func:`entry_scope` on both sides, because it has to
+    be a property of the entry rather than of whoever is asking.
+
+    Ordering is by scope specificity (project before user), then discovery
+    order. At most :data:`VARIANT_LABELS` copies are labelled; further copies
+    are left unlabelled rather than given an invented letter.
+
+    ``items`` are ``(name, key, content_hash, scope, position)`` tuples for one
+    skill name, where ``key`` identifies the copy (its canonical path) and
+    ``position`` is its stable index in discovery order.
+
+    Copies with identical content hashes are the same bytes, not variants, and
+    share one label. Copies that failed validation have no comparable content
+    and are left unlabelled.
+    """
+    by_hash: dict[str | None, list[tuple[str, str, Scope, int]]] = {}
+    for name, key, content_hash, scope, position in items:
+        by_hash.setdefault(content_hash, []).append((name, key, scope, position))
+
+    ordered = sorted(
+        by_hash.values(),
+        key=lambda group: (
+            min(SCOPE_SPECIFICITY.get(scope, 9) for _n, _k, scope, _p in group),
+            min(position for _n, _k, _s, position in group),
+        ),
+    )
+    labels: dict[str, str] = {}
+    for position, group in enumerate(ordered):
+        if position >= len(VARIANT_LABELS):
+            break
+        for _name, key, _scope, _position in group:
+            labels[key] = VARIANT_LABELS[position]
+    return labels
+
 
 @dataclass(frozen=True, slots=True)
 class RootHit:
-    """One ``(agent, root)`` pair that reaches an entrypoint."""
+    """One ``(agent, root)`` pair that reaches an entrypoint.
+
+    ``entrypoint_path`` is the *path this root actually sees*. A symlink farm
+    reaches one canonical library through several different paths, and
+    precedence is judged per entrypoint path (spec section 4), so the path
+    belongs to the hit -- not to the merged entry.
+    """
 
     agent_id: str
     root_id: str
@@ -45,6 +123,7 @@ class RootHit:
     file_rule_id: str | None = None
     nested_rule_id: str | None = None
     specificity: int = 0
+    entrypoint_path: str = ""
 
     def rule_for(self, is_file: bool) -> str:
         if self.nested and self.nested_rule_id:
@@ -56,12 +135,16 @@ class RootHit:
 
 @dataclass(frozen=True, slots=True)
 class DiscoveredEntry:
-    """A single entrypoint on disk plus everything known about it.
+    """A single canonical skill on disk plus every entrypoint that reaches it.
 
-    ``entrypoint_path`` is the primary (first-seen) path. When several
-    entrypoints share one canonical target -- a symlink farm -- every path is
-    kept in ``entrypoint_paths`` so counts reflect reality rather than the
-    number of (agent, root) pairs that happen to reach it.
+    One record per **canonical target** (spec section 4, *Inventory &
+    Identity*): a symlink farm is one library with N entrypoints, never N
+    installations.
+
+    Each :class:`RootHit` in ``hits`` keeps its own ``entrypoint_path``, so the
+    resolver can still judge precedence on the path the *requested* agent uses
+    (spec section 4, *Precedence & Collision*). ``entrypoint_paths`` lists every
+    path on disk, for honest counts.
     """
 
     entrypoint_path: str
@@ -73,6 +156,7 @@ class DiscoveredEntry:
     content_hash: str | None
     hits: tuple[RootHit, ...] = ()
     entrypoint_paths: tuple[str, ...] = ()
+    variant_label: str | None = None
 
     @property
     def canonical_path(self) -> str | None:
@@ -212,6 +296,22 @@ def _is_skill_dir(path: Path) -> bool:
     return find_skill_document(path) is not None
 
 
+def _is_symlinked_markdown(path: Path) -> bool:
+    """True when ``path`` is a symlink whose target is a standalone ``.md`` file.
+
+    A symlinked file skill must keep the *file* classification, otherwise the
+    root's ``file_rule_id`` is never emitted and a standalone-file agent reports
+    the directory-skill rule instead. Resolved safely: an unresolvable link
+    (cycle, dangling) simply is not a markdown file skill.
+    """
+    if path.suffix.lower() != ".md":
+        return False
+    try:
+        return path.resolve().is_file()
+    except OSError:
+        return False
+
+
 def _list_entries(base: Path) -> list[tuple[Path, bool]]:
     """List skill entrypoints directly under ``base`` as ``(path, is_file)``.
 
@@ -227,7 +327,7 @@ def _list_entries(base: Path) -> list[tuple[Path, bool]]:
     results: list[tuple[Path, bool]] = []
     for child in children:
         if child.is_symlink():
-            results.append((child, False))
+            results.append((child, _is_symlinked_markdown(child)))
         elif child.is_dir():
             if _is_skill_dir(child) or _unreadable(child):
                 results.append((child, False))
@@ -299,6 +399,7 @@ def discover(
                         file_rule_id=root.file_rule_id,
                         nested_rule_id=root.nested_rule_id,
                         specificity=len(Path(root.path).parts),
+                        entrypoint_path=str(entrypoint),
                     )
                     index.entries.append(_build_entry(entrypoint, is_file, hit))
 
@@ -351,9 +452,10 @@ def _merge_entries(entries: list[DiscoveredEntry]) -> list[DiscoveredEntry]:
     """Group entrypoints that share a canonical target into one record.
 
     A symlink farm (many entrypoints, one real target) becomes a single entry
-    whose ``hits`` union every reaching root. Entries with no resolvable
-    canonical (cycles, dangling links) are keyed by their own path so they
-    never collapse with a real skill.
+    whose ``hits`` union every reaching root, each hit keeping the entrypoint
+    path *it* was reached through. Entries with no resolvable canonical (cycles,
+    dangling links) are keyed by their own path so they never collapse with a
+    real skill.
     """
     merged: dict[str, DiscoveredEntry] = {}
     order: list[str] = []
@@ -368,7 +470,9 @@ def _merge_entries(entries: list[DiscoveredEntry]) -> list[DiscoveredEntry]:
         merged[key] = DiscoveredEntry(
             entrypoint_path=existing.entrypoint_path,
             name=existing.name or entry.name,
-            is_file=existing.is_file,
+            # A symlinked ``.md`` is a file skill even when the sibling entry
+            # that reached the same target was a directory, so OR the flags.
+            is_file=existing.is_file or entry.is_file,
             is_symlink=existing.is_symlink or entry.is_symlink,
             canonical=existing.canonical,
             parse=existing.parse or entry.parse,

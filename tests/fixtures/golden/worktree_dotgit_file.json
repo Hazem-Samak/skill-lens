@@ -10,7 +10,9 @@
       "parse_status": "valid",
       "is_symlink": false,
       "variant_label": "A",
-      "agent_entrypoints": ["project/.agents/skills/wt"]
+      "agent_entrypoints": [
+        "project/.agents/skills/wt"
+      ]
     }
   ],
   "resolutions": [
@@ -23,7 +25,13 @@
         {
           "state": "ACTIVE",
           "canonical_path": "project/.agents/skills/wt",
-          "rule_id": "codex_project_ancestor_walk"
+          "entrypoint_path": "project/.agents/skills/wt",
+          "scope": "project",
+          "visibility": "active_root",
+          "collision": "winning_entry",
+          "variant_label": "A",
+          "rule_id": "codex_project_ancestor_walk",
+          "reason": "Highest-priority copy (Worktree skill.)."
         }
       ]
     }

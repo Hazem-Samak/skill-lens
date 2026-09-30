@@ -14,6 +14,7 @@ from rich.console import Console
 
 from skill_lens import __version__
 from skill_lens.core import paths
+from skill_lens.core.discovery import normalize_cwd
 from skill_lens.core.resolver import resolve_skill
 from skill_lens.core.scanner import build_scan_report
 from skill_lens.models import dumps
@@ -65,10 +66,39 @@ def _effective_home() -> Path:
     return paths.home()
 
 
-def _effective_cwd(cwd: Path | None) -> Path:
+def _effective_cwd(cwd: Path | None, sandbox: Path | None) -> Path:
+    """Resolve the working directory, clamped to the sandbox when there is one.
+
+    ``$HOME`` is usually not inside a repository, so defaulting there silently
+    skipped every project root -- hence the terminal folder. A *relative*
+    ``--cwd`` keeps its documented meaning under ``--sandbox``: home-relative,
+    never process-relative, so a sandboxed run can never be walked from the
+    folder the user happens to be standing in.
+    """
     if cwd is None:
-        return _effective_home()
-    return cwd
+        return paths.terminal_cwd()
+    if sandbox is None:
+        return cwd
+    return normalize_cwd(cwd, sandbox)
+
+
+def _assert_inside_sandbox(cwd: Path, sandbox: Path) -> None:
+    """Refuse a ``--cwd`` that points out of the sandbox.
+
+    Relative values are clamped first (see :func:`_effective_cwd`), but an
+    *absolute* one was accepted verbatim and let a sandboxed run read any
+    directory on the machine. Resolving both sides means the check still holds
+    when the sandbox itself sits behind a symlink (macOS ``/tmp``).
+    """
+    if paths.same_location(cwd, sandbox):
+        return
+    try:
+        cwd.resolve().relative_to(sandbox.resolve())
+    except ValueError:
+        raise typer.BadParameter(f"--cwd must stay inside --sandbox {sandbox}; got {cwd}") from None
+
+
+_CWD_HELP = "Working directory (defaults to the current terminal folder)."
 
 
 @app.command()
@@ -79,7 +109,7 @@ def scan(
     ] = None,
     cwd: Annotated[
         Path | None,
-        typer.Option("--cwd", help="Working directory (defaults to $HOME)."),
+        typer.Option("--cwd", help=_CWD_HELP),
     ] = None,
     as_json: Annotated[
         bool,
@@ -89,7 +119,9 @@ def scan(
     """Inventory skills across every detected agent."""
     _apply_sandbox(sandbox)
     home = _effective_home()
-    working_dir = _effective_cwd(cwd)
+    working_dir = _effective_cwd(cwd, sandbox)
+    if sandbox is not None:
+        _assert_inside_sandbox(working_dir, home)
     report = build_scan_report(home, working_dir)
     if as_json:
         _emit_json(report.to_dict())
@@ -103,7 +135,7 @@ def why(
     agent: Annotated[str, typer.Option("--agent", help="Target agent id (e.g. claude).")],
     cwd: Annotated[
         Path | None,
-        typer.Option("--cwd", help="Working directory (defaults to $HOME)."),
+        typer.Option("--cwd", help=_CWD_HELP),
     ] = None,
     sandbox: Annotated[
         Path | None,
@@ -117,7 +149,9 @@ def why(
     """Explain how a skill resolves for one agent, and why."""
     _apply_sandbox(sandbox)
     home = _effective_home()
-    working_dir = _effective_cwd(cwd)
+    working_dir = _effective_cwd(cwd, sandbox)
+    if sandbox is not None:
+        _assert_inside_sandbox(working_dir, home)
     try:
         report = resolve_skill(skill_name, agent, working_dir, home)
     except KeyError as exc:

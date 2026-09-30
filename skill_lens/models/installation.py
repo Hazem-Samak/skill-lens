@@ -12,14 +12,19 @@ from skill_lens.models.enums import ParseStatus, Scope
 class SkillInstallation:
     """A single physical installation of a skill (a directory or standalone file).
 
-    Identity is deliberately split in two, per the specification:
+    Identity is deliberately split in two, per the specification (section 4):
 
-    * ``entrypoint_path`` is what the agent literally resolves (a symlink wins
-      project precedence), and
+    * ``entrypoint_path`` is the path *this agent* resolves -- a project symlink
+      wins project precedence -- and is always a real path on disk;
     * ``canonical_path`` is the real target used for inventory deduplication.
 
-    A symlink farm therefore reports one canonical library with many
-    ``agent_entrypoints`` rather than N duplicate installations.
+    ``agent_entrypoints`` holds **entrypoint paths**, never agent ids: every path
+    on disk that reaches this canonical library, so a symlink farm reports one
+    library with N entrypoints rather than N duplicate installations.
+
+    ``variant_label`` is ``"A"``/``"B"``/... for copies of one name whose bytes
+    differ, ordered so ``"A"`` is the copy the agent will actually run. It is
+    ``None`` when the copies are byte-identical or there is only one.
     """
 
     name: str

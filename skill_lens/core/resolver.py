@@ -15,7 +15,7 @@ The three axes:
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from skill_lens.core.discovery import (
@@ -23,6 +23,8 @@ from skill_lens.core.discovery import (
     DiscoveryIndex,
     RootHit,
     discover,
+    entry_scope,
+    variant_labels,
 )
 from skill_lens.models.enums import (
     Collision,
@@ -41,6 +43,11 @@ _CYCLE = "symlink_cycle"
 _DANGLING = "dangling_symlink"
 _DENIED = "permission_denied"
 
+# Coexistence policies under which a lower-ranked copy is *not* suppressed.
+# ``ambiguous``: ties / undocumented policy. ``merge``: every root is listed and
+# no copy is documented to suppress the others (spec section 2, COEXISTS).
+_COEXISTING_POLICIES = frozenset({"ambiguous", "merge"})
+
 _FALLBACK_REASON = {
     HeadlineState.ACTIVE: "Winning copy for this agent.",
     HeadlineState.SHADOWED: "Suppressed by a higher-priority copy.",
@@ -51,15 +58,28 @@ _FALLBACK_REASON = {
     HeadlineState.AMBIGUOUS: "Tie or undocumented collision policy.",
 }
 
+_NOT_FOUND_NOTE = "No copy of this skill name was found in any search root."
+
 
 @dataclass(frozen=True, slots=True)
 class Candidate:
-    """Pre-collision view of one discovered copy for an agent."""
+    """One entrypoint of a discovered copy, evaluated for a single agent.
+
+    A candidate is a *path*, not a canonical library: two entrypoints of the
+    same library are two candidates, because precedence is judged on the
+    entrypoint path (spec section 4). ``entrypoint_path`` therefore comes from
+    ``hit`` -- the path this agent's root actually reaches the skill through.
+    """
 
     entry: DiscoveredEntry
     hit: RootHit
     searched: bool
     overridden: bool
+
+    @property
+    def entrypoint_path(self) -> str:
+        """The path this agent reaches the skill through."""
+        return self.hit.entrypoint_path or self.entry.entrypoint_path
 
     @property
     def rank(self) -> int:
@@ -115,18 +135,29 @@ def _default_root_id(agent: AgentDefinition) -> str:
     return agent.roots[0].id if agent.roots else f"{agent.id}_roots"
 
 
-def _matches(agent: AgentDefinition, entry: DiscoveredEntry, name: str) -> bool:
-    if not _is_valid(entry):
-        return entry.name == name
+def _identity_names(agent: AgentDefinition, entry: DiscoveredEntry) -> set[str]:
+    """Every name this agent would use to look up ``entry``.
+
+    A skill that fails validation (for example a missing ``description``) is
+    still *findable*: the frontmatter name is populated for
+    ``missing_description`` parses, so an agent that identifies skills by
+    frontmatter must be able to find it by that name rather than only by its
+    folder name.
+    """
     parse = entry.parse
-    assert parse is not None
+    if parse is None:
+        return {entry.name}
+    directory_name = parse.directory_name
+    frontmatter_name = parse.frontmatter_name or directory_name
     if agent.identity_source == "directory_name":
-        candidates = {parse.directory_name}
-    elif agent.identity_source == "frontmatter_name":
-        candidates = {parse.frontmatter_name or parse.directory_name}
-    else:  # hybrid
-        candidates = {parse.directory_name, parse.frontmatter_name or parse.directory_name}
-    return name in candidates
+        return {directory_name}
+    if agent.identity_source == "frontmatter_name":
+        return {frontmatter_name}
+    return {directory_name, frontmatter_name}
+
+
+def _matches(agent: AgentDefinition, entry: DiscoveredEntry, name: str) -> bool:
+    return name in _identity_names(agent, entry)
 
 
 def _load_disabled_overrides(agent: AgentDefinition, home: Path) -> set[str]:
@@ -143,21 +174,42 @@ def _load_disabled_overrides(agent: AgentDefinition, home: Path) -> set[str]:
 
 
 def _candidates_for(agent: AgentDefinition, index: DiscoveryIndex, name: str) -> list[Candidate]:
+    """Build one candidate per entrypoint this agent reaches for ``name``.
+
+    A symlink farm reaches one canonical library through several paths. Each of
+    those paths is a genuine candidate for *this* agent, because precedence is
+    judged on the entrypoint path (spec section 4) -- a project shortcut into a
+    global library outranks the global root. Entries the agent never searches
+    contribute a single ``UNSEARCHED`` candidate.
+    """
     overrides = _load_disabled_overrides(agent, Path(index.home))
     fallback_root_id = _default_root_id(agent)
     candidates: list[Candidate] = []
     for entry in index.entries:
         if not _matches(agent, entry, name):
             continue
-        hit = _representative_hit(agent, entry, fallback_root_id)
-        candidates.append(
-            Candidate(
-                entry=entry,
-                hit=hit,
-                searched=bool(_searched_hits(agent, entry)),
-                overridden=entry.name in overrides,
+        overridden = entry.name in overrides
+        hits = _searched_hits(agent, entry)
+        if not hits:
+            candidates.append(
+                Candidate(
+                    entry=entry,
+                    hit=_representative_hit(agent, entry, fallback_root_id),
+                    searched=False,
+                    overridden=overridden,
+                )
             )
-        )
+            continue
+        # One candidate per distinct entrypoint path; if two roots of the same
+        # agent reach the identical path, the higher-ranked rule represents it.
+        best: dict[str, RootHit] = {}
+        for hit in hits:
+            path = hit.entrypoint_path
+            current = best.get(path)
+            if current is None or hit.rank > current.rank:
+                best[path] = hit
+        for hit in best.values():
+            candidates.append(Candidate(entry=entry, hit=hit, searched=True, overridden=overridden))
     return candidates
 
 
@@ -185,20 +237,24 @@ def _assign_states(
 
     roles = _active_roles(candidates, agent)
     return [
-        (c, roles.get(c.canonical_key, _fallback_state(c, HeadlineState.ACTIVE)))
-        for c in candidates
+        (c, roles.get(index, _fallback_state(c, HeadlineState.ACTIVE)))
+        for index, c in enumerate(candidates)
     ]
 
 
 # --- Per-candidate state assignment ----------------------------------------
 
 
-def _active_roles(candidates: list[Candidate], agent: AgentDefinition) -> dict[str, HeadlineState]:
-    """Map each candidate key to its state, plus decide the overall headline.
+def _active_roles(candidates: list[Candidate], agent: AgentDefinition) -> dict[int, HeadlineState]:
+    """Map each candidate's position to its collision state.
 
-    The top-ranked searched, valid, enabled copy wins. A nested (qualified)
-    copy coexists. Under an ambiguous coexistence policy any other searched
-    valid copy coexists; otherwise it is shadowed.
+    The top-ranked searched, valid, enabled entrypoint wins. A nested
+    (qualified) copy coexists. Under an ``ambiguous`` or ``merge`` coexistence
+    policy any other searched valid copy coexists; otherwise it is shadowed.
+
+    States are keyed by candidate index, not by canonical target: two
+    entrypoints of the same library are distinct candidates with distinct
+    ranks, and collapsing them here is what used to lose a shadowed copy.
     """
     searched_valid = [
         c for c in candidates if c.searched and _is_valid(c.entry) and not c.overridden
@@ -209,12 +265,12 @@ def _active_roles(candidates: list[Candidate], agent: AgentDefinition) -> dict[s
     winners = [c for c in searched_valid if c.rank == top_rank]
     ambiguous = len(winners) > 1
     multi = len(searched_valid) > 1
-    roles: dict[str, HeadlineState] = {}
-    for candidate in candidates:
+    roles: dict[int, HeadlineState] = {}
+    for index, candidate in enumerate(candidates):
         if ambiguous:
-            roles[candidate.canonical_key] = _fallback_state(candidate, HeadlineState.AMBIGUOUS)
+            roles[index] = _fallback_state(candidate, HeadlineState.AMBIGUOUS)
             continue
-        roles[candidate.canonical_key] = _role_for_active(agent, candidate, top_rank, multi)
+        roles[index] = _role_for_active(agent, candidate, top_rank, multi)
     return roles
 
 
@@ -234,7 +290,7 @@ def _role_for_active(
         return HeadlineState.ACTIVE
     if candidate.hit.nested:
         return HeadlineState.COEXISTS
-    if agent.coexist_policy == "ambiguous":
+    if agent.coexist_policy in _COEXISTING_POLICIES:
         return HeadlineState.COEXISTS
     return HeadlineState.SHADOWED
 
@@ -287,19 +343,44 @@ def _installation(candidate: Candidate) -> SkillInstallation:
     parse = entry.parse
     return SkillInstallation(
         name=entry.name,
-        entrypoint_path=entry.entrypoint_path,
-        canonical_path=entry.canonical_path or entry.entrypoint_path,
+        entrypoint_path=candidate.entrypoint_path,
+        canonical_path=entry.canonical_path or candidate.entrypoint_path,
         scope=candidate.hit.scope,
         parse_status=parse.status if parse else ParseStatus.UNREADABLE,
         content_hash=entry.content_hash,
         description=parse.description if parse else None,
         frontmatter_name=parse.frontmatter_name if parse else None,
         is_symlink=entry.is_symlink,
-        agent_entrypoints=tuple(hit.agent_id for hit in entry.hits),
+        # Paths, not agent ids (Phase 0 contract): every entrypoint that reaches
+        # this canonical library, home-relative in display contexts.
+        agent_entrypoints=entry.entrypoint_paths or (candidate.entrypoint_path,),
+        variant_label=entry.variant_label,
     )
 
 
-def _reason(agent: AgentDefinition, candidate: Candidate, state: HeadlineState) -> str:
+def _winner_label(agent: AgentDefinition, winner: Candidate) -> str:
+    """A short, human label for the root that won, e.g. ``the project root .grok/skills``.
+
+    Registry paths are home-relative for global roots and repository-relative
+    for project roots, so the two must be named differently -- otherwise
+    "``.agents/skills``" would read as the home copy when the project copy won.
+    """
+    root = agent.root_by_id(winner.hit.root_id)
+    if root is None:
+        return f"the {winner.hit.root_id} root"
+    if root.is_absolute:
+        return f"the absolute root {root.path}"
+    if root.is_project:
+        return f"the project root {root.path}"
+    return f"the global root ~/{root.path}"
+
+
+def _reason(
+    agent: AgentDefinition,
+    candidate: Candidate,
+    state: HeadlineState,
+    winner: Candidate | None = None,
+) -> str:
     entry = candidate.entry
     if entry.error_code == _CYCLE:
         return "Symlink cycle detected; traversal stopped safely."
@@ -322,9 +403,19 @@ def _reason(agent: AgentDefinition, candidate: Candidate, state: HeadlineState) 
     if state is HeadlineState.COEXISTS:
         if candidate.hit.nested:
             return "Qualified namespaced copy, accessible alongside the winning copy."
+        if agent.coexist_policy == "merge":
+            return (
+                f"Listed alongside a higher-priority copy; {agent.name} merges all roots "
+                "with no documented winner."
+            )
+        if agent.coexist_policy == "ambiguous":
+            return "Listed alongside another copy; collision policy is undocumented."
         return "Coexists with another copy; both remain available."
     if state is HeadlineState.SHADOWED:
-        return f"Suppressed by a higher-priority copy ({candidate.reason_fragment})."
+        # Name the *winning* copy's root, never this copy's own description.
+        if winner is not None:
+            return f"Suppressed by the higher-priority copy in {_winner_label(agent, winner)}."
+        return _FALLBACK_REASON[state]
     return _FALLBACK_REASON[state]
 
 
@@ -350,7 +441,10 @@ _VISIBILITY_FOR_STATE = {
 
 
 def _rule_and_evidence(
-    agent: AgentDefinition, candidate: Candidate, state: HeadlineState
+    agent: AgentDefinition,
+    candidate: Candidate,
+    state: HeadlineState,
+    winner: Candidate | None = None,
 ) -> tuple[str, Evidence]:
     entry = candidate.entry
     if entry.error_code == _CYCLE:
@@ -365,13 +459,20 @@ def _rule_and_evidence(
         return agent.disabled_rule_id, Evidence.DOCUMENTED
     if state is HeadlineState.UNSEARCHED:
         return agent.unsearched_rule_id, Evidence(agent.policy_evidence)
+    if state is HeadlineState.SHADOWED and winner is not None:
+        # The rule that explains a shadow is the rule of the copy that beat it,
+        # so the reason is traceable to the actual cause, not to the loser.
+        return winner.hit.rule_for(entry.is_file), Evidence(winner.hit.evidence)
     return candidate.hit.rule_for(entry.is_file), Evidence(candidate.hit.evidence)
 
 
 def _resolution(
-    agent: AgentDefinition, candidate: Candidate, state: HeadlineState
+    agent: AgentDefinition,
+    candidate: Candidate,
+    state: HeadlineState,
+    winner: Candidate | None = None,
 ) -> CandidateResolution:
-    rule_id, evidence = _rule_and_evidence(agent, candidate, state)
+    rule_id, evidence = _rule_and_evidence(agent, candidate, state, winner)
     collision = _COLLISION_FOR_STATE[state]
     if state is HeadlineState.COEXISTS and candidate.hit.nested:
         collision = Collision.QUALIFIED_NAMESPACE
@@ -381,7 +482,7 @@ def _resolution(
         collision=collision,
         rule_id=rule_id,
         evidence=evidence,
-        reason=_reason(agent, candidate, state),
+        reason=_reason(agent, candidate, state, winner),
         rank=max(candidate.rank, 0),
         installation=_installation(candidate),
     )
@@ -396,6 +497,42 @@ _STATE_ORDER = {
     HeadlineState.INVALID: 5,
     HeadlineState.UNSEARCHED: 6,
 }
+
+
+def _assign_variant_labels(candidates: list[Candidate]) -> dict[int, str]:
+    """Label differing copies of one name as Variant A / B / C.
+
+    Delegates to the shared rule in :mod:`skill_lens.core.discovery` so that
+    ``why`` and ``scan`` can never disagree about a copy's label. Ordering is
+    by scope specificity (project before user), then discovery order -- *not*
+    by this agent's rank, because ``scan`` has no agent to rank with. Which
+    copy actually wins is reported by the candidate's ``state``, not by its
+    letter.
+    """
+    by_name: dict[str, list[tuple[str, str, str | None, Scope, int]]] = {}
+    for position, candidate in enumerate(candidates):
+        if not _is_valid(candidate.entry) or candidate.entry.content_hash is None:
+            continue
+        key = candidate.entry.canonical_path or candidate.entry.entrypoint_path
+        by_name.setdefault(candidate.entry.name, []).append(
+            (
+                candidate.entry.name,
+                key,
+                candidate.entry.content_hash,
+                entry_scope(candidate.entry),
+                position,
+            )
+        )
+    keys: dict[str, int] = {}
+    for position, candidate in enumerate(candidates):
+        key = candidate.entry.canonical_path or candidate.entry.entrypoint_path
+        keys.setdefault(key, position)
+
+    labels: dict[int, str] = {}
+    for items in by_name.values():
+        for key, label in variant_labels(items).items():
+            labels[keys[key]] = label
+    return labels
 
 
 def _sort_resolutions(resolutions: list[CandidateResolution]) -> list[CandidateResolution]:
@@ -435,10 +572,28 @@ def resolve_skill(
     candidates = _candidates_for(agent, discovery, name)
     outcomes = _assign_states(agent, candidates)
     headline = _headline_from_states([state for _candidate, state in outcomes])
-    resolutions = [_resolution(agent, candidate, state) for candidate, state in outcomes]
+
+    # The winning copy explains every shadow, so it is resolved first and passed
+    # to the rest: their reason and rule then name the real cause.
+    winner = next(
+        (c for c, state in outcomes if state is HeadlineState.ACTIVE and c.searched), None
+    )
+    ordered = _sort_resolutions(
+        [_resolution(agent, candidate, state, winner) for candidate, state in outcomes]
+    )
+
+    labels = {
+        candidates[index].entrypoint_path: label
+        for index, label in _assign_variant_labels(candidates).items()
+    }
+    ordered = [_label_resolution(resolution, labels) for resolution in ordered]
 
     notes: tuple[str, ...] = ()
-    if headline is HeadlineState.AMBIGUOUS:
+    if not candidates:
+        # F-10: UNSEARCHED means "on disk, outside this agent's search rules".
+        # Zero candidates is a different fact: the name is nowhere on disk.
+        notes = (_NOT_FOUND_NOTE,)
+    elif headline is HeadlineState.AMBIGUOUS:
         notes = (f"{agent.name} has no documented winner for duplicate names.",)
     return ResolutionReport(
         skill_name=name,
@@ -448,9 +603,20 @@ def resolve_skill(
         collision_policy=agent.collision_policy,
         policy_evidence=agent.policy_evidence,
         headline=headline,
-        candidates=tuple(_sort_resolutions(resolutions)),
+        candidates=tuple(ordered),
         notes=notes,
+        found=bool(candidates),
     )
+
+
+def _label_resolution(
+    resolution: CandidateResolution, labels: dict[str, str]
+) -> CandidateResolution:
+    """Attach this entrypoint's variant label to its installation."""
+    label = labels.get(resolution.installation.entrypoint_path)
+    if label is None or resolution.installation.variant_label == label:
+        return resolution
+    return replace(resolution, installation=replace(resolution.installation, variant_label=label))
 
 
 __all__ = ["Candidate", "resolve_skill"]
