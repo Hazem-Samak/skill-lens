@@ -1,0 +1,34 @@
+id = "claude"
+name = "Claude Code"
+identity_source = "directory_name"
+collision_policy = "Personal > Project"
+policy_evidence = "documented"
+coexist_policy = "shadow"
+walk_boundary = "git_worktree_root"
+unsearched_rule_id = "claude_search_roots"
+disabled_rule_id = "claude_skill_override_disabled"
+disabled_settings = ".claude/settings.json"
+disabled_key = "skillOverrides"
+source = "https://code.claude.com/docs/en/skills.md"
+
+# Personal user skills outrank project skills (documented).
+[[roots]]
+id = "claude_personal"
+kind = "global"
+path = ".claude/skills"
+scope = "user"
+rank = 100
+rule_id = "claude_personal_beats_project"
+evidence = "documented"
+
+# Project skills: at the repository root they are shadowed by Personal; when
+# nested in a subdirectory they qualify as ``dir:cmd`` and coexist.
+[[roots]]
+id = "claude_project"
+kind = "project"
+path = ".claude/skills"
+scope = "project"
+rank = 50
+rule_id = "claude_personal_beats_project"
+nested_rule_id = "claude_nested_qualification"
+evidence = "documented"

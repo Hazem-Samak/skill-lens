@@ -1,0 +1,64 @@
+id = "codex"
+name = "OpenAI Codex"
+identity_source = "frontmatter_name"
+collision_policy = "Unverified / Merged"
+policy_evidence = "empirical"
+coexist_policy = "merge"
+walk_boundary = "project_root_markers"
+unsearched_rule_id = "codex_search_roots"
+source = "https://developers.openai.com/codex/skills"
+
+[[roots]]
+id = "codex_global"
+kind = "global"
+path = ".codex/skills"
+scope = "user"
+rank = 85
+rule_id = "codex_global_skills"
+evidence = "empirical"
+
+[[roots]]
+id = "codex_shared_global"
+kind = "global"
+path = ".agents/skills"
+scope = "user"
+rank = 80
+rule_id = "codex_global_skills"
+evidence = "documented"
+
+[[roots]]
+id = "codex_project"
+kind = "project"
+path = ".agents/skills"
+scope = "project"
+rank = 90
+rule_id = "codex_project_ancestor_walk"
+evidence = "empirical"
+
+[[roots]]
+id = "codex_system"
+kind = "system"
+path = ".codex/skills/.system"
+scope = "system"
+rank = 55
+rule_id = "codex_system_container"
+evidence = "empirical"
+
+[[roots]]
+id = "codex_etc"
+kind = "global"
+path = "/etc/codex/skills"
+scope = "system"
+rank = 75
+rule_id = "codex_global_skills"
+evidence = "documented"
+
+[[roots]]
+id = "codex_plugin"
+kind = "plugin"
+path = ".codex/.tmp/plugins"
+scope = "plugin"
+rank = 10
+rule_id = "codex_plugin_skills"
+evidence = "empirical"
+recursive = true

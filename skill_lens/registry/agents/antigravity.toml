@@ -1,0 +1,47 @@
+id = "antigravity"
+name = "Antigravity CLI"
+identity_source = "hybrid"
+collision_policy = "Shadow (Project > User > Builtin)"
+policy_evidence = "empirical"
+coexist_policy = "shadow"
+walk_boundary = "git_root"
+unsearched_rule_id = "antigravity_search_roots"
+source = "https://antigravity.google/docs/skills"
+
+# Global user skills may be a directory or a standalone ``.md`` file.
+[[roots]]
+id = "antigravity_global"
+kind = "global"
+path = ".gemini/config/skills"
+scope = "user"
+rank = 90
+rule_id = "antigravity_global_skills"
+file_rule_id = "antigravity_standalone_md"
+evidence = "empirical"
+
+[[roots]]
+id = "antigravity_builtin"
+kind = "global"
+path = ".gemini/antigravity/builtin/skills"
+scope = "system"
+rank = 40
+rule_id = "antigravity_builtin"
+evidence = "documented"
+
+[[roots]]
+id = "antigravity_project_agents"
+kind = "project"
+path = ".agents/skills"
+scope = "project"
+rank = 80
+rule_id = "antigravity_project_shadow"
+evidence = "empirical"
+
+[[roots]]
+id = "antigravity_project_agent"
+kind = "project"
+path = ".agent/skills"
+scope = "project"
+rank = 78
+rule_id = "antigravity_project_shadow"
+evidence = "documented"

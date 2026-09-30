@@ -1,0 +1,381 @@
+"""Filesystem discovery: find skill entrypoints and tag how agents reach them.
+
+Discovery is deliberately **agent-agnostic**. It scans every root of every
+known agent and records, per entrypoint, which ``(agent, root)`` pairs reach
+it. The resolver then decides, per agent, what is searched vs unsearched.
+
+This split is what lets ``why`` explain an ``UNSEARCHED`` copy: the copy is
+found because some *other* agent looks there, then marked as outside this
+agent's search rules.
+"""
+
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass, field
+from pathlib import Path
+
+from skill_lens.core.hasher import hash_path
+from skill_lens.core.parser import canonicalize, find_skill_document, parse_skill
+from skill_lens.models.enums import Scope
+from skill_lens.models.parsing import (
+    ERR_DANGLING_SYMLINK,
+    ERR_PERMISSION_DENIED,
+    ERR_SYMLINK_CYCLE,
+    CanonicalResult,
+    CanonicalStatus,
+    ParseResult,
+)
+from skill_lens.registry.loader import AgentDefinition, AgentRoot, load_registry
+
+MAX_WALK_DEPTH = 4
+
+
+@dataclass(frozen=True, slots=True)
+class RootHit:
+    """One ``(agent, root)`` pair that reaches an entrypoint."""
+
+    agent_id: str
+    root_id: str
+    rank: int
+    rule_id: str
+    evidence: str
+    scope: Scope
+    nested: bool = False
+    file_rule_id: str | None = None
+    nested_rule_id: str | None = None
+    specificity: int = 0
+
+    def rule_for(self, is_file: bool) -> str:
+        if self.nested and self.nested_rule_id:
+            return self.nested_rule_id
+        if is_file and self.file_rule_id:
+            return self.file_rule_id
+        return self.rule_id
+
+
+@dataclass(frozen=True, slots=True)
+class DiscoveredEntry:
+    """A single entrypoint on disk plus everything known about it."""
+
+    entrypoint_path: str
+    name: str
+    is_file: bool
+    is_symlink: bool
+    canonical: CanonicalResult
+    parse: ParseResult | None
+    content_hash: str | None
+    hits: tuple[RootHit, ...] = ()
+
+    @property
+    def canonical_path(self) -> str | None:
+        return self.canonical.resolved_path
+
+    @property
+    def parse_status(self) -> str:
+        if self.parse is not None:
+            return self.parse.status.value
+        return "invalid"
+
+    @property
+    def error_code(self) -> str | None:
+        if self.canonical.status is CanonicalStatus.CYCLE:
+            return ERR_SYMLINK_CYCLE
+        if self.canonical.status is CanonicalStatus.BROKEN:
+            return ERR_DANGLING_SYMLINK
+        if self.canonical.status is CanonicalStatus.UNREADABLE:
+            return ERR_PERMISSION_DENIED
+        return None
+
+
+@dataclass(frozen=True, slots=True)
+class UnreadableRoot:
+    """A root that exists but could not be listed (e.g. macOS TCC)."""
+
+    agent_id: str
+    root_id: str
+    path: str
+    detail: str
+
+
+@dataclass(slots=True)
+class DiscoveryIndex:
+    """The result of one full discovery pass over a mock or real home."""
+
+    home: str
+    cwd: str
+    entries: list[DiscoveredEntry] = field(default_factory=list)
+    unreadable_roots: list[UnreadableRoot] = field(default_factory=list)
+
+    def all_agents(self) -> set[str]:
+        return {hit.agent_id for entry in self.entries for hit in entry.hits}
+
+
+# --- Boundary detection ----------------------------------------------------
+
+
+def find_walk_boundary(cwd: Path, kind: str) -> Path | None:
+    """Find the directory that bounds an upward project walk, if any.
+
+    Looks for ``.git`` (a directory for a normal checkout, a file for a linked
+    worktree). Returns ``None`` when no boundary marker is found, which means
+    "this working directory is not inside a project" -- so project-scoped roots
+    do not apply. This prevents a machine-wide ``scan`` from mislabelling
+    global roots as project roots.
+    """
+    markers = (".git",) if kind != "project_root_markers" else (".git", "pyproject.toml")
+    for directory in (cwd, *cwd.parents):
+        for marker in markers:
+            if (directory / marker).exists():
+                return directory
+    return None
+
+
+def normalize_cwd(cwd: Path, home: Path) -> Path:
+    """Resolve ``cwd`` to an absolute path, treating relative input as home-relative.
+
+    ``--cwd .`` therefore means "the mock/real home itself", which keeps
+    sandboxed scans inside the sandbox and never escapes into the process's
+    real working directory.
+    """
+    expanded = Path(cwd).expanduser()
+    if expanded.is_absolute():
+        return expanded
+    return (home / expanded).resolve()
+
+
+def _ancestor_dirs(cwd: Path, boundary: Path) -> list[Path]:
+    """Directories from ``cwd`` up to and including ``boundary``."""
+    chain: list[Path] = []
+    current = cwd
+    while True:
+        chain.append(current)
+        if current == boundary or current.parent == current:
+            break
+        current = current.parent
+    return chain
+
+
+# --- Root expansion --------------------------------------------------------
+
+
+def _absolute_roots_allowed(home: Path) -> bool:
+    """Absolute system roots (e.g. ``/etc/codex/skills``) are scanned live only.
+
+    Under a sandbox (tests, ``--sandbox``) they are skipped so a scan can never
+    read real system directories and contaminate deterministic results.
+    """
+    from skill_lens.core import paths
+
+    return paths.get_sandbox() is None and home == paths.home()
+
+
+def _directories_for_root(
+    home: Path, cwd: Path, root: AgentRoot, boundary: Path | None
+) -> list[tuple[Path, bool]]:
+    """Return ``(directory, nested)`` pairs a root resolves to for this cwd.
+
+    Global/system/plugin roots are relative to the home directory. Project
+    roots are joined onto each ancestor of ``cwd`` up to the git boundary, so a
+    project skill is the *root* copy (not nested) while a skill found further up
+    the monorepo from the working directory is nested (qualifies as ``dir:skill``).
+    When there is no boundary (cwd is not in a project), no project root applies.
+    """
+    if root.is_absolute:
+        if not _absolute_roots_allowed(home):
+            return []
+        return [(Path(root.path), False)]
+    if not root.is_project:
+        return [(home / root.path, False)]
+    if boundary is None:
+        return []
+
+    results: list[tuple[Path, bool]] = []
+    for directory in _ancestor_dirs(cwd, boundary):
+        candidate = directory / root.path
+        if candidate.exists() or candidate.is_symlink():
+            results.append((candidate, directory != boundary))
+    return results
+
+
+# --- Entry listing ---------------------------------------------------------
+
+
+def _is_skill_dir(path: Path) -> bool:
+    return find_skill_document(path) is not None
+
+
+def _list_entries(base: Path) -> list[tuple[Path, bool]]:
+    """List skill entrypoints directly under ``base`` as ``(path, is_file)``.
+
+    A ``.system`` container is **not** descended here: bundled system skills are
+    owned by a dedicated root whose path ends in ``.system`` (see codex.toml),
+    so attributing them here too would give them the wrong scope and rank.
+    """
+    try:
+        children = sorted(base.iterdir(), key=lambda p: p.name)
+    except OSError:
+        return []
+
+    results: list[tuple[Path, bool]] = []
+    for child in children:
+        if child.is_symlink():
+            results.append((child, False))
+        elif child.is_dir():
+            if _is_skill_dir(child) or _unreadable(child):
+                results.append((child, False))
+        elif child.suffix.lower() == ".md":
+            results.append((child, True))
+    return results
+
+
+def _list_recursive_entries(base: Path) -> list[tuple[Path, bool]]:
+    """Find ``skills`` directories under ``base`` up to :data:`MAX_WALK_DEPTH`."""
+    found: list[tuple[Path, bool]] = []
+    base_depth = len(base.parts)
+    for dirpath, dirnames, _filenames in os.walk(base):
+        current = Path(dirpath)
+        if len(current.parts) - base_depth >= MAX_WALK_DEPTH:
+            dirnames[:] = []
+            continue
+        dirnames[:] = [d for d in dirnames if d != ".git"]
+        if current.name == "skills":
+            found.extend(_list_entries(current))
+            dirnames[:] = []
+    return found
+
+
+# --- Main discovery --------------------------------------------------------
+
+
+def discover(
+    home: Path,
+    cwd: Path,
+    registry: dict[str, AgentDefinition] | None = None,
+) -> DiscoveryIndex:
+    """Scan every agent's roots and return a tagged :class:`DiscoveryIndex`."""
+    agents = registry if registry is not None else load_registry()
+    cwd = normalize_cwd(cwd, home)
+    index = DiscoveryIndex(home=str(home), cwd=str(cwd))
+
+    seen: set[tuple[str, str, str]] = set()
+    for agent in agents.values():
+        boundary = find_walk_boundary(cwd, agent.walk_boundary)
+        for root in agent.roots:
+            for base, nested in _directories_for_root(home, cwd, root, boundary):
+                if not base.exists() and not base.is_symlink():
+                    continue
+                if base.is_dir() and not base.is_symlink() and _unreadable(base):
+                    index.unreadable_roots.append(
+                        UnreadableRoot(
+                            agent_id=agent.id,
+                            root_id=root.id,
+                            path=str(base),
+                            detail=ERR_PERMISSION_DENIED,
+                        )
+                    )
+                    continue
+                listing = _list_recursive_entries(base) if root.recursive else _list_entries(base)
+                for entrypoint, is_file in listing:
+                    key = (agent.id, root.id, str(entrypoint))
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    hit = RootHit(
+                        agent_id=agent.id,
+                        root_id=root.id,
+                        rank=root.rank,
+                        rule_id=root.rule_id,
+                        evidence=root.evidence.value,
+                        scope=root.scope,
+                        nested=nested,
+                        file_rule_id=root.file_rule_id,
+                        nested_rule_id=root.nested_rule_id,
+                        specificity=len(Path(root.path).parts),
+                    )
+                    index.entries.append(_build_entry(entrypoint, is_file, hit))
+
+    index.entries = _merge_entries(index.entries)
+    return index
+
+
+def _unreadable(path: Path) -> bool:
+    try:
+        os.listdir(path)
+    except OSError:
+        return True
+    return False
+
+
+def _build_entry(entrypoint: Path, is_file: bool, hit: RootHit) -> DiscoveredEntry:
+    canonical = canonicalize(entrypoint)
+    parse: ParseResult | None = None
+    content_hash: str | None = None
+    if canonical.status is CanonicalStatus.OK:
+        parse = parse_skill(entrypoint)
+        try:
+            content_hash = hash_path(entrypoint)
+        except OSError:
+            content_hash = None
+
+    name = _entry_name(entrypoint, is_file, parse)
+    return DiscoveredEntry(
+        entrypoint_path=str(entrypoint),
+        name=name,
+        is_file=is_file,
+        is_symlink=entrypoint.is_symlink(),
+        canonical=canonical,
+        parse=parse,
+        content_hash=content_hash,
+        hits=(hit,),
+    )
+
+
+def _entry_name(entrypoint: Path, is_file: bool, parse: ParseResult | None) -> str:
+    if parse is not None:
+        return parse.directory_name
+    if is_file or entrypoint.suffix.lower() == ".md":
+        return entrypoint.stem
+    return entrypoint.name
+
+
+def _merge_entries(entries: list[DiscoveredEntry]) -> list[DiscoveredEntry]:
+    """Group entrypoints that share a canonical target into one record.
+
+    A symlink farm (many entrypoints, one real target) becomes a single entry
+    whose ``hits`` union every reaching root. Entries with no resolvable
+    canonical (cycles, dangling links) are keyed by their own path so they
+    never collapse with a real skill.
+    """
+    merged: dict[str, DiscoveredEntry] = {}
+    order: list[str] = []
+    for entry in entries:
+        key = entry.canonical_path or f"@{entry.entrypoint_path}"
+        if key not in merged:
+            merged[key] = entry
+            order.append(key)
+            continue
+        existing = merged[key]
+        hits = _union_hits(existing.hits, entry.hits)
+        merged[key] = DiscoveredEntry(
+            entrypoint_path=existing.entrypoint_path,
+            name=existing.name or entry.name,
+            is_file=existing.is_file,
+            is_symlink=existing.is_symlink or entry.is_symlink,
+            canonical=existing.canonical,
+            parse=existing.parse or entry.parse,
+            content_hash=existing.content_hash or entry.content_hash,
+            hits=hits,
+        )
+    return [merged[key] for key in order]
+
+
+def _union_hits(current: tuple[RootHit, ...], incoming: tuple[RootHit, ...]) -> tuple[RootHit, ...]:
+    combined = list(current)
+    existing = {(h.agent_id, h.root_id, h.nested) for h in combined}
+    for hit in incoming:
+        marker = (hit.agent_id, hit.root_id, hit.nested)
+        if marker not in existing:
+            combined.append(hit)
+            existing.add(marker)
+    return tuple(combined)

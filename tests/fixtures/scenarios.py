@@ -24,6 +24,7 @@ from tests.fixtures.builders import (
 
 def claude_personal_beats_project(home: Path) -> None:
     """Personal ``~/.claude/skills`` copy overrides the project copy."""
+    (home / "project" / ".git").mkdir(parents=True, exist_ok=True)
     make_skill(home / ".claude" / "skills" / "deploy", "deploy", "Personal deploy helper.")
     make_skill(
         home / "project" / ".claude" / "skills" / "deploy",
@@ -38,6 +39,7 @@ def claude_personal_beats_project(home: Path) -> None:
 
 def claude_nested_qualification(home: Path) -> None:
     """A monorepo subdirectory skill loads as ``dir:skill`` alongside personal."""
+    (home / "project" / ".git").mkdir(parents=True, exist_ok=True)
     make_skill(home / ".claude" / "skills" / "deploy", "deploy", "Personal deploy helper.")
     make_skill(
         home / "project" / "apps" / "web" / ".claude" / "skills" / "deploy",

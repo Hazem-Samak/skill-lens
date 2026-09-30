@@ -1,0 +1,47 @@
+id = "omp"
+name = "Oh My Pi"
+identity_source = "frontmatter_name"
+collision_policy = "Inferred"
+policy_evidence = "inferred"
+coexist_policy = "ambiguous"
+walk_boundary = "git_root"
+unsearched_rule_id = "omp_search_roots"
+ambiguous_rule_id = "omp_duplicate_ambiguous"
+source = ""
+
+# Tier 2: inferred from sibling agent behaviour; not yet empirically verified.
+[[roots]]
+id = "omp_agent"
+kind = "global"
+path = ".omp/agent"
+scope = "user"
+rank = 80
+rule_id = "omp_inferred_global"
+evidence = "inferred"
+
+[[roots]]
+id = "omp_shared_global"
+kind = "global"
+path = ".agents/skills"
+scope = "user"
+rank = 75
+rule_id = "omp_inferred_shared"
+evidence = "inferred"
+
+[[roots]]
+id = "omp_project"
+kind = "project"
+path = ".omp/skills"
+scope = "project"
+rank = 65
+rule_id = "omp_inferred_project"
+evidence = "inferred"
+
+[[roots]]
+id = "omp_project_agents"
+kind = "project"
+path = ".agents/skills"
+scope = "project"
+rank = 60
+rule_id = "omp_inferred_project"
+evidence = "inferred"

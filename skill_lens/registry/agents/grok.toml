@@ -1,0 +1,36 @@
+id = "grok"
+name = "Grok CLI"
+identity_source = "frontmatter_name"
+collision_policy = "Shadow (Project > Global)"
+policy_evidence = "empirical"
+coexist_policy = "shadow"
+walk_boundary = "git_root"
+unsearched_rule_id = "grok_search_roots"
+source = "https://docs.x.ai/grok-cli/skills"
+
+[[roots]]
+id = "grok_global"
+kind = "global"
+path = ".grok/skills"
+scope = "user"
+rank = 90
+rule_id = "grok_global_symlink_farm"
+evidence = "empirical"
+
+[[roots]]
+id = "grok_bundled"
+kind = "global"
+path = ".grok/bundled/skills"
+scope = "system"
+rank = 40
+rule_id = "grok_bundled"
+evidence = "empirical"
+
+[[roots]]
+id = "grok_project"
+kind = "project"
+path = ".agents/skills"
+scope = "project"
+rank = 70
+rule_id = "grok_project_shadow"
+evidence = "empirical"

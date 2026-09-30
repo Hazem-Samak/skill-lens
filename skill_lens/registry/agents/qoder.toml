@@ -1,0 +1,36 @@
+id = "qoder"
+name = "Qoder CLI"
+identity_source = "frontmatter_name"
+collision_policy = "Shadow (Project > Global)"
+policy_evidence = "empirical"
+coexist_policy = "shadow"
+walk_boundary = "git_root"
+unsearched_rule_id = "qoder_search_roots"
+source = "https://docs.qoder.com/skills"
+
+[[roots]]
+id = "qoder_global"
+kind = "global"
+path = ".qoder/skills"
+scope = "user"
+rank = 90
+rule_id = "qoder_global_symlink_farm"
+evidence = "empirical"
+
+[[roots]]
+id = "qoder_project"
+kind = "project"
+path = ".qoder/skills"
+scope = "project"
+rank = 70
+rule_id = "qoder_project_shadow"
+evidence = "empirical"
+
+[[roots]]
+id = "qoder_project_agents"
+kind = "project"
+path = ".agents/skills"
+scope = "project"
+rank = 65
+rule_id = "qoder_project_shadow"
+evidence = "empirical"

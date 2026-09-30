@@ -1,8 +1,8 @@
 """Shared pytest fixtures.
 
 Every test runs against a mock ``$HOME`` under ``tmp_path``. The real
-``~/.claude``, ``~/.agents`` and ``~/.codex`` are never touched (AGENTS.md
-rule 2).
+``~/.claude``, ``~/.agents``, ``~/.codex`` and ``/etc/codex`` are never touched
+(AGENTS.md rule 2).
 """
 
 from __future__ import annotations
@@ -23,6 +23,27 @@ def mock_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]
     ``HOME`` is monkeypatched so that any *lazy* path resolution follows the
     fixture; a module that expanded ``~`` at import time would not move, which
     is exactly what the guards in ``test_paths.py`` detect.
+
+    The sandbox is activated too, so absolute system roots (``/etc/codex/skills``)
+    are never read during a test even on a machine that really has them.
+    """
+    home = tmp_path / "home"
+    home.mkdir()
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.delenv("XDG_CONFIG_HOME", raising=False)
+    paths.set_sandbox(home)
+    try:
+        yield home
+    finally:
+        paths.set_sandbox(None)
+
+
+@pytest.fixture
+def bare_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]:
+    """A mock home with ``HOME`` patched but the explicit sandbox left *off*.
+
+    Used by the tests that verify lazy path resolution still follows ``HOME``
+    without the sandbox override.
     """
     home = tmp_path / "home"
     home.mkdir()

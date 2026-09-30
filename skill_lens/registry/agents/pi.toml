@@ -1,0 +1,46 @@
+id = "pi"
+name = "Pi Agent"
+identity_source = "directory_name"
+collision_policy = "Shadow (Project > Global)"
+policy_evidence = "empirical"
+coexist_policy = "shadow"
+walk_boundary = "git_root"
+unsearched_rule_id = "pi_search_roots"
+source = "https://github.com/badlogic/pi"
+
+# The live 83-link symlink farm into the shared canonical library.
+[[roots]]
+id = "pi_global_agent"
+kind = "global"
+path = ".pi/agent/skills"
+scope = "user"
+rank = 90
+rule_id = "pi_global_symlink_farm"
+evidence = "empirical"
+
+[[roots]]
+id = "pi_global"
+kind = "global"
+path = ".pi/skills"
+scope = "user"
+rank = 85
+rule_id = "pi_global_skills"
+evidence = "empirical"
+
+[[roots]]
+id = "pi_project"
+kind = "project"
+path = ".pi/skills"
+scope = "project"
+rank = 70
+rule_id = "pi_project_shadow"
+evidence = "empirical"
+
+[[roots]]
+id = "pi_project_agents"
+kind = "project"
+path = ".agents/skills"
+scope = "project"
+rank = 60
+rule_id = "pi_project_shadow"
+evidence = "empirical"

@@ -1,0 +1,48 @@
+id = "opencode"
+name = "OpenCode"
+identity_source = "frontmatter_name"
+# Duplicate names across searched roots have no documented winner.
+collision_policy = "Ambiguous on duplicate"
+policy_evidence = "empirical"
+coexist_policy = "ambiguous"
+walk_boundary = "git_worktree_root"
+unsearched_rule_id = "opencode_search_roots"
+ambiguous_rule_id = "opencode_duplicate_ambiguous"
+source = "https://opencode.ai/docs/skills"
+
+[[roots]]
+id = "opencode_native"
+kind = "global"
+path = ".config/opencode/skills"
+scope = "user"
+rank = 80
+rule_id = "opencode_native_skills"
+evidence = "empirical"
+
+# OpenCode also searches the shared library upward from the working directory.
+[[roots]]
+id = "opencode_shared_global"
+kind = "global"
+path = ".agents/skills"
+scope = "user"
+rank = 80
+rule_id = "opencode_shared_skills"
+evidence = "empirical"
+
+[[roots]]
+id = "opencode_project"
+kind = "project"
+path = ".opencode/skills"
+scope = "project"
+rank = 70
+rule_id = "opencode_project_skills"
+evidence = "empirical"
+
+[[roots]]
+id = "opencode_project_agents"
+kind = "project"
+path = ".agents/skills"
+scope = "project"
+rank = 70
+rule_id = "opencode_project_skills"
+evidence = "empirical"
