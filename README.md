@@ -52,8 +52,9 @@ each agent actually resolves skills.
 | --- | --- |
 | `skill-lens scan` | Inventory skills across detected agents, split by scope. |
 | `skill-lens why <skill> --agent <id>` | Explain why a skill resolves the way it does. |
+| `skill-lens agents` | List known agents, their collision policy and evidence. |
 | `skill-lens compare --agent A --agent B` | Compare two agents' capability surfaces. |
-| `skill-lens diff <skill>` | Side-by-side diff of diverging variants of one skill. |
+| `skill-lens diff <skill>` | Unified diff of diverging variants of one skill. |
 | `skill-lens doctor` | Hygiene checks: broken links, bad frontmatter, budget warnings. |
 
 Every command accepts `--json`.

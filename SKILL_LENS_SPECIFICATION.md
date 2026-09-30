@@ -132,9 +132,11 @@ On modern developer setups, agents share a canonical library via symlinks (e.g. 
 
 ## 6. CLI Command Specifications
 
-Every command supports `--json` returning structured data models.
+Every command supports `--json` returning structured data models. Exit codes are uniform
+across commands: `0` means the command ran (including "nothing found" and "no
+differences"); `2` means a usage error or an unknown agent.
 
-### 1. `skill-lens scan [--sandbox <dir>] [--json]`
+### 1. `skill-lens scan [--sandbox <dir>] [--cwd <dir>] [--json]`
 Inventories skills across detected agents, separating canonical user skills from plugins.
 ```text
 $ skill-lens scan
@@ -178,13 +180,55 @@ $ skill-lens why supabase --agent claude --cwd ~/Projects/my-app
   Hash:   sha256:1a49c2...
 ```
 
-### 3. `skill-lens compare --agent <agent_a> --agent <agent_b> [--cwd <dir>] [--json]`
+### 3. `skill-lens agents [--json]`
+Lists the known agent definitions with their collision policy, provenance evidence and
+root count. Shipped in Phase 2.
+
+### 4. `skill-lens compare --agent <agent_a> --agent <agent_b> [--cwd <dir>] [--json]`
 Compares capability surfaces between two agents. Pinpoints which skills are shared via symlink farms vs where their capabilities diverge.
 
-### 4. `skill-lens diff <skill_name> [--json]`
-Side-by-side terminal syntax diff between differing variants sharing the same name.
+### 5. `skill-lens diff <skill_name> [--sandbox <dir>] [--cwd <dir>] [--json]`
+Unified syntax diff between the differing variants that share one name.
 
-### 5. `skill-lens doctor [--json]`
+- **Inputs.** Built from `DiscoveryIndex` entries, which are already deduplicated by
+  canonical target: one library reached through N symlink entrypoints is one copy, so
+  symlinked copies of a target can never produce a diff. `diff` must not re-implement
+  that grouping.
+- **Comparability.** Every *readable* copy is a diff participant — including copies that
+  fail frontmatter validation (malformed YAML, missing `description`), because a broken
+  copy is usually the one worth inspecting. The content hash is computed as soon as the
+  symlink resolves, so such a copy is still hashable and diffable. Two rules keep this
+  consistent with `scan` and `why`: a copy that failed validation is **flagged as invalid
+  and given no Variant letter** (only `discovery.variant_labels`'s valid set is labelled),
+  and it is **never the baseline**. Copies that cannot be read at all — dangling symlinks,
+  cycles, permission-denied roots — have no content and are listed with no diff.
+- **Baseline.** The copy `discovery.variant_labels` labels **Variant A** (scope
+  specificity via `discovery.entry_scope`, then discovery order). Every other distinct
+  copy — valid or invalid — is diffed against it; an invalid copy is never itself the
+  baseline. Copies past A–F are reported unlabelled, never with an invented letter.
+- **File comparison.** Directory skills are compared over exactly `hasher.iter_files()`
+  (the same sorted, forward-slash relative set, with `.git/`, `.DS_Store` and AppleDouble
+  `._*` excluded) **and with the same normalization** as `hash_file` (UTF-8 decode,
+  `\r\n` → `\n`). Two copies that differ only by line endings therefore share a content
+  hash and must produce no diff — a raw byte comparison here would contradict the hash
+  and repeat finding F-16. Files match by relative path, so added, removed and renamed
+  files appear as such. Standalone `.md` (file) skills are compared as a single file.
+- **Binary files** are reported as differing; their contents are never printed.
+- **Outcomes.** Zero copies → clear message, `found: false`, exit code `0` (matching
+  `why`, finding F-10). Exactly one distinct copy, or all copies identical → "no
+  differences", exit code `0`. Neither is an error.
+- **Truncation.** 400 changed lines per copy and 20,000 characters per report; the JSON
+  carries `truncated: true` and the terminal states how much was omitted.
+- **Escaping.** All file content and paths pass through `rich.markup.escape()` before
+  display.
+
+> **v1 is a unified diff, not side-by-side.** Rich has no native side-by-side diff, and a
+> hand-built two-column layout is width-sensitive and brittle to snapshot. v1 renders a
+> unified diff (standard-library `difflib` plus Rich `Syntax` with the `"diff"` lexer);
+> side-by-side is a deferred enhancement. `Pygments` arrives transitively via Rich and is
+> **not** added to `pyproject.toml`.
+
+### 6. `skill-lens doctor [--json]`
 Performs hygiene and ecosystem health diagnostics:
 - ❌ Dangling symlinks and symlink cycles.
 - ❌ Malformed frontmatter (invalid YAML or missing required `description`).
@@ -240,11 +284,40 @@ Development follows a strict test-first protocol. Tests run against mock fixture
   - `skill-lens scan --sandbox <dir> --json`
 - **Gate:** Semantic JSON output (`json.dumps(sort_keys=True)`) matches golden `expected.json` across all fixtures.
 
-### Phase 3: Rich Terminal Presentation Layer
-- Build Rich output formatters for `scan` and `why`.
-- Implement safe markup escaping (`rich.markup.escape()`) for descriptions.
-- Add Rich diff renderer for `skill-lens diff`.
-- **Gate:** Rich snapshot tests pass with clean formatting.
+### Phase 3: Rich Terminal Presentation Layer & `diff`
+
+**Already shipped in Phase 2 — do not rebuild:** the Rich formatters for `scan` and `why`
+(`render_scan`, `render_why` in `skill_lens/render.py`) and safe markup escaping
+(`rich.markup.escape`) for every description, path and diff body, covered by
+`test_markup_is_escaped_in_output`. Phase 3 therefore covers the work below.
+
+- **Step 1 — models first.** Add frozen dataclasses in `skill_lens/models/diff.py`
+  (`DiffReport`, `DiffCopy`, `DiffFile`, `DiffHunk`), each with `to_dict()`, and export
+  them from `skill_lens/models/__init__.py`. `skill-lens diff --json` emits
+  `dumps(DiffReport)` (sorted keys) and is pinned by a golden
+  `tests/fixtures/golden/diff_*.json` **before** any Rich renderer exists (AGENTS.md
+  rule 4).
+- **Step 2 — pure computation.** `skill_lens/core/diff.py` builds the `DiffReport` from
+  `DiscoveryIndex` entries and imports **no `rich`**.
+- **Step 3 — presentation.** `render_diff(report, console)` in `skill_lens/render.py`
+  formats an already-complete model and prints nothing else. Move the `agents` table out
+  of `cli.py` into `render.py` as `render_agents(...)`, so `cli.py` holds no Rich layout
+  code.
+- **Step 4 — snapshot harness.** Plain-text goldens under `tests/fixtures/snapshots/`
+  (no new dev dependency). Every snapshot renders into
+  `Console(record=True, width=<fixed>, no_color=True, force_terminal=False,
+  highlight=False)` and is compared via `export_text()`; the fixed width is asserted,
+  not assumed. Regeneration is a documented in-repo switch (e.g.
+  `pytest tests/test_render_snapshots.py --update-snapshots`). Cover `scan`, `why` and
+  `diff`.
+- **Boundaries.** `doctor`, multi-agent `compare` and the live scanner
+  (`skill_lens/core/system.py`) stay in Phase 4. No new *declared* dependencies: the
+  unified diff uses the standard-library `difflib` plus Rich's existing `Syntax`
+  (`Pygments` arrives transitively via Rich and is not added to `pyproject.toml`). No
+  full-screen TUI (AGENTS.md rule 5).
+- **Gate:** `pytest` green — including the new snapshot tests and a `diff` golden
+  scenario built on the existing `variant_hash_detection` fixture — `ruff check .` clean
+  and `ruff format .` clean.
 
 ### Phase 4: Doctor, Multi-Agent Compare & Safe Live Adapter
 - Implement `skill_lens/core/doctor.py`:

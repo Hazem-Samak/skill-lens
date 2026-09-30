@@ -58,14 +58,14 @@ The developer driving you has zero coding experience and is vibe-coding this pro
 ```text
 skill_lens/
 ├── __init__.py
-├── cli.py                  # Typer commands (scan, why, compare, diff, doctor)
+├── cli.py                  # Typer commands (scan, why, agents, compare, diff, doctor)
 ├── models/                 # Frozen dataclasses (SkillInstallation, ResolutionReport, etc.)
 ├── core/
 │   ├── paths.py            # Lazy environment & path resolution
 │   ├── parser.py           # Frontmatter extraction & streaming SHA-256 hasher
 │   ├── resolver.py         # 3-axis resolution engine
 │   ├── doctor.py           # Diagnostics & hygiene checks
-│   ├── differ.py           # Side-by-side Rich diff renderer
+│   ├── diff.py             # Unified diff computation (pure; no Rich)
 │   └── system.py           # TCC-resilient live directory scanner
 └── registry/
     └── agents/             # Agent definition TOML files (codex.toml, claude.toml, etc.)
