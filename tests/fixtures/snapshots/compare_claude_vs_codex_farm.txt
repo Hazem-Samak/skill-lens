@@ -1,0 +1,16 @@
+╭────── Skill Lens: Compare claude vs codex ───────╮
+│ A: Claude Code (claude)  B: OpenAI Codex (codex) │
+│ Shared: 5  Diverged: 0  A only: 0  B only: 2     │
+╰──────────────────────────────────────────────────╯
+
+┏━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Skill Name ┃ Relation ┃ Path A                   ┃ Path B                                      ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ alpha      │ shared   │ ~/.claude/skills/alpha   │ ~/.agents/skills/alpha                      │
+│ beta       │ shared   │ ~/.claude/skills/beta    │ ~/.agents/skills/beta                       │
+│ delta      │ shared   │ ~/.claude/skills/delta   │ ~/.agents/skills/delta                      │
+│ epsilon    │ shared   │ ~/.claude/skills/epsilon │ ~/.agents/skills/epsilon                    │
+│ gamma      │ shared   │ ~/.claude/skills/gamma   │ ~/.agents/skills/gamma                      │
+│ omega      │ B only   │ -                        │ ~/.codex/skills/.system/omega               │
+│ plugskill  │ B only   │ -                        │ ~/.codex/.tmp/plugins/plug/skills/plugskill │
+└────────────┴──────────┴──────────────────────────┴─────────────────────────────────────────────┘

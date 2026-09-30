@@ -78,10 +78,10 @@ each agent actually resolves skills.
 | `skill-lens why <skill> --agent <id>` | Explain why a skill resolves the way it does. |
 | `skill-lens agents` | List known agents, their collision policy and evidence. |
 | `skill-lens diff <skill>` | Unified diff of diverging variants of one skill. |
-| `skill-lens compare --agent A --agent B` | *Phase 4* — compare two agents' capability surfaces. |
-| `skill-lens doctor` | *Phase 4* — hygiene checks: broken links, bad frontmatter, budget warnings. |
+| `skill-lens compare --agent A --agent B` | Compare two agents' capability surfaces: shared, diverged, or one-sided. |
+| `skill-lens doctor` | Hygiene checks: broken links, bad frontmatter, budget warnings, permission blocks. |
 
-The first four are built and tested; `compare` and `doctor` arrive in Phase 4.
+All six commands are built and tested.
 
 Every command accepts `--json`.
 
@@ -114,10 +114,12 @@ proceeds by phase:
   render snapshots for `scan`, `why` and `diff` — ✅ **reviewed and corrected**: all 4
   findings in [`PHASE3_FINDINGS.md`](./PHASE3_FINDINGS.md) (D-01 … D-04) are fixed and
   each is guarded by a regression test
-- [ ] **Phase 4** — `doctor`, multi-agent `compare`, live scanner
+- [x] **Phase 4** — `doctor` hygiene checks, multi-agent `compare`, and the live
+  discovery adapter — pinned by golden `doctor_*.json` / `compare_*.json` fixtures,
+  render snapshots, and a live smoke test that runs with the sandbox off
 - [ ] **Phase 5** — packaging and release
 
-Current gate: **355 tests pass**, `ruff check .` clean, `ruff format --check .` clean.
+Current gate: **417 tests pass**, `ruff check .` clean, `ruff format --check .` clean.
 
 ## Development
 
@@ -136,6 +138,14 @@ layer, review the difference and regenerate them with:
 
 ```bash
 pytest tests/test_render_snapshots.py --update-snapshots
+```
+
+The Phase 4 machine-readable contracts are pinned as JSON goldens under
+`tests/fixtures/golden/phase4/`. A missing or stale golden fails the test --
+regenerate only after reading the diff, with:
+
+```bash
+pytest tests/test_phase4_gate.py --update-goldens
 ```
 
 All tests run against synthetic fixtures under temporary directories. The test

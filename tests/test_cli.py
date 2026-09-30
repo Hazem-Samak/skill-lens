@@ -323,3 +323,102 @@ def test_diff_refuses_a_cwd_outside_the_sandbox(mock_home: Path, tmp_path: Path)
     )
     assert result.exit_code != 0
     assert "sandbox" in (result.stdout + result.stderr).lower()
+
+
+# --- Phase 4: doctor ---------------------------------------------------------
+
+
+def test_doctor_json_is_the_model(mock_home: Path) -> None:
+    """``doctor --json`` emits exactly DoctorReport.to_dict()."""
+    _make_skill(mock_home / ".claude" / "skills" / "good", "good", "Fine.")
+    result = runner.invoke(app, ["doctor", "--sandbox", str(mock_home), "--json"])
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert set(payload) == {"home", "cwd", "findings"}
+    assert payload["home"] == str(mock_home)
+
+
+def test_doctor_exits_zero_even_with_findings(mock_home: Path) -> None:
+    """Running is success; the findings are data, not exit codes (spec rule)."""
+    broken = mock_home / ".claude" / "skills" / "broken"
+    broken.mkdir(parents=True)
+    (broken / "SKILL.md").write_text("---\nname: broken\ndescription: [\n---\n", "utf-8")
+    result = runner.invoke(app, ["doctor", "--sandbox", str(mock_home)])
+    assert result.exit_code == 0
+    assert "broken" in result.stdout
+
+
+def test_doctor_rejects_an_outside_cwd(mock_home: Path, tmp_path: Path) -> None:
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    result = runner.invoke(app, ["doctor", "--sandbox", str(mock_home), "--cwd", str(outside)])
+    assert result.exit_code != 0
+    assert "sandbox" in (result.stdout + result.stderr).lower()
+
+
+# --- Phase 4: compare --------------------------------------------------------
+
+
+def test_compare_json_is_the_model(mock_home: Path) -> None:
+    _make_skill(mock_home / ".claude" / "skills" / "solo", "solo", "One agent only.")
+    result = runner.invoke(
+        app,
+        ["compare", "--agent", "claude", "--agent", "codex", "--sandbox", str(mock_home), "--json"],
+    )
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert payload["agent_a"] == "claude"
+    assert payload["agent_b"] == "codex"
+    entry = next(e for e in payload["entries"] if e["name"] == "solo")
+    assert entry["relation"] == "only_a"
+
+
+def test_compare_requires_exactly_two_agents(mock_home: Path) -> None:
+    one = runner.invoke(app, ["compare", "--agent", "claude", "--sandbox", str(mock_home)])
+    assert one.exit_code == 2
+    assert "--agent" in (one.stdout + one.stderr)
+    three = runner.invoke(
+        app,
+        [
+            "compare",
+            "--agent",
+            "claude",
+            "--agent",
+            "codex",
+            "--agent",
+            "pi",
+            "--sandbox",
+            str(mock_home),
+        ],
+    )
+    assert three.exit_code == 2
+    zero = runner.invoke(app, ["compare", "--sandbox", str(mock_home)])
+    assert zero.exit_code == 2
+
+
+def test_compare_unknown_agent_exits_2(mock_home: Path) -> None:
+    result = runner.invoke(
+        app, ["compare", "--agent", "claude", "--agent", "nope", "--sandbox", str(mock_home)]
+    )
+    assert result.exit_code == 2
+    assert "unknown agent 'nope'" in (result.stdout + result.stderr)
+    assert "Known agents:" in (result.stdout + result.stderr)
+
+
+def test_compare_human_output_names_the_agents(mock_home: Path) -> None:
+    library = mock_home / ".agents" / "skills" / "shared"
+    _make_skill(library, "shared", "Shared library.")
+    from tests.fixtures.builders import relative_symlink
+
+    relative_symlink(library, mock_home / ".claude" / "skills" / "shared")
+    result = runner.invoke(
+        app, ["compare", "--agent", "claude", "--agent", "codex", "--sandbox", str(mock_home)]
+    )
+    assert result.exit_code == 0
+    assert "shared" in result.stdout
+
+
+def test_help_lists_the_phase4_commands() -> None:
+    result = runner.invoke(app, ["--help"])
+    assert "doctor" in result.stdout
+    assert "compare" in result.stdout

@@ -1,0 +1,8 @@
+╭─ Skill Lens: Doctor ─╮
+│ Home: ~              │
+│ Cwd: ~               │
+│ No problems found.   │
+╰──────────────────────╯
+
+i No installer lockfile at '~/.agents/.skill-lock.json' (normal if you never ran one). 
+~/.agents/.skill-lock.json (missing)

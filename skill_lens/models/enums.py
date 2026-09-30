@@ -73,3 +73,12 @@ class Severity(StrEnum):
     ERROR = "error"
     WARNING = "warning"
     INFO = "info"
+
+
+class CompareRelation(StrEnum):
+    """How one skill name sits between two agents (``skill-lens compare``)."""
+
+    SHARED = "shared"
+    DIVERGED = "diverged"
+    ONLY_A = "only_a"
+    ONLY_B = "only_b"

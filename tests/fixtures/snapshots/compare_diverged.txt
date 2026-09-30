@@ -1,0 +1,12 @@
+╭────── Skill Lens: Compare claude vs codex ───────╮
+│ A: Claude Code (claude)  B: OpenAI Codex (codex) │
+│ Shared: 0  Diverged: 1  A only: 0  B only: 0     │
+╰──────────────────────────────────────────────────╯
+
+┏━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Skill Name ┃ Relation ┃ Path A                  ┃ Path B                 ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ deploy     │ diverged │ ~/.claude/skills/deploy │ ~/.codex/skills/deploy │
+└────────────┴──────────┴─────────────────────────┴────────────────────────┘
+Note: names where claude and codex read different copies: 'deploy'. Run 'skill-lens diff <name>' to 
+see the text differences.

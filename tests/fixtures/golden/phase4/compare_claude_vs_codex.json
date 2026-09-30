@@ -1,0 +1,67 @@
+{
+  "agent_a": "claude",
+  "agent_a_name": "Claude Code",
+  "agent_b": "codex",
+  "agent_b_name": "OpenAI Codex",
+  "cwd": ".",
+  "entries": [
+    {
+      "canonical_a": ".agents/skills/alpha",
+      "canonical_b": ".agents/skills/alpha",
+      "name": "alpha",
+      "path_a": ".claude/skills/alpha",
+      "path_b": ".agents/skills/alpha",
+      "relation": "shared"
+    },
+    {
+      "canonical_a": ".agents/skills/beta",
+      "canonical_b": ".agents/skills/beta",
+      "name": "beta",
+      "path_a": ".claude/skills/beta",
+      "path_b": ".agents/skills/beta",
+      "relation": "shared"
+    },
+    {
+      "canonical_a": ".agents/skills/delta",
+      "canonical_b": ".agents/skills/delta",
+      "name": "delta",
+      "path_a": ".claude/skills/delta",
+      "path_b": ".agents/skills/delta",
+      "relation": "shared"
+    },
+    {
+      "canonical_a": ".agents/skills/epsilon",
+      "canonical_b": ".agents/skills/epsilon",
+      "name": "epsilon",
+      "path_a": ".claude/skills/epsilon",
+      "path_b": ".agents/skills/epsilon",
+      "relation": "shared"
+    },
+    {
+      "canonical_a": ".agents/skills/gamma",
+      "canonical_b": ".agents/skills/gamma",
+      "name": "gamma",
+      "path_a": ".claude/skills/gamma",
+      "path_b": ".agents/skills/gamma",
+      "relation": "shared"
+    },
+    {
+      "canonical_a": null,
+      "canonical_b": ".codex/skills/.system/omega",
+      "name": "omega",
+      "path_a": null,
+      "path_b": ".codex/skills/.system/omega",
+      "relation": "only_b"
+    },
+    {
+      "canonical_a": null,
+      "canonical_b": ".codex/.tmp/plugins/plug/skills/plugskill",
+      "name": "plugskill",
+      "path_a": null,
+      "path_b": ".codex/.tmp/plugins/plug/skills/plugskill",
+      "relation": "only_b"
+    }
+  ],
+  "home": ".",
+  "notes": []
+}

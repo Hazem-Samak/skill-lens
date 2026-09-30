@@ -1,0 +1,10 @@
+╭─────── Skill Lens: Doctor ────────╮
+│ Home: ~                           │
+│ Cwd: ~                            │
+│ 1 error(s), 0 warning(s), 1 info. │
+╰───────────────────────────────────╯
+
+✗ '~/.claude/skills/[bold evil]' links to a target that does not exist -- claude cannot load '[bold 
+evil]'. ~/.claude/skills/[bold evil] (dangling_symlink)
+i No installer lockfile at '~/.agents/.skill-lock.json' (normal if you never ran one). 
+~/.agents/.skill-lock.json (missing)

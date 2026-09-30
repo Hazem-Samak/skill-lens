@@ -1,0 +1,6 @@
+╭────── Skill Lens: Compare claude vs codex ───────╮
+│ A: Claude Code (claude)  B: OpenAI Codex (codex) │
+│ Shared: 0  Diverged: 0  A only: 0  B only: 0     │
+╰──────────────────────────────────────────────────╯
+
+Neither agent has any skills installed.

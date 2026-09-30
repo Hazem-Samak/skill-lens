@@ -1,0 +1,24 @@
+{
+  "cwd": ".",
+  "findings": [
+    {
+      "code": "installer_lockfile",
+      "detail": "missing",
+      "evidence": "empirical",
+      "message": "No installer lockfile at '~/.agents/.skill-lock.json' (normal if you never ran one).",
+      "path": ".agents/.skill-lock.json",
+      "rule_id": "doctor_installer_lockfile",
+      "severity": "info"
+    },
+    {
+      "code": "symlink_farm",
+      "detail": "library=~/.agents/skills",
+      "evidence": "empirical",
+      "message": "5 skills are shared through symlink farms (15 links point into one library) -- that is the installer's normal layout, not a defect.",
+      "path": null,
+      "rule_id": "doctor_symlink_farm",
+      "severity": "info"
+    }
+  ],
+  "home": "."
+}

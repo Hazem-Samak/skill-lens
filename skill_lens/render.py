@@ -19,8 +19,10 @@ from rich.text import Text
 from skill_lens.core import paths
 from skill_lens.core.resolver import ResolutionReport
 from skill_lens.core.scanner import ScanReport
+from skill_lens.models.compare import CompareReport
 from skill_lens.models.diff import DiffCopy, DiffFile, DiffReport
-from skill_lens.models.enums import HeadlineState, Scope
+from skill_lens.models.doctor import DoctorReport
+from skill_lens.models.enums import CompareRelation, HeadlineState, Scope, Severity
 from skill_lens.models.parsing import (
     ERR_DANGLING_SYMLINK,
     ERR_PERMISSION_DENIED,
@@ -365,3 +367,98 @@ def render_diff(report: DiffReport, console: Console | None = None) -> None:
         )
     if show_notes:
         _print_notes(report, console)
+
+
+_SEVERITY_STYLE = {
+    Severity.ERROR: "red",
+    Severity.WARNING: "yellow",
+    Severity.INFO: "dim",
+}
+
+_SEVERITY_MARK = {
+    Severity.ERROR: "✗",
+    Severity.WARNING: "!",
+    Severity.INFO: "i",
+}
+
+_RELATION_LABEL = {
+    CompareRelation.SHARED: ("shared", "green"),
+    CompareRelation.DIVERGED: ("diverged", "yellow"),
+    CompareRelation.ONLY_A: ("A only", "cyan"),
+    CompareRelation.ONLY_B: ("B only", "magenta"),
+}
+
+
+def render_doctor(report: DoctorReport, console: Console | None = None) -> None:
+    """Render a doctor report: one line per finding, sorted by severity.
+
+    Formatting only -- the model already sorted findings and phrased every
+    message; this chooses colours and marks.
+    """
+    console = console or Console()
+    counts = report.counts_by_severity()
+    verdict = (
+        "No problems found."
+        if report.healthy
+        else (f"{counts['error']} error(s), {counts['warning']} warning(s), {counts['info']} info.")
+    )
+    header = (
+        f"[bold]Home:[/bold] {escape(paths.display(report.home))}\n"
+        f"[bold]Cwd:[/bold] {escape(paths.display(report.cwd))}\n"
+        f"[bold]{escape(verdict)}[/bold]"
+    )
+    console.print(Panel(header, title="Skill Lens: Doctor", expand=False))
+    console.print()
+
+    if not report.findings:
+        console.print("[green]Skill folders look healthy.[/green]")
+    for finding in report.findings:
+        style = _SEVERITY_STYLE[finding.severity]
+        mark = _SEVERITY_MARK[finding.severity]
+        location = f" [dim]{escape(finding.path)}[/dim]" if finding.path else ""
+        detail = f" [dim]({escape(finding.detail)})[/dim]" if finding.detail else ""
+        console.print(f"[{style}]{mark}[/] {escape(finding.message)}{location}{detail}")
+
+
+def render_compare(report: CompareReport, console: Console | None = None) -> None:
+    """Render a pairwise capability comparison as a table grouped by relation."""
+    console = console or Console()
+    counts = report.counts_by_relation()
+    header = (
+        f"[bold]A:[/bold] {escape(report.agent_a_name)} ({escape(report.agent_a)})  "
+        f"[bold]B:[/bold] {escape(report.agent_b_name)} ({escape(report.agent_b)})\n"
+        f"[bold]Shared:[/bold] {counts['shared']}  "
+        f"[bold]Diverged:[/bold] {counts['diverged']}  "
+        f"[bold]A only:[/bold] {counts['only_a']}  "
+        f"[bold]B only:[/bold] {counts['only_b']}"
+    )
+    console.print(
+        Panel(
+            header,
+            title=(f"Skill Lens: Compare {escape(report.agent_a)} vs {escape(report.agent_b)}"),
+            expand=False,
+        )
+    )
+    console.print()
+
+    if not report.entries:
+        console.print("[dim]Neither agent has any skills installed.[/dim]")
+        return
+
+    table = Table(show_header=True, header_style="bold")
+    table.add_column("Skill Name")
+    table.add_column("Relation")
+    table.add_column("Path A", overflow="fold")
+    table.add_column("Path B", overflow="fold")
+    for entry in report.entries:
+        label, style = _RELATION_LABEL[entry.relation]
+        table.add_row(
+            escape(entry.name),
+            f"[{style}]{label}[/]",
+            escape(_short(entry.path_a)) if entry.path_a else "-",
+            escape(_short(entry.path_b)) if entry.path_b else "-",
+        )
+    console.print(table)
+
+    for note in report.notes:
+        console.print(f"[yellow]Note:[/yellow] {escape(note)}")

@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from skill_lens.models.compare import CompareEntry, CompareReport
 from skill_lens.models.diff import (
     DiffChange,
     DiffCopy,
@@ -16,9 +17,10 @@ from skill_lens.models.diff import (
     DiffHunk,
     DiffReport,
 )
-from skill_lens.models.doctor import DoctorFinding
+from skill_lens.models.doctor import DoctorFinding, DoctorReport
 from skill_lens.models.enums import (
     Collision,
+    CompareRelation,
     Evidence,
     HeadlineState,
     ParseStatus,
@@ -39,12 +41,16 @@ __all__ = [
     "CanonicalResult",
     "CanonicalStatus",
     "Collision",
+    "CompareEntry",
+    "CompareRelation",
+    "CompareReport",
     "DiffChange",
     "DiffCopy",
     "DiffFile",
     "DiffHunk",
     "DiffReport",
     "DoctorFinding",
+    "DoctorReport",
     "Evidence",
     "HeadlineState",
     "ParseResult",

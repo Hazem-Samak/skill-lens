@@ -64,8 +64,8 @@ The developer driving you has zero coding experience and is vibe-coding this pro
 ```text
 skill_lens/
 ├── __init__.py
-├── cli.py                  # Typer commands (scan, why, agents, diff)
-├── render.py               # All Rich layout (scan, why, diff, agents table)
+├── cli.py                  # Typer commands (scan, why, agents, diff, doctor, compare)
+├── render.py               # All Rich layout (scan, why, diff, agents, doctor, compare)
 ├── models/                 # Frozen dataclasses (SkillInstallation, DiffReport, ...)
 ├── core/
 │   ├── paths.py            # Lazy environment & path resolution
@@ -76,7 +76,8 @@ skill_lens/
 │   ├── scanner.py          # Inventory view over one discovery pass
 │   ├── diff.py             # Unified diff computation (pure; no Rich)
 │   ├── doctor.py           # Phase 4: diagnostics & hygiene checks
-│   └── system.py           # Phase 4: TCC-resilient live directory scanner
+│   ├── compare.py          # Phase 4: pairwise capability comparison (pure; no Rich)
+│   └── system.py           # Phase 4: TCC-resilient live discovery adapter
 └── registry/
     ├── loader.py           # TOML agent-definition loader
     └── agents/             # Agent definition TOML files (codex.toml, claude.toml, ...)

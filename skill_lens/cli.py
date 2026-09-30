@@ -1,7 +1,8 @@
 """Skill Lens command-line interface.
 
-Line-oriented Typer commands. Every command supports ``--json`` and returns
-machine-readable output; the Rich layer is presentation only.
+Line-oriented Typer commands (scan, why, agents, diff, doctor, compare).
+Every command supports ``--json`` and returns machine-readable output; the
+Rich layer is presentation only.
 """
 
 from __future__ import annotations
@@ -14,13 +15,22 @@ from rich.console import Console
 
 from skill_lens import __version__
 from skill_lens.core import paths
+from skill_lens.core.compare import run_compare
 from skill_lens.core.diff import build_diff_report
 from skill_lens.core.discovery import normalize_cwd
+from skill_lens.core.doctor import run_doctor
 from skill_lens.core.resolver import resolve_skill
 from skill_lens.core.scanner import build_scan_report
 from skill_lens.models import dumps
 from skill_lens.registry.loader import list_agents
-from skill_lens.render import render_agents, render_diff, render_scan, render_why
+from skill_lens.render import (
+    render_agents,
+    render_compare,
+    render_diff,
+    render_doctor,
+    render_scan,
+    render_why,
+)
 
 app = typer.Typer(
     name="skill-lens",
@@ -216,6 +226,76 @@ def diff(
         _emit_json(report.to_dict())
         return
     render_diff(report, console)
+
+
+@app.command()
+def doctor(
+    sandbox: Annotated[
+        Path | None,
+        typer.Option("--sandbox", help="Treat this directory as a mock $HOME."),
+    ] = None,
+    cwd: Annotated[
+        Path | None,
+        typer.Option("--cwd", help=_CWD_HELP),
+    ] = None,
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Emit machine-readable JSON."),
+    ] = False,
+) -> None:
+    """Check skill hygiene: broken links, bad frontmatter, budget risks."""
+    _apply_sandbox(sandbox)
+    home = _effective_home()
+    working_dir = _effective_cwd(cwd, sandbox)
+    if sandbox is not None:
+        _assert_inside_sandbox(working_dir, home)
+    # The CLI goes through the live adapter (system.py) so the OSError-
+    # guarded bridge is the production path, not a test-only helper.
+    report = run_doctor(cwd=working_dir)
+    if as_json:
+        _emit_json(report.to_dict())
+        return
+    render_doctor(report, console)
+
+
+@app.command()
+def compare(
+    agents: Annotated[
+        list[str],
+        typer.Option("--agent", help="Agent id to compare. Pass exactly two."),
+    ],
+    sandbox: Annotated[
+        Path | None,
+        typer.Option("--sandbox", help="Treat this directory as a mock $HOME."),
+    ] = None,
+    cwd: Annotated[
+        Path | None,
+        typer.Option("--cwd", help=_CWD_HELP),
+    ] = None,
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Emit machine-readable JSON."),
+    ] = False,
+) -> None:
+    """Compare which skills two agents can reach: shared, diverged, one-sided."""
+    if len(agents) != 2:
+        raise typer.BadParameter(
+            f"pass --agent exactly twice (two agents to compare); got {len(agents)}."
+        )
+    _apply_sandbox(sandbox)
+    home = _effective_home()
+    working_dir = _effective_cwd(cwd, sandbox)
+    if sandbox is not None:
+        _assert_inside_sandbox(working_dir, home)
+    try:
+        report = run_compare(agents[0], agents[1], cwd=working_dir)
+    except KeyError as exc:
+        error_console.print(f"[red]Error:[/red] {exc.args[0]}")
+        raise typer.Exit(code=2) from None
+    if as_json:
+        _emit_json(report.to_dict())
+        return
+    render_compare(report, console)
 
 
 if __name__ == "__main__":  # pragma: no cover

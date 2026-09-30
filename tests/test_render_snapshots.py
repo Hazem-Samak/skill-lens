@@ -16,6 +16,7 @@ content, so a snapshot can never smuggle in the path of whoever generated it.
 
 from __future__ import annotations
 
+import os
 from collections.abc import Callable
 from pathlib import Path
 
@@ -23,11 +24,20 @@ import pytest
 from rich.console import Console
 
 import skill_lens.core.diff as diff_module
+from skill_lens.core.compare import build_compare_report
 from skill_lens.core.diff import build_diff_report
+from skill_lens.core.doctor import build_doctor_report
 from skill_lens.core.resolver import resolve_skill
 from skill_lens.core.scanner import build_scan_report
-from skill_lens.render import render_diff, render_scan, render_why
+from skill_lens.render import (
+    render_compare,
+    render_diff,
+    render_doctor,
+    render_scan,
+    render_why,
+)
 from tests.fixtures.builders import make_skill
+from tests.fixtures.farm import build_acceptance_farm
 from tests.fixtures.scenarios import build_scenario
 
 SNAPSHOT_DIR = Path(__file__).parent / "fixtures" / "snapshots"
@@ -271,3 +281,96 @@ def test_diff_snapshot_keeps_markup_in_content_literal(
     )
     assert "[bold red]PWNED[/]" in rendered
     assert "[link=http://example.test]click[/link]" in rendered
+
+
+# --- Phase 4: doctor ---------------------------------------------------------
+
+
+def test_doctor_snapshot_healthy(mock_home: Path, update_snapshots: bool) -> None:
+    home = mock_home.resolve()
+    make_skill(home / ".claude" / "skills" / "good", "good", "Fine.")
+    _check(
+        "doctor_healthy",
+        update_snapshots,
+        lambda: _render(render_doctor, build_doctor_report(home, home)),
+        home,
+    )
+
+
+def test_doctor_snapshot_findings(mock_home: Path, update_snapshots: bool) -> None:
+    """One of each severity, in the order the model sorts them."""
+    home = mock_home.resolve()
+    # error: a dangling symlink
+    link = home / ".claude" / "skills" / "ghost"
+    link.parent.mkdir(parents=True)
+    os.symlink(home / "gone", link, target_is_directory=True)
+    # error: malformed frontmatter
+    broken = home / ".claude" / "skills" / "broken"
+    broken.mkdir(parents=True)
+    (broken / "SKILL.md").write_text("---\nname: broken\ndescription: [\n---\n", encoding="utf-8")
+    # info: the missing lockfile is always there
+    _check(
+        "doctor_findings",
+        update_snapshots,
+        lambda: _render(render_doctor, build_doctor_report(home, home)),
+        home,
+    )
+
+
+def test_doctor_snapshot_escapes_skill_text(mock_home: Path, update_snapshots: bool) -> None:
+    """A skill name can never inject Rich markup into the report.
+
+    The name contains Rich markup (``[bold evil]`` -- no slash, so it stays one
+    directory name). If Rich had interpreted the tags they would be *consumed*,
+    so their literal presence in the rendered text is the proof they were not.
+    """
+    home = mock_home.resolve()
+    skills = home / ".claude" / "skills"
+    skills.mkdir(parents=True)
+    os.symlink(home / "gone", skills / "[bold evil]", target_is_directory=True)
+    rendered = _check(
+        "doctor_markup_is_literal",
+        update_snapshots,
+        lambda: _render(render_doctor, build_doctor_report(home, home)),
+        home,
+    )
+    assert "[bold evil]" in rendered
+
+
+# --- Phase 4: compare --------------------------------------------------------
+
+
+def test_compare_snapshot_farm(mock_home: Path, update_snapshots: bool) -> None:
+    """The acceptance farm: five shared copies plus codex-only extras."""
+    home = mock_home.resolve()
+    build_acceptance_farm(mock_home)
+    _check(
+        "compare_claude_vs_codex_farm",
+        update_snapshots,
+        lambda: _render(render_compare, build_compare_report("claude", "codex", home, home)),
+        home,
+    )
+
+
+def test_compare_snapshot_diverged_note(mock_home: Path, update_snapshots: bool) -> None:
+    """Two same-named files must show as diverged with the follow-up note."""
+    home = mock_home.resolve()
+    make_skill(home / ".claude" / "skills" / "deploy", "deploy", "Claude copy.")
+    make_skill(home / ".codex" / "skills" / "deploy", "deploy", "Codex copy.")
+    rendered = _check(
+        "compare_diverged",
+        update_snapshots,
+        lambda: _render(render_compare, build_compare_report("claude", "codex", home, home)),
+        home,
+    )
+    assert "skill-lens diff" in rendered
+
+
+def test_compare_snapshot_empty(mock_home: Path, update_snapshots: bool) -> None:
+    home = mock_home.resolve()
+    _check(
+        "compare_empty",
+        update_snapshots,
+        lambda: _render(render_compare, build_compare_report("claude", "codex", home, home)),
+        home,
+    )

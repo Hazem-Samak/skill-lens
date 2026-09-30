@@ -30,12 +30,24 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=False,
         help="Rewrite the plain-text render snapshots instead of comparing them.",
     )
+    parser.addoption(
+        "--update-goldens",
+        action="store_true",
+        default=False,
+        help="Rewrite the Phase 4 JSON goldens instead of comparing them.",
+    )
 
 
 @pytest.fixture
 def update_snapshots(request: pytest.FixtureRequest) -> bool:
     """True when ``--update-snapshots`` was passed."""
     return bool(request.config.getoption("--update-snapshots"))
+
+
+@pytest.fixture
+def update_goldens(request: pytest.FixtureRequest) -> bool:
+    """True when ``--update-goldens`` was passed."""
+    return bool(request.config.getoption("--update-goldens"))
 
 
 @pytest.fixture
