@@ -56,7 +56,13 @@ class RootHit:
 
 @dataclass(frozen=True, slots=True)
 class DiscoveredEntry:
-    """A single entrypoint on disk plus everything known about it."""
+    """A single entrypoint on disk plus everything known about it.
+
+    ``entrypoint_path`` is the primary (first-seen) path. When several
+    entrypoints share one canonical target -- a symlink farm -- every path is
+    kept in ``entrypoint_paths`` so counts reflect reality rather than the
+    number of (agent, root) pairs that happen to reach it.
+    """
 
     entrypoint_path: str
     name: str
@@ -66,6 +72,7 @@ class DiscoveredEntry:
     parse: ParseResult | None
     content_hash: str | None
     hits: tuple[RootHit, ...] = ()
+    entrypoint_paths: tuple[str, ...] = ()
 
     @property
     def canonical_path(self) -> str | None:
@@ -328,6 +335,7 @@ def _build_entry(entrypoint: Path, is_file: bool, hit: RootHit) -> DiscoveredEnt
         parse=parse,
         content_hash=content_hash,
         hits=(hit,),
+        entrypoint_paths=(str(entrypoint),),
     )
 
 
@@ -366,8 +374,24 @@ def _merge_entries(entries: list[DiscoveredEntry]) -> list[DiscoveredEntry]:
             parse=existing.parse or entry.parse,
             content_hash=existing.content_hash or entry.content_hash,
             hits=hits,
+            entrypoint_paths=_union_paths(existing.entrypoint_paths, entry.entrypoint_paths),
         )
     return [merged[key] for key in order]
+
+
+def _union_paths(current: tuple[str, ...], incoming: tuple[str, ...]) -> tuple[str, ...]:
+    """Concatenate entrypoint paths, keeping order and dropping duplicates.
+
+    Several agent roots can reach the same physical path, so the same path may
+    arrive more than once; counting it twice would inflate the metrics.
+    """
+    seen: set[str] = set()
+    merged: list[str] = []
+    for path in (*current, *incoming):
+        if path not in seen:
+            seen.add(path)
+            merged.append(path)
+    return tuple(merged)
 
 
 def _union_hits(current: tuple[RootHit, ...], incoming: tuple[RootHit, ...]) -> tuple[RootHit, ...]:

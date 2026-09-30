@@ -113,8 +113,15 @@ def _agents_of(entry: DiscoveredEntry) -> tuple[str, ...]:
     return tuple(sorted({hit.agent_id for hit in entry.hits}))
 
 
-def _symlink_entrypoints(entry: DiscoveredEntry) -> int:
-    return sum(1 for hit in entry.hits if entry.is_symlink) or 0
+def _symlink_entrypoint_count(entry: DiscoveredEntry) -> int:
+    """Count the entrypoint paths that are genuinely symlinks on disk.
+
+    Counting (agent, root) hits instead would inflate the number, because a
+    single real path is reached by several agent roots.
+    """
+    return sum(
+        1 for path in entry.entrypoint_paths or (entry.entrypoint_path,) if Path(path).is_symlink()
+    )
 
 
 def build_scan_report(
@@ -137,7 +144,7 @@ def build_scan_report(
                 canonical_path=entry.canonical_path or entry.entrypoint_path,
                 parse_status=entry.parse_status,
                 agents=_agents_of(entry),
-                entrypoint_count=len(entry.hits),
+                entrypoint_count=len(entry.entrypoint_paths) or len(entry.hits),
                 is_symlink=entry.is_symlink,
                 content_hash=entry.content_hash,
                 description=entry.parse.description if entry.parse else None,
@@ -157,9 +164,7 @@ def build_scan_report(
         system_skills=counts[Scope.SYSTEM],
         plugin_skills=counts[Scope.PLUGIN],
         canonical_skill_count=len(skills),
-        symlink_entrypoints=sum(
-            1 for entry in discovery.entries for hit in entry.hits if entry.is_symlink
-        ),
+        symlink_entrypoints=sum(_symlink_entrypoint_count(entry) for entry in discovery.entries),
     )
     unreadable = tuple(
         {

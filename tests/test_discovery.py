@@ -45,6 +45,22 @@ def test_symlink_farm_merges_to_one_entry(mock_home: Path) -> None:
     assert len(shared) == 1
     agents = {hit.agent_id for hit in shared[0].hits}
     assert {"claude", "pi", "qoder"} <= agents
+    # All reaching entrypoint paths are retained for accurate counting.
+    assert len(shared[0].entrypoint_paths) == 4
+
+
+def test_symlink_entrypoint_count_counts_paths_not_hits(mock_home: Path) -> None:
+    """Regression: the count must equal real symlinks, not (agent, root) hits.
+
+    Several agent roots reach the same physical path, so counting hits
+    inflated the number. Assert the reported count equals the symlinks on disk.
+    """
+    from skill_lens.core.scanner import build_scan_report
+
+    build_scenario("symlink_farm_multi_agent", mock_home)
+    report = build_scan_report(mock_home, mock_home)
+    actual = sum(1 for path in mock_home.rglob("*") if path.is_symlink())
+    assert report.summary.symlink_entrypoints == actual
 
 
 def test_cycle_entry_has_error_code(mock_home: Path) -> None:
