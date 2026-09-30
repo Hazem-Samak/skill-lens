@@ -1,0 +1,22 @@
+╭─────────────── Diff: 'broken' ────────────────╮
+│ Copies: 2                                     │
+│ Baseline: ~/.claude/skills/broken (Variant A) │
+╰───────────────────────────────────────────────╯
+
+= ~/.claude/skills/broken [Variant A] (user, valid)  baseline (no diff shown)
+  Reference copy; every diff below is against it.
+
+* ~/.agents/skills/broken (user, missing_description)  1 file(s) differ
+  SKILL.md modified
+--- SKILL.md
++++ SKILL.md
+@@ -1,7 +1,4 @@
+ ---
+ name: broken
+-description: Valid copy.
+ ---
+-# Instructions
+-
+-Good body.
++# Body without a description.
+

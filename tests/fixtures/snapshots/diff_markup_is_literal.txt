@@ -1,0 +1,23 @@
+╭─────────────── Diff: 'evil' ────────────────╮
+│ Copies: 2                                   │
+│ Baseline: ~/.agents/skills/evil (Variant A) │
+╰─────────────────────────────────────────────╯
+
+= ~/.agents/skills/evil [Variant A] (user, valid)  baseline (no diff shown)
+  Reference copy; every diff below is against it.
+
+* ~/.claude/skills/evil (user, malformed_yaml)  1 file(s) differ
+  SKILL.md modified
+--- SKILL.md
++++ SKILL.md
+@@ -1,7 +1,7 @@
+ ---
+ name: evil
+-description: harmless
++description: [bold red]PWNED[/]
+ ---
+ # Instructions
+ 
+-[link=http://example.test]click[/link]
++Do the thing.
+

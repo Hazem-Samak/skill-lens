@@ -22,9 +22,9 @@ from skill_lens.core.discovery import (
     DiscoveredEntry,
     DiscoveryIndex,
     RootHit,
+    canonical_key,
     discover,
-    entry_scope,
-    variant_labels,
+    labels_for_entries,
 )
 from skill_lens.models.enums import (
     Collision,
@@ -503,36 +503,21 @@ def _assign_variant_labels(candidates: list[Candidate]) -> dict[int, str]:
     """Label differing copies of one name as Variant A / B / C.
 
     Delegates to the shared rule in :mod:`skill_lens.core.discovery` so that
-    ``why`` and ``scan`` can never disagree about a copy's label. Ordering is
-    by scope specificity (project before user), then discovery order -- *not*
-    by this agent's rank, because ``scan`` has no agent to rank with. Which
-    copy actually wins is reported by the candidate's ``state``, not by its
-    letter.
+    ``why``, ``scan`` and ``diff`` can never disagree about a copy's label.
+    Ordering is by scope specificity (project before user), then discovery
+    order -- *not* by this agent's rank, because ``scan`` has no agent to rank
+    with. Which copy actually wins is reported by the candidate's ``state``, not
+    by its letter.
     """
-    by_name: dict[str, list[tuple[str, str, str | None, Scope, int]]] = {}
+    labels_by_key = labels_for_entries(candidate.entry for candidate in candidates)
+    position_by_key: dict[str, int] = {}
     for position, candidate in enumerate(candidates):
-        if not _is_valid(candidate.entry) or candidate.entry.content_hash is None:
-            continue
-        key = candidate.entry.canonical_path or candidate.entry.entrypoint_path
-        by_name.setdefault(candidate.entry.name, []).append(
-            (
-                candidate.entry.name,
-                key,
-                candidate.entry.content_hash,
-                entry_scope(candidate.entry),
-                position,
-            )
-        )
-    keys: dict[str, int] = {}
-    for position, candidate in enumerate(candidates):
-        key = candidate.entry.canonical_path or candidate.entry.entrypoint_path
-        keys.setdefault(key, position)
-
-    labels: dict[int, str] = {}
-    for items in by_name.values():
-        for key, label in variant_labels(items).items():
-            labels[keys[key]] = label
-    return labels
+        position_by_key.setdefault(canonical_key(candidate.entry), position)
+    return {
+        position_by_key[key]: label
+        for key, label in labels_by_key.items()
+        if key in position_by_key
+    }
 
 
 def _sort_resolutions(resolutions: list[CandidateResolution]) -> list[CandidateResolution]:

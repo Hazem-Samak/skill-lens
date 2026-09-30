@@ -16,6 +16,28 @@ from skill_lens.core import paths
 from tests.fixtures.scenarios import build_scenario
 
 
+def pytest_addoption(parser: pytest.Parser) -> None:
+    """Add the documented in-repo switch for regenerating render snapshots.
+
+    Snapshots are plain text, so regenerating them needs no new dependency --
+    only this flag::
+
+        pytest tests/test_render_snapshots.py --update-snapshots
+    """
+    parser.addoption(
+        "--update-snapshots",
+        action="store_true",
+        default=False,
+        help="Rewrite the plain-text render snapshots instead of comparing them.",
+    )
+
+
+@pytest.fixture
+def update_snapshots(request: pytest.FixtureRequest) -> bool:
+    """True when ``--update-snapshots`` was passed."""
+    return bool(request.config.getoption("--update-snapshots"))
+
+
 @pytest.fixture
 def mock_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]:
     """A throwaway home directory wired into the environment variables.

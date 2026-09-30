@@ -1,0 +1,31 @@
+╭─────────────── Diff: 'long' ────────────────╮
+│ Copies: 2                                   │
+│ Baseline: ~/.claude/skills/long (Variant A) │
+╰─────────────────────────────────────────────╯
+
+= ~/.claude/skills/long [Variant A] (user, valid)  baseline (no diff shown)
+  Reference copy; every diff below is against it.
+
+* ~/.agents/skills/long [Variant B] (user, valid)  2 file(s) differ
+  SKILL.md modified
+--- SKILL.md
++++ SKILL.md
+@@ -1,6 +1,6 @@
+ ---
+ name: long
+-description: Copy A.
++description: Copy B.
+ ---
+ # Instructions
+ 
+  body.txt modified
+--- body.txt
++++ body.txt
+@@ -1,4 +1,0 @@
+-old 0
+-old 1
+-old 2
+-old 3
+  Truncated: 36 changed lines omitted.
+
+Truncated: 272 characters of diff body were omitted to keep this report readable.

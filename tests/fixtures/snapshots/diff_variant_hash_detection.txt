@@ -1,0 +1,23 @@
+╭─────────────── Diff: 'deploy' ────────────────╮
+│ Copies: 2                                     │
+│ Baseline: ~/.claude/skills/deploy (Variant A) │
+╰───────────────────────────────────────────────╯
+
+= ~/.claude/skills/deploy [Variant A] (user, valid)  baseline (no diff shown)
+  Reference copy; every diff below is against it.
+
+* ~/.agents/skills/deploy [Variant B] (user, valid)  1 file(s) differ
+  SKILL.md modified
+--- SKILL.md
++++ SKILL.md
+@@ -1,7 +1,7 @@
+ ---
+ name: deploy
+-description: Personal deploy.
++description: Shared-library deploy.
+ ---
+ # Instructions
+ 
+-Personal body.
++Shared-library body.
+

@@ -1,0 +1,10 @@
+╭───────────── Diff: 'cycle_a' ──────────────╮
+│ Copies: 1                                  │
+│ Baseline: none (no copy passed validation) │
+╰────────────────────────────────────────────╯
+
+No differences: only one copy exists, so there is nothing to compare.
+
+x ~/.agents/skills/cycle_a (user, invalid)  cannot be read: symlink cycle
+  No content to compare (symlink cycle).
+

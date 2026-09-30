@@ -42,8 +42,26 @@ def test_scenario_never_escapes_mock_home(name: str, mock_home: Path) -> None:
 
 def test_all_scenarios_present() -> None:
     assert len(SCENARIO_NAMES) == 13
-    golden = {p.stem for p in GOLDEN_DIR.glob("*.json")}
+    # ``diff_*.json`` goldens pin the Phase 3 diff contract and are keyed by the
+    # scenario they are built on, so they are not scenario goldens themselves.
+    golden = {p.stem for p in GOLDEN_DIR.glob("*.json") if not p.stem.startswith("diff_")}
     assert golden == set(SCENARIO_NAMES)
+
+
+def test_every_diff_golden_names_a_real_scenario() -> None:
+    """A ``diff_<scenario>.json`` golden must be built on a scenario that exists.
+
+    Otherwise the golden would pin a fixture nobody can rebuild, and the diff it
+    documents could drift away from the tree it claims to describe.
+    """
+    goldens = sorted(GOLDEN_DIR.glob("diff_*.json"))
+    assert goldens, "no diff golden found"
+    for path in goldens:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        assert data["scenario"] in SCENARIO_NAMES, path.name
+        assert data["schema_version"] == 1, path.name
+        assert "diff" in data, path.name
+        assert path.stem == f"diff_{data['scenario']}", path.name
 
 
 @pytest.mark.parametrize("name", SCENARIO_NAMES)

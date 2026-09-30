@@ -14,12 +14,13 @@ from rich.console import Console
 
 from skill_lens import __version__
 from skill_lens.core import paths
+from skill_lens.core.diff import build_diff_report
 from skill_lens.core.discovery import normalize_cwd
 from skill_lens.core.resolver import resolve_skill
 from skill_lens.core.scanner import build_scan_report
 from skill_lens.models import dumps
 from skill_lens.registry.loader import list_agents
-from skill_lens.render import render_scan, render_why
+from skill_lens.render import render_agents, render_diff, render_scan, render_why
 
 app = typer.Typer(
     name="skill-lens",
@@ -185,24 +186,36 @@ def agents(
         ]
         _emit_json(payload)
         return
+    render_agents(definitions, console)
 
-    from rich.table import Table
 
-    table = Table(show_header=True, header_style="bold")
-    table.add_column("Agent")
-    table.add_column("ID")
-    table.add_column("Collision Policy")
-    table.add_column("Evidence")
-    table.add_column("Roots", justify="right")
-    for agent in definitions:
-        table.add_row(
-            agent.name,
-            agent.id,
-            agent.collision_policy,
-            agent.policy_evidence.value,
-            str(len(agent.roots)),
-        )
-    console.print(table)
+@app.command()
+def diff(
+    skill_name: Annotated[str, typer.Argument(help="Skill name whose variants to diff.")],
+    sandbox: Annotated[
+        Path | None,
+        typer.Option("--sandbox", help="Treat this directory as a mock $HOME."),
+    ] = None,
+    cwd: Annotated[
+        Path | None,
+        typer.Option("--cwd", help=_CWD_HELP),
+    ] = None,
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Emit machine-readable JSON."),
+    ] = False,
+) -> None:
+    """Unified diff between the differing variants that share one name."""
+    _apply_sandbox(sandbox)
+    home = _effective_home()
+    working_dir = _effective_cwd(cwd, sandbox)
+    if sandbox is not None:
+        _assert_inside_sandbox(working_dir, home)
+    report = build_diff_report(skill_name, working_dir, home)
+    if as_json:
+        _emit_json(report.to_dict())
+        return
+    render_diff(report, console)
 
 
 if __name__ == "__main__":  # pragma: no cover

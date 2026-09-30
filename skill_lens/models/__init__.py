@@ -9,6 +9,13 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from skill_lens.models.diff import (
+    DiffChange,
+    DiffCopy,
+    DiffFile,
+    DiffHunk,
+    DiffReport,
+)
 from skill_lens.models.doctor import DoctorFinding
 from skill_lens.models.enums import (
     Collision,
@@ -32,6 +39,11 @@ __all__ = [
     "CanonicalResult",
     "CanonicalStatus",
     "Collision",
+    "DiffChange",
+    "DiffCopy",
+    "DiffFile",
+    "DiffHunk",
+    "DiffReport",
     "DoctorFinding",
     "Evidence",
     "HeadlineState",

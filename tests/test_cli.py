@@ -28,7 +28,7 @@ def test_version() -> None:
 def test_help_lists_commands() -> None:
     result = runner.invoke(app, ["--help"])
     assert result.exit_code == 0
-    for command in ("scan", "why", "agents"):
+    for command in ("scan", "why", "agents", "diff"):
         assert command in result.stdout
 
 
@@ -255,3 +255,71 @@ def test_why_reports_a_missing_skill_clearly(mock_home: Path) -> None:
 
     human = runner.invoke(app, ["why", "nope", "--agent", "claude", "--sandbox", str(mock_home)])
     assert "No copies of this skill name" in human.stdout
+
+
+# --- diff ------------------------------------------------------------------
+
+
+def test_diff_json_is_the_model(mock_home: Path) -> None:
+    build_scenario("variant_hash_detection", mock_home)
+    result = runner.invoke(
+        app, ["diff", "deploy", "--sandbox", str(mock_home), "--cwd", str(mock_home), "--json"]
+    )
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert payload["skill_name"] == "deploy"
+    assert payload["found"] is True
+    assert payload["baseline_path"].endswith(".claude/skills/deploy")
+    assert payload["copies"][1]["variant_label"] == "B"
+    assert payload["copies"][1]["files"][0]["hunks"][0]["lines"]
+
+
+def test_diff_human_output_shows_the_unified_diff(mock_home: Path) -> None:
+    build_scenario("variant_hash_detection", mock_home)
+    result = runner.invoke(
+        app, ["diff", "deploy", "--sandbox", str(mock_home), "--cwd", str(mock_home)]
+    )
+    assert result.exit_code == 0
+    assert "Variant B" in result.stdout
+    assert "@@ -1,7 +1,7 @@" in result.stdout
+    assert "+description: Shared-library deploy." in result.stdout
+
+
+def test_diff_without_differences_exits_zero(mock_home: Path) -> None:
+    """One canonical copy is not an error (spec section 6, command 5)."""
+    build_scenario("symlink_farm_multi_agent", mock_home)
+    result = runner.invoke(
+        app, ["diff", "shared", "--sandbox", str(mock_home), "--cwd", str(mock_home), "--json"]
+    )
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert len(payload["copies"]) == 1
+    assert payload["copies"][0]["files"] == []
+
+
+def test_diff_missing_skill_exits_zero(mock_home: Path) -> None:
+    build_scenario("claude_personal_beats_project", mock_home)
+    result = runner.invoke(
+        app, ["diff", "nope", "--sandbox", str(mock_home), "--cwd", str(mock_home), "--json"]
+    )
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert payload["found"] is False
+    assert payload["notes"]
+
+    human = runner.invoke(
+        app, ["diff", "nope", "--sandbox", str(mock_home), "--cwd", str(mock_home)]
+    )
+    assert human.exit_code == 0
+    assert "No copies of 'nope'" in human.stdout
+
+
+def test_diff_refuses_a_cwd_outside_the_sandbox(mock_home: Path, tmp_path: Path) -> None:
+    """The sandbox guard covers ``diff`` as well as ``scan`` and ``why``."""
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    result = runner.invoke(
+        app, ["diff", "x", "--sandbox", str(mock_home), "--cwd", str(outside), "--json"]
+    )
+    assert result.exit_code != 0
+    assert "sandbox" in (result.stdout + result.stderr).lower()

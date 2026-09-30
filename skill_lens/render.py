@@ -7,16 +7,26 @@ it into terminal output. Descriptions are escaped with
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 from rich.console import Console
 from rich.markup import escape
 from rich.panel import Panel
+from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
 from skill_lens.core import paths
 from skill_lens.core.resolver import ResolutionReport
 from skill_lens.core.scanner import ScanReport
+from skill_lens.models.diff import DiffCopy, DiffFile, DiffReport
 from skill_lens.models.enums import HeadlineState, Scope
+from skill_lens.models.parsing import (
+    ERR_DANGLING_SYMLINK,
+    ERR_PERMISSION_DENIED,
+    ERR_SYMLINK_CYCLE,
+)
+from skill_lens.registry.loader import AgentDefinition
 
 _STATE_STYLE = {
     HeadlineState.ACTIVE: "bold green",
@@ -136,5 +146,191 @@ def render_why(report: ResolutionReport, console: Console | None = None) -> None
             console.print(f"  Hash:   {escape(installation.content_hash[:23])}...")
         console.print()
 
+    for note in report.notes:
+        console.print(f"[yellow]Note:[/yellow] {escape(note)}")
+
+
+def render_agents(agents: Sequence[AgentDefinition], console: Console | None = None) -> None:
+    """Render the known agent definitions as a table.
+
+    Lives here rather than in ``cli.py`` so that every Rich layout in the tool
+    sits in one module and the command layer stays presentation-free.
+    """
+    console = console or Console()
+    table = Table(show_header=True, header_style="bold")
+    table.add_column("Agent")
+    table.add_column("ID")
+    table.add_column("Collision Policy")
+    table.add_column("Evidence")
+    table.add_column("Roots", justify="right")
+    for agent in agents:
+        table.add_row(
+            escape(agent.name),
+            escape(agent.id),
+            escape(agent.collision_policy),
+            agent.policy_evidence.value,
+            str(len(agent.roots)),
+        )
+    console.print(table)
+
+
+# --- diff ------------------------------------------------------------------
+
+_UNREADABLE_REASON = {
+    ERR_SYMLINK_CYCLE: "symlink cycle",
+    ERR_DANGLING_SYMLINK: "dangling symlink",
+    ERR_PERMISSION_DENIED: "permission denied",
+}
+
+
+def _range_text(start: int, count: int) -> str:
+    """Format one side of a unified hunk header the way ``difflib`` does."""
+    return str(start) if count == 1 else f"{start},{count}"
+
+
+def _unified_text(file: DiffFile) -> str:
+    """The unified diff body for one file, ready for Rich's ``diff`` lexer."""
+    lines = [f"--- {file.path}", f"+++ {file.path}"]
+    for hunk in file.hunks:
+        old = _range_text(hunk.old_start, hunk.old_count)
+        new = _range_text(hunk.new_start, hunk.new_count)
+        lines.append(f"@@ -{old} +{new} @@")
+        lines.extend(hunk.lines)
+    return "\n".join(lines)
+
+
+def _unreadable_reason(copy: DiffCopy) -> str:
+    return _UNREADABLE_REASON.get(copy.error or "", "no readable content")
+
+
+def _copy_heading(copy: DiffCopy) -> str:
+    """One copy's heading line: marker, Variant letter, path, scope, status."""
+    if copy.is_baseline:
+        mark, style, status = "=", "bold cyan", "baseline (no diff shown)"
+    elif not copy.is_readable:
+        mark, style, status = "x", "bold red", f"cannot be read: {_unreadable_reason(copy)}"
+    elif copy.files:
+        mark, style, status = "*", "bold yellow", f"{len(copy.files)} file(s) differ"
+    else:
+        mark, style, status = "=", "dim", "identical to the baseline"
+
+    variant = f" [Variant {copy.variant_label}]" if copy.variant_label else ""
+    return (
+        f"[{style}]{mark}[/] {escape(paths.display(copy.path))}{escape(variant)}"
+        f" [dim]({escape(copy.scope.value)}, {escape(copy.parse_status)})[/dim]"
+        f"  [{style}]{escape(status)}[/]"
+    )
+
+
+def _render_file(file: DiffFile, console: Console) -> None:
+    kind = " [red]binary[/red]" if file.is_binary else ""
+    console.print(f"  [bold]{escape(file.path)}[/bold] [yellow]{file.change.value}[/yellow]{kind}")
+    if file.is_binary:
+        console.print("    [dim]Binary content differs and is never printed.[/dim]")
+        return
+    if not file.hunks:
+        console.print("    [dim]No printable content.[/dim]")
+        return
+    # ``Syntax`` hands the body to Pygments and never parses Rich markup, so file
+    # content cannot inject markup -- the guarantee ``escape()`` provides for the
+    # paths above. Escaping here instead would print literal backslashes, because
+    # Pygments treats them as ordinary characters.
+    console.print(
+        Syntax(
+            _unified_text(file),
+            "diff",
+            background_color="default",
+            indent_guides=False,
+        )
+    )
+
+
+def _no_differences_message(report: DiffReport) -> str:
+    readable = [copy for copy in report.copies if copy.is_readable]
+    if len(report.copies) == 1:
+        return (
+            "[green]No differences:[/green] only one copy exists, so there is nothing to compare."
+        )
+    if len(readable) < 2:
+        return "[green]No differences:[/green] fewer than two copies could be read."
+    return f"[green]No differences:[/green] all {len(readable)} readable copies are identical."
+
+
+def _needs_listing(report: DiffReport) -> bool:
+    """True when the copies must be listed even though nothing differs.
+
+    A second copy, or a copy that could not be read at all, is itself a finding:
+    printing only "no differences" would hide it.
+    """
+    return len(report.copies) > 1 or any(not copy.is_readable for copy in report.copies)
+
+
+def render_diff(report: DiffReport, console: Console | None = None) -> None:
+    """Render a diff report: a summary panel, then one block per copy.
+
+    Formatting only -- every decision (which copy is the baseline, what differs,
+    what was truncated) is already recorded in the model.
+    """
+    console = console or Console()
+
+    if not report.found:
+        # The model's note says the same thing for ``--json`` consumers, where it
+        # travels with the data; printing it here as well would just repeat this.
+        console.print(
+            f"[yellow]No copies of '{escape(report.skill_name)}' were found in any "
+            "search root.[/yellow]"
+        )
+        return
+
+    baseline = next((copy for copy in report.copies if copy.is_baseline), None)
+    if baseline is None:
+        baseline_text = "none (no copy passed validation)"
+    else:
+        variant = f" (Variant {baseline.variant_label})" if baseline.variant_label else ""
+        baseline_text = f"{paths.display(baseline.path)}{variant}"
+    header = (
+        f"[bold]Copies:[/bold] {len(report.copies)}\n[bold]Baseline:[/bold] {escape(baseline_text)}"
+    )
+    console.print(
+        Panel(
+            header,
+            title=f"Diff: '{escape(report.skill_name)}'",
+            expand=False,
+        )
+    )
+    console.print()
+
+    if not report.has_differences:
+        console.print(_no_differences_message(report))
+        for note in report.notes:
+            console.print(f"[yellow]Note:[/yellow] {escape(note)}")
+        if not _needs_listing(report):
+            return
+        console.print()
+
+    for copy in report.copies:
+        console.print(_copy_heading(copy))
+        if copy.is_baseline:
+            console.print("  [dim]Reference copy; every diff below is against it.[/dim]")
+        elif not copy.is_readable:
+            console.print(
+                f"  [dim]No content to compare ({escape(_unreadable_reason(copy))}).[/dim]"
+            )
+        elif not copy.files:
+            console.print("  [dim]No differences from the baseline.[/dim]")
+        else:
+            for file in copy.files:
+                _render_file(file, console)
+        if copy.truncated:
+            console.print(
+                f"  [yellow]Truncated:[/yellow] {copy.omitted_lines} changed lines omitted."
+            )
+        console.print()
+
+    if report.truncated:
+        console.print(
+            f"[yellow]Truncated:[/yellow] {report.omitted_chars} characters of diff body "
+            "were omitted to keep this report readable."
+        )
     for note in report.notes:
         console.print(f"[yellow]Note:[/yellow] {escape(note)}")

@@ -1,0 +1,19 @@
+╭────── Resolution: 'deploy' for Claude Code ───────╮
+│ Agent: Claude Code                                │
+│ Working Dir: ~/project                            │
+│ Collision Policy: Personal > Project (documented) │
+╰───────────────────────────────────────────────────╯
+Headline: ACTIVE
+
+* [ACTIVE]  Variant B
+  Path:   ~/.claude/skills/deploy
+  Reason: Highest-priority copy (Personal deploy helper.).
+  Rule:   claude_personal_beats_project (Evidence: documented)
+  Hash:   sha256:cbb920bf417ccc9e...
+
+o [SHADOWED]  Variant A
+  Path:   ~/project/.claude/skills/deploy
+  Reason: Suppressed by the higher-priority copy in the global root ~/.claude/skills.
+  Rule:   claude_personal_beats_project (Evidence: documented)
+  Hash:   sha256:adfd6199b873e42c...
+

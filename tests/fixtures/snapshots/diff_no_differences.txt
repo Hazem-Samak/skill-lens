@@ -1,0 +1,6 @@
+╭─────────────── Diff: 'shared' ────────────────╮
+│ Copies: 1                                     │
+│ Baseline: ~/.agents/skills/shared (Variant A) │
+╰───────────────────────────────────────────────╯
+
+No differences: only one copy exists, so there is nothing to compare.

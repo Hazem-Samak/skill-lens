@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "scenario": "variant_hash_detection",
+  "description": "Diff golden for the existing variant_hash_detection fixture: two valid copies of 'deploy' with differing bytes. Variant A (.claude/skills/deploy, the personal copy, earlier in discovery order) is the baseline and carries no files of its own; Variant B (.agents/skills/deploy) is diffed against it and differs inside SKILL.md. The two changes sit three equal lines apart, so difflib groups them into a single hunk covering the whole seven-line file.",
+  "diff": {
+    "baseline_path": ".claude/skills/deploy",
+    "copies": [
+      {
+        "content_hash": "sha256:ede5a6a3619e7fb5f8e068dbf9430eb596aaabe6071614c32d07cdea4c9d8da6",
+        "error": null,
+        "files": [],
+        "is_baseline": true,
+        "is_readable": true,
+        "is_valid": true,
+        "omitted_lines": 0,
+        "parse_status": "valid",
+        "path": ".claude/skills/deploy",
+        "scope": "user",
+        "truncated": false,
+        "variant_label": "A"
+      },
+      {
+        "content_hash": "sha256:69581b22f89392f55657d9ee9c1a53a9cd64558d85baf7bfbfcc87590f56a360",
+        "error": null,
+        "files": [
+          {
+            "change": "modified",
+            "hunks": [
+              {
+                "lines": [
+                  " ---",
+                  " name: deploy",
+                  "-description: Personal deploy.",
+                  "+description: Shared-library deploy.",
+                  " ---",
+                  " # Instructions",
+                  " ",
+                  "-Personal body.",
+                  "+Shared-library body."
+                ],
+                "new_count": 7,
+                "new_start": 1,
+                "old_count": 7,
+                "old_start": 1
+              }
+            ],
+            "is_binary": false,
+            "path": "SKILL.md"
+          }
+        ],
+        "is_baseline": false,
+        "is_readable": true,
+        "is_valid": true,
+        "omitted_lines": 0,
+        "parse_status": "valid",
+        "path": ".agents/skills/deploy",
+        "scope": "user",
+        "truncated": false,
+        "variant_label": "B"
+      }
+    ],
+    "cwd": ".",
+    "found": true,
+    "home": ".",
+    "notes": [],
+    "omitted_chars": 0,
+    "skill_name": "deploy",
+    "truncated": false
+  }
+}

@@ -82,8 +82,10 @@ proceeds by phase:
 - [x] **Phase 2** — registry loader, 3-axis resolver, `scan` / `why` / `agents` commands
   — ✅ **reviewed and corrected**: all 20 findings in
   [`PHASE2_FINDINGS.md`](./PHASE2_FINDINGS.md) (F-01 … F-20) are fixed and each is
-  guarded by a regression test (311 passing, `ruff check` clean)
-- [ ] **Phase 3** — Rich presentation layer and `diff`
+  guarded by a regression test
+- [x] **Phase 3** — Rich presentation layer and `diff` — unified diff between the
+  differing variants of one name, pinned by a golden `diff_*.json` and plain-text
+  render snapshots for `scan`, `why` and `diff`
 - [ ] **Phase 4** — `doctor`, multi-agent `compare`, live scanner
 - [ ] **Phase 5** — packaging and release
 
@@ -96,6 +98,14 @@ pip install -e ".[dev]"
 pytest          # run the test suite
 ruff check .    # lint
 ruff format .   # format
+```
+
+Terminal output is pinned by plain-text snapshots under
+`tests/fixtures/snapshots/`. After an intentional change to the presentation
+layer, review the difference and regenerate them with:
+
+```bash
+pytest tests/test_render_snapshots.py --update-snapshots
 ```
 
 All tests run against synthetic fixtures under temporary directories. The test

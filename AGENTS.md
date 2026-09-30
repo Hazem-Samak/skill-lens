@@ -46,9 +46,15 @@ The developer driving you has zero coding experience and is vibe-coding this pro
 - **Test Runner:** `pytest`
 - Before finishing any task, run:
   ```bash
-  pytest -v
+  pytest
   ruff check .
+  ruff format --check .
   ```
+- **Snapshot tests:** the terminal output of `scan`, `why` and `diff` is pinned as
+  plain text under `tests/fixtures/snapshots/`. A snapshot failure means the
+  rendering changed: read the difference first, then regenerate with
+  `pytest tests/test_render_snapshots.py --update-snapshots`. Never regenerate
+  without reviewing what changed.
 - Commit only when all tests pass cleanly.
 
 ---
@@ -58,15 +64,20 @@ The developer driving you has zero coding experience and is vibe-coding this pro
 ```text
 skill_lens/
 ├── __init__.py
-├── cli.py                  # Typer commands (scan, why, agents, compare, diff, doctor)
-├── models/                 # Frozen dataclasses (SkillInstallation, ResolutionReport, etc.)
+├── cli.py                  # Typer commands (scan, why, agents, diff)
+├── render.py               # All Rich layout (scan, why, diff, agents table)
+├── models/                 # Frozen dataclasses (SkillInstallation, DiffReport, ...)
 ├── core/
 │   ├── paths.py            # Lazy environment & path resolution
-│   ├── parser.py           # Frontmatter extraction & streaming SHA-256 hasher
+│   ├── parser.py           # Frontmatter extraction & symlink canonicalization
+│   ├── hasher.py           # Streaming SHA-256 fingerprint (newline-normalised)
+│   ├── discovery.py        # Agent-agnostic entrypoint discovery + variant labels
 │   ├── resolver.py         # 3-axis resolution engine
-│   ├── doctor.py           # Diagnostics & hygiene checks
+│   ├── scanner.py          # Inventory view over one discovery pass
 │   ├── diff.py             # Unified diff computation (pure; no Rich)
-│   └── system.py           # TCC-resilient live directory scanner
+│   ├── doctor.py           # Phase 4: diagnostics & hygiene checks
+│   └── system.py           # Phase 4: TCC-resilient live directory scanner
 └── registry/
-    └── agents/             # Agent definition TOML files (codex.toml, claude.toml, etc.)
+    ├── loader.py           # TOML agent-definition loader
+    └── agents/             # Agent definition TOML files (codex.toml, claude.toml, ...)
 ```

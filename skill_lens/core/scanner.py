@@ -17,9 +17,9 @@ from skill_lens.core.discovery import (
     DiscoveryIndex,
     discover,
     entry_scope,
-    variant_labels,
+    labels_for_entries,
 )
-from skill_lens.models.enums import ParseStatus, Scope
+from skill_lens.models.enums import Scope
 from skill_lens.registry.loader import AgentDefinition, load_registry
 
 _SCOPE_ORDER = SCOPE_SPECIFICITY
@@ -126,22 +126,11 @@ def _symlink_entrypoint_count(entry: DiscoveredEntry) -> int:
 def _variant_labels(indexed: list[tuple[DiscoveredEntry, Scope]]) -> dict[str, str]:
     """Label same-named copies as Variant A / B, using the shared rule.
 
-    See :func:`skill_lens.core.discovery.variant_labels` -- ``scan`` and ``why``
-    must agree, so a copy is never "Variant A" in one command and "B" in the
-    other.
+    See :func:`skill_lens.core.discovery.labels_for_entries` -- ``scan``,
+    ``why`` and ``diff`` must agree, so a copy is never "Variant A" in one
+    command and "B" in another.
     """
-    by_name: dict[str, list[tuple[str, str, str | None, Scope, int]]] = {}
-    for position, (entry, scope) in enumerate(indexed):
-        if entry.parse_status != ParseStatus.VALID.value or entry.content_hash is None:
-            continue
-        key = entry.canonical_path or entry.entrypoint_path
-        by_name.setdefault(entry.name, []).append(
-            (entry.name, key, entry.content_hash, scope, position)
-        )
-    labels: dict[str, str] = {}
-    for items in by_name.values():
-        labels.update(variant_labels(items))
-    return labels
+    return labels_for_entries(entry for entry, _scope in indexed)
 
 
 def build_scan_report(

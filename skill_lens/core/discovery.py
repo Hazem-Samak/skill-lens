@@ -18,7 +18,7 @@ from pathlib import Path
 
 from skill_lens.core.hasher import hash_path
 from skill_lens.core.parser import canonicalize, find_skill_document, parse_skill
-from skill_lens.models.enums import Scope
+from skill_lens.models.enums import ParseStatus, Scope
 from skill_lens.models.parsing import (
     ERR_DANGLING_SYMLINK,
     ERR_PERMISSION_DENIED,
@@ -100,6 +100,42 @@ def variant_labels(items: Iterable[tuple[str, str, str | None, Scope, int]]) -> 
             break
         for _name, key, _scope, _position in group:
             labels[key] = VARIANT_LABELS[position]
+    return labels
+
+
+def canonical_key(entry: DiscoveredEntry) -> str:
+    """The key that identifies one copy: its canonical target, or its own path.
+
+    A copy with no resolvable target (a dangling symlink, a cycle) is keyed by
+    its entrypoint so it can never collapse onto a real skill.
+    """
+    return entry.canonical_path or entry.entrypoint_path
+
+
+def labels_for_entries(entries: Iterable[DiscoveredEntry]) -> dict[str, str]:
+    """Variant labels for a set of entries, keyed by :func:`canonical_key`.
+
+    This is the one place the label inputs are assembled, so ``scan``, ``why``
+    and ``diff`` cannot drift apart the way they did in finding F-16. The rules
+    it encodes, all of them deliberate:
+
+    * only *valid* copies that have a content hash are labelled -- a copy that
+      failed validation has no comparable content and gets no letter;
+    * the scope is always :func:`entry_scope`'s, because a copy's label must be
+      a property of the copy and not of whichever command is asking;
+    * ``position`` is the entry's index in the order given, which is what breaks
+      ties between two copies of equal scope specificity.
+    """
+    by_name: dict[str, list[tuple[str, str, str | None, Scope, int]]] = {}
+    for position, entry in enumerate(entries):
+        if entry.parse_status != ParseStatus.VALID.value or entry.content_hash is None:
+            continue
+        by_name.setdefault(entry.name, []).append(
+            (entry.name, canonical_key(entry), entry.content_hash, entry_scope(entry), position)
+        )
+    labels: dict[str, str] = {}
+    for items in by_name.values():
+        labels.update(variant_labels(items))
     return labels
 
 
