@@ -21,6 +21,30 @@ $ skill-lens scan
 ╰─────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
+And when two copies of one skill have drifted apart, `diff` shows exactly how:
+
+```console
+$ skill-lens diff deploy
+
+╭─────────────── Diff: 'deploy' ────────────────╮
+│ Copies: 2                                     │
+│ Baseline: ~/.claude/skills/deploy (Variant A) │
+╰───────────────────────────────────────────────╯
+
+= ~/.claude/skills/deploy [Variant A] (user, valid)  baseline (no diff shown)
+  Reference copy; every diff below is against it.
+
+* ~/.agents/skills/deploy [Variant B] (user, valid)  1 file(s) differ
+  SKILL.md modified
+--- SKILL.md
++++ SKILL.md
+@@ -1,7 +1,7 @@
+ ---
+ name: deploy
+-description: Personal deploy.
++description: Shared-library deploy.
+```
+
 ## Why
 
 Once you use several agents, three problems appear:
@@ -53,9 +77,11 @@ each agent actually resolves skills.
 | `skill-lens scan` | Inventory skills across detected agents, split by scope. |
 | `skill-lens why <skill> --agent <id>` | Explain why a skill resolves the way it does. |
 | `skill-lens agents` | List known agents, their collision policy and evidence. |
-| `skill-lens compare --agent A --agent B` | Compare two agents' capability surfaces. |
 | `skill-lens diff <skill>` | Unified diff of diverging variants of one skill. |
-| `skill-lens doctor` | Hygiene checks: broken links, bad frontmatter, budget warnings. |
+| `skill-lens compare --agent A --agent B` | *Phase 4* — compare two agents' capability surfaces. |
+| `skill-lens doctor` | *Phase 4* — hygiene checks: broken links, bad frontmatter, budget warnings. |
+
+The first four are built and tested; `compare` and `doctor` arrive in Phase 4.
 
 Every command accepts `--json`.
 
@@ -85,9 +111,13 @@ proceeds by phase:
   guarded by a regression test
 - [x] **Phase 3** — Rich presentation layer and `diff` — unified diff between the
   differing variants of one name, pinned by a golden `diff_*.json` and plain-text
-  render snapshots for `scan`, `why` and `diff`
+  render snapshots for `scan`, `why` and `diff` — ✅ **reviewed and corrected**: all 4
+  findings in [`PHASE3_FINDINGS.md`](./PHASE3_FINDINGS.md) (D-01 … D-04) are fixed and
+  each is guarded by a regression test
 - [ ] **Phase 4** — `doctor`, multi-agent `compare`, live scanner
 - [ ] **Phase 5** — packaging and release
+
+Current gate: **355 tests pass**, `ruff check .` clean, `ruff format --check .` clean.
 
 ## Development
 

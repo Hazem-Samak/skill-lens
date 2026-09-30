@@ -81,3 +81,24 @@ skill_lens/
     ├── loader.py           # TOML agent-definition loader
     └── agents/             # Agent definition TOML files (codex.toml, claude.toml, ...)
 ```
+
+---
+
+## 4. Project record (read before changing a finished phase)
+
+Each reviewed phase keeps its findings as a permanent record, including the code
+that was wrong and why. Read the relevant one before touching that area — the
+rules in them were paid for:
+
+- [`PHASE2_FINDINGS.md`](./PHASE2_FINDINGS.md) — 20 findings (F-01 … F-20) in the
+  registry, discovery and resolver. Load-bearing for anything touching precedence,
+  variant labels or canonical paths.
+- [`PHASE3_FINDINGS.md`](./PHASE3_FINDINGS.md) — 4 findings (D-01 … D-04) in the
+  `diff` truncation and presentation layer, plus the test gaps that let them
+  through.
+
+Both were produced by an independent read-only review delegated to another model,
+then reproduced and fixed by the orchestrator. Two habits came out of them and
+should be kept: **reproduce a reported defect before believing it** (a false alarm
+costs as much as a miss), and **never regenerate a snapshot without reading the
+diff** — a snapshot proves the output did not change, not that it was right.
