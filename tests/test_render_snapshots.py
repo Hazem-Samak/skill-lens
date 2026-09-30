@@ -169,6 +169,59 @@ def test_diff_unreadable_copy_snapshot(mock_home: Path, update_snapshots: bool) 
     assert "cycle_a" in rendered
 
 
+def test_diff_no_baseline_snapshot(mock_home: Path, update_snapshots: bool) -> None:
+    """Two broken copies must not be called identical: nothing was compared.
+
+    Neither copy passes validation, so neither can be the baseline and no diff is
+    computed. Claiming they match would be a lie about work that never happened.
+    """
+    home = mock_home.resolve()
+    for root in (".claude/skills", ".agents/skills"):
+        (home / root / "junk").mkdir(parents=True)
+        (home / root / "junk" / "SKILL.md").write_text(
+            f"---\nname: junk\n---\n# body from {root}\n", encoding="utf-8"
+        )
+    rendered = _check(
+        "diff_no_baseline",
+        update_snapshots,
+        lambda: _render(render_diff, build_diff_report("junk", home, home)),
+        home,
+    )
+    assert "Not compared" in rendered
+    assert "identical" not in rendered, "nothing was compared, so identity cannot be claimed"
+
+
+def test_diff_truncated_by_characters_snapshot(
+    mock_home: Path, update_snapshots: bool, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A character-only truncation must not report '0 changed lines omitted'.
+
+    The per-copy notice counts changed lines; when only the report-wide character
+    budget bit, that count is zero and quoting it is worse than saying nothing.
+    """
+    monkeypatch.setattr(diff_module, "MAX_CHARS_PER_REPORT", 300)
+    home = mock_home.resolve()
+    make_skill(home / ".claude" / "skills" / "ctx", "ctx", "Copy A.")
+    make_skill(home / ".agents" / "skills" / "ctx", "ctx", "Copy B.")
+    old = [f"ctx {index:02d} " + "x" * 60 for index in range(40)]
+    new = list(old)
+    new[0] = "CHANGED " + "y" * 60
+    (home / ".claude" / "skills" / "ctx" / "body.txt").write_text(
+        "\n".join(old) + "\n", encoding="utf-8"
+    )
+    (home / ".agents" / "skills" / "ctx" / "body.txt").write_text(
+        "\n".join(new) + "\n", encoding="utf-8"
+    )
+    rendered = _check(
+        "diff_truncated_by_chars",
+        update_snapshots,
+        lambda: _render(render_diff, build_diff_report("ctx", home, home)),
+        home,
+    )
+    assert "0 changed lines omitted" not in rendered
+    assert "Truncated" in rendered
+
+
 def test_diff_truncation_notice_snapshot(
     mock_home: Path, update_snapshots: bool, monkeypatch: pytest.MonkeyPatch
 ) -> None:

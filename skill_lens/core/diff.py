@@ -247,19 +247,58 @@ def _count_chars(hunks: Sequence[DiffHunk]) -> int:
     return sum(len(line) + 1 for hunk in hunks for line in hunk.lines)
 
 
+def _recount_start(stored_start: int, original_count: int, kept_count: int) -> int:
+    """Adjust a range start when truncation has emptied the range.
+
+    A zero-length range names the line *before* it (see :func:`_range_start`).
+    The stored start was computed for the original count, so when truncation
+    empties a range that was not empty before, the start must step back one line.
+    Otherwise a truncated all-deletions hunk renders as ``+1,0`` where a standard
+    diff reader requires ``+0,0``.
+    """
+    if original_count > 0 and kept_count == 0:
+        return stored_start - 1
+    return stored_start
+
+
 def _recount(hunk: DiffHunk, lines: Sequence[str]) -> DiffHunk:
     """Rebuild a hunk's header from the lines that survived truncation.
 
     Without this a truncated hunk would advertise line counts it no longer
-    contains, and the printed diff would not add up.
+    contains, and the printed diff would not add up. The starts are recomputed
+    too: a range that truncation emptied must name the line before it, not the
+    line it used to begin at.
     """
+    old_count = sum(1 for line in lines if line[:1] in (" ", "-"))
+    new_count = sum(1 for line in lines if line[:1] in (" ", "+"))
     return DiffHunk(
-        old_start=hunk.old_start,
-        old_count=sum(1 for line in lines if line[:1] in (" ", "-")),
-        new_start=hunk.new_start,
-        new_count=sum(1 for line in lines if line[:1] in (" ", "+")),
+        old_start=_recount_start(hunk.old_start, hunk.old_count, old_count),
+        old_count=old_count,
+        new_start=_recount_start(hunk.new_start, hunk.new_count, new_count),
+        new_count=new_count,
         lines=tuple(lines),
     )
+
+
+def _fit_hunk(hunk: DiffHunk, changed_budget: int, char_budget: int) -> tuple[list[str], int, int]:
+    """The longest prefix of ``hunk``'s lines that fits both budgets.
+
+    Returns the lines, how many of them are changes, and how many characters they
+    cost. ``changed_budget`` and ``char_budget`` are what is *left*, so a caller
+    can fit one hunk at a time without double-counting.
+    """
+    lines: list[str] = []
+    changed = 0
+    chars = 0
+    for line in hunk.lines:
+        line_changed = 1 if line[:1] in ("-", "+") else 0
+        cost = len(line) + 1
+        if changed + line_changed > changed_budget or chars + cost > char_budget:
+            break
+        lines.append(line)
+        changed += line_changed
+        chars += cost
+    return lines, changed, chars
 
 
 def _truncate(files: Sequence[DiffFile], *, changed_budget: int, char_budget: int) -> _Budgeted:
@@ -280,19 +319,21 @@ def _truncate(files: Sequence[DiffFile], *, changed_budget: int, char_budget: in
         hunks: list[DiffHunk] = []
         if not exhausted:
             for hunk in file.hunks:
-                lines: list[str] = []
-                for line in hunk.lines:
-                    changed = 1 if line[:1] in ("-", "+") else 0
-                    cost = len(line) + 1
-                    if used_changed + changed > changed_budget or used_chars + cost > char_budget:
-                        exhausted = True
-                        break
-                    lines.append(line)
-                    used_changed += changed
-                    used_chars += cost
-                if lines:
-                    hunks.append(_recount(hunk, lines))
-                if exhausted:
+                lines, hunk_changed, hunk_chars = _fit_hunk(
+                    hunk, changed_budget - used_changed, char_budget - used_chars
+                )
+                if not hunk_changed:
+                    # The budget ran out before this hunk's first change, or cut it
+                    # back to context lines only. A hunk with no changed lines is not
+                    # a diff, so it is dropped -- and because it is dropped, its
+                    # context lines are not charged to the budgets either.
+                    exhausted = True
+                    break
+                hunks.append(_recount(hunk, lines))
+                used_changed += hunk_changed
+                used_chars += hunk_chars
+                if len(lines) < len(hunk.lines):
+                    exhausted = True
                     break
         kept.append(replace(file, hunks=tuple(hunks)))
     total_changed = sum(_count_changed(file.hunks) for file in files)

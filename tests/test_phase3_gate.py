@@ -446,7 +446,10 @@ def test_the_report_character_budget_truncates_the_whole_report(mock_home: Path)
 def test_a_truncated_hunk_still_adds_up(mock_home: Path) -> None:
     """A truncated hunk's header must describe the lines that survived.
 
-    Otherwise the printed diff would advertise counts it does not contain.
+    Otherwise the printed diff would advertise counts it does not contain. The
+    starts matter as much as the counts: a range that truncation emptied must
+    name the line *before* it, so for a diff beginning at line 1 an emptied side
+    starts at 0, never at 1.
     """
     home = mock_home.resolve()
     lines = 600
@@ -466,6 +469,76 @@ def test_a_truncated_hunk_still_adds_up(mock_home: Path) -> None:
         for hunk in file.hunks:
             assert hunk.old_count == sum(1 for line in hunk.lines if line[:1] in (" ", "-"))
             assert hunk.new_count == sum(1 for line in hunk.lines if line[:1] in (" ", "+"))
+            if hunk.old_count == 0:
+                assert hunk.old_start == 0, "an empty old range names the line before it"
+            if hunk.new_count == 0:
+                assert hunk.new_start == 0, "an empty new range names the line before it"
+
+
+def test_recount_steps_back_when_truncation_empties_a_range() -> None:
+    """A range emptied by truncation must name the line before it.
+
+    The stored start was computed for the original count. Leaving it alone renders
+    a truncated all-deletions hunk as ``+1,0``, which a standard diff reader
+    rejects; the correct header is ``+0,0``.
+    """
+    hunk = DiffHunk(
+        old_start=1,
+        old_count=2,
+        new_start=1,
+        new_count=2,
+        lines=("-old1", "-old2", "+new1", "+new2"),
+    )
+
+    kept = diff_module._recount(hunk, ["-old1", "-old2"])  # the added lines were cut
+    assert (kept.old_start, kept.old_count) == (1, 2)
+    assert (kept.new_start, kept.new_count) == (0, 0)
+
+    intact = diff_module._recount(hunk, list(hunk.lines))
+    assert (intact.old_start, intact.old_count) == (1, 2)
+    assert (intact.new_start, intact.new_count) == (1, 2)
+
+
+def test_recount_does_not_step_back_a_range_that_was_already_empty() -> None:
+    """Only a range *emptied by truncation* moves back -- never one that was empty."""
+    hunk = DiffHunk(old_start=0, old_count=0, new_start=1, new_count=1, lines=("+new",))
+    kept = diff_module._recount(hunk, ["+new"])
+    assert (kept.old_start, kept.old_count) == (0, 0)
+    assert (kept.new_start, kept.new_count) == (1, 1)
+
+
+def test_multi_hunk_truncation_never_emits_a_hunk_without_changes(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A hunk with no changed lines is not a diff, so it must never be printed.
+
+    When the changed-line budget is exhausted *exactly* at a hunk boundary, the
+    next hunk's leading context lines still fit -- context costs no changed lines
+    -- so a budget loop that only counts changes emits a hunk showing none.
+    """
+    monkeypatch.setattr(diff_module, "MAX_CHANGED_LINES_PER_COPY", 2)
+    home = mock_home.resolve()
+    # Identical descriptions, so only body.txt differs and the budget arithmetic
+    # is not disturbed by the SKILL.md change.
+    make_skill(home / ".claude" / "skills" / "multi", "multi", "Same.")
+    make_skill(home / ".agents" / "skills" / "multi", "multi", "Same.")
+    old = [f"line {index}" for index in range(40)]
+    new = list(old)
+    new[0] = "LINE 0"
+    new[19] = "LINE 19"
+    write_text(home / ".claude" / "skills" / "multi" / "body.txt", "\n".join(old) + "\n")
+    write_text(home / ".agents" / "skills" / "multi" / "body.txt", "\n".join(new) + "\n")
+
+    other = _other(build_diff_report("multi", home, home))
+    hunks = [hunk for file in other.files for hunk in file.hunks]
+    assert hunks, "the first hunk fits the budget and must be kept"
+    for hunk in hunks:
+        assert any(line[:1] in ("-", "+") for line in hunk.lines), (
+            f"hunk at old line {hunk.old_start} shows no change: {list(hunk.lines)}"
+        )
+    # The second hunk was dropped, so its changes must be reported as omitted.
+    assert other.truncated is True
+    assert other.omitted_lines == 2
 
 
 def test_an_ordinary_diff_is_not_truncated(mock_home: Path) -> None:

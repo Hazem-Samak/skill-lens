@@ -203,7 +203,7 @@ def _unreadable_reason(copy: DiffCopy) -> str:
     return _UNREADABLE_REASON.get(copy.error or "", "no readable content")
 
 
-def _copy_heading(copy: DiffCopy) -> str:
+def _copy_heading(copy: DiffCopy, *, baseline_exists: bool) -> str:
     """One copy's heading line: marker, Variant letter, path, scope, status."""
     if copy.is_baseline:
         mark, style, status = "=", "bold cyan", "baseline (no diff shown)"
@@ -211,6 +211,9 @@ def _copy_heading(copy: DiffCopy) -> str:
         mark, style, status = "x", "bold red", f"cannot be read: {_unreadable_reason(copy)}"
     elif copy.files:
         mark, style, status = "*", "bold yellow", f"{len(copy.files)} file(s) differ"
+    elif not baseline_exists:
+        # Nothing was compared, so claiming identity would be a lie.
+        mark, style, status = "-", "dim", "not compared: no baseline"
     else:
         mark, style, status = "=", "dim", "identical to the baseline"
 
@@ -246,6 +249,13 @@ def _render_file(file: DiffFile, console: Console) -> None:
 
 
 def _no_differences_message(report: DiffReport) -> str:
+    """The headline when nothing differs -- which is not the same as "identical".
+
+    With no baseline nothing was compared at all, so the honest headline is that
+    no comparison happened, not that the copies match.
+    """
+    if report.baseline_path is None:
+        return "[yellow]Not compared:[/yellow] no copy could serve as a baseline."
     readable = [copy for copy in report.copies if copy.is_readable]
     if len(report.copies) == 1:
         return (
@@ -263,6 +273,11 @@ def _needs_listing(report: DiffReport) -> bool:
     printing only "no differences" would hide it.
     """
     return len(report.copies) > 1 or any(not copy.is_readable for copy in report.copies)
+
+
+def _print_notes(report: DiffReport, console: Console) -> None:
+    for note in report.notes:
+        console.print(f"[yellow]Note:[/yellow] {escape(note)}")
 
 
 def render_diff(report: DiffReport, console: Console | None = None) -> None:
@@ -300,16 +315,22 @@ def render_diff(report: DiffReport, console: Console | None = None) -> None:
     )
     console.print()
 
+    # A report with no baseline states its reason in the headline below, and the
+    # model's note says the same thing for ``--json`` consumers -- so the terminal
+    # skips it rather than repeating itself.
+    show_notes = report.baseline_path is not None
+
     if not report.has_differences:
         console.print(_no_differences_message(report))
-        for note in report.notes:
-            console.print(f"[yellow]Note:[/yellow] {escape(note)}")
         if not _needs_listing(report):
+            if show_notes:
+                _print_notes(report, console)
             return
         console.print()
 
+    baseline_exists = report.baseline_path is not None
     for copy in report.copies:
-        console.print(_copy_heading(copy))
+        console.print(_copy_heading(copy, baseline_exists=baseline_exists))
         if copy.is_baseline:
             console.print("  [dim]Reference copy; every diff below is against it.[/dim]")
         elif not copy.is_readable:
@@ -317,13 +338,23 @@ def render_diff(report: DiffReport, console: Console | None = None) -> None:
                 f"  [dim]No content to compare ({escape(_unreadable_reason(copy))}).[/dim]"
             )
         elif not copy.files:
-            console.print("  [dim]No differences from the baseline.[/dim]")
+            if baseline_exists:
+                console.print("  [dim]No differences from the baseline.[/dim]")
+            else:
+                console.print("  [dim]Not compared: there is no baseline.[/dim]")
         else:
             for file in copy.files:
                 _render_file(file, console)
-        if copy.truncated:
+        if copy.omitted_lines:
             console.print(
                 f"  [yellow]Truncated:[/yellow] {copy.omitted_lines} changed lines omitted."
+            )
+        elif copy.truncated:
+            # Only the character budget bit, so quoting a line count would read as
+            # "0 changed lines omitted" -- which is worse than saying nothing.
+            console.print(
+                "  [yellow]Truncated:[/yellow] part of this diff was omitted; see the "
+                "report total below."
             )
         console.print()
 
@@ -332,5 +363,5 @@ def render_diff(report: DiffReport, console: Console | None = None) -> None:
             f"[yellow]Truncated:[/yellow] {report.omitted_chars} characters of diff body "
             "were omitted to keep this report readable."
         )
-    for note in report.notes:
-        console.print(f"[yellow]Note:[/yellow] {escape(note)}")
+    if show_notes:
+        _print_notes(report, console)

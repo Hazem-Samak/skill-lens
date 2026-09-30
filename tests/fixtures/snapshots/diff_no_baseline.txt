@@ -1,0 +1,13 @@
+╭─────────────── Diff: 'junk' ───────────────╮
+│ Copies: 2                                  │
+│ Baseline: none (no copy passed validation) │
+╰────────────────────────────────────────────╯
+
+Not compared: no copy could serve as a baseline.
+
+- ~/.claude/skills/junk (user, missing_description)  not compared: no baseline
+  Not compared: there is no baseline.
+
+- ~/.agents/skills/junk (user, missing_description)  not compared: no baseline
+  Not compared: there is no baseline.
+

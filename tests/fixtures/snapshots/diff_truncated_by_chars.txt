@@ -1,0 +1,30 @@
+╭─────────────── Diff: 'ctx' ────────────────╮
+│ Copies: 2                                  │
+│ Baseline: ~/.claude/skills/ctx (Variant A) │
+╰────────────────────────────────────────────╯
+
+= ~/.claude/skills/ctx [Variant A] (user, valid)  baseline (no diff shown)
+  Reference copy; every diff below is against it.
+
+* ~/.agents/skills/ctx [Variant B] (user, valid)  2 file(s) differ
+  SKILL.md modified
+--- SKILL.md
++++ SKILL.md
+@@ -1,6 +1,6 @@
+ ---
+ name: ctx
+-description: Copy A.
++description: Copy B.
+ ---
+ # Instructions
+ 
+  body.txt modified
+--- body.txt
++++ body.txt
+@@ -1,2 +1,2 @@
+-ctx 00 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
++CHANGED yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+ ctx 01 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  Truncated: part of this diff was omitted; see the report total below.
+
+Truncated: 138 characters of diff body were omitted to keep this report readable.
