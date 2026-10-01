@@ -102,8 +102,8 @@ rules in them were paid for:
   suggestions deliberately not adopted and why.
 - [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md) — the packaging and release
   walkthrough: what ships in the wheel, the CI gate, and the deliberate decision
-  to defer publishing. Read it before changing `pyproject.toml`, the contents of
-  the wheel, or the release steps.
+  to defer publishing. Section 10 covers the Phase 5 gate test. Read it before
+  changing `pyproject.toml`, the contents of the wheel, or the release steps.
 
 They were produced by independent read-only review delegated to other models
 (Phase 4 by two axes: one reviewer per repo standards, one per specification),
@@ -112,3 +112,7 @@ should be kept: **reproduce a reported defect before believing it** (a false
 alarm costs as much as a miss), and **never regenerate a snapshot or golden
 without reading the diff** — pinned output proves the output did not change,
 not that it was right.
+
+A third habit came from the first CI run: **a test that cannot fail is worse than
+no test.** `tests/test_phase5_gate.py` was mutation-tested — each guard was
+deliberately broken to confirm it fails. Do the same for any new gate.

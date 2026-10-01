@@ -105,7 +105,7 @@ Early development. The specification lives in
 [`SKILL_LENS_SPECIFICATION.md`](./SKILL_LENS_SPECIFICATION.md) and the build
 proceeds by phase:
 
-- [x] **Phase 0** — frozen models, lazy path resolution, 13 golden fixtures
+- [x] **Phase 0** — frozen models, lazy path resolution, 12 golden fixtures
 - [x] **Phase 1** — metadata parser, streaming SHA-256 hasher, symlink canonicalization
 - [x] **Phase 2** — registry loader, 3-axis resolver, `scan` / `why` / `agents` commands
   — ✅ **reviewed and corrected**: all 20 findings in
@@ -124,14 +124,22 @@ proceeds by phase:
   suggestions rejected with written reasons
 - [x] **Phase 5** — packaging and release readiness: a PEP 561 `py.typed` marker,
   a locked reproducible install (`uv.lock`), a CI workflow running lint and tests on
-  macOS and Linux across Python 3.11–3.13, and verified `pip` / `uvx` installs
+  macOS and Linux across Python 3.11–3.14, a `CHANGELOG.md`, and verified `pip` /
+  `uvx` installs
   — ✅ the first CI run caught and fixed two real cross-version bugs (a symlink
   loop and a permission-blocked directory both crashed old Pythons); the suite now
   passes on Python 3.11–3.14
+  — ✅ **post-release hardening**: `tests/test_phase5_gate.py` pins the packaging
+  declarations (version sync, console script, wheel target, registry count, CI
+  matrix vs `requires-python`, and that CI can never publish)
   — ⏸️ **not yet published**: publishing is deliberately manual and deferred, with
   the exact steps recorded in [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md)
 
-Current gate: **417 tests pass**, `ruff check .` clean, `ruff format --check .` clean.
+Current gate: **428 tests pass**, `ruff check .` clean, `ruff format --check .` clean.
+
+> The specification in [`SKILL_LENS_SPECIFICATION.md`](./SKILL_LENS_SPECIFICATION.md)
+> ends at Phase 5, and every phase it defines is now complete. There is no Phase 6
+> in the spec — anything beyond this point is new scope, not unfinished work.
 
 ## Development
 
@@ -170,10 +178,14 @@ CI workflow never uploads anything.
 
 1. Bump `version` in `pyproject.toml` and `__version__` in
    `skill_lens/__init__.py`, then refresh the lock with `uv lock`.
+   `test_phase5_gate.py` fails if those two versions ever disagree, and
+   `test_changelog_documents_the_current_version` fails if the new version is not
+   in [`CHANGELOG.md`](./CHANGELOG.md) under a released heading.
 2. Run the full gate: `pytest`, `ruff check .`, `ruff format --check .`.
 3. Build and inspect the artifacts:
    ```bash
    uv build --out-dir dist
+   uvx twine check dist/*                    # metadata must PASS
    unzip -l dist/*.whl | grep registry/agents   # must list all 10 agent TOMLs
    ```
 4. Smoke-test the exact artifact a user would receive:

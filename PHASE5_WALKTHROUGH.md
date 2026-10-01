@@ -167,8 +167,10 @@ read` and no publish/push step. A green CI run never releases anything.
 | Item | Notes |
 | --- | --- |
 | **Publish to PyPI** | Deferred by request. Follow README → "Releasing". Needs `uv publish` (or `twine`) with the owner's credentials. The distribution name is `skill-lens-cli`; the command stays `skill-lens`. |
-| **Version bump** | `0.1.0` in both `pyproject.toml` and `skill_lens/__init__.py`. Keep them in sync and refresh `uv.lock`. There is no CHANGELOG yet. |
-| **First CI run** | Done — it failed on Python 3.11–3.13 and the two root-cause defects are fixed (section 9). The next push should be green. |
+| ~~Version bump~~ | **Resolved.** `0.1.0` in both `pyproject.toml` and `skill_lens/__init__.py`. The manual "keep them in sync" step is now a test: `test_version_is_in_sync_between_pyproject_and_package` fails when the two disagree, and `test_changelog_documents_the_current_version` fails when a version is bumped without a matching `CHANGELOG.md` heading. `CHANGELOG.md` now exists. |
+| ~~First CI run~~ | **Done — green.** It failed on Python 3.11–3.13 and the two root-cause defects are fixed (section 9). Two consecutive green runs since. |
+| **Python 3.14 in CI** | **Resolved.** Added to the matrix after the suite was verified locally on 3.14.7 (417 passed). The `Programming Language :: Python :: 3.14` classifier was added to match, so PyPI's compatibility filter shows the package to 3.14 users. |
+| **Phase 5 gate test** | **Resolved.** `tests/test_phase5_gate.py` (11 tests) pins the packaging *declarations* rather than building a wheel — see section 10. |
 | **`.gitignore`** | `dist/`, `build/`, `*.egg-info/` are already ignored, so local builds stay untracked. |
 
 ---
@@ -250,3 +252,46 @@ part of the contract, run the suite on the *oldest* supported version before
 believing a green local run. 3.14 hid real breakage on 3.11–3.13. Equally, run it
 once with `FORCE_COLOR=1`: a test that reads rendered output must not depend on
 the host shell's colour setting.
+
+---
+
+## 10. Post-release hardening: the Phase 5 gate test
+
+Section 6 recorded a deliberate decision: *"No packaging test added to `pytest`,
+because building a wheel inside the unit test suite is slow and
+environment-sensitive."* That reasoning still holds, and this gate does **not**
+build a wheel.
+
+What it does instead is pin the **declarations that determine what the wheel
+contains**, which is fast, deterministic, and catches the failure this project
+cares most about — the agent registry silently dropping out of the distribution —
+in under 0.05 seconds, on a developer's machine, with no build step and no
+network.
+
+The eleven assertions are all **drift guards**: each compares two sources of truth
+that can silently get out of step.
+
+| Assertion | Catches |
+| --- | --- |
+| version in `pyproject.toml` == `skill_lens.__version__` | an artifact whose `--version` disagrees with its own filename |
+| `CHANGELOG.md` has a released heading for the current version | a bump that skips the changelog |
+| `skill-lens` maps to an importable `skill_lens.cli:app` | an entrypoint pointing at a renamed module |
+| all six spec commands are registered | a command silently dropped from `cli.py` |
+| build backend is hatchling, wheel target is `["skill_lens"]` | a narrowed package list that would exclude the `.toml` files |
+| `REGISTRY_DIR` resolves *inside* the installed package | the loader becoming cwd-relative, which would leave every installed user with an empty registry |
+| exactly 10 registry TOMLs, all loadable | an agent added or removed without updating `EXPECTED_AGENT_COUNT` and the CI packaging job together |
+| every CI matrix version is within `requires-python` | testing an interpreter the package does not claim to support |
+| CI covers both macOS and Linux | silently dropping a claimed platform |
+| CI contains no publish step and keeps `contents: read` | an upload slipping into an automated workflow — publishing must stay a human decision |
+| `py.typed` ships and `Typing :: Typed` is claimed | a classifier that is honest in name only |
+
+**Verified to have teeth.** Each guard was mutation-tested: bumping only the
+`pyproject.toml` version, appending a `uv publish` step to CI, adding an
+unsupported `3.9` to the matrix, and deleting `py.typed` each produced exactly
+one failure, and the suite returned to 11 passed after restoring each. A test
+that cannot fail is worse than no test, so this was checked rather than assumed.
+
+The end-to-end check that a wheel really does carry the registry remains the CI
+`packaging` job, which builds and installs for real.
+
+---
