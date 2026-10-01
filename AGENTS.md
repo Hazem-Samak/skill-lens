@@ -100,6 +100,10 @@ rules in them were paid for:
 - [`PHASE4_FINDINGS.md`](./PHASE4_FINDINGS.md) — 8 findings (C-01 ... C-08) in the
   `doctor` / `compare` engines and the golden-file harness, plus the review
   suggestions deliberately not adopted and why.
+- [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md) — the packaging and release
+  walkthrough: what ships in the wheel, the CI gate, and the deliberate decision
+  to defer publishing. Read it before changing `pyproject.toml`, the contents of
+  the wheel, or the release steps.
 
 They were produced by independent read-only review delegated to other models
 (Phase 4 by two axes: one reviewer per repo standards, one per specification),

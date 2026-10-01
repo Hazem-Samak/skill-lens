@@ -1,5 +1,7 @@
 # Skill Lens
 
+[![CI](https://github.com/Hazem-Samak/skill-lens/actions/workflows/ci.yml/badge.svg)](https://github.com/Hazem-Samak/skill-lens/actions/workflows/ci.yml)
+
 > **Your AI skills, in one place. And why each one is there.**
 
 Skill Lens is a local, read-only **diagnostics and resolution engine for AI agent
@@ -120,7 +122,11 @@ proceeds by phase:
   — ✅ **reviewed and corrected**: all 8 findings in
   [`PHASE4_FINDINGS.md`](./PHASE4_FINDINGS.md) (C-01 ... C-08) are fixed, three
   suggestions rejected with written reasons
-- [ ] **Phase 5** — packaging and release
+- [x] **Phase 5** — packaging and release readiness: a PEP 561 `py.typed` marker,
+  a locked reproducible install (`uv.lock`), a CI workflow running lint and tests on
+  macOS and Linux across Python 3.11–3.13, and verified `pip` / `uvx` installs
+  — ⏸️ **not yet published**: publishing is deliberately manual and deferred, with
+  the exact steps recorded in [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md)
 
 Current gate: **417 tests pass**, `ruff check .` clean, `ruff format --check .` clean.
 
@@ -153,6 +159,33 @@ pytest tests/test_phase4_gate.py --update-goldens
 
 All tests run against synthetic fixtures under temporary directories. The test
 suite never reads your real `~/.claude`, `~/.agents`, or `~/.codex`.
+
+## Releasing
+
+Releases are **manual and deliberate**. Nothing publishes automatically and the
+CI workflow never uploads anything.
+
+1. Bump `version` in `pyproject.toml` and `__version__` in
+   `skill_lens/__init__.py`, then refresh the lock with `uv lock`.
+2. Run the full gate: `pytest`, `ruff check .`, `ruff format --check .`.
+3. Build and inspect the artifacts:
+   ```bash
+   uv build --out-dir dist
+   unzip -l dist/*.whl | grep registry/agents   # must list all 10 agent TOMLs
+   ```
+4. Smoke-test the exact artifact a user would receive:
+   ```bash
+   uv venv /tmp/skill-lens-smoke --python 3.13
+   uv pip install --python /tmp/skill-lens-smoke dist/*.whl
+   /tmp/skill-lens-smoke/bin/skill-lens --version
+   /tmp/skill-lens-smoke/bin/skill-lens --help
+   ```
+5. Publish — **only when you mean it** — using your own PyPI credentials:
+   ```bash
+   uv publish        # or: twine upload dist/*
+   ```
+
+> Publishing is irreversible: a version can be yanked on PyPI but never reused.
 
 ## License
 
