@@ -95,6 +95,11 @@ Each reviewed phase keeps its findings as a permanent record, including the code
 that was wrong and why. Read the relevant one before touching that area — the
 rules in them were paid for:
 
+- [`DEVELOPMENT.md`](./DEVELOPMENT.md) — the contributor entry point: the build
+  record, the verification gate, how snapshots and goldens are regenerated, and
+  the release steps. It also explains why `README.md` must link with absolute
+  URLs only — PyPI renders the README as the project page and cannot resolve
+  relative links, so a `./FILE.md` target 404s there.
 - [`PHASE2_FINDINGS.md`](./PHASE2_FINDINGS.md) — 20 findings (F-01 … F-20) in the
   registry, discovery and resolver. Load-bearing for anything touching precedence,
   variant labels or canonical paths.

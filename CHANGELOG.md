@@ -11,6 +11,30 @@ macOS and Linux.
 
 ---
 
+## [0.1.1] — 2026-10-01
+
+A documentation and packaging fix. No behaviour changed: no command, exit code or
+output differs from 0.1.0.
+
+### Fixed
+
+- **Eleven dead links on the PyPI project page.** PyPI renders `README.md` as the
+  project description but does not resolve relative links, so every
+  `[LICENSE](./LICENSE)`-style target pointed at pypi.org and 404'd. All README
+  links are now absolute URLs to this repository, and
+  `test_readme_has_no_relative_links` fails if a relative one is reintroduced.
+  (An HTTP-status check cannot catch this class of bug: PyPI answers *every*
+  unknown path with the same page, so the dead links report `200`.)
+
+### Changed
+
+- **The README is now user-facing.** The six-phase build diary and the release
+  checklist moved to [`DEVELOPMENT.md`](./DEVELOPMENT.md), which the README links
+  to. Someone arriving from PyPI now sees what the tool is, how to install it and
+  how to use it, without the maintainer notes in between.
+
+[0.1.1]: https://github.com/Hazem-Samak/skill-lens/releases/tag/v0.1.1
+
 ## [0.1.0] — 2026-10-01
 
 First release. A local, strictly read-only diagnostics and resolution engine for AI

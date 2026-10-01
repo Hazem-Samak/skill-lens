@@ -19,6 +19,7 @@ loader vs the data directory) and fails loudly when they do.
 
 from __future__ import annotations
 
+import re
 import tomllib
 from pathlib import Path
 
@@ -265,3 +266,28 @@ def test_license_is_declared_once_as_an_spdx_expression() -> None:
     assert project["license"] == "MIT"
     legacy = [c for c in project["classifiers"] if c.startswith("License ::")]
     assert not legacy, f"drop the legacy license classifier(s) {legacy!r}; use the SPDX expression"
+
+
+# --- the PyPI project page ------------------------------------------------
+
+
+def test_readme_has_no_relative_links() -> None:
+    """PyPI renders the README as the project page and cannot resolve relative links.
+
+    ``[LICENSE](./LICENSE)`` works on GitHub, where the file really does sit next
+    to the README, and 404s on PyPI, which looks for it on pypi.org instead. The
+    published 0.1.0 page shipped eleven such dead links before this guard existed.
+    Every target must therefore be absolute; a same-page anchor (``#section``) is
+    the one exception, because PyPI renders headings with matching ids.
+    """
+    text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    targets = re.findall(r"\]\(([^)\s]+)\)", text)
+    relative = [
+        target
+        for target in targets
+        if not target.startswith(("http://", "https://", "#", "mailto:"))
+    ]
+    assert not relative, (
+        f"README.md must link with absolute URLs; these resolve only on GitHub and "
+        f"will 404 on the PyPI page: {relative!r}"
+    )
