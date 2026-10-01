@@ -333,6 +333,37 @@ Development follows a strict test-first protocol. Tests run against mock fixture
 - Create repository `AGENTS.md` documenting architecture rules.
 - **Gate:** `ruff check .` passes with zero warnings, 100% green `pytest`.
 
+### Phase 6: Enforceable Findings & Evidence Integrity
+
+> **Added after 0.1.0, by owner decision.** Phases 0–5 above are the original
+> roadmap and are all complete. This phase is new scope chosen after the Phase 5
+> review, which found that a live run of the tool exposed two gaps: its findings
+> could not change an exit status, and two registry entries had no citation.
+> See `PHASE6_PLAN.md` for the plan and `PHASE6_WALKTHROUGH.md` for what shipped.
+
+- Implement an explicit **exit-code contract** in a pure core module
+  (`skill_lens/core/exitcodes.py`), which imports no Typer and no Rich:
+  | Code | Meaning |
+  | --- | --- |
+  | `0` | The command ran; nothing reached the threshold. |
+  | `1` | The command ran; findings reached the threshold. |
+  | `2` | The command could not run: bad usage or unknown agent. |
+  | `3` | Reserved for an unexpected internal fault. |
+- Add `--fail-on {never,error,warning,info}` to `doctor` and `scan`.
+  - **Default `never`**, which preserves every pre-Phase-6 exit status exactly.
+  - A threshold is a comparison, never a count.
+  - The report is always printed *before* the non-zero exit, so a gate can never
+    hide the evidence that tripped it.
+  - `--fail-on` is deliberately absent from `why`, `diff`, `compare` and
+    `agents`: a missing skill is an answer, not a fault.
+- **Evidence integrity.** Every agent definition claiming `documented` or
+  `empirical` evidence must carry a citable `source`. This becomes an enforced
+  invariant rather than a convention (AGENTS.md rule 6).
+- **Correct any registry entry contradicted by primary vendor documentation**,
+  and record what remains genuinely unknown rather than guessing it.
+- **Gate:** `pytest`, `ruff check .` and `ruff format --check .` clean; every new
+  guard mutation-tested; every changed golden or snapshot reviewed and explained.
+
 ---
 
 ## 8. Safety & Explainability Contract

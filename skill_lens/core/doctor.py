@@ -82,6 +82,7 @@ def build_doctor_report(
     findings.extend(_traversal_findings(discovery))
     findings.extend(_farm_findings(discovery))
     findings.extend(_lockfile_findings(home))
+    findings.extend(_registry_evidence_findings(registry))
 
     findings.sort(key=_severity_order)
     return DoctorReport(home=str(home), cwd=str(cwd), findings=tuple(findings))
@@ -397,6 +398,62 @@ def _lockfile_findings(home: Path) -> list[DoctorFinding]:
             evidence=Evidence.EMPIRICAL,
             path=shown,
             detail="ok",
+        )
+    ]
+
+
+def _registry_evidence_findings(registry: Any | None = None) -> list[DoctorFinding]:
+    """Report agents whose behaviour Skill Lens cannot cite (ℹ️).
+
+    Every other check in this module reports something about the *user's* setup.
+    This one reports something about *ours*: an agent whose precedence Skill Lens
+    had to infer, because no primary documentation could be found for it. Any
+    resolution reported for such an agent is an informed guess rather than a
+    verified answer, and the user is entitled to know that before trusting it.
+
+    Only ``inferred`` agents are reported. ``empirical`` means somebody observed
+    the real behaviour, which is genuine evidence even without a vendor doc, and
+    ``documented`` is a citation. Reporting those would cry wolf on every agent
+    in the registry and teach the user to ignore the check.
+
+    Severity is ``info`` deliberately. This is a limitation of our knowledge,
+    not a fault on the user's disk, so it must never make ``--fail-on warning``
+    or ``--fail-on error`` trip. It shows up under ``--fail-on info`` alongside
+    genuine informational notes.
+
+    With the registry as shipped today this returns nothing, because every agent
+    is either documented or empirically verified. That is the intended quiet
+    state: the check exists to catch a regression, and a guard that is always
+    loud is a guard nobody reads.
+    """
+    from skill_lens.registry.loader import list_agents  # noqa: PLC0415
+
+    definitions = list_agents()
+    if registry is not None:
+        # ``load_registry`` returns {id: AgentDefinition}; iterating that
+        # directly yields the *keys*, so take the values explicitly.
+        items = registry.values() if isinstance(registry, dict) else registry
+        definitions = sorted(items, key=lambda agent: agent.id)
+
+    uncited = sorted(
+        agent.id for agent in definitions if agent.policy_evidence is Evidence.INFERRED
+    )
+    if not uncited:
+        return []
+    listed = ", ".join(uncited)
+    return [
+        DoctorFinding(
+            code="registry_uncited_agent",
+            severity=Severity.INFO,
+            message=(
+                f"Skill Lens cannot cite primary documentation for {len(uncited)} "
+                f"agent(s): {listed}. Their precedence is inferred, so treat "
+                "resolution for them as an informed guess."
+            ),
+            rule_id="doctor_registry_evidence",
+            evidence=Evidence.INFERRED,
+            path=None,
+            detail=f"uncited={','.join(uncited)}",
         )
     ]
 

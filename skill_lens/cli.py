@@ -19,9 +19,11 @@ from skill_lens.core.compare import run_compare
 from skill_lens.core.diff import build_diff_report
 from skill_lens.core.discovery import normalize_cwd
 from skill_lens.core.doctor import run_doctor
+from skill_lens.core.exitcodes import ExitCode, FailOn, exit_code_for, fail_on_help
 from skill_lens.core.resolver import resolve_skill
-from skill_lens.core.scanner import build_scan_report
+from skill_lens.core.scanner import build_scan_report, scan_severities
 from skill_lens.models import dumps
+from skill_lens.models.enums import Severity
 from skill_lens.registry.loader import list_agents
 from skill_lens.render import (
     render_agents,
@@ -112,6 +114,18 @@ def _assert_inside_sandbox(cwd: Path, sandbox: Path) -> None:
 _CWD_HELP = "Working directory (defaults to the current terminal folder)."
 
 
+def _finish(severities: tuple[Severity, ...], fail_on: FailOn) -> None:
+    """Exit with the status the threshold implies, once output is already sent.
+
+    Called only *after* the report has been printed, so a failing run still
+    shows the user everything that caused the failure. An exit raised before the
+    report would make ``--fail-on`` a way to hide the evidence.
+    """
+    code = exit_code_for(severities, fail_on)
+    if code is not ExitCode.OK:
+        raise typer.Exit(code=int(code))
+
+
 @app.command()
 def scan(
     sandbox: Annotated[
@@ -126,6 +140,10 @@ def scan(
         bool,
         typer.Option("--json", help="Emit machine-readable JSON."),
     ] = False,
+    fail_on: Annotated[
+        FailOn,
+        typer.Option("--fail-on", help=fail_on_help()),
+    ] = FailOn.NEVER,
 ) -> None:
     """Inventory skills across every detected agent."""
     _apply_sandbox(sandbox)
@@ -136,8 +154,9 @@ def scan(
     report = build_scan_report(home, working_dir)
     if as_json:
         _emit_json(report.to_dict())
-        return
-    render_scan(report, console)
+    else:
+        render_scan(report, console)
+    _finish(scan_severities(report), fail_on)
 
 
 @app.command()
@@ -242,6 +261,10 @@ def doctor(
         bool,
         typer.Option("--json", help="Emit machine-readable JSON."),
     ] = False,
+    fail_on: Annotated[
+        FailOn,
+        typer.Option("--fail-on", help=fail_on_help()),
+    ] = FailOn.NEVER,
 ) -> None:
     """Check skill hygiene: broken links, bad frontmatter, budget risks."""
     _apply_sandbox(sandbox)
@@ -254,8 +277,9 @@ def doctor(
     report = run_doctor(cwd=working_dir)
     if as_json:
         _emit_json(report.to_dict())
-        return
-    render_doctor(report, console)
+    else:
+        render_doctor(report, console)
+    _finish(tuple(finding.severity for finding in report.findings), fail_on)
 
 
 @app.command()

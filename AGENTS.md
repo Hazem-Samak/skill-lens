@@ -77,7 +77,8 @@ skill_lens/
 │   ├── diff.py             # Unified diff computation (pure; no Rich)
 │   ├── doctor.py           # Phase 4: diagnostics & hygiene checks
 │   ├── compare.py          # Phase 4: pairwise capability comparison (pure; no Rich)
-│   └── system.py           # Phase 4: TCC-resilient live discovery adapter
+│   ├── system.py           # Phase 4: TCC-resilient live discovery adapter
+│   └── exitcodes.py        # Phase 6: exit-code contract + --fail-on policy (pure; no Typer/Rich)
 └── registry/
     ├── loader.py           # TOML agent-definition loader
     └── agents/             # Agent definition TOML files (codex.toml, claude.toml, ...)
@@ -100,6 +101,13 @@ rules in them were paid for:
 - [`PHASE4_FINDINGS.md`](./PHASE4_FINDINGS.md) — 8 findings (C-01 ... C-08) in the
   `doctor` / `compare` engines and the golden-file harness, plus the review
   suggestions deliberately not adopted and why.
+- [`PHASE6_PLAN.md`](./PHASE6_PLAN.md) — the Phase 6 plan: the exit-code
+  contract, `--fail-on`, and the evidence-integrity work. Phase 6 is *new scope*
+  added after 0.1.0, not part of the original roadmap.
+- [`PHASE6_WALKTHROUGH.md`](./PHASE6_WALKTHROUGH.md) — what Phase 6 shipped: the
+  two registry defects found by reading vendor docs, the mutation results, and
+  the mistakes made. Read it before changing `core/exitcodes.py`, adding a
+  `--fail-on`, or editing an agent's `evidence` / `source` fields.
 - [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md) — the packaging and release
   walkthrough: what ships in the wheel, the CI gate, and the deliberate decision
   to defer publishing. Section 10 covers the Phase 5 gate test. Read it before
@@ -114,5 +122,8 @@ without reading the diff** — pinned output proves the output did not change,
 not that it was right.
 
 A third habit came from the first CI run: **a test that cannot fail is worse than
-no test.** `tests/test_phase5_gate.py` was mutation-tested — each guard was
-deliberately broken to confirm it fails. Do the same for any new gate.
+no test.** `tests/test_phase5_gate.py` and `tests/test_phase6_gate.py` were
+mutation-tested — each guard was deliberately broken to confirm it fails. Do the
+same for any new gate. Two of the ten Phase 6 mutations *survived* and exposed a
+real hole (a scan test that only ever scanned a clean sandbox) and a piece of
+dead code, so the habit earns its keep.

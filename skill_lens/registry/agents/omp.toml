@@ -1,53 +1,84 @@
 id = "omp"
 name = "Oh My Pi"
 identity_source = "frontmatter_name"
-collision_policy = "Inferred"
-policy_evidence = "inferred"
+collision_policy = "Namespace (higher precedence keeps the bare name)"
+policy_evidence = "documented"
 coexist_policy = "ambiguous"
 walk_boundary = "git_root"
 unsearched_rule_id = "omp_search_roots"
 ambiguous_rule_id = "omp_duplicate_ambiguous"
-source = ""
+source = "https://github.com/can1357/oh-my-pi/blob/main/docs/skills.md"
 
-# Tier 2: inferred from sibling agent behaviour; not yet empirically verified.
+# Documented in the upstream docs/skills.md. Two facts drive this file:
 #
-# The "project beats global" ordering is INFERRED (every sibling agent with
-# documented or empirical evidence does this), so ``evidence`` stays
-# ``inferred`` and ``coexist_policy`` stays ``ambiguous``: with no documented
-# winner, the lower-ranked copy is reported as COEXISTS rather than SHADOWED.
-# See AGENTS.md rule 6 -- provenance over hallucination.
-[[roots]]
-id = "omp_agent"
-kind = "global"
-path = ".omp/agent"
-scope = "user"
-rank = 70
-rule_id = "omp_inferred_global"
-evidence = "inferred"
-
-[[roots]]
-id = "omp_shared_global"
-kind = "global"
-path = ".agents/skills"
-scope = "user"
-rank = 65
-rule_id = "omp_inferred_shared"
-evidence = "inferred"
+# 1. COLLISION IS NAMESPACED, NOT SUPPRESSED. When two same-named skills differ,
+#    "the higher-precedence skill keeps the bare name and every other variant
+#    receives a `<namespace>/<name>` suffix". The losing copy stays reachable.
+#
+#    ``coexist_policy`` nonetheless stays ``ambiguous``, on purpose. This tool's
+#    vocabulary is shadow / merge / ambiguous, and none of them means
+#    "namespaced coexistence":
+#      - ``shadow`` would say the loser is suppressed. It is not; it stays
+#        reachable under a namespace.
+#      - ``merge`` would emit the reason "merges all roots with no documented
+#        winner". That is now false -- a winner IS documented.
+#    ``ambiguous`` under-claims ("collision policy is undocumented") where the
+#    other two over-claim. Under-claiming is the correct direction of error for
+#    a tool whose founding rule is provenance over hallucination (AGENTS.md
+#    rule 6). Representing namespacing properly is future scope, recorded in
+#    PHASE6_WALKTHROUGH.md rather than faked here.
+#
+#    ``policy_evidence`` IS ``documented``: the roots, ranks and precedence this
+#    resolver acts on are all upstream-documented. The evidence describes the
+#    agent; ``coexist_policy`` describes what this tool can express.
+#
+# 2. MANAGED SKILLS ARE DEAD LAST. The `omp-managed` (auto-learn) provider has
+#    priority 5 out of nine, and "always defers to a same-named authored skill".
+#    Before Phase 6 this file ranked `.omp/agent` at 70, which claimed managed
+#    skills outranked authored ones -- the opposite of the documentation.
+#
+# Upstream provider priorities, highest first, for reference: native 100,
+# skillshare 95, omp-plugins 90, claude 80, agent-plugins 75,
+# claude-plugins/agents/codex 70, opencode 55, github 30, omp-managed 5.
+# The absolute ranks below preserve the documented RELATIVE order that matters
+# to this resolver (authored > shared > managed) inside the numeric convention
+# every other agent already uses.
+#
+# Discovery is non-recursive upstream (one level under `skills/`); nothing here
+# sets ``recursive``, which was verified rather than changed.
 
 [[roots]]
 id = "omp_project"
 kind = "project"
 path = ".omp/skills"
 scope = "project"
-rank = 90
-rule_id = "omp_inferred_project"
-evidence = "inferred"
+rank = 95
+rule_id = "omp_documented_project"
+evidence = "documented"
 
 [[roots]]
 id = "omp_project_agents"
 kind = "project"
 path = ".agents/skills"
 scope = "project"
-rank = 85
-rule_id = "omp_inferred_project"
-evidence = "inferred"
+rank = 90
+rule_id = "omp_documented_project_agents"
+evidence = "documented"
+
+[[roots]]
+id = "omp_shared_global"
+kind = "global"
+path = ".agents/skills"
+scope = "user"
+rank = 70
+rule_id = "omp_documented_shared"
+evidence = "documented"
+
+[[roots]]
+id = "omp_agent"
+kind = "global"
+path = ".omp/agent"
+scope = "user"
+rank = 40
+rule_id = "omp_documented_managed_last"
+evidence = "documented"

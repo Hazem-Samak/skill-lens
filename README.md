@@ -85,7 +85,8 @@ each agent actually resolves skills.
 
 All six commands are built and tested.
 
-Every command accepts `--json`.
+Every command accepts `--json`. `doctor` and `scan` also accept `--fail-on` to
+gate a pipeline — see [Exit codes and CI use](#exit-codes-and-ci-use).
 
 ## Install
 
@@ -134,12 +135,47 @@ proceeds by phase:
   matrix vs `requires-python`, and that CI can never publish)
   — ⏸️ **not yet published**: publishing is deliberately manual and deferred, with
   the exact steps recorded in [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md)
+- [x] **Phase 6** — *new scope, added after 0.1.0 and not in the original roadmap.*
+  Two gaps that only appeared once the tool ran against a real machine:
+  — **enforceable findings**: a documented exit-code contract (`0` clean, `1`
+  findings, `2` bad usage) plus `--fail-on {never,error,warning,info}` on `doctor`
+  and `scan`, so the tool can gate a CI pipeline instead of only reporting.
+  **The default is `never`, so 0.1.0 behaviour is unchanged.** See
+  [`PHASE6_WALKTHROUGH.md`](./PHASE6_WALKTHROUGH.md)
+  — **evidence integrity**: `dsh` and `omp` were the only agents with no source
+  and entirely inferred rules. Both now cite their real vendor documentation —
+  which revealed that `dsh` was **missing both user-level roots** and that `omp`'s
+  managed-skills folder was ranked **above** the folders that should win. All 10
+  agents now cite a source, and an enforced invariant guarantees it.
 
-Current gate: **428 tests pass**, `ruff check .` clean, `ruff format --check .` clean.
+Current gate: **465 tests pass**, `ruff check .` clean, `ruff format --check .` clean.
 
-> The specification in [`SKILL_LENS_SPECIFICATION.md`](./SKILL_LENS_SPECIFICATION.md)
-> ends at Phase 5, and every phase it defines is now complete. There is no Phase 6
-> in the spec — anything beyond this point is new scope, not unfinished work.
+> The Phase 6 plan is [`PHASE6_PLAN.md`](./PHASE6_PLAN.md); what shipped and what
+> was wrong along the way is in
+> [`PHASE6_WALKTHROUGH.md`](./PHASE6_WALKTHROUGH.md).
+
+## Exit codes and CI use
+
+`doctor` and `scan` can fail a pipeline. By default they exit `0` exactly as they
+always have — a report you read. Opt in with `--fail-on`:
+
+```bash
+skill-lens doctor --fail-on error      # exit 1 if any error-level finding
+skill-lens scan   --fail-on warning    # exit 1 on any error or warning
+```
+
+| Code | Meaning |
+| --- | --- |
+| `0` | The command ran; nothing reached the threshold. |
+| `1` | The command ran; findings reached the threshold. |
+| `2` | Bad usage, unknown agent, or unreadable input. |
+
+Two things worth knowing: the report is **always printed before** the non-zero
+exit, so a gate never hides the evidence that tripped it; and `--fail-on info`
+fails on essentially every machine, because `doctor` reports *normal* setups as
+informational notes. Use `error` or `warning` for a gate. `why`, `diff`,
+`compare` and `agents` have no `--fail-on` — a missing skill is an answer, not a
+fault.
 
 ## Development
 

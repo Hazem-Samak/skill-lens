@@ -1,11 +1,11 @@
 ╭─────────────── Skill Lens: Discovered Skills ────────────────╮
-│ Detected Agents: claude, codex, omp, opencode                │
+│ Detected Agents: claude, codex, dsh, omp, opencode           │
 │ Canonical Library: 2 skills (0 symlink entrypoints)          │
 │ Local Project Skills: 0  System/Bundled: 0  Plugin Skills: 0 │
 ╰──────────────────────────────────────────────────────────────╯
-┏━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Skill Name ┃ Scope  ┃ Canonical Path          ┃ Active Entrypoints   ┃
-┡━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━┩
-│ deploy     │ Global │ ~/.claude/skills/deploy │ claude               │
-│ deploy     │ Global │ ~/.agents/skills/deploy │ codex, omp, opencode │
-└────────────┴────────┴─────────────────────────┴──────────────────────┘
+┏━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Skill Name ┃ Scope  ┃ Canonical Path          ┃ Active Entrypoints        ┃
+┡━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ deploy     │ Global │ ~/.claude/skills/deploy │ claude                    │
+│ deploy     │ Global │ ~/.agents/skills/deploy │ codex, dsh, omp, opencode │
+└────────────┴────────┴─────────────────────────┴───────────────────────────┘

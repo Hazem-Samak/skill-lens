@@ -1,15 +1,65 @@
 id = "dsh"
 name = "DSH"
 identity_source = "directory_name"
-collision_policy = "Inferred"
-policy_evidence = "inferred"
-coexist_policy = "ambiguous"
+collision_policy = "Shadow (Project > User)"
+policy_evidence = "documented"
+coexist_policy = "shadow"
 walk_boundary = "git_root"
 unsearched_rule_id = "dsh_search_roots"
 ambiguous_rule_id = "dsh_duplicate_ambiguous"
-source = ""
+source = "https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/subsystems/skills.md"
 
-# Tier 2: inferred. Node-module profile skills are treated as plugin scope.
+# RANK DIRECTION IS INVERTED -- READ THIS BEFORE EDITING.
+#
+# The upstream dsh docs define a rank table where a LOWER number is the HIGHER
+# priority (100 beats 600). Skill Lens ranks the other way: a HIGHER number wins
+# (`max(hits, key=rank)` in core/resolver.py). The upstream ranks are therefore
+# TRANSLATED here, never copied.
+#
+#   upstream 100 project-dsh    ->  95  dsh_project
+#   upstream 200 project-agents ->  90  dsh_project_agents
+#   upstream 400 user-dsh       ->  70  dsh_user
+#   upstream 500 user-agents    ->  65  dsh_shared_global
+#
+# The relative order is what the docs assert and is preserved exactly. The
+# absolute numbers only have to sit inside the convention every other agent
+# already uses.
+#
+# Upstream also documents two roots this file deliberately OMITS:
+#   upstream 300 custom  (Config.customSkillDirs)
+#   upstream 600 bundled (Config.bundledSkillDir)
+# Both exist only when the user sets an option, so asserting them as always
+# searched would be a guess. They are absent rather than wrong.
+#
+# The user root also skips its `.system` child upstream, which the shared
+# container-traversal rule already models project-wide.
+
+[[roots]]
+id = "dsh_project"
+kind = "project"
+path = ".dsh/skills"
+scope = "project"
+rank = 95
+rule_id = "dsh_documented_project"
+evidence = "documented"
+
+[[roots]]
+id = "dsh_project_agents"
+kind = "project"
+path = ".agents/skills"
+scope = "project"
+rank = 90
+rule_id = "dsh_documented_project_agents"
+evidence = "documented"
+
+# Plugin-bundled skills. NOT covered by the native skill docs above: upstream
+# says recursive `**/SKILL.md` discovery is unsupported for its skill roots,
+# but that rule is about the roots this file documents, not about node-module
+# plugin bundles. This root exists to model a bundled-plugin layout and to keep
+# the traversal-hazard check exercised (Phase 4 finding; see tests/test_doctor.py
+# `dsh` traversal test). It therefore stays `inferred` and stays recursive --
+# dropping that would delete reviewed coverage to satisfy a rule about a
+# different kind of root.
 [[roots]]
 id = "dsh_profiles"
 kind = "plugin"
@@ -20,20 +70,24 @@ rule_id = "dsh_inferred_profiles"
 evidence = "inferred"
 recursive = true
 
+# Upstream 400 (user-dsh) and 500 (user-agents). Both were MISSING before
+# Phase 6: the registry only knew project roots and a plugin root, so it was
+# blind to `~/.dsh/skills` and `~/.agents/skills` -- where a real dsh user's
+# skills actually live. See PHASE6_WALKTHROUGH.md section 3.
 [[roots]]
-id = "dsh_project"
-kind = "project"
+id = "dsh_user"
+kind = "global"
 path = ".dsh/skills"
-scope = "project"
-rank = 60
-rule_id = "dsh_inferred_project"
-evidence = "inferred"
+scope = "user"
+rank = 70
+rule_id = "dsh_documented_user"
+evidence = "documented"
 
 [[roots]]
-id = "dsh_project_agents"
-kind = "project"
+id = "dsh_shared_global"
+kind = "global"
 path = ".agents/skills"
-scope = "project"
-rank = 55
-rule_id = "dsh_inferred_project"
-evidence = "inferred"
+scope = "user"
+rank = 65
+rule_id = "dsh_documented_shared"
+evidence = "documented"

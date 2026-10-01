@@ -301,7 +301,7 @@
           "visibility": "active_root",
           "collision": "winning_entry",
           "variant_label": "A",
-          "rule_id": "omp_inferred_project",
+          "rule_id": "omp_documented_project",
           "reason": "Highest-priority copy (Project copy.)."
         },
         {
@@ -312,7 +312,7 @@
           "visibility": "active_root",
           "collision": "coexisting_merged",
           "variant_label": "B",
-          "rule_id": "omp_inferred_global",
+          "rule_id": "omp_documented_managed_last",
           "reason": "Listed alongside another copy; collision policy is undocumented."
         }
       ]

@@ -19,7 +19,7 @@ from skill_lens.core.discovery import (
     entry_scope,
     labels_for_entries,
 )
-from skill_lens.models.enums import Scope
+from skill_lens.models.enums import ParseStatus, Scope, Severity
 from skill_lens.registry.loader import AgentDefinition, load_registry
 
 _SCOPE_ORDER = SCOPE_SPECIFICITY
@@ -106,6 +106,39 @@ class ScanReport:
             "skills": [skill.to_dict() for skill in self.skills],
             "unreadable": list(self.unreadable),
         }
+
+
+#: How a scan entry's parse status ranks as a health problem.
+#:
+#: These deliberately mirror the severities ``doctor`` assigns to the same
+#: conditions (``malformed_frontmatter`` is an error, ``unreadable_root`` is a
+#: warning). If the two ever disagree, ``--fail-on`` on ``scan`` and ``doctor``
+#: would disagree about whether the same machine is healthy, which is worse than
+#: either being slightly conservative.
+_PARSE_STATUS_SEVERITY: dict[str, Severity] = {
+    ParseStatus.MALFORMED_YAML.value: Severity.ERROR,
+    ParseStatus.MISSING_DESCRIPTION.value: Severity.ERROR,
+    ParseStatus.UNREADABLE.value: Severity.WARNING,
+}
+
+
+def scan_severities(report: ScanReport) -> tuple[Severity, ...]:
+    """Every health problem visible in a scan report, as severities.
+
+    Pure: takes a finished report, returns the severities. This is what lets
+    ``scan --fail-on`` gate a pipeline without ``cli.py`` re-deriving the rules.
+
+    A skill that parsed cleanly contributes nothing. An unreadable *root* is a
+    warning even though no entry can be produced for it, because the absence of
+    skills in a blocked directory is itself the finding.
+    """
+    severities: list[Severity] = [
+        _PARSE_STATUS_SEVERITY[skill.parse_status]
+        for skill in report.skills
+        if skill.parse_status in _PARSE_STATUS_SEVERITY
+    ]
+    severities.extend(Severity.WARNING for _ in report.unreadable)
+    return tuple(severities)
 
 
 def _agents_of(entry: DiscoveredEntry) -> tuple[str, ...]:
