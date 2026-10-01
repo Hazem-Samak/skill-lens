@@ -133,8 +133,9 @@ proceeds by phase:
   — ✅ **post-release hardening**: `tests/test_phase5_gate.py` pins the packaging
   declarations (version sync, console script, wheel target, registry count, CI
   matrix vs `requires-python`, and that CI can never publish)
-  — ⏸️ **not yet published**: publishing is deliberately manual and deferred, with
-  the exact steps recorded in [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md)
+  — ✅ **published**: `skill-lens-cli` 0.1.0 went live on PyPI on 2026-10-01 and is
+  tagged `v0.1.0`; publishing stays manual and deliberate, with the exact steps in
+  [Releasing](#releasing) below
 - [x] **Phase 6** — *new scope, added after 0.1.0 and not in the original roadmap.*
   Two gaps that only appeared once the tool ran against a real machine:
   — **enforceable findings**: a documented exit-code contract (`0` clean, `1`

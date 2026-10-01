@@ -5,8 +5,9 @@ All notable changes to Skill Lens are recorded here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Every entry below was verified against the repository gate: `pytest`, `ruff check .`
-and `ruff format --check .` all clean, plus a green CI run on macOS and Linux.
+Every entry below was verified against the repository gate: `pytest --cov=skill_lens`,
+`mypy`, `ruff check .` and `ruff format --check .` all clean, plus a green CI run on
+macOS and Linux.
 
 ---
 
@@ -15,9 +16,8 @@ and `ruff format --check .` all clean, plus a green CI run on macOS and Linux.
 First release. A local, strictly read-only diagnostics and resolution engine for AI
 agent skills (`SKILL.md`), shipped as the `skill-lens` command.
 
-> **This release was never published to PyPI.** It is the version the repository
-> was built towards; there is no `0.1.0` tag and no upload has happened. Phase 6
-> (below) is therefore part of what `0.1.0` will contain rather than a change
+> **Published to PyPI on 2026-10-01** as `skill-lens-cli` 0.1.0, and tagged
+> `v0.1.0`. Phase 6 (below) is part of what `0.1.0` contains rather than a change
 > after it. Publishing remains deliberately manual — see
 > [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md).
 
