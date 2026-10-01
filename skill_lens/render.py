@@ -17,7 +17,6 @@ from rich.table import Table
 from rich.text import Text
 
 from skill_lens.core import paths
-from skill_lens.core.resolver import ResolutionReport
 from skill_lens.core.scanner import ScanReport
 from skill_lens.models.compare import CompareReport
 from skill_lens.models.diff import DiffCopy, DiffFile, DiffReport
@@ -28,6 +27,7 @@ from skill_lens.models.parsing import (
     ERR_PERMISSION_DENIED,
     ERR_SYMLINK_CYCLE,
 )
+from skill_lens.models.resolution import ResolutionReport
 from skill_lens.registry.loader import AgentDefinition
 
 _STATE_STYLE = {

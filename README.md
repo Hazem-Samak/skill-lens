@@ -148,7 +148,8 @@ proceeds by phase:
   managed-skills folder was ranked **above** the folders that should win. All 10
   agents now cite a source, and an enforced invariant guarantees it.
 
-Current gate: **465 tests pass**, `ruff check .` clean, `ruff format --check .` clean.
+Current gate: **470 tests pass** at **93% branch coverage**, `mypy` strict clean,
+`ruff check .` clean, `ruff format --check .` clean.
 
 > The Phase 6 plan is [`PHASE6_PLAN.md`](./PHASE6_PLAN.md); what shipped and what
 > was wrong along the way is in
@@ -183,10 +184,16 @@ fault.
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
-pytest          # run the test suite
-ruff check .    # lint
-ruff format .   # format
+pytest                        # run the test suite
+pytest --cov=skill_lens       # …with the coverage gate (fails under 90%)
+mypy                          # strict type check of skill_lens/
+ruff check .                  # lint
+ruff format .                 # format
 ```
+
+The coverage threshold lives in `[tool.coverage.report]` and the type-check
+scope in `[tool.mypy]`, both in `pyproject.toml` — one source of truth each, so
+CI enforces exactly what a local run does.
 
 Terminal output is pinned by plain-text snapshots under
 `tests/fixtures/snapshots/`. After an intentional change to the presentation
@@ -217,7 +224,8 @@ CI workflow never uploads anything.
    `test_phase5_gate.py` fails if those two versions ever disagree, and
    `test_changelog_documents_the_current_version` fails if the new version is not
    in [`CHANGELOG.md`](./CHANGELOG.md) under a released heading.
-2. Run the full gate: `pytest`, `ruff check .`, `ruff format --check .`.
+2. Run the full gate: `pytest --cov=skill_lens`, `mypy`, `ruff check .`,
+   `ruff format --check .`.
 3. Build and inspect the artifacts:
    ```bash
    uv build --out-dir dist
@@ -235,8 +243,17 @@ CI workflow never uploads anything.
    ```bash
    uv publish        # or: twine upload dist/*
    ```
+6. Tag the release, so the `[0.1.0]` link at the foot of
+   [`CHANGELOG.md`](./CHANGELOG.md) resolves instead of 404ing. The tag name is
+   not free-form: it must be `v<version>` to match that link.
+   ```bash
+   git tag -a v0.1.0 -m "skill-lens 0.1.0"
+   git push origin v0.1.0
+   ```
 
 > Publishing is irreversible: a version can be yanked on PyPI but never reused.
+> There is deliberately **no `v0.1.0` tag yet** — it is created in step 6, after
+> the upload, so the tag always points at a commit that is actually released.
 
 ## License
 

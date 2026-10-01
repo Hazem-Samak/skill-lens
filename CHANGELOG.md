@@ -60,6 +60,29 @@ agent skills (`SKILL.md`), shipped as the `skill-lens` command.
   collision behaviour is now documented. Neither `shadow` nor `merge` can
   express namespaced coexistence, and both would emit a false statement;
   under-claiming is the correct direction of error. See the walkthrough.
+- Dropped the legacy `License :: OSI Approved :: MIT License` classifier. The
+  SPDX `license = "MIT"` expression is authoritative under PEP 639, and shipping
+  both left the metadata self-contradictory. `twine check` still passes.
+
+### Verification hardening (post-Phase 6)
+
+The release gate now checks two properties it previously only asserted in prose.
+
+- **Strict type checking.** `mypy --strict` runs over `skill_lens/` in CI, with
+  `types-PyYAML` supplying the one missing stub. The `py.typed` marker and the
+  `Typing :: Typed` classifier already shipped; a strict checker is what makes
+  that promise verifiable rather than decorative. It surfaced exactly two
+  findings, both fixed: an unparameterised `dict` in the registry loader, and a
+  presentation-layer import that reached through `core.resolver` for a model it
+  should have taken from `models.resolution`.
+- **A coverage gate.** `pytest --cov=skill_lens` now fails below 90% branch
+  coverage; the suite currently measures **93%**. The threshold lives in
+  `[tool.coverage.report]` and the type-check scope in `[tool.mypy]`, so CI
+  enforces exactly what a local run does.
+- **Drift guards for both.** Five assertions in `tests/test_phase5_gate.py` pin
+  the dev-dependency list, the mypy scope, the coverage threshold, and that CI
+  actually invokes both. Each was mutation-tested: breaking the declaration
+  produces exactly one failure.
 
 ### Known limitations
 

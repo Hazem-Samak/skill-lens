@@ -43,10 +43,13 @@ The developer driving you has zero coding experience and is vibe-coding this pro
 ## 2. Test & Verification Protocol
 
 - **Linter & Formatter:** `ruff check .` and `ruff format .`
+- **Type Checker:** `mypy` (strict, scoped to `skill_lens/` via `[tool.mypy]`)
 - **Test Runner:** `pytest`
+- **Coverage Gate:** `pytest --cov=skill_lens` (threshold in `[tool.coverage.report]`)
 - Before finishing any task, run:
   ```bash
-  pytest
+  pytest --cov=skill_lens
+  mypy
   ruff check .
   ruff format --check .
   ```

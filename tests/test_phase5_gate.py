@@ -207,3 +207,61 @@ def test_typed_marker_ships_under_the_declared_package() -> None:
     package_dir = Path(skill_lens.__file__).resolve().parent
     assert (package_dir / "py.typed").is_file(), "py.typed must live inside skill_lens/"
     assert "Typing :: Typed" in _pyproject()["project"]["classifiers"]
+
+
+# --- verification gates: type check and coverage ---------------------------
+
+
+def test_dev_extras_declare_the_verification_tools() -> None:
+    """A tool CI cannot install is a gate that silently does not exist.
+
+    CI installs with ``uv sync --locked --extra dev``, so the type checker and
+    the coverage plugin have to live in the ``dev`` extra to be runnable at all.
+    """
+    dev = _pyproject()["project"]["optional-dependencies"]["dev"]
+    joined = " ".join(dev)
+    for tool in ("mypy", "pytest-cov", "types-PyYAML"):
+        assert tool in joined, f"{tool} must be a dev dependency; found {dev!r}"
+
+
+def test_mypy_is_configured_strict_over_the_package() -> None:
+    """``py.typed`` promises types; strict mypy is what makes the promise checked."""
+    mypy = _pyproject()["tool"]["mypy"]
+    assert mypy["strict"] is True, "mypy must run in strict mode to mean anything"
+    assert mypy["files"] == ["skill_lens"], (
+        f"mypy must check the shipped package, not the whole repo; found {mypy.get('files')!r}"
+    )
+
+
+def test_coverage_threshold_is_declared_and_meaningful() -> None:
+    """An unenforced coverage number erodes silently on the next refactor."""
+    coverage = _pyproject()["tool"]["coverage"]
+    assert coverage["run"]["source"] == ["skill_lens"], "coverage must measure the shipped package"
+    assert coverage["report"]["fail_under"] >= 85, (
+        f"a threshold of {coverage['report'].get('fail_under')!r} is too low to gate anything"
+    )
+
+
+def test_ci_enforces_the_type_check_and_the_coverage_gate() -> None:
+    """Declaring a gate in ``pyproject.toml`` is not running it.
+
+    The coverage threshold itself lives in ``[tool.coverage.report]`` so there is
+    exactly one source of truth; CI only has to invoke pytest under ``--cov``.
+    """
+    steps = _ci_workflow()["jobs"]["test"]["steps"]
+    runs = " ".join(str(step.get("run", "")) for step in steps)
+    assert "mypy" in runs, "CI must run the type checker"
+    assert "--cov" in runs, "CI must run pytest under coverage"
+
+
+def test_license_is_declared_once_as_an_spdx_expression() -> None:
+    """PEP 639: the SPDX expression is authoritative; the legacy classifier is not.
+
+    Shipping both leaves the metadata self-contradictory in the eyes of current
+    tooling, which is why the ``License ::`` classifier is deprecated next to a
+    ``license`` expression.
+    """
+    project = _pyproject()["project"]
+    assert project["license"] == "MIT"
+    legacy = [c for c in project["classifiers"] if c.startswith("License ::")]
+    assert not legacy, f"drop the legacy license classifier(s) {legacy!r}; use the SPDX expression"

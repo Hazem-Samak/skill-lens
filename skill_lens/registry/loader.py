@@ -10,6 +10,7 @@ from __future__ import annotations
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 from skill_lens.models.enums import Evidence, Scope
 from skill_lens.registry import REGISTRY_DIR
@@ -65,7 +66,7 @@ class AgentDefinition:
         return None
 
 
-def _parse_root(raw: dict) -> AgentRoot:
+def _parse_root(raw: dict[str, Any]) -> AgentRoot:
     return AgentRoot(
         id=raw["id"],
         kind=raw["kind"],
