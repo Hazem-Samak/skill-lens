@@ -195,8 +195,9 @@ the first CI run, which forced the small engine fixes below.
 The first CI run (run #1, commit `385b0c4`) **failed**: the packaging job passed,
 but the test jobs failed on Python 3.11 and 3.12. Reproducing locally on 3.11,
 3.12 and 3.13 showed **12 failing tests**; Python 3.14 passed everything. The
-cause was not the OS and not flaky tests — it was two real bugs that had been
-invisible because development only ever ran on Python 3.14.
+cause was not the OS and not flaky tests — it was two real engine bugs, plus one
+test that only passed because the local shell had colour off. All three were
+invisible because development only ever ran on Python 3.14 at a plain terminal.
 
 **Bug 1 — a symlink loop crashes output on Python ≤3.12.**
 `Path.resolve()` raises `RuntimeError` (not `OSError`) for a symlink loop on
@@ -221,17 +222,32 @@ swallows it and returns `False`. Three places assumed the 3.14 behaviour:
 * `discovery._directories_for_root()` had the same unguarded project-root probe;
   wrapped for the same reason.
 
+**Bug 3 — a test asserted on colourised text (CI-only, nothing to do with the
+engine).** `test_compare_requires_exactly_two_agents` checked that the CLI error
+contains the literal `--agent`. On CI colour is forced (`FORCE_COLOR`), and Rich
+renders the option name as `-` + an escape code + `-agent`, so the raw string
+never contains `--agent`; it passed locally only because a plain terminal has no
+colour. Fixed by settling colour once for the whole suite at the top of
+`tests/conftest.py` (`FORCE_COLOR` removed, `NO_COLOR=1`) *before*
+`skill_lens.cli` is imported — the CLI builds its consoles at import time, so the
+switch has to happen first. The test is now stable in any shell; no production
+code changed.
+
 **Why it matters.** Specification section 4 requires cycles and blocked roots to
 be *reported without crashing or hanging*. Before this fix that guarantee held
 only on the newest Python; now it holds on every supported version.
 
 **Verification.** The full suite was run locally on Python 3.11, 3.12, 3.13 and
-3.14 — **417 passed on each**. `ruff check .` and `ruff format --check .` clean.
-No test was weakened; the production code was made version-independent.
+3.14 — **417 passed on each**, and again with `FORCE_COLOR=1` set to mimic CI.
+`ruff check .` and `ruff format --check .` clean. No test was weakened; the
+production code was made version-independent, and the one fragile assertion was
+made colour-independent.
 
 **Files changed:** `skill_lens/core/paths.py`, `skill_lens/core/parser.py`,
-`skill_lens/core/discovery.py`.
+`skill_lens/core/discovery.py`, `tests/conftest.py`.
 
 **Lesson for future agents (keep this habit):** when a supported Python range is
 part of the contract, run the suite on the *oldest* supported version before
-believing a green local run. 3.14 hid real breakage on 3.11–3.13.
+believing a green local run. 3.14 hid real breakage on 3.11–3.13. Equally, run it
+once with `FORCE_COLOR=1`: a test that reads rendered output must not depend on
+the host shell's colour setting.
