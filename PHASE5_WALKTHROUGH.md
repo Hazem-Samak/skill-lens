@@ -25,8 +25,9 @@ Think of it like cooking a meal and then boxing it for delivery:
 * I added an **automatic checking machine** (CI) that runs the tests and the
   linter every time code is pushed, on both macOS and Linux. ✅
 * I added a small marker file so editors trust the tool's type hints. ✅
-* I wrote down, step by step, how to publish later — but **did not publish**,
-  because uploading is permanent and you asked to wait. ⏸️
+* I wrote down, step by step, how to publish — publishing was still a deliberate
+  human decision at the time; it happened after this record was written (see
+  section 7). ⏭️
 
 ---
 
@@ -40,7 +41,7 @@ Think of it like cooking a meal and then boxing it for delivery:
 | README release instructions | added — a manual, no-automation process |
 | README Phase 5 status + CI badge | updated |
 | `AGENTS.md` project record | links this file |
-| **PyPI publish** | **NOT done — intentionally deferred** |
+| **PyPI publish** | **Done post-Phase 5.** `0.1.0` and `0.1.1` were published on 2026-10-01. |
 
 The console-script entrypoint (`skill-lens = skill_lens.cli:app`), the `hatchling`
 build backend, the `pyproject.toml` metadata and the repo `AGENTS.md` already
@@ -154,8 +155,9 @@ read` and no publish/push step. A green CI run never releases anything.
   platforms; testing only one would leave the other claim unverified.
 * **Packaging is a separate CI job.** It is the one check that can silently rot
   if `pyproject.toml` or the package layout changes.
-* **No PyPI upload.** Publishing is irreversible and requires the owner's
-  credentials. The user explicitly chose "prepare, but don't publish."
+* **No PyPI upload in Phase 5 itself.** Publishing is irreversible and was left
+  as an explicit human decision. It has since been done: `0.1.0` and `0.1.1`
+  went to PyPI on 2026-10-01.
 * **No packaging test added to `pytest`.** Building a wheel inside the unit test
   suite is slow and environment-sensitive; the same assertion lives in the CI
   `packaging` job where a build is expected anyway.
@@ -166,7 +168,7 @@ read` and no publish/push step. A green CI run never releases anything.
 
 | Item | Notes |
 | --- | --- |
-| **Publish to PyPI** | Deferred by request. Follow README → "Releasing". Needs `uv publish` (or `twine`) with the owner's credentials. The distribution name is `skill-lens-cli`; the command stays `skill-lens`. |
+| **Publish to PyPI** | **Done.** `0.1.0` and `0.1.1` published 2026-10-01 via `uv publish` (README → "Releasing"). The distribution name is `skill-lens-cli`; the command stays `skill-lens`. |
 | ~~Version bump~~ | **Resolved.** `0.1.0` in both `pyproject.toml` and `skill_lens/__init__.py`. The manual "keep them in sync" step is now a test: `test_version_is_in_sync_between_pyproject_and_package` fails when the two disagree, and `test_changelog_documents_the_current_version` fails when a version is bumped without a matching `CHANGELOG.md` heading. `CHANGELOG.md` now exists. |
 | ~~First CI run~~ | **Done — green.** It failed on Python 3.11–3.13 and the two root-cause defects are fixed (section 9). Two consecutive green runs since. |
 | **Python 3.14 in CI** | **Resolved.** Added to the matrix after the suite was verified locally on 3.14.7 (417 passed). The `Programming Language :: Python :: 3.14` classifier was added to match, so PyPI's compatibility filter shows the package to 3.14 users. |

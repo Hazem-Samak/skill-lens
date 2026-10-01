@@ -533,7 +533,7 @@ The independent review was produced with a read-only `agy` dispatch:
 ```bash
 node ~/.pi/agent/skills/agy-delegate/scripts/relay.mjs \
   --brief <brief.txt> \
-  --cd "/Users/corvette/Documents/Projects Coding/Skill Lens" \
+  --cd "/path/to/Skill Lens" \
   --model "gemini-3.8-flash-high" --effort high --read-only
 ```
 

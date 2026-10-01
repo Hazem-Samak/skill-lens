@@ -6,7 +6,7 @@
 **Primary Interface:** Line-oriented Python CLI with `Rich` terminal formatting (explicitly NO full-screen TUI).  
 **Supported Platforms:** macOS and Linux (Windows is out of scope for v1).  
 **Target Audience:** Multi-agent developers using AI coding assistants (Codex, Claude Code, Antigravity, OpenCode, Pi, Grok, Qoder, Windsurf, OMP, DSH).  
-**Execution Strategy:** 100% Vibe-Coding Ready — Modular, Provenance-Tagged, Golden Fixture-Driven, Zero Systems Overhead.
+**Execution Strategy:** Built for AI-assisted development — Modular, Provenance-Tagged, Golden Fixture-Driven, Zero Systems Overhead.
 
 ---
 

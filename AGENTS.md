@@ -2,13 +2,13 @@
 
 Welcome, AI agent. You are pair-programming on **Skill Lens**, a local diagnostics and resolution CLI tool for AI agent capabilities (`SKILL.md`).
 
-The developer driving you has zero coding experience and is vibe-coding this project. Your job is to be disciplined, reliable, and strictly follow the specification in `SKILL_LENS_SPECIFICATION.md`.
+This project is built with AI coding assistants under a strict specification. Your job is to be disciplined, reliable, and strictly follow the specification in `SKILL_LENS_SPECIFICATION.md`.
 
 ---
 
 ## 0. Communication Rules (READ FIRST)
 
-- **The developer has zero coding experience. Explain everything in plain, simple English.**
+- **Explain everything in plain, simple English.** This project is built with AI assistants and read by people skimming the repo; assume no prior context.
 - **No unexplained jargon.** If a technical term is unavoidable, define it in one short sentence the first time you use it.
 - **Lead with the outcome, not the mechanics.** Say what changed and why it matters to the user before listing files or code details.
 - **Use everyday analogies** for technical concepts (e.g. "a symlink is like a shortcut icon").
