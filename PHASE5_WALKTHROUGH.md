@@ -227,11 +227,10 @@ engine).** `test_compare_requires_exactly_two_agents` checked that the CLI error
 contains the literal `--agent`. On CI colour is forced (`FORCE_COLOR`), and Rich
 renders the option name as `-` + an escape code + `-agent`, so the raw string
 never contains `--agent`; it passed locally only because a plain terminal has no
-colour. Fixed by settling colour once for the whole suite at the top of
-`tests/conftest.py` (`FORCE_COLOR` removed, `NO_COLOR=1`) *before*
-`skill_lens.cli` is imported — the CLI builds its consoles at import time, so the
-switch has to happen first. The test is now stable in any shell; no production
-code changed.
+colour. (Setting `NO_COLOR` was not enough — Rich still emits bold/dim codes.)
+Fixed with a `_PlainRunner` subclass in `tests/test_cli.py` that strips ANSI
+escapes from captured stdout/stderr, so every assertion in that file is about the
+text and never the colouring. No production code changed.
 
 **Why it matters.** Specification section 4 requires cycles and blocked roots to
 be *reported without crashing or hanging*. Before this fix that guarantee held
@@ -244,7 +243,7 @@ production code was made version-independent, and the one fragile assertion was
 made colour-independent.
 
 **Files changed:** `skill_lens/core/paths.py`, `skill_lens/core/parser.py`,
-`skill_lens/core/discovery.py`, `tests/conftest.py`.
+`skill_lens/core/discovery.py`, `tests/test_cli.py`.
 
 **Lesson for future agents (keep this habit):** when a supported Python range is
 part of the contract, run the suite on the *oldest* supported version before

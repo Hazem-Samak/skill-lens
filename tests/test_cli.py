@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 from typer.testing import CliRunner
@@ -10,7 +11,28 @@ from typer.testing import CliRunner
 from skill_lens.cli import app
 from tests.fixtures.scenarios import build_scenario
 
-runner = CliRunner()
+_ANSI_ESCAPE = re.compile(rb"\x1b\[[0-9;]*m")
+
+
+class _PlainRunner(CliRunner):
+    """A CLI runner whose captured output has ANSI styling removed.
+
+    Some environments force colour (CI exports FORCE_COLOR). Rich then styles
+    parts of a rendered message -- an option name comes out as ``-`` plus an
+    escape code plus ``-agent`` -- so a plain substring check for ``--agent``
+    fails there while passing on a normal terminal. Stripping the escapes once,
+    here, keeps every assertion in this file about the *text*, never the
+    colouring, whatever shell runs the suite.
+    """
+
+    def invoke(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+        result = super().invoke(*args, **kwargs)
+        result.stdout_bytes = _ANSI_ESCAPE.sub(b"", result.stdout_bytes or b"")
+        result.stderr_bytes = _ANSI_ESCAPE.sub(b"", result.stderr_bytes or b"")
+        return result
+
+
+runner = _PlainRunner()
 
 
 def _make_skill(directory, name, description):
