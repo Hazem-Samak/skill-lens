@@ -16,6 +16,21 @@ from pathlib import Path
 _SANDBOX: Path | None = None
 
 
+def _resolved(path: Path) -> Path:
+    """Resolve ``path`` without raising on a refusal or a symlink loop.
+
+    ``Path.resolve()`` raises ``RuntimeError`` -- *not* ``OSError`` -- for a
+    symlink loop on Python 3.11/3.12; Python 3.13+ stops at the loop instead of
+    raising. Catching both keeps output and sandbox checks identical on every
+    supported version, which is exactly the kind of cross-version divergence
+    that made the first CI run fail.
+    """
+    try:
+        return path.resolve()
+    except (OSError, RuntimeError):
+        return path
+
+
 def set_sandbox(root: str | os.PathLike[str] | None) -> None:
     """Redirect all path resolution into ``root`` (a mock ``$HOME``).
 
@@ -23,7 +38,7 @@ def set_sandbox(root: str | os.PathLike[str] | None) -> None:
     resolution. This is the single switch used by tests and safe demos.
     """
     global _SANDBOX
-    _SANDBOX = Path(root).expanduser().resolve() if root is not None else None
+    _SANDBOX = _resolved(Path(root).expanduser()) if root is not None else None
 
 
 def get_sandbox() -> Path | None:
@@ -78,7 +93,7 @@ def _home_variants() -> tuple[Path, ...]:
     either one to ``~``.
     """
     root = home()
-    resolved = root.resolve()
+    resolved = _resolved(root)
     return (root,) if resolved == root else (root, resolved)
 
 
@@ -90,10 +105,7 @@ def display(path: str | os.PathLike[str]) -> str:
     so a path reached through a symlinked home still collapses.
     """
     target = Path(path)
-    try:
-        resolved = target.resolve()
-    except OSError:  # pragma: no cover - unresolvable path
-        resolved = target
+    resolved = _resolved(target)
     targets = (target,) if resolved == target else (target, resolved)
     for root in _home_variants():
         for candidate in targets:
@@ -114,5 +126,5 @@ def same_location(left: str | os.PathLike[str], right: str | os.PathLike[str]) -
     """
     try:
         return Path(left).resolve() == Path(right).resolve()
-    except OSError:  # pragma: no cover - unresolvable path
+    except (OSError, RuntimeError):  # pragma: no cover - unresolvable path
         return False

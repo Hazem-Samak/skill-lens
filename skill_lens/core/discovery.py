@@ -320,8 +320,13 @@ def _directories_for_root(
     results: list[tuple[Path, bool]] = []
     for directory in _ancestor_dirs(cwd, boundary):
         candidate = directory / root.path
-        if candidate.exists() or candidate.is_symlink():
-            results.append((candidate, directory != boundary))
+        try:
+            if candidate.exists() or candidate.is_symlink():
+                results.append((candidate, directory != boundary))
+        except OSError:
+            # An ancestor is off-limits; this project root simply does not
+            # apply. The blocked directory is reported elsewhere, so skip it.
+            continue
     return results
 
 
@@ -344,7 +349,10 @@ def _is_symlinked_markdown(path: Path) -> bool:
         return False
     try:
         return path.resolve().is_file()
-    except OSError:
+    except (OSError, RuntimeError):
+        # A symlink loop makes ``resolve()`` raise ``RuntimeError`` on Python
+        # 3.11/3.12 (3.13+ stops at the loop instead); an unresolvable link
+        # raises ``OSError``. Either way, it is not a markdown file skill.
         return False
 
 
@@ -406,17 +414,26 @@ def discover(
         boundary = find_walk_boundary(cwd, agent.walk_boundary)
         for root in agent.roots:
             for base, nested in _directories_for_root(home, cwd, root, boundary):
-                if not base.exists() and not base.is_symlink():
-                    continue
-                if base.is_dir() and not base.is_symlink() and _unreadable(base):
-                    index.unreadable_roots.append(
-                        UnreadableRoot(
-                            agent_id=agent.id,
-                            root_id=root.id,
-                            path=str(base),
-                            detail=ERR_PERMISSION_DENIED,
+                try:
+                    if not base.exists() and not base.is_symlink():
+                        continue
+                    if base.is_dir() and not base.is_symlink() and _unreadable(base):
+                        index.unreadable_roots.append(
+                            UnreadableRoot(
+                                agent_id=agent.id,
+                                root_id=root.id,
+                                path=str(base),
+                                detail=ERR_PERMISSION_DENIED,
+                            )
                         )
-                    )
+                        continue
+                except OSError:
+                    # The root, or a parent directory, cannot be inspected --
+                    # e.g. a nested root under a TCC-blocked parent. The blocked
+                    # parent is recorded as unreadable on its own pass; skip
+                    # this one rather than letting a stat behind it abort the
+                    # whole walk (Python 3.11-3.13 re-raise PermissionError from
+                    # ``exists``/``is_dir``; 3.14 swallows it).
                     continue
                 listing = _list_recursive_entries(base) if root.recursive else _list_entries(base)
                 for entrypoint, is_file in listing:

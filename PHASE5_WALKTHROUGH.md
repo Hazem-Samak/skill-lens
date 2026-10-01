@@ -135,12 +135,11 @@ File: `.github/workflows/ci.yml`. Two jobs:
 CI is **read-only with respect to publishing**: it has `permissions: contents:
 read` and no publish/push step. A green CI run never releases anything.
 
-> **Honest caveat (do not skip):** the local test suite has only ever been run on
-> **macOS / Python 3.14**. The CI matrix is therefore the *first real run* on
-> **Linux and on Python 3.11–3.13**. Tests were written to be OS-neutral (symlinks,
-> `chmod 000`, path resolution via `paths.py`), but if the first CI run surfaces a
-> Linux- or older-Python-specific failure, that is a genuine finding, not a flaky
-> test — fix the code, do not loosen the test.
+> **Resolved — was an honest caveat.** The local suite had only ever run on
+> macOS / Python 3.14. The **first CI run failed on Python 3.11–3.13**, exposing
+> two genuine cross-version bugs (real crashes, not flaky tests). They are fixed
+> and the suite now passes on Python 3.11–3.14 — see **section 9**. The Linux and
+> older-Python rows stay covered by CI on every push.
 
 ---
 
@@ -169,7 +168,7 @@ read` and no publish/push step. A green CI run never releases anything.
 | --- | --- |
 | **Publish to PyPI** | Deferred by request. Follow README → "Releasing". Needs `uv publish` (or `twine`) with the owner's credentials. The distribution name is `skill-lens-cli`; the command stays `skill-lens`. |
 | **Version bump** | `0.1.0` in both `pyproject.toml` and `skill_lens/__init__.py`. Keep them in sync and refresh `uv.lock`. There is no CHANGELOG yet. |
-| **First CI run** | Expect the Linux / 3.11–3.13 rows to be the first true cross-platform check. Review any failure as a real defect. |
+| **First CI run** | Done — it failed on Python 3.11–3.13 and the two root-cause defects are fixed (section 9). The next push should be green. |
 | **`.gitignore`** | `dist/`, `build/`, `*.egg-info/` are already ignored, so local builds stay untracked. |
 
 ---
@@ -185,5 +184,54 @@ read` and no publish/push step. A green CI run never releases anything.
 | `PHASE5_WALKTHROUGH.md` | new — this document |
 | `uv.lock` | committed earlier as `d506ee4` |
 
-No engine, command, model, render or fixture file was changed in Phase 5. The
-417-test gate is unchanged by design.
+The engine, command, model, render and fixture files were unchanged by the
+Phase 5 packaging work itself. The 417-test gate was unchanged by design — until
+the first CI run, which forced the small engine fixes below.
+
+---
+
+## 9. Defect found by the first CI run (and fixed)
+
+The first CI run (run #1, commit `385b0c4`) **failed**: the packaging job passed,
+but the test jobs failed on Python 3.11 and 3.12. Reproducing locally on 3.11,
+3.12 and 3.13 showed **12 failing tests**; Python 3.14 passed everything. The
+cause was not the OS and not flaky tests — it was two real bugs that had been
+invisible because development only ever ran on Python 3.14.
+
+**Bug 1 — a symlink loop crashes output on Python ≤3.12.**
+`Path.resolve()` raises `RuntimeError` (not `OSError`) for a symlink loop on
+Python 3.11/3.12; Python 3.13+ changed it to stop at the loop instead. Both
+`paths.display()` (used by `doctor`/`scan` when rendering paths) and
+`discovery._is_symlinked_markdown()` caught only `OSError`, so a cyclic link
+crashed the command. Fixed: a `_resolved()` helper in `paths.py` catches both,
+and `_is_symlinked_markdown` catches both.
+
+**Bug 2 — a permission-blocked directory crashes discovery on Python ≤3.13.**
+On Python 3.11–3.13, `Path.is_file()`, `exists()` and `is_dir()` **re-raise**
+`PermissionError` (EACCES) when a parent directory is unreadable; Python 3.14
+swallows it and returns `False`. Three places assumed the 3.14 behaviour:
+* `parser.find_skill_document()` probed `is_file()`/`is_dir()` unguarded, so a
+  chmod-000 skill crashed parsing. Fixed: the probes are wrapped; a blocked
+  entrypoint falls through to `is_unreadable_directory`, so the skill is
+  reported `UNREADABLE` exactly as the spec intends.
+* `discovery.discover()` probed `base.exists()`/`is_dir()` unguarded, so a root
+  nested under a blocked parent (e.g. `~/.codex/skills/.system` under a blocked
+  `~/.codex/skills`) crashed the walk. Fixed: the root probes are wrapped; the
+  blocked parent is still recorded as an unreadable root.
+* `discovery._directories_for_root()` had the same unguarded project-root probe;
+  wrapped for the same reason.
+
+**Why it matters.** Specification section 4 requires cycles and blocked roots to
+be *reported without crashing or hanging*. Before this fix that guarantee held
+only on the newest Python; now it holds on every supported version.
+
+**Verification.** The full suite was run locally on Python 3.11, 3.12, 3.13 and
+3.14 — **417 passed on each**. `ruff check .` and `ruff format --check .` clean.
+No test was weakened; the production code was made version-independent.
+
+**Files changed:** `skill_lens/core/paths.py`, `skill_lens/core/parser.py`,
+`skill_lens/core/discovery.py`.
+
+**Lesson for future agents (keep this habit):** when a supported Python range is
+part of the contract, run the suite on the *oldest* supported version before
+believing a green local run. 3.14 hid real breakage on 3.11–3.13.

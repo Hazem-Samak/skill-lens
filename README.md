@@ -125,6 +125,9 @@ proceeds by phase:
 - [x] **Phase 5** — packaging and release readiness: a PEP 561 `py.typed` marker,
   a locked reproducible install (`uv.lock`), a CI workflow running lint and tests on
   macOS and Linux across Python 3.11–3.13, and verified `pip` / `uvx` installs
+  — ✅ the first CI run caught and fixed two real cross-version bugs (a symlink
+  loop and a permission-blocked directory both crashed old Pythons); the suite now
+  passes on Python 3.11–3.14
   — ⏸️ **not yet published**: publishing is deliberately manual and deferred, with
   the exact steps recorded in [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md)
 

@@ -41,15 +41,25 @@ def find_skill_document(entrypoint: Path) -> Path | None:
 
     Supports both directory skills (``name/SKILL.md``) and Antigravity's
     standalone file skills (``name.md``). Returns ``None`` when neither exists.
+
+    The filesystem probes are guarded: on Python < 3.14 ``is_file()`` on a path
+    inside a directory the OS refuses to open raises ``PermissionError``
+    (newer versions return ``False``). Swallowing it here makes the answer
+    version-independent; the caller still classifies such an entrypoint as
+    ``UNREADABLE`` through :func:`is_unreadable_directory`, so a blocked skill
+    is reported rather than dropped or allowed to crash the walk.
     """
-    if entrypoint.is_dir():
-        for filename in _SKILL_FILENAMES:
-            candidate = entrypoint / filename
-            if candidate.is_file():
-                return candidate
+    try:
+        if entrypoint.is_dir():
+            for filename in _SKILL_FILENAMES:
+                candidate = entrypoint / filename
+                if candidate.is_file():
+                    return candidate
+            return None
+        if entrypoint.is_file() and entrypoint.suffix.lower() == ".md":
+            return entrypoint
+    except OSError:
         return None
-    if entrypoint.is_file() and entrypoint.suffix.lower() == ".md":
-        return entrypoint
     return None
 
 
