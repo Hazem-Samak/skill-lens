@@ -97,9 +97,14 @@ rules in them were paid for:
 - [`PHASE3_FINDINGS.md`](./PHASE3_FINDINGS.md) — 4 findings (D-01 … D-04) in the
   `diff` truncation and presentation layer, plus the test gaps that let them
   through.
+- [`PHASE4_FINDINGS.md`](./PHASE4_FINDINGS.md) — 8 findings (C-01 ... C-08) in the
+  `doctor` / `compare` engines and the golden-file harness, plus the review
+  suggestions deliberately not adopted and why.
 
-Both were produced by an independent read-only review delegated to another model,
+They were produced by independent read-only review delegated to other models
+(Phase 4 by two axes: one reviewer per repo standards, one per specification),
 then reproduced and fixed by the orchestrator. Two habits came out of them and
-should be kept: **reproduce a reported defect before believing it** (a false alarm
-costs as much as a miss), and **never regenerate a snapshot without reading the
-diff** — a snapshot proves the output did not change, not that it was right.
+should be kept: **reproduce a reported defect before believing it** (a false
+alarm costs as much as a miss), and **never regenerate a snapshot or golden
+without reading the diff** — pinned output proves the output did not change,
+not that it was right.

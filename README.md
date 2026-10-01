@@ -117,6 +117,9 @@ proceeds by phase:
 - [x] **Phase 4** — `doctor` hygiene checks, multi-agent `compare`, and the live
   discovery adapter — pinned by golden `doctor_*.json` / `compare_*.json` fixtures,
   render snapshots, and a live smoke test that runs with the sandbox off
+  — ✅ **reviewed and corrected**: all 8 findings in
+  [`PHASE4_FINDINGS.md`](./PHASE4_FINDINGS.md) (C-01 ... C-08) are fixed, three
+  suggestions rejected with written reasons
 - [ ] **Phase 5** — packaging and release
 
 Current gate: **417 tests pass**, `ruff check .` clean, `ruff format --check .` clean.
