@@ -7,7 +7,6 @@ Every test runs against a mock ``$HOME`` under ``tmp_path``. The real
 
 from __future__ import annotations
 
-import os
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -15,16 +14,6 @@ import pytest
 
 from skill_lens.core import paths
 from tests.fixtures.scenarios import build_scenario
-
-# Tests must be deterministic whatever shell runs them. Some environments force
-# colour (CI exports FORCE_COLOR); Rich then styles parts of a message -- an
-# option name renders as ``-`` + an escape code + ``-agent`` -- so a plain
-# substring check for ``--agent`` fails there even though it passes on a normal
-# terminal. The CLI builds its consoles at import time, so colour has to be
-# settled before ``skill_lens.cli`` is imported: pytest loads this conftest
-# before collecting the test modules that import it.
-os.environ.pop("FORCE_COLOR", None)
-os.environ["NO_COLOR"] = "1"
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
