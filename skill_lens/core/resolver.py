@@ -167,6 +167,8 @@ def _load_disabled_overrides(agent: AgentDefinition, home: Path) -> set[str]:
         data = json.loads((home / agent.disabled_settings).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return set()
+    if not isinstance(data, dict):
+        return set()
     override = data.get(agent.disabled_key)
     if not isinstance(override, dict):
         return set()

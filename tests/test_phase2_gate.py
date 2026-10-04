@@ -503,6 +503,15 @@ def test_disabled_override(mock_home: Path) -> None:
     assert report.headline is HeadlineState.DISABLED
 
 
+@pytest.mark.parametrize("payload", ["[]", "null", '"string"', "42"])
+def test_non_object_settings_are_ignored(mock_home: Path, payload: str) -> None:
+    build_scenario("disabled_override", mock_home)
+    home = mock_home.resolve()
+    (home / ".claude" / "settings.json").write_text(payload, encoding="utf-8")
+    report = resolve_skill("legacy", "claude", home, home)
+    assert report.headline is HeadlineState.ACTIVE
+
+
 def test_malformed_is_invalid(mock_home: Path) -> None:
     build_scenario("malformed_frontmatter", mock_home)
     home = mock_home.resolve()
