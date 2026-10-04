@@ -3,7 +3,7 @@
 > **"Your AI skills, in one place. And why each one is there."**
 
 **Technical Positioning:** A local diagnostics and resolution engine for AI agent capabilities (`SKILL.md` and file-based skills).  
-**Primary Interface:** Line-oriented Python CLI with `Rich` terminal formatting. From **0.2**, an additive, optional full-screen TUI (Textual) may be layered on top as a browsing surface; the line-oriented CLI remains the primary interface and the default.  
+**Primary Interface:** Line-oriented Python CLI with `Rich` terminal formatting. From **0.2**, an additive, optional full-screen TUI (Textual) may be layered on top as a browsing surface; the line-oriented CLI remains the primary interface. Bare `skill-lens` opens the TUI when Textual is installed and stdout is interactive; `--plain`, non-interactive stdout, or missing Textual prints help instead.<br>
 **Supported Platforms:** macOS and Linux (Windows is out of scope for v1).  
 **Target Audience:** Multi-agent developers using AI coding assistants (Codex, Claude Code, Antigravity, OpenCode, Pi, Grok, Qoder, Windsurf, OMP, DSH).  
 **Execution Strategy:** Built for AI-assisted development — Modular, Provenance-Tagged, Golden Fixture-Driven, Zero Systems Overhead.

@@ -63,6 +63,12 @@ and the build proceeds by phase:
   nothing. Overturns the v1 "no full-screen TUI" rule for 0.2. The complete plan
   — vision, screens, phasing and gates — is
   [`FULL_SCREEN_TUI.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/FULL_SCREEN_TUI.md).
+  The 2026-10-04 readiness correction records two engine fixes required before
+  Step 0. Q9 is confirmed: all catalog, skill/config and diagnostic inputs stay
+  captured in memory until explicit refresh (`r`). The corrected plan does not
+  mark the engine fixes or snapshot implementation as completed.
+  Its sections 21–22 now define the exact Step 0 input types, engine signatures,
+  capture algorithm, acceptance tests and ordered assignments for implementers.
 
 Current gate: **471 tests pass** at **93% branch coverage**, `mypy` strict clean,
 `ruff check .` clean, `ruff format --check .` clean.

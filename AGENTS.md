@@ -31,11 +31,13 @@ This project is built with AI coding assistants under a strict specification. Yo
 4. **Machine-Readable JSON First:**
    - All core features must output valid dataclasses and JSON models. Rich formatting is strictly a presentation layer on top of the data.
 5. **No System Bloat or Creep:**
-   - The line-oriented CLI is the **primary** interface and the default. From
+   - The line-oriented CLI is the **primary** interface. From
      **0.2**, an *additive, optional* full-screen TUI (Textual) is allowed as a
      browsing layer, shipped as the optional `[tui]` extra; it stays strictly
      read-only and presentation-only. See [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
-     Before 0.2, line-oriented CLI only.
+     Before 0.2, line-oriented CLI only. From 0.2, bare `skill-lens` opens the
+     TUI when Textual is installed and stdout is interactive; `--plain`,
+     non-interactive stdout, or missing Textual prints help instead.
    - NO SQLite or databases in v1.
    - NO AI API calls or telemetry.
    - NO Windows support in v1. macOS and Linux only.
