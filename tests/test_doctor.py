@@ -16,6 +16,7 @@ from pathlib import Path
 
 import skill_lens.core.doctor as doctor_module
 from skill_lens.core.doctor import CODEX_CONTEXT_BUDGET_CHARS, build_doctor_report
+from skill_lens.core.system import ERR_NOT_JSON, read_json_guarded
 from skill_lens.models import dumps
 from skill_lens.models.doctor import DoctorFinding, DoctorReport
 from skill_lens.models.enums import Evidence, Severity
@@ -223,6 +224,22 @@ def test_invalid_lockfile_is_a_warning(mock_home: Path) -> None:
     finding = _finding(report, "installer_lockfile")
     assert finding.severity is Severity.WARNING
     assert finding.detail == "not_json"
+    assert not report.healthy
+
+
+def test_non_utf8_lock_reports_invalid_json(mock_home: Path) -> None:
+    home = mock_home.resolve()
+    lock = home / ".agents" / ".skill-lock.json"
+    lock.parent.mkdir(parents=True)
+    lock.write_bytes(b"\xff\xfe\x00\x00not utf-8")
+    data, error = read_json_guarded(lock)
+    assert data is None
+    assert error == ERR_NOT_JSON
+
+    report = build_doctor_report(home, home)
+    finding = _finding(report, "installer_lockfile")
+    assert finding.severity is Severity.WARNING
+    assert finding.detail == ERR_NOT_JSON
     assert not report.healthy
 
 

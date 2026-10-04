@@ -175,6 +175,10 @@ def test_read_json_guarded_never_raises(tmp_path: Path) -> None:
     assert data == {"skills": 1} and error is None
     data, error = read_json_guarded(broken)
     assert data is None and error == "not_json"
+    non_utf8 = tmp_path / "non_utf8.json"
+    non_utf8.write_bytes(b"\xff\xfe\x00\x00")
+    data, error = read_json_guarded(non_utf8)
+    assert data is None and error == "not_json"
     data, error = read_json_guarded(missing)
     assert data is None and error == "missing"
 

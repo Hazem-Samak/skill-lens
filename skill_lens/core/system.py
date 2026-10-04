@@ -62,6 +62,8 @@ def read_json_guarded(path: Path) -> tuple[Any | None, str | None]:
     """
     try:
         text = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        return None, ERR_NOT_JSON
     except FileNotFoundError:
         return None, ERR_MISSING_FILE
     except PermissionError:
@@ -74,7 +76,7 @@ def read_json_guarded(path: Path) -> tuple[Any | None, str | None]:
         return None, ERR_NOT_JSON
     try:
         return json.loads(text), None
-    except (json.JSONDecodeError, UnicodeDecodeError):
+    except json.JSONDecodeError:
         return None, ERR_NOT_JSON
 
 
