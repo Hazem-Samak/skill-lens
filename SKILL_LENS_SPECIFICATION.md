@@ -3,7 +3,7 @@
 > **"Your AI skills, in one place. And why each one is there."**
 
 **Technical Positioning:** A local diagnostics and resolution engine for AI agent capabilities (`SKILL.md` and file-based skills).  
-**Primary Interface:** Line-oriented Python CLI with `Rich` terminal formatting (explicitly NO full-screen TUI).  
+**Primary Interface:** Line-oriented Python CLI with `Rich` terminal formatting. From **0.2**, an additive, optional full-screen TUI (Textual) may be layered on top as a browsing surface; the line-oriented CLI remains the primary interface and the default.  
 **Supported Platforms:** macOS and Linux (Windows is out of scope for v1).  
 **Target Audience:** Multi-agent developers using AI coding assistants (Codex, Claude Code, Antigravity, OpenCode, Pi, Grok, Qoder, Windsurf, OMP, DSH).  
 **Execution Strategy:** Built for AI-assisted development — Modular, Provenance-Tagged, Golden Fixture-Driven, Zero Systems Overhead.
@@ -123,7 +123,7 @@ On modern developer setups, agents share a canonical library via symlinks (e.g. 
 - **Code Quality:** **`ruff`** + **`pytest`** (placed in `[project.optional-dependencies] dev`).
 
 ### Forbidden in v1
-- ❌ **NO Full-Screen TUI / Textual:** Strictly line-oriented CLI.
+- ❌ **NO Full-Screen TUI / Textual:** v1 is strictly line-oriented CLI. **Amended for 0.2:** an optional, additive, read-only full-screen TUI is permitted from 0.2 as the `[tui]` extra; the line-oriented CLI stays primary. See [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
 - ❌ **NO Write Operations:** Zero file installations, deletions, or modifications.
 - ❌ **NO Script Execution:** Never runs executable scripts inside skill folders.
 - ❌ **NO Unbounded Crawling:** Strictly registry roots and `$HOME/.*/skills` up to depth 4.
@@ -314,7 +314,8 @@ Development follows a strict test-first protocol. Tests run against mock fixture
   (`skill_lens/core/system.py`) stay in Phase 4. No new *declared* dependencies: the
   unified diff uses the standard-library `difflib` plus Rich's existing `Syntax`
   (`Pygments` arrives transitively via Rich and is not added to `pyproject.toml`). No
-  full-screen TUI (AGENTS.md rule 5).
+  full-screen TUI in Phase 3 (AGENTS.md rule 5 as it stood then). The optional TUI is
+  new scope for 0.2 — see [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
 - **Gate:** `pytest` green — including the new snapshot tests and a `diff` golden
   scenario built on the existing `variant_hash_detection` fixture — `ruff check .` clean
   and `ruff format .` clean.
@@ -339,7 +340,8 @@ Development follows a strict test-first protocol. Tests run against mock fixture
 > roadmap and are all complete. This phase is new scope chosen after the Phase 5
 > review, which found that a live run of the tool exposed two gaps: its findings
 > could not change an exit status, and two registry entries had no citation.
-> See `PHASE6_PLAN.md` for the plan and `PHASE6_WALKTHROUGH.md` for what shipped.
+> See `docs/archive/PHASE6_PLAN.md` for the plan and
+> `docs/archive/PHASE6_WALKTHROUGH.md` for what shipped.
 
 - Implement an explicit **exit-code contract** in a pure core module
   (`skill_lens/core/exitcodes.py`), which imports no Typer and no Rich:
@@ -363,6 +365,21 @@ Development follows a strict test-first protocol. Tests run against mock fixture
   and record what remains genuinely unknown rather than guessing it.
 - **Gate:** `pytest`, `ruff check .` and `ruff format --check .` clean; every new
   guard mutation-tested; every changed golden or snapshot reviewed and explained.
+
+### Phase 7 (0.2): Interactive Full-Screen TUI — planned, not built
+
+> **New scope after 0.1.x, owner decision.** Overturns the v1 "no full-screen
+> TUI" rule for 0.2. The full design — purpose, vision, screens, phasing and
+> gates — lives in [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md). This section is
+> only the pointer; the plan is authoritative.
+
+- Add an **optional** `textual` dependency as the `[tui]` extra; the base install
+  gains no new runtime dependency.
+- Ship `skill-lens tui` as a strictly **read-only, presentation-only** browsing
+  layer over the existing frozen models. No new engine, no new data fields.
+- Keep every existing command, flag, JSON shape and exit code unchanged.
+- **Gate:** see the plan's success criteria — read-only guard test, no new base
+  dependency, full repository gate green, snapshots reviewed.
 
 ---
 

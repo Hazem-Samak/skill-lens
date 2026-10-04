@@ -92,9 +92,50 @@ gate a pipeline — see [Exit codes and CI use](#exit-codes-and-ci-use).
 
 Requires **Python 3.11+** on **macOS or Linux** (Windows is out of scope for v1).
 
+The quickest route, and the one that works on a stock Mac, is an installer that
+brings its own Python:
+
+```bash
+uv tool install skill-lens-cli     # recommended
+# or:
+pipx install skill-lens-cli
+```
+
+Either one puts the `skill-lens` command on your `PATH` in an isolated
+environment, so nothing is added to your system Python.
+
+<details>
+<summary>Prefer plain <code>pip</code>?</summary>
+
 ```bash
 pip install skill-lens-cli
 ```
+
+This works only inside a virtual environment you already manage with Python
+3.11+ (see [Development](#development)). On a stock Mac it fails, and the error
+is misleading, so read the gotcha below first.
+
+</details>
+
+### If the install fails
+
+**`ERROR: Could not find a version that satisfies the requirement...
+No matching distribution found`** — this usually does *not* mean the package is
+missing. It means your `python3` is older than 3.11. macOS ships Python 3.9, and
+`pip` reports an old interpreter as "no such package." Check with:
+
+```bash
+python3 --version
+```
+
+If it prints 3.9 or lower, use `uv`/`pipx` above, or `brew install python` and
+install into a virtual environment.
+
+**`error: externally-managed-environment`** — you are trying to `pip install`
+into Homebrew's Python, which refuses writes outside a virtual environment (a
+[PEP 668](https://peps.python.org/pep-0668/) guard). Use `uv`/`pipx`, or create a
+venv first. Do **not** reach for `--break-system-packages`; it can damage your
+Homebrew Python.
 
 > **Package name note:** the command is `skill-lens` and the Python package is
 > `skill_lens`; the distribution is published as `skill-lens-cli` because the

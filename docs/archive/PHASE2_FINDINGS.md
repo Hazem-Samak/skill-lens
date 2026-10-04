@@ -11,7 +11,7 @@
 >
 > **This is a point-in-time record of Phase 2.** Phases since then have moved the
 > gate on — Phase 3 is documented in [`PHASE3_FINDINGS.md`](./PHASE3_FINDINGS.md),
-> and the current test count lives in the [README](./README.md). The counts below
+> and the current test count lives in the [README](../../README.md). The counts below
 > are what was true when each part of this document was written.
 
 ---
@@ -48,6 +48,12 @@ bug ever comes back.
 | Strictly read-only, no network, no DB, no TUI | verified |
 | Tests never touch real `~/.claude`, `~/.agents`, `/etc/codex` | verified |
 | Gate status at time of writing | **243 tests pass, `ruff check` clean** |
+
+> **Amendment (2026-10-04):** the "no TUI" item above is true **for Phase 2 and
+> for v1**. It is *not* a permanent project rule. An optional, additive,
+> read-only full-screen TUI (Textual) is planned for 0.2 — see
+> [`FULL_SCREEN_TUI.md`](../../FULL_SCREEN_TUI.md). The historical statement is
+> kept as written; this note records that the rule has since changed.
 
 > **Reading section 4:** the detailed write-ups below describe each bug **as it
 > was found**, including the code excerpts that were wrong. They are kept as the

@@ -18,19 +18,19 @@ and the build proceeds by phase:
 - [x] **Phase 1** — metadata parser, streaming SHA-256 hasher, symlink canonicalization
 - [x] **Phase 2** — registry loader, 3-axis resolver, `scan` / `why` / `agents` commands
   — ✅ **reviewed and corrected**: all 20 findings in
-  [`PHASE2_FINDINGS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/PHASE2_FINDINGS.md)
+  [`PHASE2_FINDINGS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE2_FINDINGS.md)
   (F-01 … F-20) are fixed and each is guarded by a regression test
 - [x] **Phase 3** — Rich presentation layer and `diff` — unified diff between the
   differing variants of one name, pinned by a golden `diff_*.json` and plain-text
   render snapshots for `scan`, `why` and `diff` — ✅ **reviewed and corrected**: all 4
   findings in
-  [`PHASE3_FINDINGS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/PHASE3_FINDINGS.md)
+  [`PHASE3_FINDINGS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE3_FINDINGS.md)
   (D-01 … D-04) are fixed and each is guarded by a regression test
 - [x] **Phase 4** — `doctor` hygiene checks, multi-agent `compare`, and the live
   discovery adapter — pinned by golden `doctor_*.json` / `compare_*.json` fixtures,
   render snapshots, and a live smoke test that runs with the sandbox off
   — ✅ **reviewed and corrected**: all 8 findings in
-  [`PHASE4_FINDINGS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/PHASE4_FINDINGS.md)
+  [`PHASE4_FINDINGS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE4_FINDINGS.md)
   (C-01 ... C-08) are fixed, three suggestions rejected with written reasons
 - [x] **Phase 5** — packaging and release readiness: a PEP 561 `py.typed` marker,
   a locked reproducible install (`uv.lock`), a CI workflow running lint and tests on
@@ -51,20 +51,26 @@ and the build proceeds by phase:
   findings, `2` bad usage) plus `--fail-on {never,error,warning,info}` on `doctor`
   and `scan`, so the tool can gate a CI pipeline instead of only reporting.
   **The default is `never`, so 0.1.0 behaviour is unchanged.** See
-  [`PHASE6_WALKTHROUGH.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/PHASE6_WALKTHROUGH.md)
+  [`PHASE6_WALKTHROUGH.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_WALKTHROUGH.md)
   — **evidence integrity**: `dsh` and `omp` were the only agents with no source
   and entirely inferred rules. Both now cite their real vendor documentation —
   which revealed that `dsh` was **missing both user-level roots** and that `omp`'s
   managed-skills folder was ranked **above** the folders that should win. All 10
   agents now cite a source, and an enforced invariant guarantees it.
+- [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope, planned, not
+  built.* An optional, additive, read-only browsing layer built on the existing
+  frozen models, shipped as the opt-in `[tui]` extra so the base install gains
+  nothing. Overturns the v1 "no full-screen TUI" rule for 0.2. The complete plan
+  — vision, screens, phasing and gates — is
+  [`FULL_SCREEN_TUI.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/FULL_SCREEN_TUI.md).
 
 Current gate: **471 tests pass** at **93% branch coverage**, `mypy` strict clean,
 `ruff check .` clean, `ruff format --check .` clean.
 
 > The Phase 6 plan is
-> [`PHASE6_PLAN.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/PHASE6_PLAN.md);
+> [`PHASE6_PLAN.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_PLAN.md);
 > what shipped and what was wrong along the way is in
-> [`PHASE6_WALKTHROUGH.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/PHASE6_WALKTHROUGH.md).
+> [`PHASE6_WALKTHROUGH.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_WALKTHROUGH.md).
 
 ## Development workflow
 

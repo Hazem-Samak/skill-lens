@@ -266,6 +266,13 @@ The reviewer verified every claim it was given against the code, and confirmed:
 * The Phase 2 refactor (`discovery.labels_for_entries` as the single label rule)
   did not change existing behaviour.
 
+> **Amendment (2026-10-04):** the "no TUI" and "no new declared dependency"
+> boundaries above were correct for **Phase 3 and v1**. They are not permanent
+> project rules: 0.2 plans an optional, additive, read-only full-screen TUI shipped
+> as an opt-in `[tui]` extra (so the base install still gains no dependency) — see
+> [`FULL_SCREEN_TUI.md`](../../FULL_SCREEN_TUI.md). The history above is kept
+> unchanged; this note records the later change.
+
 Spec conformance was marked "met" for every rule except truncation, which was
 downgraded to "partially met" pending D-01 … D-04.
 

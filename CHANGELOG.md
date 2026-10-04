@@ -11,6 +11,46 @@ macOS and Linux.
 
 ---
 
+## [Unreleased]
+
+Fixes and improvements waiting for the next version. Nothing here is published
+yet: `[Unreleased]` is deliberately not a released heading, so the version gate
+(`test_changelog_documents_the_current_version`) still demands a real `0.1.2`
+section before a release. When the next batch of features lands, rename this
+heading to `## [0.1.2] — <date>` and add the release link at the foot of the
+file.
+
+### Planned
+
+- **0.2 — an interactive full-screen TUI (major surface change).** A new,
+  *optional*, additive browsing layer so the tool can be opened once and
+  navigated instead of only run command-by-command. It stays strictly read-only
+  and presentation-only, reading the same frozen models the `--json` output is
+  built from, and ships as the opt-in `[tui]` extra so the base install gains no
+  new runtime dependency. All existing commands, flags, JSON shapes and exit
+  codes are unchanged; the line-oriented CLI remains the primary interface.
+  This overturns the v1 "no full-screen TUI" rule for 0.2. **Nothing is
+  implemented yet** — the full design lives in
+  [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
+
+### Fixed
+
+- **The install instructions did not work on a stock Mac.** `pip install
+  skill-lens-cli` was the only documented route, and it fails on a new Mac two
+  different ways: Apple's built-in `python3` is 3.9, below the declared
+  `requires-python = ">=3.11"`, so pip reports *"No matching distribution
+  found"* — which reads as "this package does not exist" and sends the reader
+  hunting for a publishing mistake. Installing into Homebrew's Python instead is
+  refused by PEP 668 with `externally-managed-environment`. The install section
+  now leads with `uv tool install` / `pipx install`, which carry their own
+  interpreter, and explains both error messages in plain English, including the
+  `python3 --version` check and a warning against `--break-system-packages`.
+  Both routes were verified against real installs, and the README was rendered
+  through PyPI's own `readme_renderer` to confirm the new `<details>` block and
+  its page anchor survive there.
+
+---
+
 ## [0.1.1] — 2026-10-01
 
 A documentation and packaging fix. No behaviour changed: no command, exit code or
@@ -43,7 +83,7 @@ agent skills (`SKILL.md`), shipped as the `skill-lens` command.
 > **Published to PyPI on 2026-10-01** as `skill-lens-cli` 0.1.0, and tagged
 > `v0.1.0`. Phase 6 (below) is part of what `0.1.0` contains rather than a change
 > after it. Publishing remains deliberately manual — see
-> [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md).
+> [`PHASE5_WALKTHROUGH.md`](./docs/archive/PHASE5_WALKTHROUGH.md).
 
 ### Added
 

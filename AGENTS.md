@@ -31,7 +31,11 @@ This project is built with AI coding assistants under a strict specification. Yo
 4. **Machine-Readable JSON First:**
    - All core features must output valid dataclasses and JSON models. Rich formatting is strictly a presentation layer on top of the data.
 5. **No System Bloat or Creep:**
-   - NO full-screen TUI (Textual). Line-oriented CLI only.
+   - The line-oriented CLI is the **primary** interface and the default. From
+     **0.2**, an *additive, optional* full-screen TUI (Textual) is allowed as a
+     browsing layer, shipped as the optional `[tui]` extra; it stays strictly
+     read-only and presentation-only. See [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
+     Before 0.2, line-oriented CLI only.
    - NO SQLite or databases in v1.
    - NO AI API calls or telemetry.
    - NO Windows support in v1. macOS and Linux only.
@@ -100,23 +104,23 @@ rules in them were paid for:
   the release steps. It also explains why `README.md` must link with absolute
   URLs only — PyPI renders the README as the project page and cannot resolve
   relative links, so a `./FILE.md` target 404s there.
-- [`PHASE2_FINDINGS.md`](./PHASE2_FINDINGS.md) — 20 findings (F-01 … F-20) in the
+- [`PHASE2_FINDINGS.md`](./docs/archive/PHASE2_FINDINGS.md) — 20 findings (F-01 … F-20) in the
   registry, discovery and resolver. Load-bearing for anything touching precedence,
   variant labels or canonical paths.
-- [`PHASE3_FINDINGS.md`](./PHASE3_FINDINGS.md) — 4 findings (D-01 … D-04) in the
+- [`PHASE3_FINDINGS.md`](./docs/archive/PHASE3_FINDINGS.md) — 4 findings (D-01 … D-04) in the
   `diff` truncation and presentation layer, plus the test gaps that let them
   through.
-- [`PHASE4_FINDINGS.md`](./PHASE4_FINDINGS.md) — 8 findings (C-01 ... C-08) in the
+- [`PHASE4_FINDINGS.md`](./docs/archive/PHASE4_FINDINGS.md) — 8 findings (C-01 ... C-08) in the
   `doctor` / `compare` engines and the golden-file harness, plus the review
   suggestions deliberately not adopted and why.
-- [`PHASE6_PLAN.md`](./PHASE6_PLAN.md) — the Phase 6 plan: the exit-code
+- [`PHASE6_PLAN.md`](./docs/archive/PHASE6_PLAN.md) — the Phase 6 plan: the exit-code
   contract, `--fail-on`, and the evidence-integrity work. Phase 6 is *new scope*
   added after 0.1.0, not part of the original roadmap.
-- [`PHASE6_WALKTHROUGH.md`](./PHASE6_WALKTHROUGH.md) — what Phase 6 shipped: the
+- [`PHASE6_WALKTHROUGH.md`](./docs/archive/PHASE6_WALKTHROUGH.md) — what Phase 6 shipped: the
   two registry defects found by reading vendor docs, the mutation results, and
   the mistakes made. Read it before changing `core/exitcodes.py`, adding a
   `--fail-on`, or editing an agent's `evidence` / `source` fields.
-- [`PHASE5_WALKTHROUGH.md`](./PHASE5_WALKTHROUGH.md) — the packaging and release
+- [`PHASE5_WALKTHROUGH.md`](./docs/archive/PHASE5_WALKTHROUGH.md) — the packaging and release
   walkthrough: what ships in the wheel, the CI gate, and the deliberate decision
   to defer publishing. Section 10 covers the Phase 5 gate test. Read it before
   changing `pyproject.toml`, the contents of the wheel, or the release steps.
