@@ -63,18 +63,18 @@ and the build proceeds by phase:
   nothing. Overturns the v1 "no full-screen TUI" rule for 0.2. The complete plan
   — vision, screens, phasing and gates — is
   [`FULL_SCREEN_TUI.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/FULL_SCREEN_TUI.md).
-  The 2026-10-04 readiness correction records two engine fixes required before
-  Step 0. Q9 is confirmed: all catalog, skill/config and diagnostic inputs stay
-  captured in memory until explicit refresh (`r`). The corrected plan does not
-  mark the engine fixes or snapshot implementation as completed.
-  Its sections 21–22 define the exact Step 0 input types, engine signatures,
-  capture algorithm, acceptance tests and ordered assignments for implementers.
-  A synthetic speed and memory probe (P3) must follow the two crash fixes and
-  precede C1–C5; full-capture costs and selective-capture savings are measured
-  before changing the agreed contract. Bare launch requires both terminal input
-  and output. Earlier review history is linked from the plan's short header.
+  The 2026-10-04 readiness review recorded two engine fixes required before
+  Step 0: P1 (non-object settings robustness) and P2 (lock decoding robustness).
+  Both have been implemented and verified with regression tests. P3 cost and
+  capture-scope review measured full capture vs selective retention on synthetic
+  fixtures (>600 skills), confirming the §21 Q9 full-capture contract is practical
+  and retained.
+  Sections 21–22 define the exact Step 0 input types, engine signatures,
+  capture algorithm, acceptance tests and ordered assignments for implementers
+  (C1–C5). Bare launch requires both terminal input and output. Earlier review
+  history is linked from the plan's short header.
 
-Current gate: **471 tests pass** at **93% branch coverage**, `mypy` strict clean,
+Current gate: **476 tests pass** at **93% branch coverage** (92.68%), `mypy` strict clean,
 `ruff check .` clean, `ruff format --check .` clean.
 
 > The Phase 6 plan is

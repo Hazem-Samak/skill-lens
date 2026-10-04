@@ -1,54 +1,69 @@
 # P3 Cost and Capture-Scope Probe Results
 
 > **Specification Reference:** `FULL_SCREEN_TUI.md` §9.2 and §22 (Assignment P3).
-> **Run Date:** 2026-10-04 19:52:33
+> **Run Date:** 2026-10-04 20:19:59
 > **Environment:** Python 3.11.16 on Darwin arm64.
 
 ## 1. Synthetic Fixture Profiles
 
 | Metric | Scenario A (Mostly Unique) | Scenario B (Heavily Duplicated) |
 | --- | --- | --- |
-| **Skill Count (SKILL.md)** | 620 | 615 |
-| **Total Files** | 772 | 1001 |
-| **Total Size on Disk** | 1.08 MiB | 1.99 MiB |
-| **Largest File Size** | 50.00 KiB | 80.00 KiB |
-| **Disk State** | OS cached (recently written tmpfs) | OS cached (recently written tmpfs) |
-| **Composition** | 500 shared, 50 Claude, 50 Codex, 30 symlinks, 20 malformed, binary assets | 200 distinct skills x 3 roots = 600 copies + 15 malformed, binary assets |
+| Discovered Skill Entries | 651 | 615 |
+| Valid / Malformed / Symlinks | 601 valid, 20 malformed, 30 symlinks | 600 valid, 15 malformed, 0 symlinks |
+| Total Files on Disk | 775 | 1001 |
+| Total Size on Disk | 1.08 MiB | 1.98 MiB |
+| Largest File Size | 50.00 KiB | 80.00 KiB |
+| Filesystem State | Freshly written to temporary directory on local disk; resident in OS page cache | Freshly written to temporary directory on local disk; resident in OS page cache |
+| Composition Details | 500 shared, 50 Claude, 50 Codex, 30 Pi symlinks, 20 malformed, binary assets, 1 verified malformed-diff case | 200 distinct skill names x 3 roots = 600 copies + 15 malformed, binary assets |
 
-## 2. Timings Comparison
+## 2. Separate Measured Phases (Timings)
 
-| Pipeline Step | Scenario A | Scenario B | Notes |
+| Phase | Scenario A | Scenario B | Description / Status |
 | --- | --- | --- | --- |
-| **1. First Discovery (Live Walk + Hashes)** | 1140.38 ms (1.140 s) | 708.66 ms (0.709 s) | Includes streaming hash for all copies |
-| **2a. Complete Byte Capture (Full Q9)** | 57.73 ms (0.058 s) | 79.24 ms (0.079 s) | Reads all file bytes into memory |
-| **2b. Selective Byte Capture (Candidate)** | 35.84 ms (0.036 s) | 74.33 ms (0.074 s) | Reads support files only if diff needs them |
-| **3. Second Discovery (Validation Pass)** | 1220.50 ms (1.221 s) | 731.44 ms (0.731 s) | Verifies consistency before publish |
-| **4. Scan & Doctor Construction** | 1391.83 ms (1.392 s) | 795.95 ms (0.796 s) | Builds ScanReport and DoctorReport |
-| **Total Startup (Full Capture Q9)** | **3810.45 ms (3.810 s)** | **2315.29 ms (2.315 s)** | Sum of steps 1 + 2a + 3 + 4 |
-| **Total Startup (Selective Candidate)** | **3788.56 ms (3.789 s)** | **2310.38 ms (2.310 s)** | Sum of steps 1 + 2b + 3 + 4 |
+| 1. First Discovery (Live Walk + Hashes) | 1245.03 ms (1.245 s) | 731.20 ms (0.731 s) | Full walk and streaming SHA-256 calculation |
+| 2. Byte Capture (Full Q9) | 62.39 ms (0.062 s) | 77.88 ms (0.078 s) | Reads all file bytes for all discovered entries |
+| 3. Second Discovery (Validation Pass) | 1208.87 ms (1.209 s) | 680.45 ms (0.680 s) | Reruns live discovery to verify file stability |
+| 4. Report Construction | 63.95 ms (0.064 s) | 54.67 ms (0.055 s) | `build_scan_report` & `build_doctor_report` reusing index & registry |
+| 5. Validation Work | 62.24 ms (0.062 s) | 55.60 ms (0.056 s) | Compares discovery passes, reports and configs |
+| *(Unavailable Service Phases)* | *N/A (C3)* | *N/A (C3)* | In-memory cancellation checkpoints, `display_paths` & `same_locations` |
+| **Total Startup (Probe Estimate)** | **2642.48 ms (2.642 s)** | **1599.80 ms (1.600 s)** | Sum of measured phases 1 + 2 + 3 + 4 + 5 |
 
-## 3. Memory & Retained Bytes Comparison
+### Selective-Retention Comparison (Candidate)
 
-| Memory Metric | Scenario A | Scenario B | Analysis |
+| Candidate Metric | Scenario A | Scenario B | Notes |
 | --- | --- | --- | --- |
-| **Retained Bytes (Full Capture Q9)** | 1.09 MiB | 2.00 MiB | Total bytes of in-memory files |
-| **Retained Bytes (Selective Candidate)** | 216.60 KiB | 2.00 MiB | Skips non-diff support assets |
-| **Peak Mem: First Discovery** | 4.14 MiB | 2.47 MiB | Memory during index walk |
-| **Peak Mem: Full Capture** | 1.23 MiB | 2.15 MiB | Memory during full byte read |
-| **Peak Mem: Second Discovery** | 4.14 MiB | 2.47 MiB | Memory during validation |
-| **Peak Mem: Refresh (Holding Old)** | **5.81 MiB** | **3.94 MiB** | Peak memory during background 'r' |
+| Selective Byte Capture Time | 39.98 ms (0.040 s) | 74.89 ms (0.075 s) | Retains support files only for differing Diff candidates |
+| Capture Time Difference | -22.4 ms | -3.0 ms | Signed difference vs full capture (negative = faster) |
+| Malformed-Diff Rule Verified | YES | N/A | Diff engine's Variant A baseline & readable-copy rules verified |
 
-## 4. Architectural Analysis & Decision Gate
+## 3. Precise Memory & Allocation Measurements
 
-### 4.1 Is Full Capture (Q9) Affordable?
-- **Memory Footprint:** In Scenario A (650 skills, binary assets, support scripts), full in-memory file retention consumed **~1.09 MiB** of RAM. In Scenario B (600+ skills heavily duplicated), it consumed **~2.00 MiB** of RAM.
-- **Peak Memory during Refresh:** Even when holding the previous full session snapshot while generating and validating a new one in the background, peak memory usage reached **~5.81 MiB**.
-- **Execution Time:** The complete 4-step pipeline (First Discovery -> Full Byte Capture -> Validation Discovery -> Scan & Doctor) completes in **~3.81 s (Scenario A) / 2.32 s (Scenario B)**.
+> **Note on Allocation Labels:** `tracemalloc` measures peak heap allocations tracked by the Python runtime for the monitored block. It does not represent total OS process memory (Resident Set Size). Content bytes and container overheads are measured directly via Python data lengths and `sys.getsizeof`.
 
-### 4.2 Full Capture vs. Selective Retention Candidate
-- **Selective Retention Savings:** Selective retention saves a modest fraction of time (~21.9 ms) and memory, but introduces significant architectural complexity: conditional file-loading logic, potential edge cases if diff needs unexpected files, and risk of drift between views.
-- **Verdict:** Full Capture (Q9) consumes less than 30 MiB of RAM even on a large installation with 650+ skills and binary assets. It completes in well under 1 second on modern hardware, and ensures 100% frozen inputs with zero live disk access during navigation.
-- **Recommendation:** **Retain the §21 Full Capture specification verbatim.** No scope reduction or selective-retention redesign is necessary.
+| Memory Metric | Scenario A | Scenario B | Description |
+| --- | --- | --- | --- |
+| Retained File Content Bytes | 1.07 MiB | 1.98 MiB | Exact sum of in-memory file byte buffers |
+| Retained Container Overhead | 108.39 KiB | 120.23 KiB | Overhead of mapping dicts and file tuples |
+| **Total Retained Snapshot Data** | **1.18 MiB** | **2.10 MiB** | Sum of file bytes and container overhead |
+| Selective Candidate Retained Data | 208.65 KiB | 2.00 MiB | Skips support assets for identical/isolated copies |
+| Peak Traced: First Discovery | 4.12 MiB | 2.45 MiB | Traced Python heap during initial discovery |
+| Peak Traced: Full Byte Capture | 1.22 MiB | 2.15 MiB | Traced Python heap during full byte reading |
+| Peak Traced: Reports Construction | 278.74 KiB | 274.34 KiB | Traced Python heap during scan & doctor build |
+| Peak Traced: Validation Pass | 278.67 KiB | 274.74 KiB | Traced Python heap during consistency checks |
+| **Peak Traced: Simulated Refresh** | **11.04 MiB** | **10.48 MiB** | Peak traced heap while holding old snapshot and building new |
+
+## 4. Architectural Analysis & Decision Record
+
+### 4.1 Probe Findings
+1. **Full Capture Time:** Reading all file bytes across 600+ skills requires only **~62.4 ms (Scenario A)** and **~77.9 ms (Scenario B)**.
+2. **Total Startup Estimate:** The sum of all five measured startup phases is **~2.64 s (Scenario A)** and **~1.60 s (Scenario B)** on Darwin arm64. Passing the existing index and registry into `build_doctor_report` eliminates the redundant discovery walk.
+3. **In-Memory Retention:** Total in-memory storage for all captured files and containers is **1.18 MiB (Scenario A)** and **2.10 MiB (Scenario B)**.
+4. **Refresh Memory:** Tracking heap allocations from start through retaining the entire old snapshot and constructing the replacement snapshot with freshly read bytes peaked at **11.04 MiB (Scenario A)** and **10.48 MiB (Scenario B)** of traced allocations.
+5. **Selective Retention Evaluation:** Selective retention saves only ~22.4 ms of capture time. Furthermore, to adhere to the Diff engine's Variant A baseline and readable-copy rules (where readable malformed copies with differing support files must be diffed), selective retention must retain support files for those malformed copies as verified in Scenario A. The minor memory reduction does not justify the added state complexity.
+
+### 4.2 Decision Gate
+- **Decision:** **Retain §21 Full Capture specification verbatim.**
+- **Rationale:** Full capture provides 100% frozen inputs with zero live disk access during navigation, consumes under 3 MiB of retained data for 600+ skills, and introduces no fragile conditional caching logic.
 
 ---
 *Report generated by `docs/p3_cost_probe.py`.*

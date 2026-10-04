@@ -12,9 +12,11 @@
 > `SKILL_LENS_SPECIFICATION.md` §5.
 > **Author:** maintainer, 2026-10-04.
 > **Current revision:** 2026-10-04. Checked against source, temporary crash
-> reproductions and published dependency metadata. Findings and remaining
-> prerequisites are in §20; [earlier review history](docs/archive/TUI_PLAN_REVIEWS.md)
-> is retained separately. This plan does not mark any code fix as completed.
+> reproductions and published dependency metadata. Engine prerequisites P1 and P2
+> are complete and verified with regression tests. P3 speed/memory probe confirms
+> the full-capture contract (§21) is practical and retained. Findings and
+> prerequisite records are in §20; [earlier review history](docs/archive/TUI_PLAN_REVIEWS.md)
+> is retained separately. Step 0 implementation (C1–C5) proceeds under §21.
 
 > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
 > Catalog, skill contents, settings and diagnostic inputs remain fixed until
@@ -793,12 +795,12 @@ Git state before work; there is no pending move to commit.
 - Read Phase 2/4 findings before these narrow fixes. Keep them separate from
   UI plumbing. Passing existing tests does not count as fixing these defects.
 - **Gate:** both regressions fail before their fixes and pass after; all four
-  checks pass; existing snapshots and goldens remain unchanged. These fixes are
-  planned prerequisites, not implemented by this document revision.
+  checks pass; existing snapshots and goldens remain unchanged. Both P1 and P2
+  have been completed and verified with regression tests.
 
-**Then P3 — early capture-cost probe:** run §9.2 and review its measurements
-before C1–C5. Decide whether the current capture scope is affordable before
-implementing it. The full gate still applies to the prerequisite changes.
+**Then P3 — early capture-cost probe:** P3 measurements (§9.2, `docs/P3_COST_PROBE_RESULTS.md`)
+confirmed that full capture is practical (~62–78 ms capture time, under 2.1 MiB retained
+data for 600+ skills). The §21 full-capture contract is affirmed before C1–C5.
 
 ### Step 0 — Contracts (no UI code)
 - Execute assignments C1–C5 in [§22](#22-assignments-for-the-implementer), in order.
@@ -1189,12 +1191,11 @@ temporary mock homes. This table records plan corrections, not completed code.
 | Doctor offered clipboard support despite Q3 | §8.6 displays unmatched paths; copy actions remain deferred, including JSON in §2. |
 | Full gate was claimed green despite formatting failure | Non-runnable Python sketches replaced with explicit launch flow; §11 records the review baseline and requires a new full gate. |
 
-**Readiness:** the architectural direction remains suitable. Before session
-implementation, fix the two engine crashes and pass the prerequisite gate.
-Then pass P3's speed/memory and capture-scope review before C1–C5. Q9 remains
-settled; implementation proceeds only through those ordered gates. This
-document does not mark the fixes or TUI as implemented or establish release
-readiness.
+**Readiness:** the architectural direction remains suitable. Engine prerequisites
+P1 (settings robustness) and P2 (lock decoding) have been completed and pass all
+gates. P3's speed/memory probe and capture-scope review confirmed that full
+capture under Q9 is practical and cost-effective. Implementation proceeds to
+Step 0 assignments C1–C5 under the authoritative §21 contract.
 
 ---
 

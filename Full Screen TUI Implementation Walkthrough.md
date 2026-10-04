@@ -64,35 +64,51 @@ In `skill_lens/core/system.py`, `read_json_guarded()` reads JSON files defensive
 
 ### Objective
 As required by `FULL_SCREEN_TUI.md` §9.2 and §22 before embarking on Step 0 contracts (C1–C5), execute a reproducible throwaway probe against synthetic test fixtures of 600+ skills to measure:
-- Execution time of First Discovery, Byte Capture, Second Discovery (validation), and Report construction.
-- Retained memory and peak memory (including holding an old snapshot during background refresh).
-- Feasibility of Q9 Full Capture vs. a Selective Retention candidate.
+- Separate timings of First Discovery, Complete Byte Capture, Second Discovery (validation pass), Report Construction (`build_scan_report` & `build_doctor_report` reusing index & registry), and Validation Work.
+- Precise memory footprint: retained file content bytes, container/index overhead, and peak traced Python allocations (`tracemalloc`, including retaining the old snapshot during background refresh while constructing the replacement from freshly read disk bytes).
+- Feasibility of Q9 Full Capture vs. a Selective Retention candidate matching the Diff engine's Variant A baseline and readable-copy rules (including readable malformed copies).
 
 ### Implementation Steps
 1. **Probe Script (`docs/p3_cost_probe.py`):**
-   - Implemented synthetic fixture generators for:
-     - **Scenario A (Mostly Unique):** 620 skills (500 shared in `.agents/skills`, 50 in Claude, 50 in Codex, 30 symlinks, 20 malformed, nested scripts, binary image assets up to 50 KiB).
-     - **Scenario B (Heavily Duplicated):** 615 skills (200 distinct skill names duplicated across 3 agent roots = 600 copies, plus 15 malformed skills and binary assets up to 80 KiB).
-   - Measured timings with `time.perf_counter()` and memory with `tracemalloc`.
-   - Simulated background refresh (allocating a new session snapshot while retaining the old one).
+   - Implemented synthetic fixture generators on local disk (noting files were freshly written and resident in OS page cache):
+     - **Scenario A (Mostly Unique):** 651 discovered skill entries (601 valid, 20 malformed, 30 Pi symlinks, nested scripts, binary image assets up to 50 KiB, 1 verified malformed-diff test case). Total 775 files (1.08 MiB).
+     - **Scenario B (Heavily Duplicated):** 615 discovered skill entries (200 distinct skill names duplicated across 3 agent roots = 600 copies, plus 15 malformed skills and binary assets up to 80 KiB). Total 1,001 files (1.98 MiB).
+   - Separated measured phases:
+     1. First Discovery (live walk and streaming SHA-256 calculation).
+     2. Full Byte Capture (reading all file bytes for discovered entries).
+     3. Second Discovery (live discovery pass to check file stability).
+     4. Report Construction (reusing index and registry for scan & doctor reports).
+     5. Validation Work (comparing passes, reports, and configs).
+     6. Clearly labeled unavailable capture-service phases (in-memory cancellation checkpoints, `display_paths`, `same_locations`) scheduled for C3.
+   - Refined refresh memory measurement:
+     - Started memory tracking before constructing the old captured snapshot state.
+     - Retained the old snapshot state in memory while building the replacement snapshot using freshly read disk bytes.
+     - Included both discovery passes, byte capture, and report/validation work in the simulated refresh.
+     - Excluded the selective candidate from full-capture memory tracking.
+   - Verified the selective-retention candidate against the Diff engine:
+     - Accurately followed Variant A baseline and readable-copy rules.
+     - Specifically verified a case (`skill_malformed_diff`) with one valid copy and one malformed copy whose support file differs, confirming support files are retained for both.
 2. **Execution & Results:**
    - Ran probe on macOS (Darwin arm64, Python 3.11.16).
    - Saved full report to `docs/P3_COST_PROBE_RESULTS.md`.
    - **Key Findings:**
-     - Full byte capture of all files across 600+ skills took only **~58 ms (Scenario A)** and **~79 ms (Scenario B)**.
-     - Total retained memory for captured files was only **1.09 MiB (Scenario A)** and **2.00 MiB (Scenario B)**.
-     - Peak memory during refresh while retaining the old snapshot was only **5.81 MiB (Scenario A)** and **3.94 MiB (Scenario B)**.
-     - Selective retention saved only ~22 ms of capture time while introducing complex conditional caching logic and view-drift risks.
+     - **Full Byte Capture:** Took only **62.39 ms (Scenario A)** and **77.88 ms (Scenario B)**.
+     - **Separate Measured Phases:** First discovery took 1.25 s (A) / 0.73 s (B); second discovery took 1.21 s (A) / 0.68 s (B); report construction took 63.95 ms (A) / 54.67 ms (B); validation work took 62.24 ms (A) / 55.60 ms (B). Total startup probe estimate was **2.64 s (Scenario A)** and **1.60 s (Scenario B)**.
+     - **Retained Snapshot Memory:** Retained file content bytes were **1.07 MiB (Scenario A)** and **1.98 MiB (Scenario B)**, with container overhead of **108.39 KiB (A)** and **120.23 KiB (B)**. Total retained snapshot data was **1.18 MiB (A)** and **2.10 MiB (B)**.
+     - **Peak Traced Python Allocations:** Peak traced heap during simulated refresh (holding the entire old snapshot while generating the new one) was **11.04 MiB (Scenario A)** and **10.48 MiB (Scenario B)**.
+     - **Selective Retention Comparison:** Selective retention saved only **~22.4 ms (A)** and **~3.0 ms (B)** in capture time. Given that readable malformed copies that differ from Variant A require retaining support files, selective retention introduces complex conditional caching without meaningful memory or latency benefits.
 3. **Architectural Decision Gate:**
-   - Full Capture (Q9) is fast, lightweight (<10 MiB peak memory), and completely practical.
+   - Full Capture (Q9) is fast, lightweight (<3 MiB total retained data, ~11 MiB peak traced heap during refresh), and eliminates all live disk I/O during navigation.
    - Retain the §21 Full Capture specification verbatim without redesign or scope reduction.
 4. **Verification:**
    - `docs/p3_cost_probe.py` conforms strictly to `ruff check` (100 char line limit) and `ruff format`.
    - All 476 existing tests pass, 92.68% coverage, strict `mypy` clean.
 
-### Files Created
-- `docs/p3_cost_probe.py`: Reproducible synthetic benchmark harness.
-- `docs/P3_COST_PROBE_RESULTS.md`: Detailed measurement tables and architectural decision record.
+### Files Created & Modified
+- `docs/p3_cost_probe.py`: Reproducible synthetic benchmark harness with separated phases and malformed diff verification.
+- `docs/P3_COST_PROBE_RESULTS.md`: Detailed measurement tables, precise allocation labels, and Q9 decision record.
+- `DEVELOPMENT.md`: Updated build records and current 476-test gate.
+- `FULL_SCREEN_TUI.md`: Synchronized progress statements reflecting P1/P2/P3 completion while preserving all contracts.
 
 ---
 
@@ -107,5 +123,7 @@ As required by `FULL_SCREEN_TUI.md` §9.2 and §22 before embarking on Step 0 co
 | `tests/test_phase4_gate.py` | Modified | Added test ensuring `read_json_guarded` never raises on non-UTF-8 bytes. |
 | `docs/p3_cost_probe.py` | Created | Reproducible synthetic 600+ skill probe harness for §9.2. |
 | `docs/P3_COST_PROBE_RESULTS.md` | Created | Benchmark results and Q9 capture-scope decision gate record. |
+| `DEVELOPMENT.md` | Modified | Recorded P1/P2 completion and updated 476-test gate. |
+| `FULL_SCREEN_TUI.md` | Modified | Synchronized revision and readiness statements with P1/P2/P3 completion. |
 | `Full Screen TUI Implementation Walkthrough.md` | Created / Updated | Tracks implementation progress, decisions, changes, and verification gates. |
 
