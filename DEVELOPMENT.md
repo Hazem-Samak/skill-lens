@@ -67,8 +67,12 @@ and the build proceeds by phase:
   Step 0. Q9 is confirmed: all catalog, skill/config and diagnostic inputs stay
   captured in memory until explicit refresh (`r`). The corrected plan does not
   mark the engine fixes or snapshot implementation as completed.
-  Its sections 21–22 now define the exact Step 0 input types, engine signatures,
+  Its sections 21–22 define the exact Step 0 input types, engine signatures,
   capture algorithm, acceptance tests and ordered assignments for implementers.
+  A synthetic speed and memory probe (P3) must follow the two crash fixes and
+  precede C1–C5; full-capture costs and selective-capture savings are measured
+  before changing the agreed contract. Bare launch requires both terminal input
+  and output. Earlier review history is linked from the plan's short header.
 
 Current gate: **471 tests pass** at **93% branch coverage**, `mypy` strict clean,
 `ruff check .` clean, `ruff format --check .` clean.

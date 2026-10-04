@@ -11,50 +11,10 @@
 > **Supersedes:** the "NO full-screen TUI" rule in `AGENTS.md` §1.5 and
 > `SKILL_LENS_SPECIFICATION.md` §5.
 > **Author:** maintainer, 2026-10-04.
-> **Reviewed:** 2026-10-04 — independent read-only review by Gemini 3.8 Flash
-> High via `agy` (`--read-only`, zero violations). Four blocking issues were
-> raised and are folded in below: the Home screen's non-existent global
-> resolution state ([§8.3](#83-home-screen-layout)), the base-install regression
-> from hijacking bare invocation ([§6](#6-technology-choices)), the "held
-> snapshot" that did not hold what the UI needs
-> ([§5.1](#51-what-the-tui-holds-in-memory-corrected)), and the CI/coverage gap
-> ([§6.1](#61-ci-must-test-both-installs-corrected)). One correction to the
-> reviewer: `build_diff_report()` already accepts an `index` keyword, so the
-> held state is the `DiscoveryIndex` — better than "recompute on demand".
->
-> **Second review (orchestrator, same day), against the source.** Three further
-> defects were found and folded in: `run_doctor()` *also* lacked an `index`
-> parameter and the "only change to core/" claim was wrong
-> ([§5.1](#51-what-the-tui-holds-in-memory-corrected)); the live index must come
-> from `live_discovery()` or the TCC guard is lost
-> ([§5.2](#52-the-session-index-must-come-from-live_discovery)); and Textual
-> pins a much newer Rich than this project declares, which can move our pinned
-> snapshots ([§6.2](#62-rich-is-a-shared-dependency-coupling-risk)).
->
-> **Third review (orchestrator, 2026-10-04), against the source and the repo.**
-> Six further defects were found and folded in: the shared display maps were
-> homed in `models/enums.py`, which mixes Rich styles into the pure model layer
-> ([§8.4a](#84a-sharing-the-presentation-layer--a-refactor-this-plan-must-budget));
-> the sharing refactor was under-scoped to two dicts when several diff/why text
-> builders are also private to `render.py` (same section); the bare-invocation
-> wiring was described but never specified
-> ([§7.2](#72-how-bare-invocation-is-wired)); the two `index` defaults contradicted
-> each other ([§5.1](#51-what-the-tui-holds-in-memory-corrected)); the §5.1
-> entry-point table omitted two builders that already accept `index` (same
-> section); and the coverage gate has only three points of headroom
-> ([§6.1](#61-ci-must-test-both-installs-corrected),
-> [§14](#14-risks-and-mitigations)). A note on repository state before Step 0 is
-> in [§11](#11-implementation-phases-phase-7).
-
-> **Fourth review (Codex, 2026-10-04), against code and temporary fixtures.**
-> The held index is not a complete snapshot; folder names are not lookup keys
-> for every agent; some proposed shared helpers contain Rich markup; worker
-> refresh/error behaviour needs an explicit contract; and two malformed-file
-> crashes need prerequisite fixes. Dependency, startup-measurement, repository
-> state, default-invocation and clipboard claims were also corrected below.
-> The earlier review summaries are historical: this revision supersedes their
-> claims that the adapter alone provides permission guards and that Textual
-> pins Rich exactly. The finding checklist is in §20.
+> **Current revision:** 2026-10-04. Checked against source, temporary crash
+> reproductions and published dependency metadata. Findings and remaining
+> prerequisites are in §20; [earlier review history](docs/archive/TUI_PLAN_REVIEWS.md)
+> is retained separately. This plan does not mark any code fix as completed.
 
 > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
 > Catalog, skill contents, settings and diagnostic inputs remain fixed until
@@ -64,7 +24,8 @@
 > **Implementer handoff:** [§21](#21-step-0-implementation-contract) specifies
 > Step 0 types, function signatures, files and acceptance tests.
 > [§22](#22-assignments-for-the-implementer) is the ordered assignment list.
-> Start with P1; complete and review each gate before the next assignment.
+> Start with P1 → P2 → P3 (early cost review), then C1–C5. Complete and
+> review each gate before the next assignment.
 
 ---
 
@@ -150,7 +111,7 @@ invocation follows the TUI/fallback rules in §7.
   only."* — **this plan lifts that ban** for 0.2. The rule is rewritten to say
   the line-oriented CLI stays the primary **interface** (every command, flag,
   JSON shape and exit code is unchanged), while bare `skill-lens` becomes the
-  default **entry point** into the UI. `--plain`, a non-TTY stdout and a
+  default **entry point** into the UI. `--plain`, non-terminal input or output, and a
   missing Textual all keep the old behaviour reachable.
 - The specification's "Forbidden in v1" list is amended the same way.
 
@@ -189,7 +150,7 @@ These guarantees are load-bearing and survive verbatim:
 
 - ❌ **No editing, installing, moving, or deleting skills.** Read-only forever.
 - ❌ **No file watching / automatic background refresh** in 0.2. `r` requests
-  a complete new snapshot of catalog and report inputs, as defined in §5.1.
+  a complete new snapshot of catalog and report inputs, as defined in §21.
 - ❌ **No config file, themes marketplace, or plugin system** for the TUI.
 - ❌ **No mouse-first design** — keyboard is the contract; mouse is a bonus.
 - ❌ **No invented skill facts or changed public report fields.** Session
@@ -240,97 +201,30 @@ shown.
 
 ### 5.1 What the TUI holds in memory (corrected)
 
-An earlier draft implied the UI could drive itself from a held `ScanReport`.
-**It cannot**, and this section replaces that:
+A held `ScanReport` contains list rows and counts, but no file contents or
+complete report inputs. Holding a discovery index also leaves live reads in
+Diff, Why (agent settings), and Doctor (installer lock and path checks).
+The TUI therefore needs an owned snapshot built before it publishes a session.
 
-- `ScanReport` (`core/scanner.py`) carries summary counts and `ScanEntry` rows —
-  name, scope, parse status, paths, hash. It holds **no file contents and no
-  discovery index**.
+Q9 remains the agreed user behaviour: every view, including its first visit,
+shows the same inputs until `r` successfully replaces the whole session.
+External edits, additions, deletions, settings changes and retargeted shortcuts
+appear together after refresh. Keep the previous snapshot usable if refresh
+fails or is superseded. This is an observed consistent capture, not a promise
+that the operating system can freeze other programs' writes.
 
-What each entry point already accepts:
+**§21 is the sole definition of session contents, types, engine signatures,
+capture algorithm and acceptance tests.** §21.2 defines `SessionSnapshot`;
+§21.7 defines the UI's report cache and worker controller. This section is an
+overview, not a second field list. All later session references defer to §21.
+The early cost probe and capture-scope decision are specified in §9.2.
 
-| Entry point | `index` parameter today? |
-| --- | --- |
-| `build_scan_report()` — `core/scanner.py` | ✅ already |
-| `resolve_skill()` — `core/resolver.py` | ✅ already |
-| `build_diff_report()` — `core/diff.py` | ✅ already |
-| `build_compare_report()` — `core/compare.py` | ✅ already |
-| `build_doctor_report()` — `core/doctor.py` | ✅ already |
-| `run_compare()` — `core/compare.py` | ❌ builds its own via `live_discovery()` |
-| `run_doctor()` — `core/doctor.py` | ❌ builds its own via `live_discovery()` |
-
-Two live wrappers lack the parameter. Adding it is useful plumbing, but is not
-enough to guarantee a frozen session. The exact types, signatures, capture
-algorithm and acceptance tests are specified in [§21](#21-step-0-implementation-contract).
-
-Note *which* two: only the `run_*` **live wrappers** lack it. Their `build_*`
-counterparts already accept `index=`, so the TUI could call those with a held
-index today — the new parameter exists so the **CLI entry points** can also be
-driven from a held index, not because the builders need it. That narrows the
-change but does not remove it.
-
-**Session state** (Q9: all report inputs frozen until explicit refresh):
-
-```text
-SessionState
-├── generation: int        ← identifies one published session
-├── home:  Path
-├── cwd:   Path
-├── registry: agent definitions
-├── index: FrozenDiscoveryIndex ← tuple-based captured catalog
-├── inputs: captured file contents, settings and diagnostic metadata
-├── scan:  ScanReport       ← derived from the index, cached for the list
-├── doctor: DoctorReport    ← computed before publication
-└── reports: UI-owned cache keyed by view + lookup arguments + generation
-```
-
-- The index is mutable today (`entries` and `unreadable_roots` are lists). Publish
-  the tuple-based `FrozenDiscoveryIndex` defined in §21; build replacements separately.
-- Passing `index=state.index` avoids repeating **discovery**. It does not avoid
-  all filesystem walks or reads: diff lists, reads and hashes each compared
-  copy; resolution rereads agent settings; doctor rereads the installer lock.
-- Reproduced with a held index: a diff included changed text with old hashes,
-  Claude switched `ACTIVE` → `DISABLED`, and doctor changed its lockfile finding,
-  all without refresh. A cached `ScanReport` cannot prevent these effects.
-- The `compare` and `doctor` wrappers accept keyword-only `index` and `registry`
-  inputs, defaulting to `None`. Existing calls follow the same live discovery
-  path. Doctor is built during capture and stored, rather than rerun on navigation.
-- Core scope includes the two robustness fixes in §11, the shared identity
-  helper in §8.4, and the input-capture changes required by Q9. No longer claim
-  that two wrapper parameters are the only core changes. Existing public JSON
-  shapes and supported-input behaviour remain unchanged.
-
-**Locked contract — Option 1: freeze all report inputs until `r`.**
-
-- Capture the catalog, required skill file contents/fingerprints, agent settings,
-  installer-lock input and diagnostic metadata in memory for one generation.
-  Parsed metadata, hashes and diff text must describe the same captured content.
-- Derive lazy reports through core functions using those captured inputs.
-  Opening an unvisited view must not read newer skill/config content or probe
-  current link/path state. Previously missing or unreadable inputs keep their
-  captured status until refresh; the app does not silently retry them on view.
-- Edits, deletions, additions and setting changes made elsewhere after capture
-  do not change any screen in that generation. They appear only after `r`
-  successfully publishes a complete replacement, following §9.1.
-- Keep the previous snapshot usable while refresh runs. Replace catalog, inputs
-  and report caches together; a failed or superseded refresh cannot partly
-  replace the displayed snapshot. Caches are keyed by view arguments and
-  generation, and are cleared when a replacement is published.
-- Use in-memory inputs only: no snapshot directory or database. Capture is
-  specific to the TUI; existing CLI commands keep their live-read behaviour.
-  Internal capture types may be added without changing public report fields.
-
-**Step 0 gate:** implement the API and read boundaries in §21, including scanner
-link counts, path-display decisions and path-dependent doctor checks. After a
-snapshot is published, assert that all
-view/report navigation uses captured inputs. Change skill contents, settings
-and the lockfile; add/delete skills; verify unchanged reports before `r` and
-updated reports after a successful refresh.
-
-Capture cannot promise an atomic picture of an externally changing filesystem:
-detect inconsistent reads during capture and require retry/refresh rather than
-publishing conflicting fingerprints and text. Test changes during capture and
-failed/superseded refreshes as well as ordinary edits between views.
+The current `build_scan_report()`, `resolve_skill()`, `build_diff_report()`,
+`build_compare_report()` and `build_doctor_report()` already accept an index.
+The `run_compare()` and `run_doctor()` live wrappers do not; §21 supplies their
+new optional inputs. Core work also includes captured content/settings,
+installation-to-agent name translation and the two prerequisite robustness
+fixes. Public JSON fields and supported-input CLI output stay unchanged.
 
 ### 5.2 The session index must come from `live_discovery()`
 
@@ -359,7 +253,7 @@ sentinel is `None` and the call happens inside the function.)
 | Concern | Choice | Rationale |
 | --- | --- | --- |
 | TUI framework | **Textual** (optional extra) | Same maintainers as Rich; batteries-included widgets, CSS-like layout, async event loop. |
-| Dependency shape | `[project.optional-dependencies] tui = ["textual>=<floor>"]`; the `dev` extra also gets `textual` | Keeps the base install lean while keeping the coverage gate able to measure `tui/`. |
+| Dependency shape | `[project.optional-dependencies] tui = ["textual>=8.2.8"]`; the `dev` extra uses the same floor, rechecked before scaffolding | Keeps the base install lean while keeping the coverage gate able to measure `tui/`. |
 | Rendering | Textual widgets over existing models | No new formatting logic where avoidable. |
 | Data access | Core capture service, stored scan/doctor, lazy snapshot report services | Reuses the tested engine and prevents live reads during browsing. |
 | Key handling | A small keymap module | Testable in isolation; documentable in one place. |
@@ -411,7 +305,7 @@ Three consequences:
    for `[tui]`; Textual does not require exactly 15.0.0. The current lock's
    15.0.0 already satisfies both. Keep the base declaration separate from the
    extra's combined constraints; do not raise the base floor merely because
-   an optional dependency needs more. Re-check metadata when selecting Textual.
+   an optional dependency needs more. Re-check metadata before scaffolding.
 2. **Our pinned output can move for an unrelated reason.** There are 17 plain-text
    Rich snapshots in `tests/fixtures/snapshots/` and 16 JSON goldens. A
    transitive constraint from an *optional* feature could change `render.py`'s
@@ -420,8 +314,10 @@ Three consequences:
    output byte-identical** — one must be added.
 3. **Select the current stable floor, then lock the resolved version.**
    `textual>=0.80.0` is an unnecessarily old minimum, not an exact pin; it also
-   permits 8.x. The current verified release is 8.2.8. Re-check at scaffolding
-   and each release ([§19 Q2](#19-decisions)).
+   permits 8.x. The selected baseline floor is **8.2.8**, verified against
+   [the stable release page](https://pypi.org/project/textual/) on 2026-10-04.
+   Re-check before scaffolding and each release; record any floor change before
+   implementing against newer APIs ([§19 Q2](#19-decisions)).
 
 ---
 
@@ -431,16 +327,16 @@ New and changed commands:
 
 | Invocation | Behaviour |
 | --- | --- |
-| `skill-lens` (no args) | **Changes** from printing help to opening the TUI. ✅ *Decided (Q1).* If Textual is absent, prints help + tip instead — never a hard failure. |
+| `skill-lens` (no args) | Opens the TUI only with Textual installed and both stdin and stdout attached to terminals. Otherwise prints help, adding an install tip only when both streams are interactive and Textual is absent; exit `0`. |
 | `skill-lens --plain` | Prints the help text instead of opening the TUI — the escape hatch for scripts and old terminals (✅ decided, Q4). |
 | `skill-lens tui` | Explicitly opens the TUI (same as bare invocation). |
 | `skill-lens tui --sandbox <dir>` | Opens the TUI against a mock `$HOME`. |
 | `skill-lens tui --cwd <dir>` | Opens the TUI with a chosen working directory. |
 | All existing commands | **Unchanged**, still line-oriented, still `--json`. |
 
-> **Decided (Q1):** bare `skill-lens` opens the TUI. Scripts, pipes and
-> non-interactive shells use `--plain`, which prints the help text and exits.
-> This keeps the friendly default while leaving an explicit escape hatch.
+> **Decided (Q1):** bare launch requires interactive input **and** output.
+> `echo something | skill-lens` and `skill-lens > report.txt` both print help
+> and exit `0`. `--plain` forces this fallback even in an interactive terminal.
 > (See [§19](#19-decisions).)
 
 ### 7.1 Exit codes from the TUI
@@ -476,14 +372,19 @@ the TUI instead needs three concrete edits in `cli.py`:
    - `--version` has already short-circuited (it is `is_eager`).
    - if `ctx.invoked_subcommand is not None` → a real command was given; do
      nothing and let Typer dispatch it.
-   - else if `--plain` was passed, or `not sys.stdout.isatty()` → print help and
-     exit `0` (the fallback path).
+   - else if `--plain` was passed, or either `sys.stdin.isatty()` or
+     `sys.stdout.isatty()` is false → print help and exit `0` (the fallback path).
    - else check whether Textual is absent; if absent print help plus the
      one-line install tip and exit `0`.
    - if present, import the TUI lazily and launch through the §9.1 fault boundary.
      An unrelated import/launch failure is an internal fault (`3`), not a false
      claim that Textual is missing. The explicit `tui` command uses the same
      boundary, with exit `2` only for the missing-extra/usage case.
+
+Add launch tests for all four input/output combinations: both terminals,
+input only, output only, and neither. Only the first can automatically launch.
+Keep this check on bare invocation; explicit `tui` retains its specified launch
+behaviour.
 
 No existing test pins bare-invocation behaviour — the CLI tests all pass an
 explicit subcommand — so this is additive. `--help` and the packaging smoke test
@@ -513,7 +414,8 @@ Home (Skill list)
 | `↑` / `↓` / `j` / `k` | Move selection |
 | `Enter` | Open / drill in |
 | `Esc` / `Backspace` | Back |
-| `Tab` | Move focus between panes |
+| `Tab` / `Shift+Tab` | Move focus forward / backward between controls and panes on every screen |
+| `←` / `→` on the focused agent strip | Choose the previous / next detail agent |
 | `/` | Filter the current list |
 | `a` | Cycle the agent filter |
 | `d` | Open diff for the selected skill |
@@ -563,8 +465,9 @@ around an explicit agent selector rather than pretending one report covers all:
 
 - A horizontal **agent strip** lists every agent that reaches this skill (from
   `ScanEntry.agents`), with the current one highlighted.
-- `Tab` / `Shift+Tab` move between agents; each switch requests that agent's
-  report under the session policy in §5.1 and re-renders in place.
+- Focus the strip with `Tab`; `←` / `→` then choose an agent and request its
+  report under the session policy in §21. `Tab` / `Shift+Tab` always move focus,
+  including on this screen. Test both focus movement and agent switching.
 - Below the strip, one collapsible block per candidate copy, in the same order
   and with the same `rule_id` / `evidence` fields the CLI prints.
 - Colours and marks come from the **shared** state-mapping tables (see below) so
@@ -712,7 +615,7 @@ from §8.4, not automatically the Home row's folder name.
 
 - **One published session in memory.** Launch builds the index and scan;
   `r` requests a complete replacement. Input retention, report caches and
-  changed-file handling obey §5.1/Q9.
+  changed-file handling obey §21/Q9.
 - **Views use captured inputs.** An `index` argument alone saves catalog
   discovery, not diff's file walk or resolution's settings read. The planned
   capture-aware core APIs must eliminate those live reads during navigation.
@@ -735,9 +638,10 @@ from §8.4, not automatically the Home row's folder name.
   the worker runs; the current discovery API has no incremental skill count.
   Show `N skills` only once known, or if a tested core progress API is explicitly
   budgeted. Keep help, cancellation and quit responsive throughout.
-- **Record measurements, not promises.** Step 1 records startup timings for
-  reproducible synthetic fixtures. An optional reference-machine measurement is
-  a read-only manual check, never a test against real `$HOME`. Record environment
+- **Record measurements, not promises.** P3 (§9.2) measures capture costs before
+  C1–C5. Step 1 repeats the measurement against the implemented session service
+  on the same reproducible synthetic fixtures. An optional reference-machine
+  measurement is a read-only manual check, never a test against real `$HOME`. Record environment
   and fixture size; no unmeasured 1.5s target. UI timing is measured in Step 3.
 
 ### 9.1 Background work, refresh and errors
@@ -777,6 +681,46 @@ the app with a traceback. Merely adding `@work(thread=True)` is insufficient.
 selection while a report loads; leave a loading screen; inject worker and launch
 errors; quit during a slow scan. Assert newest-result publication, safe UI
 updates, no traceback, responsive navigation and the defined `0`/`3` exits.
+
+### 9.2 Before Step 0: speed, memory and capture-scope gate (P3)
+
+Run a small throwaway probe after P1/P2 and before C1. Its purpose is to find
+an expensive design before committing to the snapshot rewrite. It is a
+measurement harness, not a second production snapshot implementation.
+
+- Build fake homes under temporary directories and set `HOME`/sandbox through
+  `paths.py`. Use at least 600 distinct skills, including same-name copies in
+  different roots, malformed but readable copies, symlinks, nested support files
+  and binary assets. Include both mostly unique and heavily duplicated cases.
+- Record skill count, file count, total bytes, largest file, Python/OS, and
+  whether files were just written and likely cached by the operating system.
+  Skill count alone is not a memory estimate: one skill can contain large assets.
+- Measure first discovery (including streaming hashes), complete byte capture,
+  second discovery, scan/doctor construction and validation separately and
+  together. Measure retained bytes and peak memory, including the old snapshot
+  being held during refresh. Before C3 exists, label unavailable phases and any
+  approximations; record raw runs rather than claiming a completed startup time.
+- Compare full capture with a **selective-retention candidate**: keep catalog,
+  parsed metadata, fingerprints, settings and diagnostic results for all entries,
+  but retain support-file bytes only where the frozen Diff report needs them.
+  Use the existing folder-name grouping, Variant A baseline and readable-copy
+  rules, including invalid copies. Unique copies, identical hashes and groups
+  with no valid baseline must preserve their current no-diff results.
+- Selective retention may save memory and the extra byte-capture pass; it does
+  **not** remove discovery's hashing or the second validation pass. It must
+  never defer a file read until someone first opens Diff.
+
+**Gate:** save a reproducible harness and measurements under `docs/` and review
+whether full capture is practical before C1. Q9's complete capture remains the
+implementation contract in §21. A selective design is a candidate, not an
+approved replacement: if the measured cost warrants it, revise §21.2–21.6 and
+review report parity, missing-key handling, first visits and refresh consistency
+before dispatching C1. If the costs are unacceptable and no replacement is
+agreed, Step 0 waits. Keep the frozen-view behaviour and read-only guarantees;
+do not silently truncate inputs, add a disk cache, or relax the coverage floor.
+Step 1 repeats the probe on the real implementation; Step 3 measures the actual
+widget and keyboard responsiveness. No timings have been measured by this plan
+revision.
 
 ---
 
@@ -852,12 +796,17 @@ Git state before work; there is no pending move to commit.
   checks pass; existing snapshots and goldens remain unchanged. These fixes are
   planned prerequisites, not implemented by this document revision.
 
+**Then P3 — early capture-cost probe:** run §9.2 and review its measurements
+before C1–C5. Decide whether the current capture scope is affordable before
+implementing it. The full gate still applies to the prerequisite changes.
+
 ### Step 0 — Contracts (no UI code)
 - Execute assignments C1–C5 in [§22](#22-assignments-for-the-implementer), in order.
   §21 is the technical contract for the frozen-input core API, cache keys and
   capture/refresh rules. Do not redesign those contracts while implementing.
-- Verify the current Textual release and its declared Rich constraints; record
-  the intended floor. Dependency declarations and lock changes land in Step 1.
+- Re-check the selected Textual 8.2.8 baseline and its declared Rich constraints
+  before scaffolding; record any reviewed floor update. Dependency declarations
+  and lock changes land in Step 1.
 - Add keyword-only `index` and `registry` inputs to **both** `run_compare()` and
   `run_doctor()`, each defaulting to `None`; call `live_discovery()` when
   `index` is `None`
@@ -887,7 +836,8 @@ Git state before work; there is no pending move to commit.
   ([§6.2](#62-rich-is-a-shared-dependency-coupling-risk)).
 - Measure discovery, any captured inputs, and `build_scan_report(index=...)`
   separately and together on synthetic fixtures; record conditions and timings
-  in §9. A reference-machine run is an optional manual read-only measurement.
+  in §9, using the P3 fixture/harness and comparing with its estimates.
+  A reference-machine run is an optional manual read-only measurement.
 - **Gate:** base install has zero new runtime deps; both fallback paths asserted;
   plumbing mutation-tested (break each branch, confirm exactly one failure).
 
@@ -928,7 +878,7 @@ Git state before work; there is no pending move to commit.
 
 ### Step 5 — Diff and JSON views
 - `d` opens the `DiffReport` view using the folder-name grouping of the existing
-  command and coherent inputs under §5.1; an index alone does not freeze text.
+  command and coherent inputs under §21; an index alone does not freeze text.
 - `J` toggles raw JSON per the mapping in [§8.8](#88-what-j-shows-on-each-screen).
 - **Gate:** diff view obeys the same truncation/binary/escaping rules as
   `render.py`; no report mixes old hashes with newly read text; each screen's
@@ -964,12 +914,12 @@ gates, snapshot discipline). The TUI must meet it.
 
 | Layer | How it is tested |
 | --- | --- |
-| Keymap / navigation logic | Pure unit tests, no terminal needed. |
+| Keymap / navigation logic | Unit tests plus headless key presses: Tab/Shift+Tab move focus on every screen; left/right change agents only on the focused strip. |
 | Screens | Textual's built-in `run_test()` headless harness — drive keys, assert on the rendered tree. |
 | Models consumed | Reuse existing golden JSON — assert the TUI reads the same objects. |
 | Read-only guard | Source checks for all banned categories plus before/after fixture checks; mutation-test each category (§10). |
-| Missing Textual | Test bare help/tip + `0` with interactive stdout, bare non-TTY help + `0`, and explicit `tui` hint + `2` in a true base install. Unrelated import faults must exit `3`. |
-| Input consistency | Change skill bytes, settings and lockfile; add/delete skills; assert all views remain unchanged until refresh, then update together. Cover inconsistent capture and failed refresh (§5.1). |
+| Bare launch / missing Textual | Test all four stdin/stdout terminal combinations. Only both-terminal input/output can launch; all other combinations give help + `0`. Test interactive bare help/tip + `0` and explicit `tui` hint + `2` without Textual in a true base install. Unrelated import faults must exit `3`. |
+| Input consistency | Change skill bytes, settings and lockfile; add/delete skills; assert all views remain unchanged until refresh, then update together. Cover inconsistent capture and failed refresh (§21). |
 | Lookup identity | Drive Home → detail with folder/declared names differing across identity policies; preserve `why` and `diff` keys. |
 | Worker lifetime | Delay/out-of-order refreshes and view results; change selection, leave screens, inject faults and quit during controlled slow work (§9.1). |
 | Existing engine defects | Non-object settings JSON and non-UTF8 lockfile regressions must fail before the prerequisite fixes and pass after. |
@@ -993,8 +943,8 @@ This plan implies edits to the repository's own rules. The list:
 
 | File | Change |
 | --- | --- |
-| `AGENTS.md` | TUI allowance already landed; default-invocation wording aligned by this revision. |
-| `SKILL_LENS_SPECIFICATION.md` | Allowance/roadmap already landed; primary-interface wording aligned by this revision. |
+| `AGENTS.md` | TUI allowance already landed; bare invocation now requires both interactive input and output. |
+| `SKILL_LENS_SPECIFICATION.md` | Align bare-launch conditions; correct Phase 6 `omp`/`dsh` evidence and code `1` wording without changing registry behaviour. |
 | `docs/archive/PHASE2_FINDINGS.md` | Historical record; the 0.2 amendment already exists. Keep the original findings. |
 | `docs/archive/PHASE3_FINDINGS.md` | Historical record; the 0.2 amendment already exists. Keep the original findings. |
 | `docs/archive/` | Finished records were moved, not deleted, in `d37f218`; no pending move. |
@@ -1019,12 +969,14 @@ An added note keeps the history honest while marking the rule as since-changed.
 | A write sneaks into the TUI | Low | Critical | Import/AST read-only guard + sandbox-only demos. |
 | The TUI drifts from the CLI's answers | Medium | High | TUI reads the same models; no logic duplication; shared display maps **and** text builders via `skill_lens/presentation/` ([§8.4a](#84a-sharing-the-presentation-layer--a-refactor-this-plan-must-budget)). |
 | Scope creep into editing/install | Medium | Critical | Non-goals are explicit; read-only guard enforces it. |
-| Accessibility / non-interactive shells | Medium | Medium | `skill-lens --plain` forces plain text; a non-TTY stdout falls back automatically. |
+| Accessibility / non-interactive shells | Medium | Medium | `skill-lens --plain` forces plain text; non-terminal input or output falls back automatically. |
 | Coverage gate hard to hit for UI code | Medium | Medium | `dev` extra includes `textual` so `tui/` is measured; factor logic out of widgets (keymap, formatting, session state) so it is unit-testable. |
 | Coverage headroom is thin (92.67% vs 90% at review) for a whole new package | Medium | Medium | Extract widget logic (keymap, formatting, session state) so it is unit-testable; land tests with each step, never after the gate goes red ([§6.1](#61-ci-must-test-both-installs-corrected)). |
 | CI never exercises the base install | Medium | High | Second lean CI lane without the extra, asserting both missing-Textual paths ([§6.1](#61-ci-must-test-both-installs-corrected)). |
 | A resolution state leaks into the UI | Medium | High | Only `ScanReport` fields on Home; resolution strictly per-agent in the detail view ([§8.3](#83-home-screen-layout)). |
-| Reports mix inputs from different times | High | High | Capture all report inputs in core; use them until explicit refresh; test edits between views and inconsistent capture (§5.1). |
+| Full capture retains large support assets unnecessarily | Medium | High | P3 measures bytes, peak memory and both discovery passes before C1; compare selective retention without changing Q9 or allowing reads during navigation (§9.2). |
+| Byte and streaming helpers drift | Medium | High | One shared decoded-text parser and shared normalization/aggregate rules; keep the CLI streaming path, with boundary/binary/parsing parity tests in C1 (§21.3/21.6). |
+| Reports mix inputs from different times | High | High | Capture all report inputs in core; use them until explicit refresh; test edits between views and inconsistent capture (§21). |
 | Home opens a nonexistent agent lookup name | Medium | High | Key selection by canonical path; core identity helper translates names; fixture with differing folder/declared names (§8.4). |
 | An older worker overwrites a newer screen | Medium | High | Generation and request checks; whole-session publication; controlled out-of-order tests (§9.1). |
 | Malformed settings/lockfile abort browsing | Medium | High | Reproduce and fix both engine crashes before Step 0; retain regression tests (§11). |
@@ -1041,8 +993,8 @@ An added note keeps the history honest while marking the rule as since-changed.
 - **Scripts:** existing explicit command invocations are unaffected for supported
   inputs. `--json` output is byte-identical for the same inputs.
 - **No-arg invocation:** changes to open the TUI (✅ Q1). `--plain` restores the
-  old help output; a non-TTY stdout *and* a missing Textual both fall back to
-  help automatically — so a base install never regresses.
+  old help output; non-terminal input or output, or missing Textual, falls back
+  to help automatically — so a base install never regresses.
 - **Install:** base install unchanged; `[tui]` extra is opt-in.
 - **Removing the extra:** keeps explicit CLI commands available. Bare invocation
   still follows the new help/exit-`0` fallback, rather than claiming it restores
@@ -1059,7 +1011,7 @@ This is control flow, not runnable Python. Implement it with typed functions;
 Root callback:
   --version / --help             → existing eager output
   explicit existing subcommand   → existing dispatch
-  bare --plain or non-TTY stdout → help, exit 0
+  bare --plain or non-TTY stdin/stdout → help, exit 0
   bare with Textual absent       → help + install tip, exit 0
   bare with Textual present      → validated launch below
 
@@ -1089,8 +1041,10 @@ Tests exercise both cases.
 
 0.2 is done when:
 
-1. Bare `skill-lens` (and `skill-lens tui`) opens a navigable interface on macOS
-   and Linux; `skill-lens --plain` prints help and exits.
+1. Bare `skill-lens` opens a navigable interface on macOS and Linux when
+   Textual is installed and both input/output are terminals. Either stream being
+   non-interactive gives help + `0`; `--plain` does likewise. Explicit `tui`
+   retains its specified launch behaviour.
 2. Existing explicit commands retain supported-input behaviour, JSON shapes and
    snapshots. The two malformed-input regressions pass after their fixes.
 3. Skill facts come from existing report/discovery data; session status is
@@ -1120,8 +1074,10 @@ Tests exercise both cases.
     report; diff keeps the existing folder-name grouping.
 15. Superseded refreshes and report requests cannot overwrite current state;
     worker/launch fault handling and slow-scan quit tests satisfy §9.1.
-16. Startup measurements cover discovery, frozen-input capture and
-    scan construction; list responsiveness is measured with the chosen widget.
+16. P3 measures capture time and memory before C1; Step 1 measures the complete
+    implemented capture/validation path on those fixtures. Step 3 measures list
+    responsiveness with the chosen widget. Capture scope follows the reviewed
+    §21 contract, with no silent optimization or delayed live reads.
 
 ---
 
@@ -1153,8 +1109,9 @@ review:** if Textual is not installed, bare invocation prints help plus a tip
 instead of failing — a base install must never regress. `skill-lens --plain` is
 the explicit escape hatch (see Q4).
 
-**Q2 — Require the newest stable version of Textual.** ✅ *Decided.* Pick the
-latest stable release on the day scaffolding begins. **Refined after review:** the
+**Q2 — Require the newest stable version of Textual.** ✅ *Decided.* The
+baseline selected on 2026-10-04 is **8.2.8**. Re-check the latest stable release
+before scaffolding, updating the recorded floor if needed. The
 *floor* goes in `pyproject.toml` (`textual>=X`) so downstream installs are never
 hard-pinned, and the *exact* pin is carried by `uv.lock` for reproducible local
 and CI runs. Revisit the floor at each release.
@@ -1168,9 +1125,9 @@ dependency, so a `y` key would be cheap to add — but display-only stands for
 **Q4 — Add a `--plain` flag.** ✅ *Decided: yes.* `skill-lens --plain` forces the
 old line-oriented behaviour (printing help rather than opening the UI) for
 scripts, pipes and terminals that cannot run a full-screen app. As safety nets, a
-non-interactive stdout (not a TTY) *and* a missing Textual both fall back to
-help automatically, so a pipe can never hang inside a UI and a base install never
-fails.
+non-interactive stdin or stdout (input or output not attached to a terminal),
+or missing Textual, falls back to help automatically. Piped bare invocations
+therefore print help; a base install stays usable.
 
 **Q5 — What exit code does the TUI return?** ✅ *Decided.* `skill-lens tui` exits
 `0` on a normal quit regardless of findings, `3` on an internal fault, and has
@@ -1178,8 +1135,8 @@ no `--fail-on`. CI keeps using `doctor --fail-on` / `scan --fail-on`, which
 remain the supported way to fail a pipeline. See [§7.1](#71-exit-codes-from-the-tui).
 
 **Q6 — What is the real startup time?** ✅ *Decided: measure it, don't guess.*
-The 1.5s figure in an earlier draft was invented and has been removed. Step 1
-times discovery, input capture and scan construction on synthetic fixtures and
+P3 measures time and memory on synthetic fixtures **before C1–C5**, as defined
+in §9.2. Step 1 measures the complete implemented path on the same fixtures and
 records the environment; reference-machine timing is an optional manual check.
 A truthful progress indicator is mandatory either way
 ([§9](#9-data-flow-and-performance)).
@@ -1201,7 +1158,7 @@ Textual uses literal content and separate widget styles. See §8.4a.
 Option 1 for 0.2.* Capture catalog, skill file contents, settings, installer-lock
 input and diagnostic metadata in memory. All views use that captured state,
 including views opened for the first time. External changes appear only after
-`r` successfully publishes a complete replacement snapshot. §5.1 defines the
+`r` successfully publishes a complete replacement snapshot. §21 defines the
 capture and consistency gates; holding an index alone does not fulfil them.
 
 ---
@@ -1213,14 +1170,20 @@ temporary mock homes. This table records plan corrections, not completed code.
 
 | Finding | Correction / implementation gate |
 | --- | --- |
-| Held index does not freeze contents, settings or lockfile | Q9 selects complete in-memory input capture; §5.1/Step 0 require its core scope and consistency tests. |
+| Held index does not freeze contents, settings or lockfile | Q9 selects complete in-memory input capture; §21/Step 0 require its core scope and consistency tests. |
 | Folder name can fail as an agent lookup key | §8.4 defines selection and core name translation; Step 0 tests differing names. |
 | Proposed shared helpers use Rich escaping/tags | §8.4a budgets splitting plain content from renderer formatting; Step 0 preserves all snapshots. |
 | Background refresh, selection and errors lacked a contract | §9.1 specifies generations, request checks, publication, error exits and cancellation tests in Steps 2/3. |
 | Non-object Claude settings JSON crashes resolution | §11 requires defensive shape validation and a regression before Step 0. |
 | Invalid UTF-8 installer lockfile crashes doctor | §11 requires read-boundary decoding handling and a regression before Step 0. |
 | Textual was claimed to require exactly Rich 15 | §6.2 cites published `rich>=14.2.0` metadata and separates requirements from the lock. |
-| Startup benchmark omitted discovery hashing | §9 and Step 1 measure the complete input/discovery/scan path. |
+| Startup measurement followed the largest core rewrite | P3 (§9.2) measures time/memory before C1, comparing full capture and selective retention; Step 1 then measures the implemented path. |
+| Possible over-capture | §9.2 evaluates selective retention using the current diff baseline/hash rules; §21 stays authoritative until a measured, reviewed revision. |
+| Byte helpers add upkeep | §21.3 requires a shared decoded-text parser and common hashing rules, with streaming/byte parity in §21.6. |
+| Bare launch checked output only | §7/§16 and AGENTS/spec require terminal input and output; §12 tests all four combinations. |
+| Tab meant both focus and agent switching | §8.2/§8.4 reserve Tab for focus and left/right for the focused agent strip; key tests cover both. |
+| Session fields and review history obscured current design | §5.1 now links to the sole session contract in §21; earlier header reviews moved to docs/archive/TUI_PLAN_REVIEWS.md. |
+| Specification retained pre-Phase-6 evidence/exit wording | §3 now matches registry evidence, including omp modelling limits and inferred dsh plugins; §6 includes code 1 and default never. |
 | Documentation move was described as pending | §11/§13 record the committed move (`d37f218`). |
 | Default behaviour contradicted project rules | §3/§7 and companion AGENTS/spec wording distinguish primary CLI from bare-invocation TUI. |
 | Doctor offered clipboard support despite Q3 | §8.6 displays unmatched paths; copy actions remain deferred, including JSON in §2. |
@@ -1228,9 +1191,10 @@ temporary mock homes. This table records plan corrections, not completed code.
 
 **Readiness:** the architectural direction remains suitable. Before session
 implementation, fix the two engine crashes and pass the prerequisite gate.
-Q9 is settled; implementation can proceed through the planned gates once those
-prerequisites pass. This document does not mark the fixes or TUI as implemented
-or establish release readiness.
+Then pass P3's speed/memory and capture-scope review before C1–C5. Q9 remains
+settled; implementation proceeds only through those ordered gates. This
+document does not mark the fixes or TUI as implemented or establish release
+readiness.
 
 ---
 
@@ -1403,6 +1367,10 @@ UTF-8 text, or raw bytes if decoding fails, with the existing `sha256:` prefix.
 `hash_captured_directory()` sorts `(relative_path, fingerprint)` pairs and hashes
 the existing `relative_path + NUL + fingerprint + LF` sequence. These helpers
 must agree with the current streaming hasher, which remains the CLI default.
+Keep one definition of newline normalization and directory hash framing wherever
+streaming allows it; do not add a second set of YAML validation or identity rules.
+Parity tests guard the unavoidable difference between chunked file reads and
+in-memory bytes; they do not justify duplicating the underlying rules.
 
 `parse_skill_bytes()` preserves the current parser's universal-newline behaviour
 (CRLF and lone CR become LF), BOM handling, YAML checks and metadata coercion.
@@ -1536,7 +1504,8 @@ Implement `capture_session()` in this order:
 This validation detects observable changes; it is not a filesystem transaction.
 An external change that happens and is completely undone between checks may be
 unobservable. Do not advertise stronger atomicity. Include both discovery
-passes, byte capture and doctor validation in the §9 startup benchmark. If this
+passes, byte capture and doctor validation in both the P3 probe (approximated
+where necessary) and the Step 1 implementation benchmark (§9.2). If this
 is too slow on the synthetic gate, report measurements before changing the
 locked consistency behaviour. Memory exhaustion is an unexpected worker error;
 do not silently cap inputs or create temporary files to work around it.
@@ -1716,6 +1685,7 @@ an arbitrary model can safely implement the whole project in one prompt.
 | --- | --- | --- |
 | P1 — settings robustness | `core/resolver.py`, existing resolver tests. Fix non-object settings crash only. | New failing-before/passing-after shape tests; valid settings behaviour unchanged. |
 | P2 — lock decoding | `core/system.py`, existing system/doctor tests. Invalid UTF-8 follows `ERR_NOT_JSON` path. | Regression proves doctor warning; existing doctor goldens unchanged. |
+| P3 — cost and capture-scope review | Temporary synthetic-fixture probe plus reproducible harness/results under `docs/`; §9.2. No production snapshot/UI code. | Measure full capture and selective retention before C1. Retain §21 or review a complete scope revision before continuing. |
 | C1 — bytes and identity | `core/hasher.py`, `parser.py`, `resolver.py`, `test_snapshot_inputs.py`, relevant existing tests. Implement pure helpers, identity helper and settings decoder from §21.3. | Hash/parser parity and identity cases in §21.6; no snapshot/TUI code yet. |
 | C2 — explicit captured engine inputs | `core/snapshot_models.py`, `resolver.py`, `diff.py`, `compare.py`, `doctor.py`, engine tests. Implement data types and signatures. | Live default parity; empty inputs never fall back; frozen calls reject missing inputs. |
 | C3 — capture and cancellation | `core/snapshot.py`, `cancellation.py`, `discovery.py`, `system.py`, `hasher.py`, `test_session_snapshot.py`. Implement §21.4 and cancellation propagation. | First-visit freeze, no-live-read tests, capture consistency, refresh, ownership, read-only and cancellation all pass. |
@@ -1730,6 +1700,11 @@ an arbitrary model can safely implement the whole project in one prompt.
 | U7 — Doctor | Doctor screen/tests; Step 7. Use stored report. | Severity/message parity; in-app jump and unmatched paths; no live doctor rerun. |
 | U8 — polish | Step 8 help/keymap/error/empty states and user docs. | Complete headless browsing flow, full gate with TUI coverage, measured limitations recorded. |
 | U9 — release preparation | Step 9 version/lock/release checklist and built-wheel smoke tests. | Follow DEVELOPMENT release rules; passing preparation does not itself authorize publishing. |
+
+U2–U9 define scope and acceptance conditions, not complete screen designs.
+Before dispatching each one, review its concrete implementation plan and named
+tests against the completed earlier rows. Expand only that assignment's details;
+the outline is not permission to invent new product behaviour.
 
 After **each row**, run `pytest --cov=skill_lens`, `mypy`, `ruff check .` and
 `ruff format --check .` using the repository environment. State what changed,

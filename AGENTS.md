@@ -36,8 +36,9 @@ This project is built with AI coding assistants under a strict specification. Yo
      browsing layer, shipped as the optional `[tui]` extra; it stays strictly
      read-only and presentation-only. See [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
      Before 0.2, line-oriented CLI only. From 0.2, bare `skill-lens` opens the
-     TUI when Textual is installed and stdout is interactive; `--plain`,
-     non-interactive stdout, or missing Textual prints help instead.
+     TUI when Textual is installed and both stdin and stdout are interactive
+     (terminal input and output); `--plain`, either stream being non-interactive,
+     or missing Textual prints help instead.
    - NO SQLite or databases in v1.
    - NO AI API calls or telemetry.
    - NO Windows support in v1. macOS and Linux only.

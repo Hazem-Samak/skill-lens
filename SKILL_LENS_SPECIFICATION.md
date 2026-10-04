@@ -3,7 +3,7 @@
 > **"Your AI skills, in one place. And why each one is there."**
 
 **Technical Positioning:** A local diagnostics and resolution engine for AI agent capabilities (`SKILL.md` and file-based skills).  
-**Primary Interface:** Line-oriented Python CLI with `Rich` terminal formatting. From **0.2**, an additive, optional full-screen TUI (Textual) may be layered on top as a browsing surface; the line-oriented CLI remains the primary interface. Bare `skill-lens` opens the TUI when Textual is installed and stdout is interactive; `--plain`, non-interactive stdout, or missing Textual prints help instead.<br>
+**Primary Interface:** Line-oriented Python CLI with `Rich` terminal formatting. From **0.2**, an additive, optional full-screen TUI (Textual) may be layered on top as a browsing surface; the line-oriented CLI remains the primary interface. Bare `skill-lens` opens the TUI when Textual is installed and both stdin and stdout (terminal input and output) are interactive; `--plain`, either stream being non-interactive, or missing Textual prints help instead.<br>
 **Supported Platforms:** macOS and Linux (Windows is out of scope for v1).  
 **Target Audience:** Multi-agent developers using AI coding assistants (Codex, Claude Code, Antigravity, OpenCode, Pi, Grok, Qoder, Windsurf, OMP, DSH).  
 **Execution Strategy:** Built for AI-assisted development — Modular, Provenance-Tagged, Golden Fixture-Driven, Zero Systems Overhead.
@@ -81,8 +81,8 @@ Collision      (winning_entry | suppressed_shadow | coexisting_merged | qualifie
 | **Qoder CLI** | `~/.qoder/skills` (live 83-link farm) | `.qoder/skills`, `.agents/skills` | **Shadow** (Project > Global) | Frontmatter `name` | Git repository root | `empirical` (83 symlinks verified) |
 | **Windsurf** | `~/.codeium/windsurf/skills` (live 83-link farm) | `.windsurf/skills`, `.agents/skills` | **Shadow** (Project > Global) | Hybrid | Git repository root | `empirical` (83 symlinks verified) |
 | **OpenCode** | `~/.config/opencode/skills/`, `~/.agents/skills` | `.opencode/skills`, `.agents/skills` | **Ambiguous** on duplicate; searches upward | Frontmatter `name` | Git worktree root | `empirical` (1 native skill verified) |
-| **Oh My Pi (`omp`)** | `~/.omp/agent/`, `~/.agents/skills` | `.omp/skills`, cross-agent roots | **Inferred** | Frontmatter `name` | Git repository root | `inferred` (Tier 2) |
-| **DSH** | `~/.dsh/profiles/node_modules/` | `.dsh/skills`, `.agents/skills` | **Inferred** | Directory Name | Git repository root | `inferred` (Tier 2) |
+| **Oh My Pi (`omp`)** | `~/.agents/skills`, `~/.omp/agent/` (managed, lowest priority) | `.omp/skills`, `.agents/skills` | Upstream keeps other copies reachable under prefixed names; Skill Lens reports `ambiguous` until that behaviour is modelled | Frontmatter `name` | Git repository root | `documented` ([vendor skills guide](https://github.com/can1357/oh-my-pi/blob/main/docs/skills.md)); Phase 6 correction |
+| **DSH** | `~/.dsh/skills`, `~/.agents/skills`, `~/.dsh/profiles` (plugin traversal) | `.dsh/skills`, `.agents/skills` | **Shadow** (Project `.dsh` > Project `.agents` > User `.dsh` > User `.agents`) | Directory Name | Git repository root | Native roots/policy `documented` ([vendor skills guide](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/subsystems/skills.md)); plugin traversal remains `inferred` |
 
 ---
 
@@ -132,9 +132,13 @@ On modern developer setups, agents share a canonical library via symlinks (e.g. 
 
 ## 6. CLI Command Specifications
 
-Every command supports `--json` returning structured data models. Exit codes are uniform
-across commands: `0` means the command ran (including "nothing found" and "no
-differences"); `2` means a usage error or an unknown agent.
+Every existing report command supports `--json` returning structured data models.
+Exit codes follow the Phase 6 contract: `0` means the command ran and no findings
+reached the chosen threshold (including "nothing found" and "no differences");
+`1` means findings reached the `--fail-on` threshold on `scan` or `doctor`;
+`2` means a usage error or an unknown agent. `--fail-on` defaults to `never`, so
+findings alone do not change the exit status. Code `3` is reserved for an
+unexpected internal fault; the planned TUI uses it as specified in its plan.
 
 ### 1. `skill-lens scan [--sandbox <dir>] [--cwd <dir>] [--json]`
 Inventories skills across detected agents, separating canonical user skills from plugins.
