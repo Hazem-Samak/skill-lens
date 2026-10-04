@@ -99,13 +99,87 @@ def _coerce_description(value: object) -> str | None:
     return None
 
 
+def _document_identity(path: Path | str) -> str:
+    """Extract skill directory name or standalone stem according to filename rules."""
+    p = Path(path) if isinstance(path, str) else path
+    return p.parent.name if p.name.lower() in _SKILL_FILENAMES else p.stem
+
+
+def _parse_skill_text(raw: str, *, source_path: str) -> ParseResult:
+    """Shared decoded-text parser so both byte and live paths use the same validation."""
+    directory_name = _document_identity(source_path)
+
+    # Universal-newline normalization: convert CRLF and lone CR to LF
+    text = raw.replace("\r\n", "\n").replace("\r", "\n")
+
+    frontmatter_text, body = split_frontmatter(text)
+    if frontmatter_text is None:
+        return ParseResult(
+            status=ParseStatus.MALFORMED_YAML,
+            directory_name=directory_name,
+            body=body,
+            source_path=source_path,
+            errors=(ERR_MISSING_FRONTMATTER,),
+        )
+
+    try:
+        loaded = yaml.safe_load(frontmatter_text)
+    except yaml.YAMLError:
+        return ParseResult(
+            status=ParseStatus.MALFORMED_YAML,
+            directory_name=directory_name,
+            body=body,
+            source_path=source_path,
+            errors=(ERR_MALFORMED_YAML,),
+        )
+
+    if not isinstance(loaded, dict):
+        return ParseResult(
+            status=ParseStatus.MALFORMED_YAML,
+            directory_name=directory_name,
+            body=body,
+            source_path=source_path,
+            errors=(ERR_MALFORMED_YAML,),
+        )
+
+    frontmatter = {str(key): value for key, value in loaded.items()}
+    name_value = loaded.get("name")
+    frontmatter_name = (
+        str(name_value).strip() if isinstance(name_value, (str, int, float)) else None
+    )
+    if not frontmatter_name:
+        frontmatter_name = None
+
+    description = _coerce_description(loaded.get("description"))
+    if description is None:
+        return ParseResult(
+            status=ParseStatus.MISSING_DESCRIPTION,
+            directory_name=directory_name,
+            body=body,
+            frontmatter_name=frontmatter_name,
+            source_path=source_path,
+            errors=(ERR_MISSING_DESCRIPTION,),
+            frontmatter=frontmatter,
+        )
+
+    return ParseResult(
+        status=ParseStatus.VALID,
+        directory_name=directory_name,
+        body=body,
+        frontmatter_name=frontmatter_name,
+        description=description,
+        source_path=source_path,
+        frontmatter=frontmatter,
+    )
+
+
 def parse_skill_document(path: Path) -> ParseResult:
     """Parse one skill document into a :class:`ParseResult`.
 
     Never raises: unreadable files become ``UNREADABLE`` results so a single
     bad file can never abort a scan.
     """
-    directory_name = path.parent.name if path.name.lower() in _SKILL_FILENAMES else path.stem
+    directory_name = _document_identity(path)
 
     try:
         raw = path.read_text(encoding="utf-8")
@@ -126,65 +200,30 @@ def parse_skill_document(path: Path) -> ParseResult:
             errors=(ERR_PERMISSION_DENIED,),
         )
 
-    frontmatter_text, body = split_frontmatter(raw)
-    if frontmatter_text is None:
-        return ParseResult(
-            status=ParseStatus.MALFORMED_YAML,
-            directory_name=directory_name,
-            body=body,
-            source_path=str(path),
-            errors=(ERR_MISSING_FRONTMATTER,),
-        )
+    return _parse_skill_text(raw, source_path=str(path))
+
+
+def parse_skill_bytes(data: bytes, *, source_path: str) -> ParseResult:
+    """Parse captured document bytes into a :class:`ParseResult`.
+
+    Matches parse_skill_document behavior: universal newlines (CRLF and lone CR
+    become LF), BOM handling, YAML validation and metadata coercion. Undecodable
+    bytes produce an UNREADABLE result with ERR_UNDECODABLE_TEXT.
+    """
+    directory_name = _document_identity(source_path)
 
     try:
-        loaded = yaml.safe_load(frontmatter_text)
-    except yaml.YAMLError:
+        raw = data.decode("utf-8")
+    except UnicodeDecodeError:
         return ParseResult(
-            status=ParseStatus.MALFORMED_YAML,
+            status=ParseStatus.UNREADABLE,
             directory_name=directory_name,
-            body=body,
-            source_path=str(path),
-            errors=(ERR_MALFORMED_YAML,),
+            body="",
+            source_path=source_path,
+            errors=(ERR_UNDECODABLE_TEXT,),
         )
 
-    if not isinstance(loaded, dict):
-        return ParseResult(
-            status=ParseStatus.MALFORMED_YAML,
-            directory_name=directory_name,
-            body=body,
-            source_path=str(path),
-            errors=(ERR_MALFORMED_YAML,),
-        )
-
-    frontmatter = {str(key): value for key, value in loaded.items()}
-    name_value = loaded.get("name")
-    frontmatter_name = (
-        str(name_value).strip() if isinstance(name_value, (str, int, float)) else None
-    )
-    if not frontmatter_name:
-        frontmatter_name = None
-
-    description = _coerce_description(loaded.get("description"))
-    if description is None:
-        return ParseResult(
-            status=ParseStatus.MISSING_DESCRIPTION,
-            directory_name=directory_name,
-            body=body,
-            frontmatter_name=frontmatter_name,
-            source_path=str(path),
-            errors=(ERR_MISSING_DESCRIPTION,),
-            frontmatter=frontmatter,
-        )
-
-    return ParseResult(
-        status=ParseStatus.VALID,
-        directory_name=directory_name,
-        body=body,
-        frontmatter_name=frontmatter_name,
-        description=description,
-        source_path=str(path),
-        frontmatter=frontmatter,
-    )
+    return _parse_skill_text(raw, source_path=source_path)
 
 
 def parse_skill(entrypoint: Path) -> ParseResult | None:

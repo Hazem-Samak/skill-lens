@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+from collections.abc import Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -96,6 +97,11 @@ def hash_file(path: Path) -> str:
     return HASH_PREFIX + text_hasher.hexdigest()
 
 
+def format_directory_entry(relative_posix: str, file_hash: str) -> bytes:
+    """Format one directory entry framing for hashing: relative_path + NUL + hash + LF."""
+    return f"{relative_posix}\0{file_hash}\n".encode()
+
+
 def hash_directory(root: Path) -> str:
     """Fingerprint an entire skill directory.
 
@@ -106,7 +112,7 @@ def hash_directory(root: Path) -> str:
     for relative in iter_files(root):
         posix = relative.as_posix()
         file_hash = hash_file(root / relative)
-        hasher.update(f"{posix}\0{file_hash}\n".encode())
+        hasher.update(format_directory_entry(posix, file_hash))
     return HASH_PREFIX + hasher.hexdigest()
 
 
@@ -115,3 +121,40 @@ def hash_path(path: Path) -> str:
     if path.is_dir():
         return hash_directory(path)
     return hash_file(path)
+
+
+def normalized_text(data: bytes) -> str | None:
+    """Decode UTF-8 and replace CRLF with LF.
+
+    Returns None if decoding fails. A lone CR stays unchanged, and a NUL byte
+    does not by itself make a file binary.
+    """
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    return text.replace("\r\n", "\n")
+
+
+def hash_bytes(data: bytes) -> str:
+    """Fingerprint in-memory file bytes with sha256: prefix.
+
+    Matches hash_file: decodable UTF-8 is newline-normalized as text; anything else
+    is hashed as raw bytes.
+    """
+    norm = normalized_text(data)
+    if norm is not None:
+        return HASH_PREFIX + hashlib.sha256(norm.encode("utf-8")).hexdigest()
+    return HASH_PREFIX + hashlib.sha256(data).hexdigest()
+
+
+def hash_captured_directory(files: Sequence[tuple[str, str]]) -> str:
+    """Fingerprint a captured directory from (relative_path, fingerprint) pairs.
+
+    Pairs are sorted by relative path and hashed using relative_path + NUL +
+    fingerprint + LF.
+    """
+    hasher = hashlib.sha256()
+    for rel_path, fingerprint in sorted(files, key=lambda item: item[0]):
+        hasher.update(format_directory_entry(rel_path, fingerprint))
+    return HASH_PREFIX + hasher.hexdigest()

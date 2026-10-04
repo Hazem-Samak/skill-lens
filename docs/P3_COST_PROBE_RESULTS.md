@@ -25,7 +25,7 @@
 | 3. Second Discovery (Validation Pass) | 1595.53 ms (1.596 s) | 704.19 ms (0.704 s) | Reruns live discovery to verify file stability |
 | 4. Report Construction & Config Capture | 65.40 ms (0.065 s) | 54.45 ms (0.054 s) | `build_scan_report`, `build_doctor_report` & guarded config read |
 | 5. Validation Pass (Reports & Configs) | 67.51 ms (0.068 s) | 56.19 ms (0.056 s) | Compares complete scan & doctor reports and reread config bytes |
-| *(Unavailable Service Phases)* | *N/A (Approximation)* | *N/A (Approximation)* | In-memory cancellation checkpoints (C2), link/display maps (C3), and byte re-parsing (C1) |
+| *(Unavailable Service Phases)* | *N/A (Approximation)* | *N/A (Approximation)* | In-memory cancellation checkpoints (C3), link/display maps (C3), and byte re-parsing (C1) |
 | **Total Startup (Probe Estimate)** | **3252.74 ms (3.253 s)** | **1593.33 ms (1.593 s)** | Sum of measured phases 1 + 2 + 3 + 4 + 5 |
 
 ### Selective-Retention Comparison (Candidate)
@@ -58,7 +58,7 @@
 
 ### 4.1 Probe Findings
 1. **Full Capture Time:** Reading all file bytes across 600+ skills requires only **~68.5 ms (Scenario A)** and **~76.9 ms (Scenario B)**.
-2. **Total Startup Estimate:** The sum of all five measured startup phases is **~3.25 s (Scenario A)** and **~1.59 s (Scenario B)** on Darwin arm64. Passing the existing index and registry into `build_doctor_report` eliminates the redundant discovery walk. Unimplemented phases (cooperative cancellation checkpoints in C2, path display and link equality maps in C3, and byte re-parsing in C1) are explicitly labeled as approximations.
+2. **Total Startup Estimate:** The sum of all five measured startup phases is **~3.25 s (Scenario A)** and **~1.59 s (Scenario B)** on Darwin arm64. Passing the existing index and registry into `build_doctor_report` eliminates the redundant discovery walk. Unimplemented phases (cooperative cancellation checkpoints in C3, path display and link equality maps in C3, and byte re-parsing in C1) are explicitly labeled as approximations.
 3. **In-Memory Retention & Precise Accounting:** Total in-memory storage for captured files and containers (using identical accounting methods) is **1.18 MiB (Scenario A)** and **2.10 MiB (Scenario B)**. This accounts for file payload plus selected container overhead.
 4. **Refresh Memory:** Tracking heap allocations from start through retaining the entire old snapshot and constructing and validating the replacement snapshot with freshly read bytes peaked at **11.30 MiB (Scenario A)** and **10.75 MiB (Scenario B)** of traced allocations.
 5. **Validation Integrity:** The validation pass verifies complete scan and doctor report dataclasses (`scan1 == scan2`, `doc1 == doc2`) and reread configuration bytes. Controlled tests verified that mutated settings and same-count report modifications are reliably detected and rejected.

@@ -117,18 +117,81 @@ As required by `FULL_SCREEN_TUI.md` §9.2 and §22 before embarking on Step 0 co
 
 ---
 
-## 5. Summary of Files Created and Modified
+## 5. Phase C1 — Pure Byte, Parser, Settings, and Identity Helpers
+
+### Objective
+Implement the pure foundation helpers specified in `FULL_SCREEN_TUI.md` §21.3 and §22 for Assignment C1:
+- Pure byte and hash helpers (`normalized_text`, `hash_bytes`, `hash_captured_directory`).
+- Extract the shared decoded-text parser (`_parse_skill_text`) and implement `parse_skill_bytes`.
+- Implement pure settings decoder (`disabled_overrides_from_bytes`) and identity helper (`lookup_name_for_entry`).
+- Correct the cancellation assignment reference from C2 to C3 in the probe documentation.
+- Add required parity and acceptance tests in `tests/test_snapshot_inputs.py`.
+- Preserve the §21 Full Capture contract without adding snapshot services, Textual dependencies, presentation packages, or UI screens.
+
+### Implementation Steps
+1. **Probe Documentation Correction:**
+   - Updated `docs/p3_cost_probe.py` and `docs/P3_COST_PROBE_RESULTS.md` to correctly cite in-memory cancellation checkpoints as belonging to **Assignment C3** (capture service and cancellation) rather than C2 (explicit engine inputs).
+2. **Pure Hasher Helpers (`skill_lens/core/hasher.py`):**
+   - Implemented `normalized_text(data: bytes) -> str | None`: Decodes bytes as UTF-8 and normalizes CRLF (`\r\n`) to LF (`\n`). Preserves lone CR (`\r`) and embedded NUL (`\0`) bytes. Returns `None` on `UnicodeDecodeError`.
+   - Implemented `hash_bytes(data: bytes) -> str`: Hashes normalized UTF-8 text if decodable, or raw bytes if decoding fails, prefixing with `"sha256:"`. Matches the streaming fingerprint computed by `hash_file()`.
+   - Implemented `hash_captured_directory(files: Sequence[tuple[str, str]]) -> str`: Sorts `(rel_path, fingerprint)` pairs lexicographically by relative path and streams `rel_path\0fingerprint\n` into SHA-256 with prefix `"sha256:"`, matching `hash_directory()` without reading disk.
+3. **Shared Parser Extraction (`skill_lens/core/parser.py`):**
+   - Extracted `_parse_skill_text(raw: str, *, source_path: str) -> ParseResult`: Centralizes universal newline normalization (`\r\n` and `\r` to `\n`), frontmatter extraction, YAML parsing, name extraction, and description coercion.
+   - Refactored `parse_skill_document(path: Path) -> ParseResult`: Reads text using `path.read_text(encoding="utf-8")` and delegates to `_parse_skill_text`, maintaining exact `OSError` / permission error handling.
+   - Implemented `parse_skill_bytes(data: bytes, *, source_path: str) -> ParseResult`: Decodes bytes as UTF-8; on `UnicodeDecodeError`, cleanly returns `ParseResult` with status `ParseStatus.UNREADABLE` and error `ERR_UNDECODABLE_TEXT`. On successful decode, delegates to `_parse_skill_text`.
+4. **Settings Decoder and Identity Helper (`skill_lens/core/resolver.py`):**
+   - Implemented `lookup_name_for_entry(entry: DiscoveredEntry, agent: AgentDefinition) -> str`: Reuses `_identity_names()`. For `frontmatter_name` agents, uses frontmatter name if present and valid, falling back to directory name. For `directory_name` and `either` / `hybrid` agents, uses directory name (or `entry.name` if parse is absent). Guarantees the returned name is an element of `_identity_names(agent, entry)`.
+   - Implemented `disabled_overrides_from_bytes(agent: AgentDefinition, data: bytes | None) -> frozenset[str]`: Pure JSON decoder returning an empty frozenset for `None`, undecodable bytes, invalid JSON, non-object top levels, or non-object overrides members, disabling only keys where the override value is `False`.
+   - Refactored `_load_disabled_overrides(agent: AgentDefinition, home: Path) -> set[str]`: Reads raw bytes guarded against `OSError` and delegates to `disabled_overrides_from_bytes`.
+5. **Comprehensive Acceptance Tests (`tests/test_snapshot_inputs.py`):**
+   - Implemented acceptance tests covering:
+     - `test_hash_bytes_matches_streaming`: Parity across empty file, standard LF, CRLF crossing 64 KiB boundary, lone CR crossing 64 KiB boundary, lone CR, trailing lone CR at EOF, UTF-8 BOM, valid UTF-8 with NUL, invalid UTF-8, and >1 MiB files.
+     - `test_normalized_text_rules`: Validates UTF-8 decoding and CRLF normalization.
+     - `test_captured_directory_matches_live_hash`: Directory aggregation parity, exclusions (`.git`, `.DS_Store`, `._*`), input order shuffling, sort key sensitivity via opposing path/hash files, renamed file sensitivity, and distinct standalone file hash.
+     - `test_byte_parser_matches_live_parser`: Parity between live file reads and byte parsing across valid, malformed YAML, missing description, lowercase `skill.md`, standalone `.md`, BOM, lone CR in frontmatter, lone CR in document without frontmatter, and undecodable bytes.
+     - `test_selected_entry_uses_agent_identity`: Verifies `lookup_name_for_entry` across directory, frontmatter, either, hybrid, real shipped agents (`claude`, `codex`, `antigravity`), invalid metadata, and absent parse cases.
+     - `test_disabled_overrides_from_bytes`: Comprehensive edge-case coverage (`None`, invalid UTF-8, invalid JSON, non-objects, boolean `False` checks, `disabled_settings` without `disabled_key`, and `_load_disabled_overrides` delegation).
+6. **Multi-Agent Review Audit & Findings Remediation:**
+   - Dispatched read-only reviews to **Codex (`gpt-6.1-sol` High)**, **Pi**, and **OpenCode (`space-bunny-free#max`)** via Orca orchestration.
+   - All three reviewers verified zero runtime regressions. Pi validated 3,000 differential parser runs with 0 mismatches. OpenCode executed a 28-mutation suite and identified key safety and test-coverage gaps.
+   - **Remediations implemented:**
+     - **BUG 1 (High):** Removed unreachable `next(iter(valid_names))` fallback in `lookup_name_for_entry()` (`resolver.py:183`). Asserted invariant `assert chosen in _identity_names(agent, entry)`. Verified that M1 (`chosen = directory_name`) and M2b (`frontmatter_name = parse.frontmatter_name`) mutations now immediately fail tests.
+     - **BUG 2 (Medium):** Added tests exercising the shipped `identity_source = "hybrid"` policy used by `antigravity.toml` and `windsurf.toml` in `tests/test_snapshot_inputs.py`.
+     - **BUG 3 (Medium):** Extracted shared directory entry framing helper `format_directory_entry()` in `skill_lens/core/hasher.py`, eliminating duplicate framing literals per §21.3.
+     - **BUG 4 (Medium):** Added files with inverted path-versus-hash sorting in `test_captured_directory_matches_live_hash`. Verified that sorting by content hash fails the test.
+     - **BUG 5 (Low-Medium):** Added test case with lone CR in a document without frontmatter (`no_fm_lone_cr.txt`), proving universal newline folding in plain bodies. Verified that removing lone CR normalization fails the test.
+     - **BUG 6 (Low):** Added test cases for an agent with `disabled_settings` configured but `disabled_key=None` as well as `disabled_key=""` (empty string) matching a JSON key `""`, proving that the `not agent.disabled_key` decoder guard cannot be omitted.
+     - **BUG 7 (Low):** Simplified `except (UnicodeDecodeError, ValueError):` to `except ValueError:` in `resolver.py:199`. Extracted `_document_identity(path)` helper in `parser.py` to eliminate triplicated filename rule.
+     - **BUG 8 (Low):** Fixed walkthrough typo citing non-existent `ParseStatus.UNDECODABLE_TEXT` (correct status is `ParseStatus.UNREADABLE` with `ERR_UNDECODABLE_TEXT`).
+     - **BUG 9 (Low):** Corrected P3 probe documentation and results citations, attributing in-memory cancellation checkpoints to C3 (per §21.4 and §22) rather than C2.
+     - **BUG 10 (Low):** Added `test_selected_entry_uses_agent_identity` in `tests/test_phase2_gate.py` verifying end-to-end `resolve_skill()` lookup name resolution per §21.6, directly piping `lookup_name_for_entry()` results into `resolve_skill()`.
+   - **Follow-up Reviewer Verification (Codex, OpenCode, Pi):**
+     - All three reviewers re-audited the remediation read-only in isolated test sandboxes.
+     - Codex confirmed zero runtime regressions and verified that in-memory mutations for M1, M2b, sort-by-hash, and lone-CR are caught.
+     - OpenCode confirmed all 10 findings resolved with a 76-case parser differential and 15-case settings differential against HEAD with 0 mismatches.
+     - Pi conducted independent differential fuzzing across 4,000 hash-parity cases, 80 parser-parity cases, and 20,000 identity-invariant cases with 0 mismatches or violations, and independently verified the opposing-sort fixture and M1/M2b mutations.
+7. **Verification & Quality Gate:**
+   - Executed full test suite: **491 tests pass**.
+   - Branch coverage: **93.18%** (above 90.0% floor).
+   - Strict `mypy`: 0 issues across all 25 source files.
+   - `ruff check .` and `ruff format --check .`: 100% clean.
+   - `git diff --check`: 100% clean (zero whitespace errors).
+
+---
+
+## 6. Summary of Files Created and Modified
 
 | File | Action | Purpose |
 | --- | --- | --- |
-| `skill_lens/core/resolver.py` | Modified | Added top-level type validation in `_load_disabled_overrides()`. |
-| `tests/test_phase2_gate.py` | Modified | Added tests for non-object settings JSON. |
-| `skill_lens/core/system.py` | Modified | Added `UnicodeDecodeError` guard in `read_json_guarded()`. |
-| `tests/test_doctor.py` | Modified | Added test for invalid UTF-8 lockfile warning in `doctor`. |
-| `tests/test_phase4_gate.py` | Modified | Added test ensuring `read_json_guarded` never raises on non-UTF-8 bytes. |
-| `docs/p3_cost_probe.py` | Created | Reproducible synthetic 600+ skill probe harness for §9.2. |
-| `docs/P3_COST_PROBE_RESULTS.md` | Created | Benchmark results and Q9 capture-scope decision gate record. |
-| `DEVELOPMENT.md` | Modified | Recorded P1/P2 completion and updated 476-test gate. |
-| `FULL_SCREEN_TUI.md` | Modified | Synchronized revision and readiness statements with P1/P2/P3 completion. |
-| `Full Screen TUI Implementation Walkthrough.md` | Created / Updated | Tracks implementation progress, decisions, changes, and verification gates. |
-
+| `skill_lens/core/resolver.py` | Modified | Added top-level type validation in `_load_disabled_overrides()`; implemented `lookup_name_for_entry()` without dead fallback and `disabled_overrides_from_bytes()`. |
+| `skill_lens/core/hasher.py` | Modified | Implemented `normalized_text()`, `hash_bytes()`, `format_directory_entry()`, and `hash_captured_directory()`. |
+| `skill_lens/core/parser.py` | Modified | Extracted `_document_identity()` and `_parse_skill_text()`, added `parse_skill_bytes()`, rewired `parse_skill_document()`. |
+| `tests/test_snapshot_inputs.py` | Created | Added comprehensive acceptance tests for pure byte, parser, settings, and identity helpers (C1). |
+| `tests/test_phase2_gate.py` | Modified | Added tests for non-object settings JSON (P1) and added `test_selected_entry_uses_agent_identity` with end-to-end `resolve_skill()` verification (C1). |
+| `skill_lens/core/system.py` | Modified | Added `UnicodeDecodeError` guard in `read_json_guarded()` (P2). |
+| `tests/test_doctor.py` | Modified | Added test for invalid UTF-8 lockfile warning in `doctor` (P2). |
+| `tests/test_phase4_gate.py` | Modified | Added test ensuring `read_json_guarded` never raises on non-UTF-8 bytes (P2). |
+| `docs/p3_cost_probe.py` | Created / Modified | Reproducible synthetic 600+ skill probe harness; corrected C3 cancellation reference. |
+| `docs/P3_COST_PROBE_RESULTS.md` | Created / Modified | Benchmark results and Q9 decision record; corrected C3 cancellation reference. |
+| `DEVELOPMENT.md` | Modified | Recorded P1/P2/P3/C1 completion and updated 491-test gate. |
+| `Full Screen TUI Implementation Walkthrough.md` | Created / Updated | Tracks implementation progress, decisions, changes, review audit, and verification gates. |

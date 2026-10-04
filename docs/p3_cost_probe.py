@@ -849,7 +849,7 @@ def main() -> None:
             "*N/A (Approximation)*",
             "*N/A (Approximation)*",
             (
-                "In-memory cancellation checkpoints (C2), link/display maps (C3), "
+                "In-memory cancellation checkpoints (C3), link/display maps (C3), "
                 "and byte re-parsing (C1)"
             ),
         ),
@@ -976,7 +976,7 @@ def main() -> None:
             f"**~{res_b.t_total_probe_estimate:.2f} s (Scenario B)** on Darwin arm64. "
             "Passing the existing index and registry into `build_doctor_report` eliminates the "
             "redundant discovery walk. Unimplemented phases (cooperative cancellation checkpoints "
-            "in C2, path display and link equality maps in C3, and byte re-parsing in C1) are "
+            "in C3, path display and link equality maps in C3, and byte re-parsing in C1) are "
             "explicitly labeled as approximations."
         ),
         (

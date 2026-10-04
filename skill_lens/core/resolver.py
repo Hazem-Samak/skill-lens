@@ -160,19 +160,57 @@ def _matches(agent: AgentDefinition, entry: DiscoveredEntry, name: str) -> bool:
     return name in _identity_names(agent, entry)
 
 
+def lookup_name_for_entry(entry: DiscoveredEntry, agent: AgentDefinition) -> str:
+    """Determine the lookup name for a discovered entry under an agent's policy.
+
+    Reuses _identity_names() and agent policy:
+    - When no parse exists, returns entry.name.
+    - For 'frontmatter_name', chooses frontmatter name with directory fallback.
+    - For 'directory_name' or 'either', chooses directory name.
+    The returned name always belongs to _identity_names(agent, entry).
+    """
+    parse = entry.parse
+    if parse is None:
+        return entry.name
+
+    directory_name = parse.directory_name
+    frontmatter_name = parse.frontmatter_name or directory_name
+
+    chosen = frontmatter_name if agent.identity_source == "frontmatter_name" else directory_name
+    assert chosen in _identity_names(agent, entry)
+    return chosen
+
+
+def disabled_overrides_from_bytes(agent: AgentDefinition, data: bytes | None) -> frozenset[str]:
+    """Decode disabled skill overrides from raw configuration file bytes.
+
+    Returns an empty frozenset for missing (None), unreadable/undecodable input,
+    invalid JSON, a non-object top level, or a non-object overrides member. Only an
+    override value that is False disables a skill name.
+    """
+    if not agent.disabled_settings or not agent.disabled_key or data is None:
+        return frozenset()
+    try:
+        text = data.decode("utf-8")
+        parsed = json.loads(text)
+    except ValueError:
+        return frozenset()
+    if not isinstance(parsed, dict):
+        return frozenset()
+    override = parsed.get(agent.disabled_key)
+    if not isinstance(override, dict):
+        return frozenset()
+    return frozenset(str(name) for name, enabled in override.items() if enabled is False)
+
+
 def _load_disabled_overrides(agent: AgentDefinition, home: Path) -> set[str]:
-    if not agent.disabled_settings or not agent.disabled_key:
+    if not agent.disabled_settings:
         return set()
     try:
-        data = json.loads((home / agent.disabled_settings).read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return set()
-    if not isinstance(data, dict):
-        return set()
-    override = data.get(agent.disabled_key)
-    if not isinstance(override, dict):
-        return set()
-    return {str(name) for name, enabled in override.items() if enabled is False}
+        data: bytes | None = (home / agent.disabled_settings).read_bytes()
+    except OSError:
+        data = None
+    return set(disabled_overrides_from_bytes(agent, data))
 
 
 def _candidates_for(agent: AgentDefinition, index: DiscoveryIndex, name: str) -> list[Candidate]:

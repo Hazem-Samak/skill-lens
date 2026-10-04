@@ -68,13 +68,15 @@ and the build proceeds by phase:
   Both have been implemented and verified with regression tests. P3 cost and
   capture-scope review measured full capture vs selective retention on synthetic
   fixtures (>600 skills), confirming the §21 Q9 full-capture contract is practical
-  and retained.
+  and retained. Assignment C1 implemented the pure byte/hash helpers,
+  shared text parser, settings decoder, and identity helper, backed by
+  `tests/test_snapshot_inputs.py`.
   Sections 21–22 define the exact Step 0 input types, engine signatures,
   capture algorithm, acceptance tests and ordered assignments for implementers
   (C1–C5). Bare launch requires both terminal input and output. Earlier review
   history is linked from the plan's short header.
 
-Current gate: **476 tests pass** at **93% branch coverage** (92.68%), `mypy` strict clean,
+Current gate: **491 tests pass** at **93% branch coverage** (93.18%), `mypy` strict clean,
 `ruff check .` clean, `ruff format --check .` clean.
 
 > The Phase 6 plan is

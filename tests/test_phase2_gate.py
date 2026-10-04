@@ -19,9 +19,11 @@ from pathlib import Path
 
 import pytest
 
-from skill_lens.core.resolver import resolve_skill
+from skill_lens.core.discovery import discover
+from skill_lens.core.resolver import lookup_name_for_entry, resolve_skill
 from skill_lens.core.scanner import build_scan_report
 from skill_lens.models.enums import Evidence, HeadlineState, Scope
+from skill_lens.registry.loader import load_registry
 from tests.fixtures.builders import make_skill, skill_markdown, symlink, write_skill
 from tests.fixtures.scenarios import (
     SCENARIO_NAMES,
@@ -553,3 +555,77 @@ def test_unknown_agent_raises(mock_home: Path) -> None:
     home = mock_home.resolve()
     with pytest.raises(KeyError):
         resolve_skill("deploy", "not-an-agent", home, home)
+
+
+def test_selected_entry_uses_agent_identity(mock_home: Path) -> None:
+    """§21.6: Verify directory/frontmatter/either agents find selected installation using helper."""
+    home = mock_home.resolve()
+    claude_skill = home / ".claude" / "skills" / "folder-key"
+    claude_skill.mkdir(parents=True, exist_ok=True)
+    (claude_skill / "SKILL.md").write_text(
+        "---\nname: declared-key\ndescription: Frontmatter skill\n---\n# Body\n",
+        encoding="utf-8",
+    )
+    codex_skill = home / ".codex" / "skills" / "folder-key"
+    codex_skill.mkdir(parents=True, exist_ok=True)
+    (codex_skill / "SKILL.md").write_text(
+        "---\nname: declared-key\ndescription: Frontmatter skill\n---\n# Body\n",
+        encoding="utf-8",
+    )
+
+    # Invalid metadata with usable declared name (missing description)
+    invalid_skill = home / ".codex" / "skills" / "invalid-meta"
+    invalid_skill.mkdir(parents=True, exist_ok=True)
+    (invalid_skill / "SKILL.md").write_text(
+        "---\nname: declared-invalid\n---\n# Body without description\n",
+        encoding="utf-8",
+    )
+
+    # Absent frontmatter name (malformed YAML)
+    malformed_skill = home / ".codex" / "skills" / "malformed-meta"
+    malformed_skill.mkdir(parents=True, exist_ok=True)
+    (malformed_skill / "SKILL.md").write_text(
+        "---\nname: [unclosed\n---\n# Malformed\n",
+        encoding="utf-8",
+    )
+
+    registry = load_registry()
+    claude = registry["claude"]  # directory_name policy
+    codex = registry["codex"]  # frontmatter_name policy
+
+    index = discover(home, home, registry)
+    entry_claude = next(
+        e for e in index.entries if "/.claude/skills/folder-key" in e.entrypoint_path
+    )
+    entry_codex = next(e for e in index.entries if "/.codex/skills/folder-key" in e.entrypoint_path)
+    entry_inv = next(e for e in index.entries if "/.codex/skills/invalid-meta" in e.entrypoint_path)
+    entry_mal = next(
+        e for e in index.entries if "/.codex/skills/malformed-meta" in e.entrypoint_path
+    )
+
+    # Helper derives correct canonical lookup name under each agent's policy
+    assert lookup_name_for_entry(entry_claude, claude) == "folder-key"
+    assert lookup_name_for_entry(entry_codex, codex) == "declared-key"
+    assert lookup_name_for_entry(entry_inv, codex) == "declared-invalid"
+    assert lookup_name_for_entry(entry_mal, codex) == "malformed-meta"
+
+    # Both resolve_skill calls find the selected installation under that lookup name
+    name_claude = lookup_name_for_entry(entry_claude, claude)
+    report_claude = resolve_skill(name_claude, "claude", home, home)
+    assert report_claude.found is True
+    assert report_claude.headline is HeadlineState.ACTIVE
+
+    name_codex = lookup_name_for_entry(entry_codex, codex)
+    report_codex = resolve_skill(name_codex, "codex", home, home)
+    assert report_codex.found is True
+    assert report_codex.headline is HeadlineState.ACTIVE
+
+    name_inv = lookup_name_for_entry(entry_inv, codex)
+    rep_inv = resolve_skill(name_inv, "codex", home, home)
+    assert rep_inv.found is True
+    assert rep_inv.headline is HeadlineState.INVALID
+
+    name_mal = lookup_name_for_entry(entry_mal, codex)
+    rep_mal = resolve_skill(name_mal, "codex", home, home)
+    assert rep_mal.found is True
+    assert rep_mal.headline is HeadlineState.INVALID
