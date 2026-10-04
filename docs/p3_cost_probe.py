@@ -6,13 +6,13 @@ allocations for:
 1. First discovery pass (live discovery with streaming content hashing).
 2. Complete byte capture (all files of all discovered skills retained in memory).
 3. Second discovery pass (validation pass).
-4. Report construction (ScanReport and DoctorReport reusing index and registry).
-5. Validation pass (comparing discovery passes and validating reports).
+4. Report construction & initial config capture (ScanReport and DoctorReport reusing index).
+5. Validation pass (comparing discovery passes, complete reports, and reread configs).
 6. Selective retention candidate (Diff engine's Variant A baseline & readable-copy
    rules, including readable malformed copies).
 7. Simulated refresh (measuring peak traced Python heap allocations from tracking
    start through holding old snapshot and building new snapshot using freshly read
-   bytes).
+   bytes, with full report and config validation).
 
 Benchmarks two synthetic datasets (>600 skills each):
 - Scenario A: Mostly unique skills across roots, with symlinks, malformed entries,
@@ -33,16 +33,16 @@ import sys
 import tempfile
 import time
 import tracemalloc
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
 from skill_lens.core import paths
 from skill_lens.core.diff import build_diff_report
-from skill_lens.core.discovery import canonical_key, labels_for_entries
-from skill_lens.core.doctor import build_doctor_report
+from skill_lens.core.discovery import DiscoveryIndex, canonical_key, labels_for_entries
+from skill_lens.core.doctor import DoctorReport, build_doctor_report
 from skill_lens.core.hasher import iter_files
-from skill_lens.core.scanner import build_scan_report
+from skill_lens.core.scanner import ScanReport, build_scan_report
 from skill_lens.core.system import live_discovery
 from skill_lens.registry.loader import load_registry
 
@@ -52,10 +52,11 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 @dataclass(frozen=True, slots=True)
 class DatasetStats:
     name: str
-    skill_count: int
+    canonical_entries_count: int
+    symlink_entrypoints_count: int
+    total_entrypoints_count: int
     valid_skill_count: int
     malformed_skill_count: int
-    symlink_count: int
     file_count: int
     total_bytes: int
     largest_file_bytes: int
@@ -77,6 +78,7 @@ class ProbeRunResult:
     retained_containers_bytes_full: int
     retained_total_bytes_full: int
     retained_file_content_bytes_selective: int
+    retained_containers_bytes_selective: int
     retained_total_bytes_selective: int
     peak_traced_first_discovery: int
     peak_traced_full_capture: int
@@ -86,6 +88,8 @@ class ProbeRunResult:
     peak_traced_selective_capture: int
     peak_traced_refresh: int
     malformed_diff_verified: bool
+    controlled_settings_rejected: bool
+    controlled_reports_rejected: bool
 
 
 def _write_file(path: Path, data: bytes | str) -> None:
@@ -122,7 +126,7 @@ def _make_skill_dir(
 
 
 def generate_scenario_a(home: Path) -> None:
-    """Scenario A: Mostly unique skills across roots (total 650 skills)."""
+    """Scenario A: Mostly unique skills across roots (total 651 entrypoints, 621 canonical)."""
     agents_dir = home / ".agents" / "skills"
     # 1. 500 unique skills in shared library (.agents/skills)
     for i in range(500):
@@ -268,20 +272,13 @@ def generate_scenario_b(home: Path) -> None:
     _write_file(home / ".agents" / ".skill-lock.json", json.dumps({"version": 1}))
 
 
-def measure_dataset_stats(home: Path, name: str) -> DatasetStats:
+def measure_dataset_stats(home: Path, name: str, index: DiscoveryIndex) -> DatasetStats:
+    """Measure dataset filesystem and index-derived statistics."""
     file_count = 0
     total_bytes = 0
     largest_file = 0
-    skill_dirs: set[str] = set()
-    valid_count = 0
-    malformed_count = 0
-    symlink_count = 0
 
-    for root, dirs, files in os.walk(home, followlinks=False):
-        for d in dirs:
-            dp = Path(root) / d
-            if dp.is_symlink():
-                symlink_count += 1
+    for root, _dirs, files in os.walk(home, followlinks=False):
         for f in files:
             file_count += 1
             p = Path(root) / f
@@ -290,21 +287,20 @@ def measure_dataset_stats(home: Path, name: str) -> DatasetStats:
                 total_bytes += size
                 if size > largest_file:
                     largest_file = size
-                if f.lower() == "skill.md":
-                    skill_dir = str(p.parent)
-                    skill_dirs.add(skill_dir)
-                    text = p.read_text(encoding="utf-8", errors="replace")
-                    if text.startswith("---") and "description:" in text:
-                        valid_count += 1
-                    else:
-                        malformed_count += 1
+
+    canonical_entries = len(index.entries)
+    total_entrypoints = sum(len(e.entrypoint_paths) for e in index.entries)
+    symlink_entrypoints = total_entrypoints - canonical_entries
+    valid_count = sum(1 for e in index.entries if e.parse_status == "valid")
+    malformed_count = sum(1 for e in index.entries if e.parse_status != "valid")
 
     return DatasetStats(
         name=name,
-        skill_count=len(skill_dirs) + symlink_count,
+        canonical_entries_count=canonical_entries,
+        symlink_entrypoints_count=symlink_entrypoints,
+        total_entrypoints_count=total_entrypoints,
         valid_skill_count=valid_count,
         malformed_skill_count=malformed_count,
-        symlink_count=symlink_count,
         file_count=file_count,
         total_bytes=total_bytes,
         largest_file_bytes=largest_file,
@@ -312,7 +308,8 @@ def measure_dataset_stats(home: Path, name: str) -> DatasetStats:
     )
 
 
-def _capture_all_files(index: Any) -> dict[str, list[tuple[str, bytes]]]:
+def _capture_all_files(index: DiscoveryIndex) -> dict[str, list[tuple[str, bytes]]]:
+    """Capture all file bytes for all discovered entries."""
     captured: dict[str, list[tuple[str, bytes]]] = {}
     for entry in index.entries:
         key = entry.canonical_path or entry.entrypoint_path
@@ -332,7 +329,37 @@ def _capture_all_files(index: Any) -> dict[str, list[tuple[str, bytes]]]:
     return captured
 
 
-def _selective_capture(index: Any) -> dict[str, list[tuple[str, bytes]]]:
+def _capture_configs(home: Path, registry: dict[str, Any]) -> dict[str, tuple[str, bytes]]:
+    """Capture settings and lockfile bytes and status through guarded read (§21.4 Step 2)."""
+    configs: dict[str, tuple[str, bytes]] = {}
+
+    # 1. Lockfile
+    lock_path = home / ".agents" / ".skill-lock.json"
+    try:
+        data = lock_path.read_bytes()
+        configs[".agents/.skill-lock.json"] = ("present", data)
+    except FileNotFoundError:
+        configs[".agents/.skill-lock.json"] = ("missing", b"")
+    except OSError:
+        configs[".agents/.skill-lock.json"] = ("unreadable", b"")
+
+    # 2. Agent disabled settings
+    for agent in registry.values():
+        disabled_settings = getattr(agent, "disabled_settings", None)
+        if disabled_settings and disabled_settings not in configs:
+            setting_path = home / disabled_settings
+            try:
+                data = setting_path.read_bytes()
+                configs[disabled_settings] = ("present", data)
+            except FileNotFoundError:
+                configs[disabled_settings] = ("missing", b"")
+            except OSError:
+                configs[disabled_settings] = ("unreadable", b"")
+
+    return configs
+
+
+def _selective_capture(index: DiscoveryIndex) -> dict[str, list[tuple[str, bytes]]]:
     """Capture files under the Diff engine's Variant A baseline & readable-copy rules."""
     entries_by_name: dict[str, list[Any]] = {}
     for entry in index.entries:
@@ -347,15 +374,12 @@ def _selective_capture(index: Any) -> dict[str, list[tuple[str, bytes]]]:
             None,
         )
 
-        # Determine which entries need diff file comparison against baseline
         keys_needing_diff_files: set[str] = set()
         if baseline is not None and baseline.content_hash is not None:
-            # Check all other copies in this group
             for copy in group:
                 if canonical_key(copy) == canonical_key(baseline):
                     continue
-                # Diff rules: is readable (content_hash is not None) and differs in hash
-                # Notice: includes readable malformed copies!
+                # Includes readable malformed copies that differ from baseline
                 if copy.content_hash is not None and copy.content_hash != baseline.content_hash:
                     keys_needing_diff_files.add(canonical_key(copy))
                     keys_needing_diff_files.add(canonical_key(baseline))
@@ -367,7 +391,6 @@ def _selective_capture(index: Any) -> dict[str, list[tuple[str, bytes]]]:
             entry_files: list[tuple[str, bytes]] = []
             target_path = Path(key)
             if key in keys_needing_diff_files:
-                # Full files needed for Diff comparison
                 if target_path.is_dir():
                     for rel_path in iter_files(target_path):
                         file_path = target_path / rel_path
@@ -377,7 +400,6 @@ def _selective_capture(index: Any) -> dict[str, list[tuple[str, bytes]]]:
                     with contextlib.suppress(OSError):
                         entry_files.append((target_path.name, target_path.read_bytes()))
             else:
-                # Diff not needed: retain only primary document for metadata/why
                 skill_doc = target_path / "SKILL.md" if target_path.is_dir() else target_path
                 if skill_doc.exists():
                     with contextlib.suppress(OSError):
@@ -387,12 +409,97 @@ def _selective_capture(index: Any) -> dict[str, list[tuple[str, bytes]]]:
     return captured
 
 
+def validate_captured_state(
+    index1: DiscoveryIndex,
+    index2: DiscoveryIndex,
+    scan1: ScanReport,
+    scan2: ScanReport,
+    doc1: DoctorReport,
+    doc2: DoctorReport,
+    configs_before: dict[str, tuple[str, bytes]],
+    configs_after: dict[str, tuple[str, bytes]],
+) -> bool:
+    """Validate captured state against validation pass. Raises ValueError on any mismatch."""
+    if len(index1.entries) != len(index2.entries):
+        raise ValueError(
+            f"Index entry count mismatch: {len(index1.entries)} vs {len(index2.entries)}"
+        )
+    for e1, e2 in zip(index1.entries, index2.entries, strict=True):
+        if (
+            e1.name != e2.name
+            or e1.content_hash != e2.content_hash
+            or e1.parse_status != e2.parse_status
+            or e1.entrypoint_paths != e2.entrypoint_paths
+        ):
+            raise ValueError(f"Index entry mismatch for {e1.name}")
+
+    if scan1 != scan2:
+        raise ValueError("Complete scan report data mismatch")
+    if doc1 != doc2:
+        raise ValueError("Complete doctor report data mismatch")
+
+    if configs_before != configs_after:
+        raise ValueError("Config bytes or status mismatch")
+
+    return True
+
+
+def verify_controlled_rejections(
+    index: DiscoveryIndex,
+    scan_rep: ScanReport,
+    doctor_rep: DoctorReport,
+    configs: dict[str, tuple[str, bytes]],
+) -> tuple[bool, bool]:
+    """Verify that controlled settings and same-count report changes are rejected."""
+    # 1. Controlled settings change rejection
+    settings_rejected = False
+    mutated_configs = dict(configs)
+    target_key = next(iter(mutated_configs))
+    status, orig_bytes = mutated_configs[target_key]
+    mutated_configs[target_key] = (status, orig_bytes + b"\n# controlled_mutation")
+    try:
+        validate_captured_state(
+            index, index, scan_rep, scan_rep, doctor_rep, doctor_rep, configs, mutated_configs
+        )
+    except ValueError:
+        settings_rejected = True
+
+    # 2. Controlled same-count report changes rejection
+    doc_rejected = False
+    if doctor_rep.findings:
+        mutated_findings = list(doctor_rep.findings)
+        mutated_findings[0] = replace(mutated_findings[0], detail="controlled_mutation")
+        mutated_doc = replace(doctor_rep, findings=tuple(mutated_findings))
+        assert len(mutated_doc.findings) == len(doctor_rep.findings)
+        try:
+            validate_captured_state(
+                index, index, scan_rep, scan_rep, doctor_rep, mutated_doc, configs, configs
+            )
+        except ValueError:
+            doc_rejected = True
+
+    scan_rejected = False
+    if scan_rep.skills:
+        mutated_skills = list(scan_rep.skills)
+        mutated_skills[0] = replace(mutated_skills[0], description="controlled_mutation")
+        mutated_scan = replace(scan_rep, skills=tuple(mutated_skills))
+        assert len(mutated_scan.skills) == len(scan_rep.skills)
+        try:
+            validate_captured_state(
+                index, index, scan_rep, mutated_scan, doctor_rep, doctor_rep, configs, configs
+            )
+        except ValueError:
+            scan_rejected = True
+
+    reports_rejected = doc_rejected and scan_rejected
+    return settings_rejected, reports_rejected
+
+
 def run_probe(scenario_name: str, generator_fn: Any) -> ProbeRunResult:
     with tempfile.TemporaryDirectory(prefix="skill_lens_probe_") as tmpdir:
         home_path = Path(tmpdir)
         paths.set_sandbox(home_path)
         generator_fn(home_path)
-        stats = measure_dataset_stats(home_path, scenario_name)
 
         registry = load_registry()
 
@@ -406,6 +513,8 @@ def run_probe(scenario_name: str, generator_fn: Any) -> ProbeRunResult:
         t_first_discovery = time.perf_counter() - t0
         _, peak_traced_first_discovery = tracemalloc.get_traced_memory()
         tracemalloc.stop()
+
+        stats = measure_dataset_stats(home_path, scenario_name, index1)
 
         # ------------------------------------------------------------------
         # Phase 2: Full Byte Capture (All files of all discovered entries)
@@ -439,11 +548,12 @@ def run_probe(scenario_name: str, generator_fn: Any) -> ProbeRunResult:
         tracemalloc.stop()
 
         # ------------------------------------------------------------------
-        # Phase 4: Report Construction (ScanReport + DoctorReport reusing index)
+        # Phase 4: Report Construction & Initial Config Capture
         # ------------------------------------------------------------------
         gc.collect()
         tracemalloc.start()
         t0 = time.perf_counter()
+        configs1 = _capture_configs(home_path, registry)
         scan_rep1 = build_scan_report(home_path, home_path, index=index1)
         doctor_rep1 = build_doctor_report(home_path, home_path, index=index1, registry=registry)
         t_reports = time.perf_counter() - t0
@@ -451,28 +561,27 @@ def run_probe(scenario_name: str, generator_fn: Any) -> ProbeRunResult:
         tracemalloc.stop()
 
         # ------------------------------------------------------------------
-        # Phase 5: Validation Pass (Consistency check of index2 & reports)
+        # Phase 5: Validation Pass (Complete reports comparison & reread configs)
         # ------------------------------------------------------------------
         gc.collect()
         tracemalloc.start()
         t0 = time.perf_counter()
-        # Compare index1 vs index2
-        assert len(index1.entries) == len(index2.entries)
-        for e1, e2 in zip(index1.entries, index2.entries, strict=True):
-            assert e1.name == e2.name
-            assert e1.content_hash == e2.content_hash
-            assert e1.parse_status == e2.parse_status
-        # Doctor & Scan validation on index2
         scan_rep2 = build_scan_report(home_path, home_path, index=index2)
         doctor_rep2 = build_doctor_report(home_path, home_path, index=index2, registry=registry)
-        assert len(scan_rep1.skills) == len(scan_rep2.skills)
-        assert len(doctor_rep1.findings) == len(doctor_rep2.findings)
-        # Config checks
-        lock_bytes = (home_path / ".agents" / ".skill-lock.json").read_bytes()
-        assert len(lock_bytes) > 0
+        configs2 = _capture_configs(home_path, registry)
+        validate_captured_state(
+            index1, index2, scan_rep1, scan_rep2, doctor_rep1, doctor_rep2, configs1, configs2
+        )
         t_validation = time.perf_counter() - t0
         _, peak_traced_validation = tracemalloc.get_traced_memory()
         tracemalloc.stop()
+
+        # Verify controlled rejections
+        controlled_settings_rejected, controlled_reports_rejected = verify_controlled_rejections(
+            index1, scan_rep1, doctor_rep1, configs1
+        )
+        assert controlled_settings_rejected
+        assert controlled_reports_rejected
 
         t_total_probe_estimate = (
             t_first_discovery + t_full_byte_capture + t_second_discovery + t_reports + t_validation
@@ -492,17 +601,19 @@ def run_probe(scenario_name: str, generator_fn: Any) -> ProbeRunResult:
         retained_content_selective = sum(
             len(data) for files in selective_captured.values() for _, data in files
         )
-        retained_total_selective = retained_content_selective + sys.getsizeof(selective_captured)
+        retained_containers_selective = sys.getsizeof(selective_captured) + sum(
+            sys.getsizeof(files) + sum(sys.getsizeof(tup) for tup in files)
+            for files in selective_captured.values()
+        )
+        retained_total_selective = retained_content_selective + retained_containers_selective
 
         # Verify malformed-diff case in selective retention if present
         malformed_diff_verified = False
         if "skill_malformed_diff" in [e.name for e in index1.entries]:
-            # Check diff report
             diff_rep = build_diff_report("skill_malformed_diff", home_path, home_path, index=index1)
             has_helper_diff = any(
                 f.path == "scripts/helper.py" for c in diff_rep.copies for f in c.files
             )
-            # Check selective retention contains helper.py for both copies
             group = [e for e in index1.entries if e.name == "skill_malformed_diff"]
             has_captured_helpers = all(
                 any(
@@ -513,7 +624,6 @@ def run_probe(scenario_name: str, generator_fn: Any) -> ProbeRunResult:
             )
             malformed_diff_verified = has_helper_diff and has_captured_helpers
 
-        # Drop selective structures before refresh measurement
         del selective_captured
         gc.collect()
 
@@ -521,28 +631,54 @@ def run_probe(scenario_name: str, generator_fn: Any) -> ProbeRunResult:
         # Phase 7: Correct Refresh Memory Measurement
         # (Start tracking before constructing old snapshot; retain old state;
         #  build replacement with freshly read bytes from disk; include both
-        #  discovery passes and report/validation work).
+        #  discovery passes, report construction, and full validation).
         # ------------------------------------------------------------------
         gc.collect()
         tracemalloc.start()
 
-        # 1. Build initial old snapshot from scratch
+        # 1. Build initial old snapshot from scratch including validation
         old_idx1 = live_discovery(cwd=home_path, registry=registry)
+        old_configs1 = _capture_configs(home_path, registry)
         old_files = _capture_all_files(old_idx1)
+        old_scan1 = build_scan_report(home_path, home_path, index=old_idx1)
+        old_doctor1 = build_doctor_report(home_path, home_path, index=old_idx1, registry=registry)
         old_idx2 = live_discovery(cwd=home_path, registry=registry)
-        old_scan = build_scan_report(home_path, home_path, index=old_idx1)
-        old_doctor = build_doctor_report(home_path, home_path, index=old_idx1, registry=registry)
-        assert len(old_idx1.entries) == len(old_idx2.entries)
-        old_snapshot = (old_idx1, old_files, old_idx2, old_scan, old_doctor)
+        old_scan2 = build_scan_report(home_path, home_path, index=old_idx2)
+        old_doctor2 = build_doctor_report(home_path, home_path, index=old_idx2, registry=registry)
+        old_configs2 = _capture_configs(home_path, registry)
+        validate_captured_state(
+            old_idx1,
+            old_idx2,
+            old_scan1,
+            old_scan2,
+            old_doctor1,
+            old_doctor2,
+            old_configs1,
+            old_configs2,
+        )
+        old_snapshot = (old_idx1, old_configs1, old_files, old_scan1, old_doctor1)
 
-        # 2. While retaining old_snapshot, build complete replacement snapshot
+        # 2. While retaining old_snapshot, build complete replacement snapshot including validation
         new_idx1 = live_discovery(cwd=home_path, registry=registry)
+        new_configs1 = _capture_configs(home_path, registry)
         new_files = _capture_all_files(new_idx1)  # Reads fresh bytes from disk
+        new_scan1 = build_scan_report(home_path, home_path, index=new_idx1)
+        new_doctor1 = build_doctor_report(home_path, home_path, index=new_idx1, registry=registry)
         new_idx2 = live_discovery(cwd=home_path, registry=registry)
-        new_scan = build_scan_report(home_path, home_path, index=new_idx1)
-        new_doctor = build_doctor_report(home_path, home_path, index=new_idx1, registry=registry)
-        assert len(new_idx1.entries) == len(new_idx2.entries)
-        new_snapshot = (new_idx1, new_files, new_idx2, new_scan, new_doctor)
+        new_scan2 = build_scan_report(home_path, home_path, index=new_idx2)
+        new_doctor2 = build_doctor_report(home_path, home_path, index=new_idx2, registry=registry)
+        new_configs2 = _capture_configs(home_path, registry)
+        validate_captured_state(
+            new_idx1,
+            new_idx2,
+            new_scan1,
+            new_scan2,
+            new_doctor1,
+            new_doctor2,
+            new_configs1,
+            new_configs2,
+        )
+        new_snapshot = (new_idx1, new_configs1, new_files, new_scan1, new_doctor1)
 
         _, peak_traced_refresh = tracemalloc.get_traced_memory()
         tracemalloc.stop()
@@ -564,6 +700,7 @@ def run_probe(scenario_name: str, generator_fn: Any) -> ProbeRunResult:
             retained_containers_bytes_full=retained_containers_full,
             retained_total_bytes_full=retained_total_full,
             retained_file_content_bytes_selective=retained_content_selective,
+            retained_containers_bytes_selective=retained_containers_selective,
             retained_total_bytes_selective=retained_total_selective,
             peak_traced_first_discovery=peak_traced_first_discovery,
             peak_traced_full_capture=peak_traced_full_capture,
@@ -573,6 +710,8 @@ def run_probe(scenario_name: str, generator_fn: Any) -> ProbeRunResult:
             peak_traced_selective_capture=peak_traced_selective_capture,
             peak_traced_refresh=peak_traced_refresh,
             malformed_diff_verified=malformed_diff_verified,
+            controlled_settings_rejected=controlled_settings_rejected,
+            controlled_reports_rejected=controlled_reports_rejected,
         )
 
 
@@ -620,20 +759,30 @@ def main() -> None:
         _row("---", "---", "---"),
         _row(
             "Discovered Skill Entries",
-            str(res_a.stats.skill_count),
-            str(res_b.stats.skill_count),
+            (
+                f"{res_a.stats.canonical_entries_count} canonical entries + "
+                f"{res_a.stats.symlink_entrypoints_count} symlink entrypoints "
+                f"({res_a.stats.total_entrypoints_count} total entrypoints)"
+            ),
+            (
+                f"{res_b.stats.canonical_entries_count} canonical entries + "
+                f"{res_b.stats.symlink_entrypoints_count} symlink entrypoints "
+                f"({res_b.stats.total_entrypoints_count} total entrypoints)"
+            ),
         ),
         _row(
             "Valid / Malformed / Symlinks",
             (
                 f"{res_a.stats.valid_skill_count} valid, "
                 f"{res_a.stats.malformed_skill_count} malformed, "
-                f"{res_a.stats.symlink_count} symlinks"
+                f"{res_a.stats.symlink_entrypoints_count} symlinks "
+                f"({res_a.stats.canonical_entries_count} canonical entries)"
             ),
             (
                 f"{res_b.stats.valid_skill_count} valid, "
                 f"{res_b.stats.malformed_skill_count} malformed, "
-                f"{res_b.stats.symlink_count} symlinks"
+                f"{res_b.stats.symlink_entrypoints_count} symlinks "
+                f"({res_b.stats.canonical_entries_count} canonical entries)"
             ),
         ),
         _row("Total Files on Disk", str(res_a.stats.file_count), str(res_b.stats.file_count)),
@@ -684,22 +833,25 @@ def main() -> None:
             "Reruns live discovery to verify file stability",
         ),
         _row(
-            "4. Report Construction",
+            "4. Report Construction & Config Capture",
             _fmt_sec(res_a.t_reports),
             _fmt_sec(res_b.t_reports),
-            "`build_scan_report` & `build_doctor_report` reusing index & registry",
+            "`build_scan_report`, `build_doctor_report` & guarded config read",
         ),
         _row(
-            "5. Validation Work",
+            "5. Validation Pass (Reports & Configs)",
             _fmt_sec(res_a.t_validation),
             _fmt_sec(res_b.t_validation),
-            "Compares discovery passes, reports and configs",
+            "Compares complete scan & doctor reports and reread config bytes",
         ),
         _row(
             "*(Unavailable Service Phases)*",
-            "*N/A (C3)*",
-            "*N/A (C3)*",
-            "In-memory cancellation checkpoints, `display_paths` & `same_locations`",
+            "*N/A (Approximation)*",
+            "*N/A (Approximation)*",
+            (
+                "In-memory cancellation checkpoints (C2), link/display maps (C3), "
+                "and byte re-parsing (C1)"
+            ),
         ),
         _row(
             "**Total Startup (Probe Estimate)**",
@@ -730,39 +882,54 @@ def main() -> None:
             "N/A",
             "Diff engine's Variant A baseline & readable-copy rules verified",
         ),
+        _row(
+            "Controlled Settings Rejection Verified",
+            "YES" if res_a.controlled_settings_rejected else "NO",
+            "YES" if res_b.controlled_settings_rejected else "NO",
+            "Verified that modified settings/lock bytes trigger validation rejection",
+        ),
+        _row(
+            "Controlled Same-Count Report Rejection Verified",
+            "YES" if res_a.controlled_reports_rejected else "NO",
+            "YES" if res_b.controlled_reports_rejected else "NO",
+            "Verified that same-count mutated reports trigger validation rejection",
+        ),
         "",
         "## 3. Precise Memory & Allocation Measurements",
         "",
         "> **Note on Allocation Labels:** `tracemalloc` measures peak heap allocations "
         "tracked by the Python runtime for the monitored block. It does not represent "
-        "total OS process memory (Resident Set Size). Content bytes and container overheads "
-        "are measured directly via Python data lengths and `sys.getsizeof`.",
+        "total OS process memory (Resident Set Size). The file payload and container figures "
+        "below measure captured file content payload plus selected file-storage container overhead "
+        "(dictionaries, lists, and tuples holding file bytes), rather than total snapshot memory "
+        "(which also holds index entries, parse results, reports, and configs). Both full and "
+        "selective capture use the identical memory-accounting method.",
         "",
         _row("Memory Metric", "Scenario A", "Scenario B", "Description"),
         _row("---", "---", "---", "---"),
         _row(
-            "Retained File Content Bytes",
+            "Retained File Payload Bytes",
             _fmt_bytes(res_a.retained_file_content_bytes_full),
             _fmt_bytes(res_b.retained_file_content_bytes_full),
             "Exact sum of in-memory file byte buffers",
         ),
         _row(
-            "Retained Container Overhead",
+            "Selected File Container Overhead",
             _fmt_bytes(res_a.retained_containers_bytes_full),
             _fmt_bytes(res_b.retained_containers_bytes_full),
-            "Overhead of mapping dicts and file tuples",
+            "Overhead of mapping dicts, lists, and file tuples",
         ),
         _row(
-            "**Total Retained Snapshot Data**",
+            "**File Payload + Selected Container Overhead (Full)**",
             f"**{_fmt_bytes(res_a.retained_total_bytes_full)}**",
             f"**{_fmt_bytes(res_b.retained_total_bytes_full)}**",
-            "Sum of file bytes and container overhead",
+            "Sum of file bytes and container overhead for full capture",
         ),
         _row(
-            "Selective Candidate Retained Data",
-            _fmt_bytes(res_a.retained_total_bytes_selective),
-            _fmt_bytes(res_b.retained_total_bytes_selective),
-            "Skips support assets for identical/isolated copies",
+            "**File Payload + Selected Container Overhead (Selective)**",
+            f"**{_fmt_bytes(res_a.retained_total_bytes_selective)}**",
+            f"**{_fmt_bytes(res_b.retained_total_bytes_selective)}**",
+            "Identical calculation for selective candidate (skips support files)",
         ),
         _row(
             "Peak Traced: First Discovery",
@@ -777,16 +944,16 @@ def main() -> None:
             "Traced Python heap during full byte reading",
         ),
         _row(
-            "Peak Traced: Reports Construction",
+            "Peak Traced: Reports & Config Capture",
             _fmt_bytes(res_a.peak_traced_reports),
             _fmt_bytes(res_b.peak_traced_reports),
-            "Traced Python heap during scan & doctor build",
+            "Traced Python heap during scan/doctor build & config read",
         ),
         _row(
             "Peak Traced: Validation Pass",
             _fmt_bytes(res_a.peak_traced_validation),
             _fmt_bytes(res_b.peak_traced_validation),
-            "Traced Python heap during consistency checks",
+            "Traced Python heap during complete reports/config validation",
         ),
         _row(
             "**Peak Traced: Simulated Refresh**",
@@ -808,33 +975,44 @@ def main() -> None:
             f"**~{res_a.t_total_probe_estimate:.2f} s (Scenario A)** and "
             f"**~{res_b.t_total_probe_estimate:.2f} s (Scenario B)** on Darwin arm64. "
             "Passing the existing index and registry into `build_doctor_report` eliminates the "
-            "redundant discovery walk."
+            "redundant discovery walk. Unimplemented phases (cooperative cancellation checkpoints "
+            "in C2, path display and link equality maps in C3, and byte re-parsing in C1) are "
+            "explicitly labeled as approximations."
         ),
         (
-            f"3. **In-Memory Retention:** Total in-memory storage for all captured files and "
-            f"containers is **{_fmt_bytes(res_a.retained_total_bytes_full)} (Scenario A)** and "
-            f"**{_fmt_bytes(res_b.retained_total_bytes_full)} (Scenario B)**."
+            "3. **In-Memory Retention & Precise Accounting:** Total in-memory storage for captured "
+            f"files and containers (using identical accounting methods) is "
+            f"**{_fmt_bytes(res_a.retained_total_bytes_full)} (Scenario A)** and "
+            f"**{_fmt_bytes(res_b.retained_total_bytes_full)} (Scenario B)**. "
+            "This accounts for file payload plus selected container overhead."
         ),
         (
-            f"4. **Refresh Memory:** Tracking heap allocations from start through retaining the "
-            f"entire old snapshot and constructing the replacement snapshot with freshly read "
-            f"bytes peaked at **{_fmt_bytes(res_a.peak_traced_refresh)} (Scenario A)** and "
+            "4. **Refresh Memory:** Tracking heap allocations from start through retaining the "
+            "entire old snapshot and constructing and validating the replacement snapshot with "
+            "freshly read bytes peaked at "
+            f"**{_fmt_bytes(res_a.peak_traced_refresh)} (Scenario A)** and "
             f"**{_fmt_bytes(res_b.peak_traced_refresh)} (Scenario B)** of traced allocations."
         ),
         (
-            f"5. **Selective Retention Evaluation:** Selective retention saves only "
-            f"~{abs(diff_delta_a):.1f} ms of capture time. "
-            "Furthermore, to adhere to the Diff engine's Variant A baseline and readable-copy "
-            "rules (where readable malformed copies with differing support files must be diffed), "
-            "selective retention must retain support files for those malformed copies as verified "
-            "in Scenario A. The minor memory reduction does not justify the added state complexity."
+            "5. **Validation Integrity:** The validation pass verifies complete scan and doctor "
+            "report dataclasses (`scan1 == scan2`, `doc1 == doc2`) and reread configuration bytes. "
+            "Controlled tests verified that mutated settings and same-count report modifications "
+            "are reliably detected and rejected."
+        ),
+        (
+            "6. **Selective Retention Evaluation:** Selective retention saves only "
+            f"~{abs(diff_delta_a):.1f} ms of capture time. Furthermore, to adhere to the "
+            "Diff engine's Variant A baseline and readable-copy rules (where readable "
+            "malformed copies with differing support files must be diffed), selective "
+            "retention must retain support files for those malformed copies as verified in "
+            "Scenario A. The minor memory reduction does not justify the added state complexity."
         ),
         "",
         "### 4.2 Decision Gate",
         "- **Decision:** **Retain §21 Full Capture specification verbatim.**",
         "- **Rationale:** Full capture provides 100% frozen inputs with zero live disk access "
-        "during navigation, consumes under 3 MiB of retained data for 600+ skills, and introduces "
-        "no fragile conditional caching logic.",
+        "during navigation, consumes under 3 MiB of retained file payload/containers for 600+ "
+        "skills, and introduces no fragile conditional caching logic.",
         "",
         "---",
         "*Report generated by `docs/p3_cost_probe.py`.*",
@@ -847,12 +1025,22 @@ def main() -> None:
     print("\nSummary:")
     for r in results:
         print(f"\n{r.scenario_name}:")
-        print(f"  Skill entries: {r.stats.skill_count} | Total files: {r.stats.file_count}")
+        print(
+            f"  Canonical entries: {r.stats.canonical_entries_count} | "
+            f"Symlink entrypoints: {r.stats.symlink_entrypoints_count} | "
+            f"Total entrypoints: {r.stats.total_entrypoints_count}"
+        )
         print(f"  Startup estimate: {_fmt_sec(r.t_total_probe_estimate)}")
-        print(f"  Retained total: {_fmt_bytes(r.retained_total_bytes_full)}")
+        print(f"  Retained payload + containers (full): {_fmt_bytes(r.retained_total_bytes_full)}")
+        print(
+            f"  Retained payload + containers (selective): "
+            f"{_fmt_bytes(r.retained_total_bytes_selective)}"
+        )
         print(f"  Peak traced heap (refresh): {_fmt_bytes(r.peak_traced_refresh)}")
         if r.malformed_diff_verified:
             print("  Malformed-diff rule verified: YES")
+        if r.controlled_settings_rejected and r.controlled_reports_rejected:
+            print("  Controlled rejections verified: YES")
 
 
 if __name__ == "__main__":
