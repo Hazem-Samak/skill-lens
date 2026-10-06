@@ -1,5 +1,9 @@
 # AGENTS.md — Guardrails for AI Coding Assistants
 
+> **Before any non-trivial change:** read `docs/process/planning-loop.md` and freeze a plan in
+> `docs/plans/`. Do not write code until it is committed. Then follow
+> `docs/process/implementation-loop.md`.
+
 Welcome, AI agent. You are pair-programming on **Skill Lens**, a local diagnostics and resolution CLI tool for AI agent capabilities (`SKILL.md`).
 
 This project is built with AI coding assistants under a strict specification. Your job is to be disciplined, reliable, and strictly follow the specification in `SKILL_LENS_SPECIFICATION.md`.
