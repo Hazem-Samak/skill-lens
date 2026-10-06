@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: Hazem Samak requested the planning loop with Antigravity and OpenCode Space Bunny, with Sol/Hermes judging their findings. This authorizes review and freezing this plan, not product implementation, pushing, or publishing.
-Reference: Pending freeze; the frozen plan commit will be recorded after it exists.
+Reference: `f9decabc55288037e0cb41d94a9e444f46d1a2b8` (agreed-plan freeze; this line is recorded in a following plan-only provenance commit).
 Source baseline: `f659d5682f0324a2fbb9f73bfb74807925364e42` on `main`.
 
 ## Outcome
