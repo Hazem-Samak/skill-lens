@@ -165,8 +165,8 @@ pytest tests/test_render_snapshots.py --update-snapshots   # only after you have
 
 ## 7. High-risk areas
 
-Treat these as **high risk**: they get the full council at planning and two critics at
-implementation.
+Treat these as **high risk**: they get two critics from different model families at
+planning and again at implementation.
 
 - Path resolution (`core/paths.py`) and anything environment-dependent
 - Public data formats: the JSON shapes in `models/`, the golden files

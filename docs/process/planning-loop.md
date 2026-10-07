@@ -77,20 +77,21 @@ public data formats, registry TOML, permissions, exit codes, compatibility, or a
 
 ## Step 3 — Review
 
-One independent critic, or the full council for high-risk work.
+One independent critic, or **two critics from different model families** for high-risk
+work. Do not stand up a five-agent council; expand when evidence warrants it.
 
 **Everyone read-only.** Paste the guard text from `council.md` §2 into every critic
 task.
 
 **Give each critic a different question.** One checks project rules and compatibility.
-Another checks behaviour, failure cases and test gaps. Five critics given one question
-return five copies of the same opinion.
+Another checks behaviour, failure cases and test gaps. Two critics given one question
+return two copies of the same opinion.
 
 **Give the critic the evidence before you state your own conclusion**, so it can judge
 independently.
 
 **Dispatch every critic before you wait on any of them.** Sequential dispatch wastes
-the wall-clock time the council was supposed to save.
+the wall-clock time the review was supposed to save.
 
 ```bash
 orca status --json
@@ -99,17 +100,21 @@ orca orchestration run-create --objective "Review the plan at docs/plans/<slug>.
 orca orchestration task-create --spec "<critic task, including the read-only guard>" --json
 orca orchestration task-list --ready --brief --json
 
-orca orchestration worker-start --task <task_id> --worktree current --agent antigravity --json
-orca orchestration worker-start --task <task_id> --worktree current --agent cline --json
 orca orchestration worker-start --task <task_id> --worktree current --agent opencode --json
-orca orchestration worker-start --task <task_id> --worktree current --agent pi --json
 
 orca orchestration check --wait --types "worker_done,escalation,question" --timeout-ms 900000 --json
 ```
 
-MCode needs the terminal route — see `machine-profile.md` §5.
+**The second critic (MCode) cannot use `worker-start --terminal`** — it is rejected as
+`agent_unconfigured`. Use Route C from `machine-profile.md` §5: `task-create`, then
+`orchestration dispatch --return-preamble` without `--inject`, then `terminal send` the
+returned preamble.
 
-The coordinator is **never** dispatched as a worker.
+Antigravity, when reviewing for feasibility, needs `--mode plan` and therefore the
+terminal route too — see `council.md` §5.
+
+The coordinator is **never** dispatched as a worker, and must run inside an Orca
+terminal — see `machine-profile.md` §7a.
 
 ---
 

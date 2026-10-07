@@ -16,7 +16,9 @@ and `profiles/machine-profile.md` (which agents exist on this machine).
 
 ## 1. The roster
 
-Ten agents are installed here; Orca knows 44. Six matter to us.
+The roster that matters in practice is small: **Hermes coordinates, Antigravity
+implements, OpenCode and MCode review.** Cline and Pi are installed but not in use —
+adding a critic is the user's decision.
 
 | Critic | Model | Model family | Installed |
 |---|---|---|---|
@@ -61,28 +63,40 @@ void.** Stop the run, fix the agent's own config, restart.
 
 ## 2. Read-only, per critic
 
-Read-only means read-only. Each CLI spells it differently, and **each critic has a
-different flag** — this is the single most common way a council fails.
+Read-only means read-only. **No critic can be made read-only by a flag on
+`worker-start`** — that command has no agent-argument forwarding at all. Verified
+against Orca 1.4.221.
 
-| Critic | What actually blocks writes |
-|---|---|
-| Antigravity | launch flag `--mode plan` |
-| Cline | launch flags `--plan --auto-approve false` ← **both. `auto-approve` defaults to true.** |
-| OpenCode | the guard text in §3, then check files afterwards |
-| MCode | the guard text in §3, then check files afterwards |
-| Pi | the guard text in §3, then check files afterwards |
+`worker-start` accepts exactly these flags:
+
+```text
+--help --json --pairing-code --environment --task --spec --task-title --deps --parent
+--on --worktree --name --repo --base-branch --display-name --comment --setup --agent
+--model --effort --terminal --retry-of --timeout-ms --run --from --retry-request
+```
+
+So `--mode plan` and `--plan --auto-approve false` **cannot be passed here** — Orca
+would reject them as unknown flags. To get a CLI's own read-only mode you must launch
+that CLI yourself in a terminal and attach the worker with `--terminal` (§5).
+
+| Critic | How read-only is actually achieved | Roster status |
+|---|---|---|
+| Antigravity | launch `agy --mode plan` yourself in a terminal, attach with `--terminal` | **in use — implementer + feasibility critic** |
+| OpenCode | the guard text below, then check files afterwards | **in use — critic** |
+| MCode | the guard text below, then check files afterwards | **in use — critic** |
+| Cline | would need `--plan --auto-approve false` via the terminal route | **not in the current roster** |
+| Pi / OMP | guard text only; no CLI read-only flag | **not in the current roster** |
 
 **Pi's `-p` does NOT make it read-only.** It is *print mode* and still has every write
 tool. Never describe it as read-only.
 
-Cline's own config already has `planActMode: "plan"`, which is a second safety layer
-behind the two flags above.
+**The roster is explicit.** Per the C2 and C3 plans: *"do not silently add Cline, MCode,
+Pi or a different OpenCode model."* Adding a critic is a user decision, not a default.
 
 ### The guard text — copy this into every critic task
 
-Five flags are enforced by the CLI. The rest are enforced only by instruction, so the
-instruction has to be in the task, not in your head. Paste this block verbatim into
-the `--spec` of every critic dispatch:
+The CLI enforces nothing for most agents, so the instruction has to be in the task, not
+in your head. Paste this block verbatim into the `--spec` of every critic dispatch:
 
 ```text
 READ-ONLY CRITIC TASK. You are reviewing, not implementing.
@@ -155,29 +169,57 @@ The coordinator verifies the report against the actual files and actual check re
 
 ---
 
-## 5. The one escape hatch: MCode
+## 5. Launch routes — verified
 
-MCode is installed but Orca cannot launch it natively with `--agent mcode`. Create a
-terminal by hand and attach the worker to it:
+Two different routes. Pick by critic.
 
-```bash
-orca terminal create --worktree active --title "mcode-critic" --command "mcode" --json
-orca orchestration worker-start --task <task_id> --terminal <handle> --worktree active --json
-```
+### Route A — native `--agent` launch
 
-Every other critic launches natively:
+Antigravity and OpenCode both launch natively:
 
 ```bash
 orca orchestration worker-start --task <task_id> --worktree current --agent antigravity --json
-orca orchestration worker-start --task <task_id> --worktree current --agent cline --json
 orca orchestration worker-start --task <task_id> --worktree current --agent opencode --json
-orca orchestration worker-start --task <task_id> --worktree current --agent pi --json
 ```
 
-Add `--mode plan` for Antigravity and `--plan --auto-approve false` for Cline. Flag
-*placement* has changed between Orca versions — confirm with
-`orca orchestration worker-start --help` at dispatch time rather than trusting this
-file. See `profiles/machine-profile.md`.
+`--agent` takes an Orca agent id — `claude, codex, cursor, antigravity, muse, zcode,
+opencode, opencode2` are documented examples, and the list is **not exhaustive**. Do not
+assume an id works; try it and read the error.
+
+### Route B — terminal you launch, then attach
+
+Use this when a critic needs its own CLI flags, because `worker-start` cannot carry
+them. This is how Antigravity gets `--mode plan`:
+
+```bash
+orca terminal create --worktree current --title "agy-critic" --command "agy --mode plan" --json
+orca orchestration worker-start --task <task_id> --terminal <handle> --worktree current --json
+```
+
+The `--command` text is typed into the terminal, so the agent's own read-only flag
+finally reaches it. Verified on Orca 1.4.221 — this is the route the C2 plan used.
+
+### MCode — Route B fails, use Route C
+
+Recorded on 2026-10-07: **`worker-start --terminal` on MCode's terminal is rejected as
+`agent_unconfigured`.** The working low-level route:
+
+```bash
+orca orchestration task-create --spec "<critic task, including the guard text>" --json
+orca orchestration dispatch --task <task_id> --to <handle> --return-preamble --json
+orca terminal send --terminal <handle> --text "<exact returned preamble>" --enter --json
+```
+
+Note `dispatch` runs **without** `--inject`, and the preamble Orca returns is sent
+literally into the verified-idle terminal.
+
+**MCode's lane is unsupervised.** Orca owns no terminal resource for it, and `release`
+returns `retained / no_owned_resource / processAction none`. Never claim supervised
+cleanup for MCode. The Task/Dispatch pair and `worker_done` remain authoritative.
+
+`--model` is not portable either: it is accepted for Claude, Codex, Cursor, Antigravity
+and Muse ids; **OMP takes `--model` but not `--effort`**; everything else (OpenCode,
+ZCode, …) launches on whatever its own config says.
 
 ---
 
@@ -189,7 +231,7 @@ Do not run five agents on a typo fix.
 |---|---|---|
 | Obvious, low impact | none — the coordinator plans alone | the four gates + coordinator's own reading |
 | Normal feature or bug fix | 1 independent critic | 1 independent critic |
-| **High risk** | **full council: Antigravity, Cline, OpenCode, MCode, Pi** | **2 critics, from different families** |
+| **High risk** | **2 critics, different families** | **2 critics, different families** |
 
 **High risk** = touching path resolution, public data formats, registry TOML,
 permissions, exit codes, compatibility, or anything `AGENTS.md` §4 flags as
@@ -197,13 +239,22 @@ load-bearing. On Skill Lens this is often true.
 
 Expand review when the evidence warrants it, never by standing habit.
 
+**As actually practised:** C2 and C3 each ran **two critics from different model
+families** — OpenCode `space-bunny-free` (Space Bunny/Muse) and MCode
+`minimax/MiniMax-M3.1-Flash-Preview` (minimax), with Antigravity
+`gemini-3.8-flash-high` (Google) as feasibility reviewer and implementer, and Hermes
+`gpt-6.1-sol-900k` (OpenAI) coordinating — a fourth family. No five-agent council has
+been run, and none is needed for this risk profile.
+
 ---
 
 ## 7. Before you trust any of this
 
-- **Record the effective model in every report.** Only Antigravity takes `--model` from
-  Orca; Cline, OpenCode and Pi read their own config. Never claim a model from the
-  dispatch arguments — read back what the agent actually used. A council quietly
+- **Record the effective model in every report.** `--model` is only honoured for Claude,
+  Codex, Cursor, Antigravity and Muse provider ids; **OMP takes `--model` but not
+  `--effort`**; everything else — OpenCode, ZCode and the rest — launches on whatever
+  its own config says. Never claim a model from the dispatch arguments; read back what
+  the agent actually used, from its own banner or session metadata. A council quietly
   running the wrong model has destroyed the point of having a council.
 - **Read current config and command help, not these files, when they disagree.**
 - Machines change. An agent roster written down last month is a guess.
