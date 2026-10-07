@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: Hazem requested “let's start C3”, with Agy implementing and OpenCode Space Bunny Free plus MCode MiniMax M3.1 F reviewing. Hermes coordinates, plans, verifies, judges and commits accepted work; it does not write product code. No push, release or publication is authorized.
-Reference: Agreed-plan freeze commit; exact hash recorded in the following plan-only provenance commit.
+Reference: `a5be5bf7fb9f427abfbbf67ce57cb3532e3faf87` (agreed-plan freeze; this line is recorded in a following plan-only provenance commit).
 Source baseline: `a1d60e8f99c0fa23e0a9d4b93ebd75454f5eef8c` on `main`.
 
 ## Outcome
