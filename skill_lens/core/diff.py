@@ -23,7 +23,7 @@ Three rules from the specification (section 6, command 5) drive the design:
 from __future__ import annotations
 
 import difflib
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
@@ -35,7 +35,8 @@ from skill_lens.core.discovery import (
     entry_scope,
     labels_for_entries,
 )
-from skill_lens.core.hasher import hash_file, iter_files
+from skill_lens.core.hasher import hash_file, iter_files, normalized_text
+from skill_lens.core.snapshot_models import CapturedFile, FrozenDiscoveryIndex
 from skill_lens.models.diff import DiffChange, DiffCopy, DiffFile, DiffHunk, DiffReport
 from skill_lens.models.enums import ParseStatus
 from skill_lens.registry.loader import AgentDefinition, load_registry
@@ -99,7 +100,11 @@ def _collect(path: Path) -> _Collected | None:
     return _Collected(text=text, fingerprint=fingerprint, is_binary=text is None)
 
 
-def _copy_files(entry: DiscoveredEntry) -> dict[str, _Collected]:
+def _copy_files(
+    entry: DiscoveredEntry,
+    *,
+    captured_files: Mapping[str, tuple[CapturedFile, ...]] | None = None,
+) -> dict[str, _Collected]:
     """Every comparable file of one copy, keyed by relative POSIX path.
 
     A directory skill is walked with exactly :func:`hasher.iter_files` -- the
@@ -107,11 +112,26 @@ def _copy_files(entry: DiscoveredEntry) -> dict[str, _Collected]:
     diff can never see a file the fingerprint ignored. A standalone ``.md`` skill
     is a single file keyed by its own name.
     """
+    if captured_files is not None:
+        key = canonical_key(entry)
+        if key not in captured_files:
+            raise ValueError(f"missing captured files for key {key!r}")
+        items = captured_files[key]
+        files: dict[str, _Collected] = {}
+        for cf in items:
+            text = normalized_text(cf.data)
+            files[cf.relative_path] = _Collected(
+                text=text,
+                fingerprint=cf.fingerprint,
+                is_binary=text is None,
+            )
+        return files
+
     root = Path(entry.canonical_path or entry.entrypoint_path)
     if not root.is_dir():
         collected = _collect(root)
         return {root.name: collected} if collected is not None else {}
-    files: dict[str, _Collected] = {}
+    files = {}
     for relative in iter_files(root):
         collected = _collect(root / relative)
         if collected is not None:
@@ -394,8 +414,9 @@ def build_diff_report(
     cwd: Path,
     home: Path,
     *,
-    index: DiscoveryIndex | None = None,
+    index: DiscoveryIndex | FrozenDiscoveryIndex | None = None,
     registry: dict[str, AgentDefinition] | None = None,
+    captured_files: Mapping[str, tuple[CapturedFile, ...]] | None = None,
 ) -> DiffReport:
     """Diff every copy of ``name`` against the Variant A baseline.
 
@@ -407,6 +428,17 @@ def build_diff_report(
     A name that exists nowhere yields ``found=False`` and exit code ``0``: like
     ``why``, "nothing found" is a fact, not an error (finding F-10).
     """
+    if captured_files is not None:
+        if index is None:
+            raise ValueError("index must be supplied when captured_files is provided")
+        if registry is None:
+            raise ValueError("registry must be supplied when captured_files is provided")
+    if isinstance(index, FrozenDiscoveryIndex):
+        if registry is None:
+            raise ValueError("registry must be supplied when index is a FrozenDiscoveryIndex")
+        if captured_files is None:
+            raise ValueError("captured_files must be supplied when index is a FrozenDiscoveryIndex")
+
     agents = registry if registry is not None else load_registry()
     discovery = index if index is not None else discover(home, cwd, agents)
 
@@ -419,6 +451,12 @@ def build_diff_report(
             found=False,
             notes=(_NOT_FOUND_NOTE,),
         )
+
+    if captured_files is not None:
+        for entry in entries:
+            key = canonical_key(entry)
+            if key not in captured_files:
+                raise ValueError(f"missing captured files for key {key!r}")
 
     labels = labels_for_entries(entries)
     baseline_index = next(
@@ -453,9 +491,9 @@ def build_diff_report(
             continue
 
         if baseline_files is None:
-            baseline_files = _copy_files(baseline)
+            baseline_files = _copy_files(baseline, captured_files=captured_files)
         budgeted = _truncate(
-            _files_between(baseline_files, _copy_files(entry)),
+            _files_between(baseline_files, _copy_files(entry, captured_files=captured_files)),
             changed_budget=MAX_CHANGED_LINES_PER_COPY,
             char_budget=max(MAX_CHARS_PER_REPORT - used_chars, 0),
         )

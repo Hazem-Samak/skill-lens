@@ -26,6 +26,7 @@ from skill_lens.core.discovery import (
     discover,
     labels_for_entries,
 )
+from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
 from skill_lens.models.enums import (
     Collision,
     Evidence,
@@ -213,7 +214,13 @@ def _load_disabled_overrides(agent: AgentDefinition, home: Path) -> set[str]:
     return set(disabled_overrides_from_bytes(agent, data))
 
 
-def _candidates_for(agent: AgentDefinition, index: DiscoveryIndex, name: str) -> list[Candidate]:
+def _candidates_for(
+    agent: AgentDefinition,
+    index: DiscoveryIndex | FrozenDiscoveryIndex,
+    name: str,
+    *,
+    disabled_overrides: frozenset[str] | None = None,
+) -> list[Candidate]:
     """Build one candidate per entrypoint this agent reaches for ``name``.
 
     A symlink farm reaches one canonical library through several paths. Each of
@@ -222,7 +229,11 @@ def _candidates_for(agent: AgentDefinition, index: DiscoveryIndex, name: str) ->
     global library outranks the global root. Entries the agent never searches
     contribute a single ``UNSEARCHED`` candidate.
     """
-    overrides = _load_disabled_overrides(agent, Path(index.home))
+    overrides = (
+        disabled_overrides
+        if disabled_overrides is not None
+        else _load_disabled_overrides(agent, Path(index.home))
+    )
     fallback_root_id = _default_root_id(agent)
     candidates: list[Candidate] = []
     for entry in index.entries:
@@ -583,10 +594,25 @@ def resolve_skill(
     agent_id: str,
     cwd: Path,
     home: Path,
-    index: DiscoveryIndex | None = None,
+    index: DiscoveryIndex | FrozenDiscoveryIndex | None = None,
     registry: dict[str, AgentDefinition] | None = None,
+    *,
+    disabled_overrides: frozenset[str] | None = None,
 ) -> ResolutionReport:
     """Resolve ``name`` for ``agent_id`` from ``cwd`` and explain the result."""
+    if disabled_overrides is not None:
+        if index is None:
+            raise ValueError("index must be supplied when disabled_overrides is provided")
+        if registry is None:
+            raise ValueError("registry must be supplied when disabled_overrides is provided")
+    if isinstance(index, FrozenDiscoveryIndex):
+        if registry is None:
+            raise ValueError("registry must be supplied when index is a FrozenDiscoveryIndex")
+        if disabled_overrides is None:
+            raise ValueError(
+                "disabled_overrides must be supplied when index is a FrozenDiscoveryIndex"
+            )
+
     agents = registry if registry is not None else load_registry()
     if agent_id not in agents:
         known = ", ".join(sorted(agents))
@@ -594,7 +620,7 @@ def resolve_skill(
     agent = agents[agent_id]
     discovery = index if index is not None else discover(home, cwd, agents)
 
-    candidates = _candidates_for(agent, discovery, name)
+    candidates = _candidates_for(agent, discovery, name, disabled_overrides=disabled_overrides)
     outcomes = _assign_states(agent, candidates)
     headline = _headline_from_states([state for _candidate, state in outcomes])
 

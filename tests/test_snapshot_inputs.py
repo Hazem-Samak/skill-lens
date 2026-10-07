@@ -407,3 +407,153 @@ def test_disabled_overrides_from_bytes(tmp_path: Path) -> None:
     # Missing file returns empty set
     missing_home = tmp_path / "nonexistent"
     assert _load_disabled_overrides(claude, missing_home) == set()
+
+
+# ---------------------------------------------------------------------------
+# 5. Snapshot Model Structure and Invariant Tests (Assignment C2, §21.2)
+# ---------------------------------------------------------------------------
+
+
+def test_snapshot_models_types_and_invariants() -> None:
+    """Verify frozen/slotted models, tuple-backed index, and all_agents behavior."""
+    from dataclasses import FrozenInstanceError, is_dataclass
+    from unittest.mock import patch
+
+    from skill_lens.core.discovery import DiscoveryIndex, RootHit
+    from skill_lens.core.scanner import ScanReport, ScanSummary
+    from skill_lens.core.snapshot_models import (
+        CapturedFile,
+        CapturedInput,
+        FrozenDiscoveryIndex,
+        SessionSnapshot,
+    )
+    from skill_lens.models.doctor import DoctorReport
+    from skill_lens.models.enums import Scope
+
+    # 1. Four exact frozen and slotted types
+    for cls in (CapturedFile, CapturedInput, FrozenDiscoveryIndex, SessionSnapshot):
+        assert is_dataclass(cls), f"{cls.__name__} must be a dataclass"
+        assert hasattr(cls, "__slots__"), f"{cls.__name__} must have slots"
+
+    # Test frozen immutability
+    cf = CapturedFile(relative_path="skill/SKILL.md", data=b"# test", fingerprint="sha256:123")
+    with pytest.raises(FrozenInstanceError):
+        cf.relative_path = "other"  # type: ignore[misc]
+
+    ci = CapturedInput(path="/etc/settings.json", data=b"{}", error=None)
+    with pytest.raises(FrozenInstanceError):
+        ci.error = "missing"  # type: ignore[misc]
+
+    # 2. Tuple-backed index and all_agents() behavior
+    hit_claude = RootHit(
+        agent_id="claude",
+        root_id="claude_root",
+        rank=100,
+        rule_id="claude_user",
+        evidence="documented",
+        scope=Scope.USER,
+        entrypoint_path="/home/.claude/skills/test",
+    )
+    hit_codex = RootHit(
+        agent_id="codex",
+        root_id="codex_root",
+        rank=90,
+        rule_id="codex_user",
+        evidence="documented",
+        scope=Scope.USER,
+        entrypoint_path="/home/.codex/skills/test",
+    )
+    entry = DiscoveredEntry(
+        entrypoint_path="/skills/test",
+        name="test",
+        is_file=False,
+        is_symlink=False,
+        canonical=CanonicalResult(
+            status=CanonicalStatus.OK,
+            entrypoint_path="/skills/test",
+            resolved_path="/skills/test",
+            is_symlink=False,
+        ),
+        parse=None,
+        content_hash="sha256:abc",
+        hits=(hit_claude, hit_codex),
+    )
+
+    frozen_idx = FrozenDiscoveryIndex(
+        home="/home",
+        cwd="/cwd",
+        entries=(entry,),
+        unreadable_roots=(),
+    )
+    live_idx = DiscoveryIndex(
+        home="/home",
+        cwd="/cwd",
+        entries=[entry],
+        unreadable_roots=[],
+    )
+
+    assert isinstance(frozen_idx.entries, tuple)
+    assert isinstance(frozen_idx.unreadable_roots, tuple)
+    assert frozen_idx.all_agents() == live_idx.all_agents()
+    assert frozen_idx.all_agents() == {"claude", "codex"}
+
+    # Mutate first returned set with a sentinel; assert next result lacks that sentinel
+    agents_set = frozen_idx.all_agents()
+    agents_set.add("sentinel")
+    next_set = frozen_idx.all_agents()
+    assert "sentinel" not in next_set
+
+    # 3. Complete SessionSnapshot field construction
+    dummy_scan = ScanReport(
+        home="/home",
+        cwd="/cwd",
+        summary=ScanSummary(0, 0, 0, 0, 0, 0, 0),
+        skills=(),
+        unreadable=(),
+    )
+    dummy_doctor = DoctorReport(
+        home="/home",
+        cwd="/cwd",
+        findings=(),
+    )
+    registry = load_registry()
+    claude_def = registry["claude"]
+
+    # Verify no filesystem calls during model operations
+    with (
+        patch("pathlib.Path.read_bytes", side_effect=AssertionError("filesystem read prohibited")),
+        patch("pathlib.Path.read_text", side_effect=AssertionError("filesystem read prohibited")),
+        patch("pathlib.Path.exists", side_effect=AssertionError("filesystem stat prohibited")),
+    ):
+        snapshot = SessionSnapshot(
+            generation=1,
+            home=Path("/home"),
+            cwd=Path("/cwd"),
+            registry=(claude_def,),
+            index=frozen_idx,
+            files={"test": (cf,)},
+            config_inputs={"/home/.claude/settings.json": ci},
+            disabled_overrides={"claude": frozenset({"disabled-skill"})},
+            display_paths={"/home": "~"},
+            same_locations=frozenset([("/skills/test", "/skills/test")]),
+            scan=dummy_scan,
+            doctor=dummy_doctor,
+        )
+        assert snapshot.generation == 1
+        assert snapshot.home == Path("/home")
+        assert snapshot.cwd == Path("/cwd")
+        assert snapshot.registry == (claude_def,)
+        assert snapshot.index is frozen_idx
+        assert snapshot.files["test"] == (cf,)
+        assert snapshot.config_inputs["/home/.claude/settings.json"] == ci
+        assert snapshot.disabled_overrides["claude"] == frozenset({"disabled-skill"})
+        assert snapshot.display_paths["/home"] == "~"
+        assert snapshot.same_locations == frozenset([("/skills/test", "/skills/test")])
+        assert snapshot.scan is dummy_scan
+        assert snapshot.doctor is dummy_doctor
+        with pytest.raises(FrozenInstanceError):
+            snapshot.generation = 2  # type: ignore[misc]
+        with pytest.raises(FrozenInstanceError):
+            frozen_idx.home = "other"  # type: ignore[misc]
+        # Index all_agents still works without filesystem
+        assert frozen_idx.all_agents() == {"claude", "codex"}

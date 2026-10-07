@@ -252,3 +252,171 @@ def test_the_system_adapter_imports_no_rich() -> None:
     import skill_lens.core.system as system_module
 
     assert _no_rich(system_module)
+
+
+# ---------------------------------------------------------------------------
+# C2 Compare Tests: injected builder and wrapper inputs (§21.3)
+# ---------------------------------------------------------------------------
+
+
+def test_compare_injected_inputs_matrix(mock_home: Path, tmp_path: Path) -> None:
+    """Cover live index-only, registry-only, both, and neither for builder and wrapper."""
+    from skill_lens.core.compare import run_compare
+    from skill_lens.registry.loader import load_registry
+
+    build_acceptance_farm(mock_home)
+    home = mock_home.resolve()
+    registry = load_registry()
+    index = discover(home, home, registry)
+
+    from skill_lens.models import dumps
+
+    base_expected = build_compare_report("claude", "codex", home, home).to_dict()
+    base_dumps = dumps(base_expected)
+
+    # Neither (live default)
+    rep_neither = run_compare("claude", "codex", cwd=home)
+    assert rep_neither.to_dict() == base_expected
+    assert dumps(rep_neither.to_dict()) == base_dumps
+
+    # Index only
+    rep_idx = run_compare("claude", "codex", cwd=home, index=index)
+    assert rep_idx.to_dict() == base_expected
+    assert dumps(rep_idx.to_dict()) == base_dumps
+    b_idx = build_compare_report("claude", "codex", home, home, index=index)
+    assert b_idx.to_dict() == base_expected
+    assert dumps(b_idx.to_dict()) == base_dumps
+
+    # Registry only
+    rep_reg = run_compare("claude", "codex", cwd=home, registry=registry)
+    assert rep_reg.to_dict() == base_expected
+    assert dumps(rep_reg.to_dict()) == base_dumps
+    b_reg = build_compare_report("claude", "codex", home, home, registry=registry)
+    assert b_reg.to_dict() == base_expected
+    assert dumps(b_reg.to_dict()) == base_dumps
+
+    # Both
+    rep_both = run_compare("claude", "codex", cwd=home, index=index, registry=registry)
+    assert rep_both.to_dict() == base_expected
+    assert dumps(rep_both.to_dict()) == base_dumps
+    b_both = build_compare_report("claude", "codex", home, home, index=index, registry=registry)
+    assert b_both.to_dict() == base_expected
+    assert dumps(b_both.to_dict()) == base_dumps
+
+
+def test_compare_frozen_index_and_missing_registry(mock_home: Path, tmp_path: Path) -> None:
+    """Frozen index skips live discovery/loaders; missing registry raises ValueError first."""
+    from unittest.mock import patch
+
+    from skill_lens.core.compare import run_compare
+    from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
+    from skill_lens.registry.loader import load_registry
+
+    build_acceptance_farm(mock_home)
+    home = mock_home.resolve()
+    registry = load_registry()
+    live_idx = discover(home, home, registry)
+    frozen_idx = FrozenDiscoveryIndex(
+        home=str(home), cwd=str(home), entries=tuple(live_idx.entries), unreadable_roots=()
+    )
+
+    # 1. Frozen index + registry skips patched discovery/loaders
+    with (
+        patch("skill_lens.core.compare.discover", side_effect=AssertionError("discover banned")),
+        patch(
+            "skill_lens.core.compare.live_discovery",
+            side_effect=AssertionError("live_discovery banned"),
+        ),
+        patch(
+            "skill_lens.core.compare.load_registry",
+            side_effect=AssertionError("load_registry banned"),
+        ),
+    ):
+        b_rep = build_compare_report(
+            "claude", "codex", home, home, index=frozen_idx, registry=registry
+        )
+        w_rep = run_compare("claude", "codex", cwd=home, index=frozen_idx, registry=registry)
+        assert b_rep.to_dict() == w_rep.to_dict()
+
+    # 2. Missing registry for frozen calls raises ValueError first
+    with (
+        patch(
+            "skill_lens.core.compare.load_registry",
+            side_effect=AssertionError("load_registry banned"),
+        ),
+        patch(
+            "skill_lens.core.compare.live_discovery",
+            side_effect=AssertionError("live_discovery banned"),
+        ),
+    ):
+        with pytest.raises(ValueError, match="registry"):
+            build_compare_report("claude", "codex", home, home, index=frozen_idx, registry=None)
+        with pytest.raises(ValueError, match="registry"):
+            run_compare("claude", "codex", cwd=home, index=frozen_idx, registry=None)
+
+
+def test_compare_empty_registry_and_unknown_ids_rejected_before_scanning(
+    mock_home: Path, tmp_path: Path
+) -> None:
+    """Explicit {} registry is not replaced; invalid ids are rejected before scanning."""
+    from unittest.mock import patch
+
+    from skill_lens.core.compare import run_compare
+
+    home = mock_home.resolve()
+
+    # Explicit {} is not replaced
+    with pytest.raises(KeyError, match="unknown agent 'claude'. Known agents: "):
+        run_compare("claude", "codex", cwd=home, registry={})
+    with pytest.raises(KeyError, match="unknown agent 'claude'. Known agents: "):
+        build_compare_report("claude", "codex", home, home, registry={})
+
+    # Unknown agent id rejected before scanning
+    with (
+        patch(
+            "skill_lens.core.compare.live_discovery",
+            side_effect=AssertionError("live_discovery must not be called for unknown agent"),
+        ),
+        pytest.raises(KeyError, match="unknown agent 'nope'"),
+    ):
+        run_compare("nope", "codex", cwd=home)
+
+
+def test_compare_wrapper_uses_index_home_cwd_and_bans_ambient_lookups(
+    mock_home: Path, tmp_path: Path
+) -> None:
+    """Give index.home, index.cwd, wrapper cwd distinct fixture paths; report uses index."""
+    from unittest.mock import patch
+
+    from skill_lens.core.compare import run_compare
+    from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
+    from skill_lens.registry.loader import load_registry
+
+    path_index_home = tmp_path / "distinct_index_home"
+    path_index_cwd = tmp_path / "distinct_index_cwd"
+    path_wrapper_cwd = tmp_path / "distinct_wrapper_cwd"
+    path_index_home.mkdir()
+    path_index_cwd.mkdir()
+    path_wrapper_cwd.mkdir()
+
+    registry = load_registry()
+    frozen_idx = FrozenDiscoveryIndex(
+        home=str(path_index_home),
+        cwd=str(path_index_cwd),
+        entries=(),
+        unreadable_roots=(),
+    )
+
+    with (
+        patch("skill_lens.core.paths.home", side_effect=AssertionError("ambient home banned")),
+        patch("pathlib.Path.cwd", side_effect=AssertionError("ambient cwd banned")),
+    ):
+        report = run_compare(
+            "claude",
+            "codex",
+            cwd=path_wrapper_cwd,
+            index=frozen_idx,
+            registry=registry,
+        )
+        assert report.home == str(path_index_home)
+        assert report.cwd == str(path_index_cwd)

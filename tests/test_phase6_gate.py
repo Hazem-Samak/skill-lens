@@ -356,3 +356,16 @@ def test_registry_check_finding_is_informational_only() -> None:
     assert finding.severity is Severity.INFO
     assert exit_code_for([finding.severity], FailOn.ERROR) is ExitCode.OK
     assert exit_code_for([finding.severity], FailOn.WARNING) is ExitCode.OK
+
+
+def test_registry_check_supplied_definitions_bypasses_packaged_list_agents() -> None:
+    """Supplied dictionary or iterable bypasses list_agents(); empty yields no findings."""
+    from unittest.mock import patch
+
+    with patch(
+        "skill_lens.registry.loader.list_agents",
+        side_effect=AssertionError("list_agents must not be called when registry is supplied"),
+    ):
+        assert _registry_evidence_findings({}) == []
+        assert _registry_evidence_findings([]) == []
+        assert _registry_evidence_findings(()) == []

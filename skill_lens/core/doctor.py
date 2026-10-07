@@ -34,6 +34,7 @@ from skill_lens.models.parsing import (
     ERR_PERMISSION_DENIED,
     ERR_SYMLINK_CYCLE,
 )
+from skill_lens.registry.loader import AgentDefinition
 
 #: Codex prepends every skill description to the model context. Vendor docs
 #: describe a budget of roughly 8,000 characters; past it Codex is documented
@@ -426,10 +427,11 @@ def _registry_evidence_findings(registry: Any | None = None) -> list[DoctorFindi
     state: the check exists to catch a regression, and a guard that is always
     loud is a guard nobody reads.
     """
-    from skill_lens.registry.loader import list_agents  # noqa: PLC0415
+    if registry is None:
+        from skill_lens.registry.loader import list_agents  # noqa: PLC0415
 
-    definitions = list_agents()
-    if registry is not None:
+        definitions = list_agents()
+    else:
         # ``load_registry`` returns {id: AgentDefinition}; iterating that
         # directly yields the *keys*, so take the values explicitly.
         items = registry.values() if isinstance(registry, dict) else registry
@@ -458,7 +460,14 @@ def _registry_evidence_findings(registry: Any | None = None) -> list[DoctorFindi
     ]
 
 
-def run_doctor(cwd: Path | None = None) -> DoctorReport:
+def run_doctor(
+    cwd: Path | None = None,
+    *,
+    index: DiscoveryIndex | None = None,
+    registry: dict[str, AgentDefinition] | None = None,
+) -> DoctorReport:
     """One-call entry point used by the CLI: live discovery, then report."""
-    discovery = live_discovery(cwd)
-    return build_doctor_report(Path(discovery.home), Path(discovery.cwd), discovery)
+    discovery = index if index is not None else live_discovery(cwd, registry)
+    return build_doctor_report(
+        Path(discovery.home), Path(discovery.cwd), discovery, registry=registry
+    )

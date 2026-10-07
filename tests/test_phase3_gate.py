@@ -29,6 +29,8 @@ from skill_lens.core.diff import (
     MAX_CHARS_PER_REPORT,
     build_diff_report,
 )
+from skill_lens.core.discovery import DiscoveredEntry
+from skill_lens.core.snapshot_models import CapturedFile
 from skill_lens.models import dumps
 from skill_lens.models.diff import (
     DiffChange,
@@ -563,3 +565,520 @@ def test_diff_never_writes_to_the_filesystem(name: str, mock_home: Path) -> None
     after = sorted(path.relative_to(mock_home).as_posix() for path in mock_home.rglob("*"))
     assert before == after
     paths.set_sandbox(None)
+
+
+# ---------------------------------------------------------------------------
+# C2 Diff Tests: captured files, explicit emptiness, completeness, falsey mapping
+# ---------------------------------------------------------------------------
+
+
+def _capture_entry_files(entry: DiscoveredEntry) -> tuple[CapturedFile, ...]:
+    from skill_lens.core.hasher import hash_bytes, iter_files
+    from skill_lens.core.snapshot_models import CapturedFile
+
+    root = Path(entry.canonical_path or entry.entrypoint_path)
+    if not root.exists():
+        return ()
+    if not root.is_dir():
+        data = root.read_bytes()
+        return (CapturedFile(relative_path=root.name, data=data, fingerprint=hash_bytes(data)),)
+    files = []
+    for rel in iter_files(root):
+        data = (root / rel).read_bytes()
+        files.append(
+            CapturedFile(
+                relative_path=rel.as_posix(),
+                data=data,
+                fingerprint=hash_bytes(data),
+            )
+        )
+    return tuple(files)
+
+
+def test_diff_captured_parity_matches_live_reports(mock_home: Path, tmp_path: Path) -> None:
+    """Captured diff reports match live reports across binaries, CRLF, BOM, unreadable, etc."""
+    from skill_lens.core.diff import _NO_BASELINE_NOTE
+    from skill_lens.core.discovery import canonical_key, discover
+    from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
+    from skill_lens.registry.loader import load_registry
+
+    # 1. Differing directory copies: CRLF differing content, lone-CR, BOM bytes, NUL, binary
+    dir_a = mock_home / ".claude" / "skills" / "complex-diff"
+    make_skill(dir_a, name="complex-diff", description="Variant A", body="Line 1\nLine 2\nLine 3\n")
+    (dir_a / "sub").mkdir(parents=True, exist_ok=True)
+    (dir_a / "sub" / "crlf_diff.txt").write_bytes(b"nested content A\r\nCRLF ending\r\n")
+    (dir_a / "lone_cr.txt").write_bytes(b"alpha\rbeta A\n")
+    (dir_a / "bom.txt").write_bytes(b"\xef\xbb\xbfBOM header A\n")
+    (dir_a / "nul.txt").write_bytes(b"Text with \x00 NUL A\n")
+    (dir_a / "bin.dat").write_bytes(b"\xff\xfe\x00\x00Invalid UTF8 binary A")
+
+    dir_b = mock_home / ".agents" / "skills" / "complex-diff"
+    make_skill(
+        dir_b,
+        name="complex-diff",
+        description="Variant B",
+        body="Line 1\nLine 2 modified\nLine 3\n",
+    )
+    (dir_b / "sub").mkdir(parents=True, exist_ok=True)
+    (dir_b / "sub" / "crlf_diff.txt").write_bytes(b"nested content B\r\nCRLF ending\r\n")
+    (dir_b / "lone_cr.txt").write_bytes(b"alpha\rbeta B\n")
+    (dir_b / "bom.txt").write_bytes(b"\xef\xbb\xbfBOM header B\n")
+    (dir_b / "nul.txt").write_bytes(b"Text with \x00 NUL B\n")
+    (dir_b / "extra.txt").write_bytes(b"extra file in B\n")
+    (dir_b / "bin.dat").write_bytes(b"\xff\xfe\x00\x01Differing binary B")
+
+    # 2. Standalone file skill
+    sa_a = mock_home / ".claude" / "skills" / "standalone-diff.md"
+    sa_a.write_text("---\nname: standalone-diff\ndescription: A\n---\nBody A\n", encoding="utf-8")
+    sa_b = mock_home / ".agents" / "skills" / "standalone-diff.md"
+    sa_b.write_text("---\nname: standalone-diff\ndescription: B\n---\nBody B\n", encoding="utf-8")
+
+    # 3. No-baseline skill (both copies invalid frontmatter)
+    nb_a = mock_home / ".claude" / "skills" / "nobaseline-diff"
+    write_text(nb_a / "SKILL.md", "---\nname: [malformed\n---\n")
+    nb_b = mock_home / ".agents" / "skills" / "nobaseline-diff"
+    write_text(nb_b / "SKILL.md", "---\nname: [malformed2\n---\n")
+
+    # 4. Unreadable / dangling symlink copy
+    un_a = mock_home / ".claude" / "skills" / "unreadable-diff"
+    un_a.symlink_to(mock_home / "nonexistent_target")
+    un_b = mock_home / ".agents" / "skills" / "unreadable-diff"
+    make_skill(un_b, name="unreadable-diff", description="Valid copy B")
+
+    # 5. Line truncation budget (exceeds MAX_CHANGED_LINES_PER_COPY = 400)
+    tr_lines_a = mock_home / ".claude" / "skills" / "trunc-lines"
+    make_skill(
+        tr_lines_a,
+        name="trunc-lines",
+        description="A",
+        body="".join(f"line {i}\n" for i in range(450)),
+    )
+    tr_lines_b = mock_home / ".agents" / "skills" / "trunc-lines"
+    make_skill(
+        tr_lines_b,
+        name="trunc-lines",
+        description="B",
+        body="".join(f"modified {i}\n" for i in range(450)),
+    )
+
+    # 6. Char truncation budget (exceeds MAX_CHARS_PER_REPORT = 20_000)
+    tr_chars_a = mock_home / ".claude" / "skills" / "trunc-chars"
+    make_skill(
+        tr_chars_a,
+        name="trunc-chars",
+        description="A",
+        body="".join(f"line {i:03d} " + "x" * 250 + "\n" for i in range(120)),
+    )
+    tr_chars_b = mock_home / ".agents" / "skills" / "trunc-chars"
+    make_skill(
+        tr_chars_b,
+        name="trunc-chars",
+        description="B",
+        body="".join(f"line {i:03d} " + "y" * 250 + "\n" for i in range(120)),
+    )
+
+    registry = load_registry()
+    index = discover(mock_home, tmp_path, registry)
+    frozen_idx = FrozenDiscoveryIndex(
+        home=str(mock_home), cwd=str(tmp_path), entries=tuple(index.entries), unreadable_roots=()
+    )
+
+    captured_files = {canonical_key(e): _capture_entry_files(e) for e in index.entries}
+
+    skills_to_test = (
+        "complex-diff",
+        "standalone-diff",
+        "nobaseline-diff",
+        "unreadable-diff",
+        "trunc-lines",
+        "trunc-chars",
+    )
+
+    for skill_name in skills_to_test:
+        live_rep = build_diff_report(
+            skill_name, tmp_path, mock_home, index=index, registry=registry
+        )
+        captured_rep = build_diff_report(
+            skill_name,
+            tmp_path,
+            mock_home,
+            index=index,
+            registry=registry,
+            captured_files=captured_files,
+        )
+        frozen_rep = build_diff_report(
+            skill_name,
+            tmp_path,
+            mock_home,
+            index=frozen_idx,
+            registry=registry,
+            captured_files=captured_files,
+        )
+
+        assert captured_rep == live_rep
+        assert frozen_rep == live_rep
+        assert captured_rep.to_dict() == live_rep.to_dict()
+        assert dumps(captured_rep.to_dict()) == dumps(live_rep.to_dict())
+
+    # Specific assertion proofs for distinct paths:
+    # No-baseline notes
+    rep_nb = build_diff_report(
+        "nobaseline-diff",
+        tmp_path,
+        mock_home,
+        index=index,
+        registry=registry,
+        captured_files=captured_files,
+    )
+    assert _NO_BASELINE_NOTE in rep_nb.notes
+
+    # Unreadable copy accounting
+    rep_un = build_diff_report(
+        "unreadable-diff",
+        tmp_path,
+        mock_home,
+        index=index,
+        registry=registry,
+        captured_files=captured_files,
+    )
+    assert any(
+        c.files == () and c.is_readable is False and c.error is not None for c in rep_un.copies
+    )
+
+    # Line truncation accounting
+    rep_tl = build_diff_report(
+        "trunc-lines",
+        tmp_path,
+        mock_home,
+        index=index,
+        registry=registry,
+        captured_files=captured_files,
+    )
+    assert any(c.truncated is True and c.omitted_lines > 0 for c in rep_tl.copies)
+
+    # Char truncation accounting
+    rep_tc = build_diff_report(
+        "trunc-chars",
+        tmp_path,
+        mock_home,
+        index=index,
+        registry=registry,
+        captured_files=captured_files,
+    )
+    assert rep_tc.truncated is True and rep_tc.omitted_chars > 0
+
+    # Assert no binary payload entered printable hunks
+    rep_cd = build_diff_report(
+        "complex-diff",
+        tmp_path,
+        mock_home,
+        index=index,
+        registry=registry,
+        captured_files=captured_files,
+    )
+    for copy in rep_cd.copies:
+        for diff_file in copy.files:
+            for hunk in diff_file.hunks:
+                for line in hunk.lines:
+                    assert "\xff\xfe" not in line
+
+
+def test_diff_explicit_empty_tuple_remains_empty_under_patched_collector(
+    mock_home: Path, tmp_path: Path
+) -> None:
+    """Present empty tuple remains empty under a patched live collector."""
+    from unittest.mock import patch
+
+    from skill_lens.core.discovery import canonical_key, discover
+    from skill_lens.registry.loader import load_registry
+
+    dir_a = mock_home / ".claude" / "skills" / "empty-copy"
+    make_skill(dir_a, name="empty-copy", description="Empty A")
+    dir_b = mock_home / ".codex" / "skills" / "empty-copy"
+    make_skill(dir_b, name="empty-copy", description="Empty B")
+
+    registry = load_registry()
+    index = discover(mock_home, tmp_path, registry)
+    captured_files = {
+        canonical_key(entry): () for entry in index.entries if entry.name == "empty-copy"
+    }
+
+    with patch(
+        "skill_lens.core.diff._collect",
+        side_effect=AssertionError("Live collector must not be called"),
+    ):
+        rep = build_diff_report(
+            "empty-copy",
+            tmp_path,
+            mock_home,
+            index=index,
+            registry=registry,
+            captured_files=captured_files,
+        )
+        assert rep.found is True
+        assert len(rep.copies) == 2
+        assert all(copy.files == () for copy in rep.copies)
+
+
+def test_diff_missing_selected_copy_key_raises_value_error(mock_home: Path, tmp_path: Path) -> None:
+    """An absent copy key raises ValueError, across all shortcut paths and unreadable copies."""
+    from skill_lens.core.discovery import canonical_key, discover
+    from skill_lens.registry.loader import load_registry
+
+    # 1. Single copy shortcut
+    dir_single = mock_home / ".claude" / "skills" / "single-skill"
+    make_skill(dir_single, name="single-skill", description="Single")
+
+    # 2. Equal hash shortcut (byte identical in two places)
+    dir_eq1 = mock_home / ".claude" / "skills" / "equal-skill"
+    make_skill(dir_eq1, name="equal-skill", description="Equal")
+    dir_eq2 = mock_home / ".agents" / "skills" / "equal-skill"
+    make_skill(dir_eq2, name="equal-skill", description="Equal")
+
+    # 3. No baseline shortcut (both invalid, so no Variant A baseline)
+    dir_nb1 = mock_home / ".claude" / "skills" / "nobaseline-skill"
+    write_text(dir_nb1 / "SKILL.md", "---\nname: [unclosed\n---\n")
+    dir_nb2 = mock_home / ".agents" / "skills" / "nobaseline-skill"
+    write_text(dir_nb2 / "SKILL.md", "---\nname: [unclosed2\n---\n")
+
+    # 4. Unreadable shortcut (dangling symlink)
+    dir_dang1 = mock_home / ".claude" / "skills" / "dangling-skill"
+    dir_dang1.symlink_to(mock_home / "nonexistent_target")
+    dir_dang2 = mock_home / ".agents" / "skills" / "dangling-skill"
+    make_skill(dir_dang2, name="dangling-skill", description="Valid Dangling Sibling")
+
+    registry = load_registry()
+    index = discover(mock_home, tmp_path, registry)
+
+    # All these shortcut cases must raise ValueError when their key is missing from captured_files
+    for skill_name in ("single-skill", "equal-skill", "nobaseline-skill", "dangling-skill"):
+        entries = [e for e in index.entries if e.name == skill_name]
+        assert entries
+        all_captured = {canonical_key(e): _capture_entry_files(e) for e in entries}
+
+        for target_entry in entries:
+            target_key = canonical_key(target_entry)
+            partial_captured = {k: v for k, v in all_captured.items() if k != target_key}
+            with pytest.raises(ValueError, match="missing captured files"):
+                build_diff_report(
+                    skill_name,
+                    tmp_path,
+                    mock_home,
+                    index=index,
+                    registry=registry,
+                    captured_files=partial_captured,
+                )
+
+
+def test_diff_empty_supplied_index_and_empty_files_returns_not_found(
+    mock_home: Path, tmp_path: Path
+) -> None:
+    """Empty supplied index and {} files against populated disk returns not-found without reads."""
+    from unittest.mock import patch
+
+    from skill_lens.core.discovery import DiscoveryIndex
+    from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
+    from skill_lens.registry.loader import load_registry
+
+    skill_dir = mock_home / ".claude" / "skills" / "disk-skill"
+    make_skill(skill_dir, name="disk-skill", description="On disk")
+
+    registry = load_registry()
+    empty_index = DiscoveryIndex(
+        home=str(mock_home), cwd=str(tmp_path), entries=[], unreadable_roots=[]
+    )
+    frozen_idx = FrozenDiscoveryIndex(
+        home=str(mock_home), cwd=str(tmp_path), entries=(), unreadable_roots=()
+    )
+
+    with (
+        patch(
+            "skill_lens.core.diff.load_registry", side_effect=AssertionError("load_registry banned")
+        ),
+        patch("skill_lens.core.diff.discover", side_effect=AssertionError("discover banned")),
+        patch("skill_lens.core.diff._copy_files", side_effect=AssertionError("_copy_files banned")),
+    ):
+        rep = build_diff_report(
+            "disk-skill",
+            tmp_path,
+            mock_home,
+            index=empty_index,
+            registry=registry,
+            captured_files={},
+        )
+        assert rep.found is False
+
+        # Companion input violations when captured_files is provided
+        for cf_input in ({}, {"arbitrary_key": ()}):
+            with pytest.raises(
+                ValueError, match=r"^index must be supplied when captured_files is provided$"
+            ):
+                build_diff_report(
+                    "disk-skill",
+                    tmp_path,
+                    mock_home,
+                    index=None,
+                    registry=registry,
+                    captured_files=cf_input,
+                )
+            with pytest.raises(
+                ValueError, match=r"^registry must be supplied when captured_files is provided$"
+            ):
+                build_diff_report(
+                    "disk-skill",
+                    tmp_path,
+                    mock_home,
+                    index=empty_index,
+                    registry=None,
+                    captured_files=cf_input,
+                )
+
+        # Frozen index violations
+        with pytest.raises(
+            ValueError,
+            match=(
+                r"^(registry|captured_files) must be supplied "
+                r"when index is a FrozenDiscoveryIndex$"
+            ),
+        ):
+            build_diff_report(
+                "disk-skill",
+                tmp_path,
+                mock_home,
+                index=frozen_idx,
+                registry=None,
+                captured_files=None,
+            )
+        with pytest.raises(
+            ValueError,
+            match=r"^captured_files must be supplied when index is a FrozenDiscoveryIndex$",
+        ):
+            build_diff_report(
+                "disk-skill",
+                tmp_path,
+                mock_home,
+                index=frozen_idx,
+                registry=registry,
+                captured_files=None,
+            )
+
+
+def test_diff_copy_files_private_contract(mock_home: Path, tmp_path: Path) -> None:
+    """Unit test of _copy_files: missing key raises, present empty tuple returns {}, pinned hash."""
+    from skill_lens.core.diff import _copy_files
+    from skill_lens.core.discovery import canonical_key, discover
+    from skill_lens.core.snapshot_models import CapturedFile
+    from skill_lens.registry.loader import load_registry
+
+    skill_dir = mock_home / ".claude" / "skills" / "private-copy-test"
+    make_skill(skill_dir, name="private-copy-test", description="Test")
+
+    registry = load_registry()
+    index = discover(mock_home, tmp_path, registry)
+    entry = next(e for e in index.entries if e.name == "private-copy-test")
+    key = canonical_key(entry)
+
+    # 1. Missing key raises ValueError
+    with pytest.raises(ValueError, match=r"^missing captured files for key "):
+        _copy_files(entry, captured_files={})
+
+    # 2. Present empty tuple returns empty dict
+    assert _copy_files(entry, captured_files={key: ()}) == {}
+
+    # 3. CapturedFile uses cf.fingerprint without re-hashing
+    cf = CapturedFile(relative_path="SKILL.md", data=b"hello world", fingerprint="pinned-fp-1234")
+    out = _copy_files(entry, captured_files={key: (cf,)})
+    assert "SKILL.md" in out
+    assert out["SKILL.md"].fingerprint == "pinned-fp-1234"
+    assert out["SKILL.md"].text == "hello world"
+
+
+def test_diff_falsey_mapping_exercises_captured_branch_without_live_reads(
+    mock_home: Path, tmp_path: Path
+) -> None:
+    """Populated Mapping with __bool__()==False on differing copies uses real _copy_files."""
+    from unittest.mock import patch
+
+    from skill_lens.core.discovery import canonical_key, discover
+    from skill_lens.registry.loader import load_registry
+
+    dir_a = mock_home / ".claude" / "skills" / "diff-skill"
+    make_skill(dir_a, name="diff-skill", description="A", body="Line A\n")
+    dir_b = mock_home / ".agents" / "skills" / "diff-skill"
+    make_skill(dir_b, name="diff-skill", description="B", body="Line B\n")
+
+    registry = load_registry()
+    index = discover(mock_home, tmp_path, registry)
+    entries = [e for e in index.entries if e.name == "diff-skill"]
+    assert len(entries) == 2
+
+    captured_files = {canonical_key(e): _capture_entry_files(e) for e in entries}
+
+    class FalseyMap(dict):
+        def __bool__(self) -> bool:
+            return False
+
+    falsey_files = FalseyMap(captured_files)
+    assert bool(falsey_files) is False
+    assert len(falsey_files) == 2
+
+    expected_rep = build_diff_report(
+        "diff-skill", tmp_path, mock_home, index=index, registry=registry
+    )
+
+    # Within report-call patch context, ban live collector/probe symbols.
+    # DO NOT patch _copy_files itself: real new branch is under test!
+    with (
+        patch("skill_lens.core.diff._collect", side_effect=AssertionError("_collect banned")),
+        patch(
+            "skill_lens.core.diff._read_normalized",
+            side_effect=AssertionError("_read_normalized banned"),
+        ),
+        patch("skill_lens.core.diff.iter_files", side_effect=AssertionError("iter_files banned")),
+        patch("skill_lens.core.diff.hash_file", side_effect=AssertionError("hash_file banned")),
+        patch("pathlib.Path.is_dir", side_effect=AssertionError("Path.is_dir banned")),
+    ):
+        rep = build_diff_report(
+            "diff-skill",
+            tmp_path,
+            mock_home,
+            index=index,
+            registry=registry,
+            captured_files=falsey_files,
+        )
+        assert rep == expected_rep
+
+
+def test_diff_empty_registry_with_supplied_index_bans_load_registry(
+    mock_home: Path, tmp_path: Path
+) -> None:
+    """Empty registry with supplied index must not call load_registry."""
+    from unittest.mock import patch
+
+    from skill_lens.core.discovery import canonical_key, discover
+
+    dir_a = mock_home / ".claude" / "skills" / "reg-skill"
+    make_skill(dir_a, name="reg-skill", description="A", body="Line A\n")
+    dir_b = mock_home / ".agents" / "skills" / "reg-skill"
+    make_skill(dir_b, name="reg-skill", description="B", body="Line B\n")
+
+    index = discover(mock_home, tmp_path)
+    entries = [e for e in index.entries if e.name == "reg-skill"]
+    captured_files = {canonical_key(e): _capture_entry_files(e) for e in entries}
+
+    expected_rep = build_diff_report(
+        "reg-skill", tmp_path, mock_home, index=index, captured_files=captured_files, registry={}
+    )
+
+    with patch(
+        "skill_lens.core.diff.load_registry", side_effect=AssertionError("load_registry banned")
+    ):
+        rep = build_diff_report(
+            "reg-skill",
+            tmp_path,
+            mock_home,
+            index=index,
+            registry={},
+            captured_files=captured_files,
+        )
+        assert rep == expected_rep

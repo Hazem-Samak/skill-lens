@@ -447,3 +447,140 @@ protected-retention outcome with no coordinator-owned reclaimable worker left.
 Orca may retain externally attached or user-taken-over terminals; do not close
 those against its ownership receipt. Report any remaining requirement choice
 rather than calling a draft frozen.
+
+## C2 implementation checkpoint — historical pause before acceptance
+
+Hazem subsequently authorized the implementation loop with Antigravity Gemini
+3.8 Flash High implementing, and OpenCode Space Bunny Free plus Cline reviewing.
+That later authorization supersedes the planning-only authorization above for C2,
+not for C3 or pushing. The frozen contract/reference is unchanged. Implementation
+started at `95e0e88a57191c063429a96e627e54e0bef784e6`; its difference from the
+frozen plan commit is the previously recorded reference-only metadata change.
+
+Antigravity created the four snapshot models and added the optional captured
+inputs to resolver, diff, compare and doctor. CLI defaults and pinned fixtures
+are unchanged. The coordinator read all changed/new files and independently ran
+the four gates. The initial tree passed 512 tests with 93.37% coverage, but both
+critics found test-proof gaps. Passing gates alone did not establish acceptance.
+
+### Findings and correction outcomes
+
+| Finding | Coordinator disposition and evidence |
+| --- | --- |
+| Diff missing-index assertion accidentally matched its pytest temporary directory | Accepted and corrected: anchored messages and raising read sentinels cover the companion-input calls. The individual guard-removal mutation now fails. |
+| Doctor home/cwd swap and evidence-registry forwarding were unprotected | Accepted and corrected: three distinct paths, a public-wrapper inferred-agent finding, banned packaged loader, and exact finding text. Both mutations now fail. |
+| Resolver override-key migration and ignoring supplied index were unprotected | Accepted and corrected: Codex frontmatter-name lookup with distinct directory keys, plus populated/empty frozen-index calls with discovery banned. Both mutations now fail. |
+| Diff lacked meaningful normalization/no-baseline/unreadable/truncation parity | Accepted and corrected: differing-content CRLF, lone CR, actual BOM bytes, NUL/binary files, dangling copies, and both truncation budgets are exercised against complete live reports/JSON. |
+| Two snapshot types had no frozen-assignment assertion | Accepted and corrected: all four types now reject assignment. No deep-immutability claim is made. |
+| Private missing-key mutation and captured fingerprint were unpinned | Kept the production guards; added a direct private-helper contract test. The missing-key mutation is equivalent through the public builder's upfront validation, but is now caught by the private test. |
+| Compare/doctor JSON proof and meaningful Codex budget fixture | Accepted and corrected: complete JSON equality and a long description that demonstrably triggers the budget finding. |
+| Round-one correction introduced an always-truthy disabled-report JSON assertion | Coordinator rejected it. Round two replaced it with real equality and compared actual live Claude enabled/disabled settings reports with frozen captured sets. Missing-multiple-input assertions do not prescribe guard order. |
+
+The final code/test checkpoint passed 515 tests with 93.61% coverage; strict
+mypy passed over 26 source files; Ruff lint/format and `git diff --check` passed.
+The coordinator independently ran 32 mutations in a separate scratch copy:
+32 failed on protecting tests, zero survived, and each restored selector passed.
+The original 17 render snapshot files and 16 JSON golden files remain unchanged.
+All five product-file hashes remained identical through the two test-correction
+rounds. Critic rechecks changed none of the twelve product/test files.
+
+OpenCode's targeted recheck closed its original findings and returned `pass`.
+Cline closed its original findings but returned `changes_required` for the new
+home-isolation defect below. The coordinator accepts that safety blocker over
+the narrower OpenCode pass. Cline's initial identity paragraph incorrectly used
+OpenCode configuration as evidence; it is withdrawn. Process and running-banner
+evidence identifies Cline 3.0.68 with MiMo-V2.6-Flash (free), xhigh. Antigravity
+launch receipts identify `gemini-3.8-flash-high`; OpenCode's running banner
+identifies Space Bunny Free / max. No model was substituted.
+
+Cline's suggestion that the compare builder's frozen guard was absent from the
+mutation record is rejected: original `MUT-12` replaces the first occurrence in
+`build_compare_report`; a separately function-targeted mutation covers
+`run_compare`. OpenCode also identified a further optional test-strength concern
+for forwarding a non-packaged registry into compare's live discovery. Its actual
+source forwards the registry correctly; that additional suggestion is recorded,
+not silently treated as an accepted code change or resolved proof.
+
+### Safety blocker and approval boundary at that checkpoint
+
+`tests/test_doctor.py:380`,
+`test_doctor_wrapper_evidence_wiring_with_inferred_agent`, requests only
+`tmp_path`, not `mock_home`. `mock_home` is not automatic. The public wrapper
+therefore obtains the ambient home and its diagnostic report can read the real
+`~/.agents/.skill-lock.json`. Supplying a synthetic agent with no roots prevents
+skill traversal but does not isolate that lockfile read. This violates AGENTS.md
+rule 2. The coordinator reproduced the missing isolation with a raising
+`paths.home` sentinel, stopping before any live file read; Cline independently
+confirmed the path. Earlier green test/gate runs do not override this defect.
+No user files were modified, but those runs were not fully home-isolated.
+
+Acceptance and committing were blocked. The proposed narrow fix was to request the
+existing `mock_home` fixture in that test and pass it as the wrapper cwd, then
+verify isolated execution and repeat the gates. Two correction rounds have been
+used; implementation-loop Step 6 requires Hazem's decision before another.
+The coordinator requested approval; no answer was received. No third correction
+was dispatched, no implementation commit was made, and nothing was pushed.
+
+Evidence lives outside the checkout under
+`/Users/corvette/.hermes/cache/scratch/skill-lens-c2-implementation-20261006/`:
+initial/final critic reports, `coordinator-final-code-gates.json`,
+`coordinator-final-second-round-mutations.json`,
+`coordinator_mutation_audit.py`, `doctor-home-isolation-probe.json`, and
+`final-review-fingerprints.json`. Some large patch captures were clipped;
+the coordinator and critics read the actual files and Git differences instead
+of treating those captures as a complete diff.
+
+All eight implementation/review Dispatches settled. Antigravity-owned terminals
+were released. Orca retained attached/user-owned reviewer terminals under its
+protected ownership receipts; they are settled, not active workers. The final
+reclaimable-worker enumeration returned zero. C2 is implemented but not accepted;
+C3 has not started.
+
+## C2 accepted after the user-approved safety correction
+
+Hazem replied **“continue”**, explicitly authorizing the proposed isolated-test
+correction, repeat verification, and the C2 commit. This clears the earlier
+two-round approval boundary without changing the frozen implementation contract.
+Antigravity again ran as `gemini-3.8-flash-high`; it changed only
+`test_doctor_wrapper_evidence_wiring_with_inferred_agent` in `tests/test_doctor.py`:
+request `mock_home`, pass it as cwd, and assert the report's home/cwd match it.
+The coordinator verified the exact small change against the previous file hash;
+all other product/test hashes remained unchanged.
+
+The coordinator's fail-closed runtime audit requires the fixture before the test
+can run, checks `paths.home()` and the sandbox against it, and rejects diagnostic
+reads outside that temporary home. The corrected test passed; its single lockfile
+read targeted only `<temporary home>/.agents/.skill-lock.json`. It no longer
+consults the real home. Cline independently rechecked this sole remaining blocker,
+withdrew it, and returned `pass` with `BLOCKERS: []`. OpenCode's earlier corrected
+implementation `pass` remains applicable; nothing else in that reviewed tree changed.
+
+Final coordinator verification on the corrected tree:
+
+- `pytest --cov=skill_lens`: **515 passed**, **93.61%** coverage.
+- `mypy`: no issues in 26 source files.
+- `ruff check .`, `ruff format --check .`, and `git diff --check`: clean.
+- All 17 render snapshots and 16 JSON goldens unchanged; no regeneration.
+- All five product files byte-identical throughout the test corrections.
+- The 32 recorded regression mutations were repeated: all failed on their
+  protecting tests and passed restored. A further scoped in-memory comparison
+  probe asserts that a supplied non-packaged registry is forwarded unchanged to
+  live discovery; changing that argument to `None` failed the probe, while both
+  clean/restored calls passed. **33 concrete mutation checks passed in total.**
+
+This additional compare probe closes the forwarding concern empirically without
+another repository test edit or a new product behavior. A permanent synthetic-agent
+regression test remains optional foundation-audit work, not a silently introduced
+C2 scope change. Its mutation is behaviorally observable, not “equivalent.”
+
+Final receipts under the existing external scratch directory include
+`approved-final-gates.json`, `approved-home-isolation-audit.json`,
+`approved-final-code-fingerprints.json`, `accepted-mutation-summary.json`,
+`compare-registry-forwarding-proof.json`, `cline-home-signoff-report.txt`, and
+`complete-c2-working-diff.patch` (captured without tool-output clipping).
+
+The coordinator accepts C2 for the local implementation commit. All ten
+implementation/review Dispatches are settled; owned Antigravity terminals were
+released, protected attached reviewer terminals were retained, and the reclaimable
+worker enumeration is empty. Nothing is pushed or published. C3 — capture service
+and cancellation — is next and has not started.

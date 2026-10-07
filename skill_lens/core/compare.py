@@ -14,6 +14,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from skill_lens.core.discovery import DiscoveredEntry, DiscoveryIndex, discover
+from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
 from skill_lens.core.system import live_discovery
 from skill_lens.models.compare import CompareEntry, CompareReport
 from skill_lens.models.enums import CompareRelation
@@ -25,7 +26,7 @@ def build_compare_report(
     agent_b: str,
     home: Path,
     cwd: Path,
-    index: DiscoveryIndex | None = None,
+    index: DiscoveryIndex | FrozenDiscoveryIndex | None = None,
     registry: dict[str, AgentDefinition] | None = None,
 ) -> CompareReport:
     """Compare the skills two agents can reach, name by name.
@@ -35,6 +36,9 @@ def build_compare_report(
     fields describe, so ``claude vs codex`` and ``codex vs claude`` are honest
     mirrors of one another, not re-judged.
     """
+    if isinstance(index, FrozenDiscoveryIndex) and registry is None:
+        raise ValueError("registry must be supplied when index is a FrozenDiscoveryIndex")
+
     agents = registry if registry is not None else load_registry()
     definition_a = _require(agent_a, agents)
     definition_b = _require(agent_b, agents)
@@ -157,16 +161,31 @@ def _classify(
     )
 
 
-def run_compare(agent_a: str, agent_b: str, cwd: Path | None = None) -> CompareReport:
+def run_compare(
+    agent_a: str,
+    agent_b: str,
+    cwd: Path | None = None,
+    *,
+    index: DiscoveryIndex | FrozenDiscoveryIndex | None = None,
+    registry: dict[str, AgentDefinition] | None = None,
+) -> CompareReport:
     """Compare two agents against the live machine (used by the CLI).
 
     Agent ids are validated *before* the filesystem walk, so a typo costs an
     error message, not a crawl. The loaded registry is handed down, too.
     """
-    agents = load_registry()
+    if isinstance(index, FrozenDiscoveryIndex) and registry is None:
+        raise ValueError("registry must be supplied when index is a FrozenDiscoveryIndex")
+
+    agents = registry if registry is not None else load_registry()
     _require(agent_a, agents)
     _require(agent_b, agents)
-    index = live_discovery(cwd, agents)
+    chosen_index = index if index is not None else live_discovery(cwd, agents)
     return build_compare_report(
-        agent_a, agent_b, Path(index.home), Path(index.cwd), index=index, registry=agents
+        agent_a,
+        agent_b,
+        Path(chosen_index.home),
+        Path(chosen_index.cwd),
+        index=chosen_index,
+        registry=agents,
     )

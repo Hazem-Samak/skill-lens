@@ -629,3 +629,322 @@ def test_selected_entry_uses_agent_identity(mock_home: Path) -> None:
     rep_mal = resolve_skill(name_mal, "codex", home, home)
     assert rep_mal.found is True
     assert rep_mal.headline is HeadlineState.INVALID
+
+
+# ---------------------------------------------------------------------------
+# C2 Resolver Tests: explicit captured settings and companion inputs
+# ---------------------------------------------------------------------------
+
+
+def test_resolver_explicit_empty_overrides_keeps_enabled_without_settings_read(
+    mock_home: Path, tmp_path: Path
+) -> None:
+    """Synthetic live settings disable skill; explicit frozenset() keeps enabled without read."""
+    from unittest.mock import patch
+
+    skill_dir = mock_home / ".claude" / "skills" / "toggle-skill"
+    make_skill(skill_dir, name="toggle-skill", description="Toggle test")
+    settings_file = mock_home / ".claude" / "settings.json"
+    settings_file.write_text(
+        json.dumps({"skillOverrides": {"toggle-skill": False}}), encoding="utf-8"
+    )
+
+    registry = load_registry()
+    index = discover(mock_home, tmp_path, registry)
+
+    # 1. Live resolution without overrides observes settings and marks DISABLED
+    live_report = resolve_skill(
+        "toggle-skill", "claude", tmp_path, mock_home, index=index, registry=registry
+    )
+    assert live_report.found is True
+    assert live_report.headline is HeadlineState.DISABLED
+
+    # 2. Explicit frozenset() keeps it enabled while live settings loader is patched to raise
+    with patch(
+        "skill_lens.core.resolver._load_disabled_overrides",
+        side_effect=AssertionError("Live settings loader must not be called"),
+    ):
+        captured_report = resolve_skill(
+            "toggle-skill",
+            "claude",
+            tmp_path,
+            mock_home,
+            index=index,
+            registry=registry,
+            disabled_overrides=frozenset(),
+        )
+        assert captured_report.found is True
+        assert captured_report.headline is HeadlineState.ACTIVE
+
+
+def test_resolver_nonempty_captured_overrides_disables_directory_key(
+    mock_home: Path, tmp_path: Path
+) -> None:
+    """Nonempty override disables directory key; differing frontmatter name does not migrate key."""
+    skill_dir = mock_home / ".codex" / "skills" / "folder-key"
+    make_skill(skill_dir, name="frontmatter-name", description="Diff test")
+
+    registry = load_registry()
+    index = discover(mock_home, tmp_path, registry)
+
+    # 1. Explicit empty {} stays active
+    rep_empty = resolve_skill(
+        "frontmatter-name",
+        "codex",
+        tmp_path,
+        mock_home,
+        index=index,
+        registry=registry,
+        disabled_overrides=frozenset(),
+    )
+    assert rep_empty.headline is HeadlineState.ACTIVE
+
+    # 2. Overriding directory key "folder-key" disables the candidate
+    rep_disabled = resolve_skill(
+        "frontmatter-name",
+        "codex",
+        tmp_path,
+        mock_home,
+        index=index,
+        registry=registry,
+        disabled_overrides=frozenset({"folder-key"}),
+    )
+    assert rep_disabled.headline is HeadlineState.DISABLED
+
+    # 3. Overriding frontmatter name "frontmatter-name" does NOT disable directory key "folder-key"
+    rep_active = resolve_skill(
+        "frontmatter-name",
+        "codex",
+        tmp_path,
+        mock_home,
+        index=index,
+        registry=registry,
+        disabled_overrides=frozenset({"frontmatter-name"}),
+    )
+    assert rep_active.headline is HeadlineState.ACTIVE
+
+
+def test_resolver_missing_companion_inputs_raise_value_error(
+    mock_home: Path, tmp_path: Path
+) -> None:
+    """Supplied overrides require index/registry; frozen index requires registry/overrides."""
+    from unittest.mock import patch
+
+    from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
+
+    registry = load_registry()
+    index = discover(mock_home, tmp_path, registry)
+    frozen_idx = FrozenDiscoveryIndex(
+        home=str(mock_home), cwd=str(tmp_path), entries=(), unreadable_roots=()
+    )
+
+    with (
+        patch(
+            "skill_lens.core.resolver.load_registry",
+            side_effect=AssertionError("load_registry banned"),
+        ),
+        patch("skill_lens.core.resolver.discover", side_effect=AssertionError("discover banned")),
+        patch(
+            "skill_lens.core.resolver._load_disabled_overrides",
+            side_effect=AssertionError("_load_disabled_overrides banned"),
+        ),
+    ):
+        for overrides in (frozenset(), frozenset({"folder-key"})):
+            # Supplied overrides without index or registry
+            with pytest.raises(
+                ValueError, match=r"^index must be supplied when disabled_overrides is provided$"
+            ):
+                resolve_skill(
+                    "foo",
+                    "claude",
+                    tmp_path,
+                    mock_home,
+                    index=None,
+                    registry=registry,
+                    disabled_overrides=overrides,
+                )
+            with pytest.raises(
+                ValueError, match=r"^registry must be supplied when disabled_overrides is provided$"
+            ):
+                resolve_skill(
+                    "foo",
+                    "claude",
+                    tmp_path,
+                    mock_home,
+                    index=index,
+                    registry=None,
+                    disabled_overrides=overrides,
+                )
+
+        # Frozen index missing registry
+        with pytest.raises(
+            ValueError,
+            match=(
+                r"^(registry|disabled_overrides) must be supplied "
+                r"when index is a FrozenDiscoveryIndex$"
+            ),
+        ):
+            resolve_skill(
+                "foo",
+                "claude",
+                tmp_path,
+                mock_home,
+                index=frozen_idx,
+                registry=None,
+                disabled_overrides=None,
+            )
+
+        # Frozen index missing overrides
+        with pytest.raises(
+            ValueError,
+            match=r"^disabled_overrides must be supplied when index is a FrozenDiscoveryIndex$",
+        ):
+            resolve_skill(
+                "foo",
+                "claude",
+                tmp_path,
+                mock_home,
+                index=frozen_idx,
+                registry=registry,
+                disabled_overrides=None,
+            )
+
+
+def test_resolver_empty_supplied_registry_not_replaced_by_packaged(
+    mock_home: Path, tmp_path: Path
+) -> None:
+    """An empty supplied registry is not replaced by packaged definitions."""
+    from unittest.mock import patch
+
+    with (
+        patch(
+            "skill_lens.core.resolver.load_registry",
+            side_effect=AssertionError("load_registry banned"),
+        ),
+        pytest.raises(KeyError, match="unknown agent 'claude'"),
+    ):
+        resolve_skill("foo", "claude", tmp_path, mock_home, registry={})
+
+
+def test_resolver_frozen_discovery_index_parity_and_dumps(mock_home: Path, tmp_path: Path) -> None:
+    """Populated FrozenDiscoveryIndex gives report and dumps parity; honors supplied index."""
+    from unittest.mock import patch
+
+    from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
+    from skill_lens.models import dumps
+
+    skill_dir = mock_home / ".claude" / "skills" / "folder-key"
+    make_skill(skill_dir, name="folder-key", description="Parity test")
+    registry = load_registry()
+    index = discover(mock_home, tmp_path, registry)
+    frozen_idx = FrozenDiscoveryIndex(
+        home=index.home,
+        cwd=index.cwd,
+        entries=tuple(index.entries),
+        unreadable_roots=tuple(index.unreadable_roots),
+    )
+
+    # 1. Enabled setting parity: baseline with DEFAULT disabled_overrides omitted
+    # (before settings file exists)
+    live_enabled = resolve_skill(
+        "folder-key",
+        "claude",
+        tmp_path,
+        mock_home,
+        index=index,
+        registry=registry,
+    )
+    assert live_enabled.headline is HeadlineState.ACTIVE
+
+    # 2. Disabled setting parity: baseline after writing mock_home/.claude/settings.json
+    # with skillOverrides folder-key:false
+    (mock_home / ".claude").mkdir(parents=True, exist_ok=True)
+    settings_file = mock_home / ".claude" / "settings.json"
+    settings_file.write_text(
+        json.dumps({"skillOverrides": {"folder-key": False}}),
+        encoding="utf-8",
+    )
+    live_disabled = resolve_skill(
+        "folder-key",
+        "claude",
+        tmp_path,
+        mock_home,
+        index=index,
+        registry=registry,
+    )
+    assert live_disabled.headline is HeadlineState.DISABLED
+
+    # Both baselines obtained OUTSIDE raising-loader contexts.
+    # Compare full dict/dumps with frozen captured frozenset() / frozenset({"folder-key"})
+    # under raising readers.
+    with (
+        patch(
+            "skill_lens.core.resolver.load_registry",
+            side_effect=AssertionError("load_registry banned"),
+        ),
+        patch("skill_lens.core.resolver.discover", side_effect=AssertionError("discover banned")),
+        patch(
+            "skill_lens.core.resolver._load_disabled_overrides",
+            side_effect=AssertionError("_load_disabled_overrides banned"),
+        ),
+    ):
+        frozen_enabled = resolve_skill(
+            "folder-key",
+            "claude",
+            tmp_path,
+            mock_home,
+            index=frozen_idx,
+            registry=registry,
+            disabled_overrides=frozenset(),
+        )
+        assert frozen_enabled == live_enabled
+        assert frozen_enabled.to_dict() == live_enabled.to_dict()
+        assert dumps(frozen_enabled.to_dict()) == dumps(live_enabled.to_dict())
+
+        frozen_disabled = resolve_skill(
+            "folder-key",
+            "claude",
+            tmp_path,
+            mock_home,
+            index=frozen_idx,
+            registry=registry,
+            disabled_overrides=frozenset({"folder-key"}),
+        )
+        assert frozen_disabled == live_disabled
+        assert frozen_disabled.to_dict() == live_disabled.to_dict()
+        assert dumps(frozen_disabled.to_dict()) == dumps(live_disabled.to_dict())
+
+    # 3. Cline B6b: supplied empty index against populated disk never discovers
+    empty_frozen = FrozenDiscoveryIndex(
+        home=str(mock_home), cwd=str(tmp_path), entries=(), unreadable_roots=()
+    )
+    with patch("skill_lens.core.resolver.discover", side_effect=AssertionError("discover banned")):
+        rep_empty = resolve_skill(
+            "folder-key",
+            "claude",
+            tmp_path,
+            mock_home,
+            index=empty_frozen,
+            registry=registry,
+            disabled_overrides=frozenset(),
+        )
+        assert rep_empty.found is False
+
+
+def test_resolver_direct_builder_preserves_explicit_cwd(mock_home: Path, tmp_path: Path) -> None:
+    """Preserve explicit cwd argument for direct-builder parity."""
+    registry = load_registry()
+    index = discover(mock_home, tmp_path, registry)
+    custom_cwd = tmp_path / "custom_cwd"
+    custom_cwd.mkdir()
+
+    report = resolve_skill(
+        "nonexistent",
+        "claude",
+        cwd=custom_cwd,
+        home=mock_home,
+        index=index,
+        registry=registry,
+        disabled_overrides=frozenset(),
+    )
+    assert report.cwd == str(custom_cwd)

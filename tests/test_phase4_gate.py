@@ -197,3 +197,16 @@ def test_live_smoke_over_json_stays_machine_readable(bare_home: Path) -> None:
     assert text == json.dumps(json.loads(text), sort_keys=True, indent=2)
     compare = build_compare_report("claude", "codex", paths.home(), bare_home)
     assert CompareReport.from_dict(compare.to_dict()) == compare
+
+
+def test_doctor_wrapper_integration_parity(bare_home: Path) -> None:
+    """Doctor wrapper with supplied live index/registry matches default run_doctor."""
+    from skill_lens.registry.loader import load_registry
+
+    build_acceptance_farm(bare_home)
+    rep_live = run_doctor(cwd=bare_home)
+    registry = load_registry()
+    index = live_discovery(bare_home, registry)
+    rep_supplied = run_doctor(cwd=bare_home, index=index, registry=registry)
+    assert rep_supplied.to_dict() == rep_live.to_dict()
+    assert dumps(rep_supplied.to_dict()) == dumps(rep_live.to_dict())
