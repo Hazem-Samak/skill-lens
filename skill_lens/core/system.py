@@ -15,6 +15,7 @@ Read-only is absolute here: every call is ``iterdir`` / ``read_text`` /
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -83,6 +84,8 @@ def read_json_guarded(path: Path) -> tuple[Any | None, str | None]:
 def live_discovery(
     cwd: Path | None = None,
     registry: dict[str, AgentDefinition] | None = None,
+    *,
+    cancelled: Callable[[], bool] | None = None,
 ) -> DiscoveryIndex:
     """Run a full discovery pass against the live (or sandboxed) environment.
 
@@ -95,4 +98,4 @@ def live_discovery(
     """
     home = paths.home()
     working_dir = cwd if cwd is not None else paths.terminal_cwd()
-    return discover(home, working_dir, registry)
+    return discover(home, working_dir, registry, cancelled=cancelled)

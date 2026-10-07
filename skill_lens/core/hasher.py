@@ -14,9 +14,11 @@ from __future__ import annotations
 
 import hashlib
 import os
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+from skill_lens.core.cancellation import check_cancelled
 
 if TYPE_CHECKING:
     from hashlib import _Hash
@@ -35,16 +37,19 @@ def _is_ignored(relative: Path) -> bool:
     return name in _IGNORED_FILES or name.startswith("._")
 
 
-def iter_files(root: Path) -> list[Path]:
+def iter_files(root: Path, *, cancelled: Callable[[], bool] | None = None) -> list[Path]:
     """Return the hashable files under ``root`` in sorted, stable order.
 
     Only relative paths are returned, sorted as POSIX strings so the same tree
     fingerprints identically on macOS and Linux.
     """
+    check_cancelled(cancelled)
     collected: list[Path] = []
     for dirpath, dirnames, filenames in os.walk(root):
+        check_cancelled(cancelled)
         dirnames[:] = sorted(d for d in dirnames if d not in _IGNORED_DIRS)
         for filename in sorted(filenames):
+            check_cancelled(cancelled)
             candidate = Path(dirpath) / filename
             relative = candidate.relative_to(root)
             if not _is_ignored(relative):
@@ -53,11 +58,13 @@ def iter_files(root: Path) -> list[Path]:
     return collected
 
 
-def _update_text(hasher: _Hash, path: Path) -> None:
+def _update_text(hasher: _Hash, path: Path, *, cancelled: Callable[[], bool] | None = None) -> None:
     """Stream ``path`` as UTF-8 text, normalising ``\\r\\n`` across chunks."""
+    check_cancelled(cancelled)
     pending_cr = False
     with path.open("r", encoding="utf-8", newline="") as handle:
         while True:
+            check_cancelled(cancelled)
             chunk = handle.read(_CHUNK_SIZE)
             if not chunk:
                 break
@@ -72,27 +79,32 @@ def _update_text(hasher: _Hash, path: Path) -> None:
             hasher.update(b"\r")
 
 
-def _update_binary(hasher: _Hash, path: Path) -> None:
+def _update_binary(
+    hasher: _Hash, path: Path, *, cancelled: Callable[[], bool] | None = None
+) -> None:
+    check_cancelled(cancelled)
     with path.open("rb") as handle:
         while True:
+            check_cancelled(cancelled)
             chunk = handle.read(_CHUNK_SIZE)
             if not chunk:
                 break
             hasher.update(chunk)
 
 
-def hash_file(path: Path) -> str:
+def hash_file(path: Path, *, cancelled: Callable[[], bool] | None = None) -> str:
     """Fingerprint a single file, choosing text or binary handling.
 
     UTF-8 decodability decides: decodable files are newline-normalised as text;
     anything else is hashed as raw bytes.
     """
+    check_cancelled(cancelled)
     text_hasher = hashlib.sha256()
     try:
-        _update_text(text_hasher, path)
+        _update_text(text_hasher, path, cancelled=cancelled)
     except UnicodeDecodeError:
         binary_hasher = hashlib.sha256()
-        _update_binary(binary_hasher, path)
+        _update_binary(binary_hasher, path, cancelled=cancelled)
         return HASH_PREFIX + binary_hasher.hexdigest()
     return HASH_PREFIX + text_hasher.hexdigest()
 
@@ -102,25 +114,28 @@ def format_directory_entry(relative_posix: str, file_hash: str) -> bytes:
     return f"{relative_posix}\0{file_hash}\n".encode()
 
 
-def hash_directory(root: Path) -> str:
+def hash_directory(root: Path, *, cancelled: Callable[[], bool] | None = None) -> str:
     """Fingerprint an entire skill directory.
 
     Combines sorted relative paths with each file's own content hash, so a
     rename, an added file or an edited file all change the fingerprint.
     """
+    check_cancelled(cancelled)
     hasher = hashlib.sha256()
-    for relative in iter_files(root):
+    for relative in iter_files(root, cancelled=cancelled):
+        check_cancelled(cancelled)
         posix = relative.as_posix()
-        file_hash = hash_file(root / relative)
+        file_hash = hash_file(root / relative, cancelled=cancelled)
         hasher.update(format_directory_entry(posix, file_hash))
     return HASH_PREFIX + hasher.hexdigest()
 
 
-def hash_path(path: Path) -> str:
+def hash_path(path: Path, *, cancelled: Callable[[], bool] | None = None) -> str:
     """Fingerprint a file or a directory, dispatching on the real type."""
+    check_cancelled(cancelled)
     if path.is_dir():
-        return hash_directory(path)
-    return hash_file(path)
+        return hash_directory(path, cancelled=cancelled)
+    return hash_file(path, cancelled=cancelled)
 
 
 def normalized_text(data: bytes) -> str | None:

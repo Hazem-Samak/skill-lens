@@ -500,3 +500,231 @@ plan-only provenance commit. Agy builds that frozen contract; the next HEAD
 deliberately differs solely by the provenance line. All C3 product/test edits,
 actual acceptance gates, fresh independent implementation reviews and final
 commit are still required. Nothing is pushed or published.
+
+## C3 implementation acceptance record
+
+The coordinator accepts C3 after the initial implementation, two consolidated
+correction rounds, independent verification and the selected critics' final
+passes. This record is appended under the documentation permission at :128;
+the agreed implementation contract and original freeze reference above are
+unchanged. Implementation checkout baseline was
+`cc48438c7110431a8b0774c8937d07a3d68db2a4`, the authorized provenance-only
+successor to the frozen plan. No push, release or publication is authorized.
+
+### What shipped and what did not
+
+Agy wrote the nine permitted product/test files. `core/cancellation.py` supplies
+the shared cancellation exception/check; discovery, its private listing/building
+helpers, the live adapter and streaming hasher forward the optional predicate.
+Default CLI calls keep their existing behavior. `core/snapshot.py` captures
+complete canonical file bytes, original parsing identity, settings/lock read
+outcomes, per-agent overrides, finished Scan/Doctor reports and path/link
+decisions. It checks them against a second discovery/report/input pass before
+constructing an owned session snapshot. A cancelled or inconsistent capture
+returns no snapshot. Why, Diff, Compare and path/location helpers use captured
+inputs only, including their error paths.
+
+No UI, controller, presentation, C4/C5, packaging, registry or other engine work
+was added. Public JSON, existing CLI output and all pinned fixtures remain
+unchanged. The only coordinator checkout edit is this appended evidence record;
+other documentation remains outside this assignment's scope.
+
+### Actual verification, not the implementer's self-report
+
+The coordinator read the complete new code and all changed tests, checked live
+test fixture signatures for `mock_home`/sandbox isolation, and independently ran
+the final checkout gates:
+
+| Gate | Actual result |
+| --- | --- |
+| `.venv/bin/pytest --cov=skill_lens` | 542 passed, 1 conditional filesystem skip; 543 collected; 94.19% coverage against the 90% gate |
+| `.venv/bin/mypy` | No issues in 28 source files |
+| `.venv/bin/ruff check .` | All checks passed |
+| `.venv/bin/ruff format --check .` | 78 files already formatted |
+| `git diff --check` | Clean |
+
+The skipped test is `test_case_sensitive_dual_case_preference`: this macOS
+volume cannot hold two distinct `SKILL.md`/`skill.md` files in the same directory.
+Its corrected branch selects the actual directory identity `dual_case_skill`,
+asserts frontmatter name `dual` separately and verifies distinct document
+contents before uppercase preference. The physical two-file branch was not
+exercised here; Linux execution is not claimed. Lowercase-only selection and
+the actual suffixless standalone `parse=None` boundary did run.
+
+A separate coordinator-written, actually executed scratch-only exercise used
+the existing live builders for independent expected outputs before capture.
+It verified 7 canonical copies, 14 complete files and 1,345,238 retained raw
+bytes; all 10 registry agents, 70 complete Why reports, 7 Diff reports and 90
+ordered Compare reports; exactly 15 displayed paths and 11 ordered true
+location pairs. It then changed/deleted skills, settings, lock bytes and a link
+target before first report-service calls. All original full JSON remained equal
+under bans on discovery, configuration, registry, path, file-open and OS
+readers. It mutated retained original index/registry/nested metadata and proved
+owned snapshot insulation. A new generation changed inventory, disabled
+resolution, Diff and Doctor while the old snapshot stayed unchanged. Cancelled
+and deliberately inconsistent replacements never invoked publication. Whole
+synthetic-home bytes, modes, sizes and link targets were unchanged by capture
+and navigation. All probes used explicit scratch homes, not installed skills.
+
+Repository Compare parity selects each `i+1` agent combination; the independent
+exercise additionally checks both orders. Do not call the repository loop 90
+ordered tests. Location tables separately assert both true link/target orders.
+
+### Review provenance and decisions
+
+Orca Run: `run_7ff09c704694`. Agy's effective model was independently observed
+as `gemini-3.8-flash-high` in launch receipts and its own high-effort banner.
+Permissions were preserved; no model substitution or global settings edits.
+Initial implementer Task/Dispatch: `task_3f0ed4e831a7` / `ctx_ff8dc32935a5`.
+Correction round 1: `task_a781c812f431` / `ctx_43cc40fb4ac9`.
+Correction round 2: `task_0fc79bea4577` / `ctx_02ce66a70a60`.
+
+Initial fresh-context implementation reviews returned changes_required on both
+axes. OpenCode: `task_c57f865f0e6c` / `ctx_1d51d5aac424`, full report
+`msg_4f59b103ad7e`. MCode: `task_bdcf96c935e6` / `ctx_81dd6be82fa9`, full
+report `msg_6d08481821b5`. Round-1 targeted rechecks still found narrow proof
+gaps: OpenCode `ctx_fe4dd16ef3f7`, report `msg_0a675af0a763`; MCode
+`ctx_ff9f57c5835d`, report `msg_6b4421563119`. Their broad closure claims
+were qualified by the coordinator's actual phase counters, malformed hits
+payload and benign-open experiment rather than accepted blindly.
+
+Final closure used fresh contexts after the prior custom terminals were
+positively observed exited:
+
+- OpenCode `opencode/space-bunny-free`, variant `max`, Plan mode:
+  `task_2061ad9b58b8` / `ctx_39e86adb4dce`; final pass and completion
+  `msg_24857ea59e31`. It reproduced all four gates and 14 targeted mutations;
+  an early run using an interpreter without pytest was discarded, not counted.
+- MCode `minimax/MiniMax-M3.1-Flash-Preview`, effort `xhigh`:
+  `task_e53f332fd2f7` / `ctx_6fca771b3cce`; full pass report
+  `msg_2491d4ff1b53`, completion `msg_2d5b66a4db5c`. It inspected all 114
+  final mutated/restored logs and independently reproduced six targeted kills.
+
+The coordinator reproduced confirmed findings before dispatching corrections.
+All accepted behavior/proof rows are closed. Style-only duplicate literals,
+singleton canonical-set cleanup and unrelated discovery/Phase4 changes were
+deferred as unneeded scope, not hidden remaining behavior defects.
+
+One original MCode claim was rejected: the recorded M03a mutation removed the
+whole source `to_dict`/body/frontmatter block, not frontmatter alone. That whole
+removal genuinely failed. Separate raw metadata clauses still needed tests:
+YAML dates normalize to strings in JSON, so equal `to_dict()` can conceal
+unequal raw metadata. Both source and validation clauses now have independently
+killed date-coercion cases. Existing-tuple-to-tuple conversion alone is narrowly
+equivalent; removing `MappingProxyType` is NOT equivalent and read-only tests
+protect it. These qualifications replace the worker report's ambiguous wording.
+
+### Mistakes reproduced and corrected
+
+- The initial settings fixture wrote ignored `disabled_skills`; it now uses
+  real `skillOverrides` values that are `False`, and asserts actual DISABLED
+  state, complete captured inputs and every registry agent's overrides entry.
+- The initial ownership assertion mutated the published object itself. Tests
+  now mutate retained original index lists, registry dictionaries, nested
+  parsed metadata and report dictionaries and assert snapshot insulation.
+- Iterating only returned files could miss an omitted asset. Direct assertions
+  now compare exact independently collected keys, sorted filenames, complete
+  raw bytes and hashes BEFORE report parity can abort. Differing copies carry
+  different nested/binary assets; single-copy large data is asserted directly.
+- A separately discovered canonical document hid the initial suffixless
+  `parse=None` seam through merging. Its target is now outside scanned roots
+  but inside `mock_home`; absence, file flag, hash and bytes are explicit.
+- Cancellation invocation counts were mistaken for reached file chunks.
+  Actual read wrappers now flip after the first chunk and prevent the second.
+  Final cancellation flips AFTER the last real config reread, with input count
+  derived from the registry instead of magic `4`.
+- A missing tuple comma made a hits mutation fail through an unrelated scanner
+  TypeError. The payload now preserves a valid tuple of real hits; the omitted
+  guard fails through the intended missing SnapshotChanged assertion.
+- Corrupting a published standalone fingerprint did not test the earlier
+  discovery/capture hash guard. A real parse-absent standalone temporarily
+  changes bytes and restores them before validation; omitting that first hash
+  check now independently permits the forbidden publication and fails the test.
+- Path-method sentinels missed a benign built-in open returning identical
+  output. Narrow navigation bans now include builtins/io/raw OS opens and
+  readers; the matching-output read is caught by the sentinel itself.
+- Missing/unreadable/empty input outcomes and empty inventory are now exact,
+  unconditional assertions. Targeted permission faults remain portable even
+  under elevated test users; no real-home execution or silent passing branch.
+- The skipped dual-case branch selected a frontmatter name rather than its
+  directory identity. The selector and separate identity assertions are fixed;
+  the unexercised physical-filesystem limitation is conceded above.
+
+### Mutation accounting verified by the coordinator
+
+The coordinator actually replayed all 57 final substitutions in a DIFFERENT
+scratch checkout, then read every failure reason and restored result. All 57
+mutated runs failed and all 57 restored runs passed, with zero payload-TypeError,
+setup, syntax or collection failures counted. Most fail through an intended
+assertion or missing expected exception. M04 entry-count and unreadable-count
+guard omissions instead expose `zip(strict=True)` ValueError: these are
+retry-exception-contract failures on legal changing inputs, not fabricated
+payload crashes or proof of a successful partial snapshot.
+
+| Frozen group | Replayed substitutions | Protecting selectors / real outcome |
+| --- | --- | --- |
+| M01 | 3 | Initial supplied-home/order and late effective-home guards; forbidden-reader sentinel or missing SnapshotChanged |
+| M02 | 2 | Directory aggregate and actual standalone capture/discovery hash; missing SnapshotChanged |
+| M03 | 8 | Source and validation dictionaries/body/raw date metadata, parse presence and source identity; missing SnapshotChanged |
+| M04 | 12 | Entry count, paths/names/file/link flags/canonical/hash/hits/variants, unreadable count and index home/cwd; intended rejection contract |
+| M05 | 2 | Rebuilt Scan and Doctor comparisons; missing SnapshotChanged |
+| M06 | 3 | Display/location revalidation and reverse-pair retention; missing rejection or direct true-pair assertion |
+| M07 | 3 | Raw input revalidation, exact missing/unreadable and readable empty; direct outcome/retry assertion |
+| M08 | 2 | Valid-shape zero binary bytes and omitted nested filename; DIRECT retained-file assertion before Diff |
+| M09 | 4 | Original nested frontmatter/report ownership and file/input read-only maps; direct isolation/TypeError assertion |
+| M10 | 4 | Agent-specific Why identity, unchanged Diff grouping, overrides and same-agent error; full report/error assertions |
+| M11 | 5 | Home/registry/display/location fallbacks and matching-output real built-in open; forbidden-reader sentinel |
+| M12 | 9 | Real text/binary/config/asset chunks, recursive walk, discovery hash exception separation, samefile candidates, final publication and adapter forwarding; reached-phase/cancellation assertions |
+
+Most table rows use `test_change_during_capture_is_rejected`; retained-data,
+identity and pairing rows use `test_snapshot_reports_match_live_reports`;
+ownership uses `test_snapshot_owns_its_containers`; navigation uses
+`test_navigation_has_no_filesystem_fallback` and
+`test_navigation_intercepts_benign_builtin_open`; exact input outcomes use
+`test_config_inputs_exact_outcomes_and_empty_inventory`; cancellation uses
+`test_cancelled_capture_does_not_publish`, the text/binary hasher tests,
+`test_discover_cancelled_during_recursive_listing`,
+`test_build_entry_cancellation_separation` and `test_live_discovery_cancelled`.
+The three M01 selectors are `test_initial_home_mismatch_rejected` and
+`test_effective_home_drift_rejected_before_publication`.
+
+Round-1 forwarding/proxy targets also supplied real earlier proof; their
+product paths did not change in round 2. No claim that 57 chosen substitutions
+exhaust every imaginable defect is made. Required guards remain in the source;
+the table counts actual applied mutations, not 57 named specification groups.
+
+Worker snippets frequently quoted pytest source context rather than the actual
+E-line, and one footer still said 44. The coordinator preserved those raw
+reports and wrote corrected, exact-selector/full-failure receipts instead of
+overwriting history. Approved evidence:
+`coordinator-final-adjudicated-mutation-receipts.json`, the two
+`coordinator-round2-semantic-batch*.json` files, complete logs under
+`coordinator-round2-replay/receipts/`, and
+`coordinator-round2-gates-and-full-probe.json`, all under the named scratch.
+Those paths are supplementary local receipts, not a substitute for this
+permanent acceptance record or the committed protecting tests.
+
+### Accepted source identity and cleanup
+
+SHA-256 of the accepted product/test files (before this documentation append):
+
+| File | SHA-256 |
+| --- | --- |
+| `core/cancellation.py` | `a57076cdca9e5925c46c79c2a3d552ac375f75066265e346e7995d779890a0ca` |
+| `core/snapshot.py` | `86d50b2b5e8b6dccc18c7e8920decd9aa6b789ba07906231858d92be181a3fe8` |
+| `core/discovery.py` | `d50b4602dfa985526692be3de67d59dcd6e9070fa12f1cea60745d5761bb406d` |
+| `core/hasher.py` | `677741ee6c7938e8923779e46a141590aa495733f8499b38828890e69d6e6f62` |
+| `core/system.py` | `adafb6258f7e60df5cbf191bb03bb22a49dbb38374e48df06c45294b64bbec28` |
+| `tests/test_session_snapshot.py` | `e15ad0c96eb3a4399fdf6b05086ef82dcbab409117fe5ac03ce05ae7127f4903` |
+| `tests/test_discovery.py` | `a90edcca975fd7dc277eb2cfe930a89849e609ecc2339a880e5df59c3154fd7e` |
+| `tests/test_hasher.py` | `e13165b29f0cd782c984695133e44866b98edad95bb848949c775922717a19dd` |
+| `tests/test_doctor.py` | `c53ee08b36db9ade8c7e26b7ad586bc1335e616844627a68a3b7a1c78eb01262` |
+
+All 128 pre-final-review checkout fingerprints matched after critic work and
+coordinator mutation replay. All three Agy worker resources were released,
+closing their owned terminals. Final custom critic Dispatches were settled and
+released; their coordinator-created, proven-idle terminals were then closed
+individually. Prior protected/user-owned surfaces were not force-closed.
+The final Run query returned no reclaimable worker resources. No active
+implementation/review work remains. Commit only these nine files and this
+authorized appended record, after the final four-gate rerun; no push or publish.

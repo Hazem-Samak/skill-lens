@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
+import skill_lens.core.discovery as discovery_module
+from skill_lens.core.cancellation import CaptureCancelled
 from skill_lens.core.discovery import (
     discover,
     find_walk_boundary,
@@ -146,3 +150,187 @@ def test_find_walk_boundary_walks_up(mock_home: Path) -> None:
     (project / ".git").mkdir(parents=True)
     deep.mkdir(parents=True)
     assert find_walk_boundary(deep, "git_root") == project
+
+
+# --- Cancellation -----------------------------------------------------------
+
+
+def test_discover_cancelled_immediately(mock_home: Path) -> None:
+    build_scenario("claude_personal_beats_project", mock_home)
+    with pytest.raises(CaptureCancelled):
+        discover(mock_home, mock_home, cancelled=lambda: True)
+
+
+def test_discover_cancelled_between_roots(mock_home: Path) -> None:
+    build_scenario("claude_personal_beats_project", mock_home)
+    visited_roots: list[str] = []
+
+    orig_dirs_for_root = discovery_module._directories_for_root
+
+    def tracking_dirs_for_root(*args: object, **kwargs: object) -> object:
+        root = args[2]
+        visited_roots.append(root.id)
+        return orig_dirs_for_root(*args, **kwargs)  # type: ignore[arg-type]
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(discovery_module, "_directories_for_root", tracking_dirs_for_root)
+
+        def cancel_after_first_root() -> bool:
+            return len(visited_roots) >= 1
+
+        with pytest.raises(CaptureCancelled):
+            discover(mock_home, mock_home, cancelled=cancel_after_first_root)
+
+    assert len(visited_roots) == 1, "Expected cancellation immediately after first root"
+
+
+def test_discover_cancelled_during_recursive_listing(mock_home: Path) -> None:
+    rec_root = mock_home / "plugins"
+    (rec_root / "sub1" / "sub2").mkdir(parents=True)
+
+    walk_steps = 0
+
+    def cancel_on_second_walk_step() -> bool:
+        nonlocal walk_steps
+        walk_steps += 1
+        return walk_steps >= 2
+
+    with pytest.raises(CaptureCancelled):
+        discovery_module._list_recursive_entries(rec_root, cancelled=cancel_on_second_walk_step)
+
+    assert walk_steps >= 2, "Expected walk loop to be entered before cancellation"
+
+    # Also prove discover() forwards cancelled into _list_recursive_entries
+    codex_plugins = mock_home / ".codex" / ".tmp" / "plugins"
+    (codex_plugins / "sub1" / "skills" / "nested_skill").mkdir(parents=True)
+
+    rec_calls: list[object] = []
+    orig_list_rec = discovery_module._list_recursive_entries
+
+    def tracking_list_rec(base: Path, *, cancelled: object = None) -> list[tuple[Path, bool]]:
+        assert cancelled is not None, "_list_recursive_entries must receive forwarded cancelled"
+        rec_calls.append(cancelled)
+        return orig_list_rec(base, cancelled=cancelled)  # type: ignore[arg-type]
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(discovery_module, "_list_recursive_entries", tracking_list_rec)
+
+        def cancel_in_rec() -> bool:
+            return len(rec_calls) >= 1
+
+        with pytest.raises(CaptureCancelled):
+            discover(mock_home, mock_home, cancelled=cancel_in_rec)
+
+    assert len(rec_calls) >= 1, "Expected _list_recursive_entries to be called during discover"
+
+
+def test_discover_cancelled_during_entry_listing(mock_home: Path) -> None:
+    build_scenario("claude_personal_beats_project", mock_home)
+    listed_dirs: list[Path] = []
+
+    orig_list_entries = discovery_module._list_entries
+
+    def tracking_list_entries(base: Path, *, cancelled: object = None) -> list[tuple[Path, bool]]:
+        assert cancelled is not None, "_list_entries must receive forwarded cancelled"
+        listed_dirs.append(base)
+        return orig_list_entries(base, cancelled=cancelled)  # type: ignore[arg-type]
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(discovery_module, "_list_entries", tracking_list_entries)
+
+        def cancel_in_list_entries() -> bool:
+            return len(listed_dirs) >= 1
+
+        with pytest.raises(CaptureCancelled):
+            discover(mock_home, mock_home, cancelled=cancel_in_list_entries)
+
+    assert len(listed_dirs) >= 1, "Expected entry listing to be entered before cancellation"
+
+
+def test_discover_cancelled_during_hashing(mock_home: Path) -> None:
+    build_scenario("symlink_farm_multi_agent", mock_home)
+    parsed_skills: list[str] = []
+    hash_calls: list[str] = []
+
+    orig_parse_skill = discovery_module.parse_skill
+    orig_hash_path = discovery_module.hash_path
+
+    def tracking_parse_skill(p: Path) -> object:
+        parsed_skills.append(p.name)
+        return orig_parse_skill(p)
+
+    def tracking_hash_path(p: Path, *, cancelled: object = None) -> str:
+        assert cancelled is not None, "hash_path must receive forwarded cancelled predicate"
+        hash_calls.append(p.name)
+        return orig_hash_path(p, cancelled=cancelled)  # type: ignore[arg-type]
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(discovery_module, "parse_skill", tracking_parse_skill)
+        mp.setattr(discovery_module, "hash_path", tracking_hash_path)
+
+        def cancel_on_hash() -> bool:
+            # Let parsing happen, then cancel when hashing starts
+            return len(hash_calls) >= 1
+
+        with pytest.raises(CaptureCancelled):
+            discover(mock_home, mock_home, cancelled=cancel_on_hash)
+
+    assert len(parsed_skills) >= 1, "Expected parse_skill to succeed before hashing"
+    assert len(hash_calls) == 1, "Expected hash_path to be entered before cancellation"
+
+
+def test_build_entry_cancellation_separation(mock_home: Path) -> None:
+    """_build_entry lets CaptureCancelled from hash_path propagate.
+
+    It must not catch it as OSError or swallow into content_hash=None.
+    """
+    from skill_lens.core import hasher as hasher_module
+    from skill_lens.core.discovery import RootHit, _build_entry
+    from tests.fixtures.builders import make_skill
+
+    skill_dir = mock_home / ".claude" / "skills" / "sep_skill"
+    make_skill(skill_dir, "sep_skill", "Test cancellation separation")
+
+    hit = RootHit(
+        agent_id="claude",
+        root_id="claude_user",
+        rank=100,
+        rule_id="claude_user_skills",
+        evidence="documented",
+        scope="user",
+        nested=False,
+        file_rule_id=None,
+        nested_rule_id=None,
+        specificity=3,
+        entrypoint_path=str(skill_dir),
+    )
+
+    hashing_entered = False
+    orig_hash_file = hasher_module.hash_file
+
+    def tracking_hash_file(p: Path, *, cancelled: object = None) -> str:
+        nonlocal hashing_entered
+        hashing_entered = True
+        return orig_hash_file(p, cancelled=cancelled)  # type: ignore[arg-type]
+
+    def cancel_during_hash() -> bool:
+        return hashing_entered
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(hasher_module, "hash_file", tracking_hash_file)
+        # Direct private helper check: must propagate CaptureCancelled rather than catching
+        # and returning an entry with content_hash=None
+        with pytest.raises(CaptureCancelled):
+            _build_entry(skill_dir, False, hit, cancelled=cancel_during_hash)
+
+    assert hashing_entered, "Expected hasher to be entered before cancellation"
+
+    # Integration check: single-entry discover() also propagates CaptureCancelled rather than
+    # returning an index with content_hash=None
+    hashing_entered = False
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(hasher_module, "hash_file", tracking_hash_file)
+        with pytest.raises(CaptureCancelled):
+            discover(mock_home, mock_home, cancelled=cancel_during_hash)
+
+    assert hashing_entered

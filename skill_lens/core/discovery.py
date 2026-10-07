@@ -12,10 +12,11 @@ agent's search rules.
 from __future__ import annotations
 
 import os
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from skill_lens.core.cancellation import check_cancelled
 from skill_lens.core.hasher import hash_path
 from skill_lens.core.parser import canonicalize, find_skill_document, parse_skill
 from skill_lens.models.enums import ParseStatus, Scope
@@ -356,13 +357,16 @@ def _is_symlinked_markdown(path: Path) -> bool:
         return False
 
 
-def _list_entries(base: Path) -> list[tuple[Path, bool]]:
+def _list_entries(
+    base: Path, *, cancelled: Callable[[], bool] | None = None
+) -> list[tuple[Path, bool]]:
     """List skill entrypoints directly under ``base`` as ``(path, is_file)``.
 
     A ``.system`` container is **not** descended here: bundled system skills are
     owned by a dedicated root whose path ends in ``.system`` (see codex.toml),
     so attributing them here too would give them the wrong scope and rank.
     """
+    check_cancelled(cancelled)
     try:
         children = sorted(base.iterdir(), key=lambda p: p.name)
     except OSError:
@@ -370,6 +374,7 @@ def _list_entries(base: Path) -> list[tuple[Path, bool]]:
 
     results: list[tuple[Path, bool]] = []
     for child in children:
+        check_cancelled(cancelled)
         if child.is_symlink():
             results.append((child, _is_symlinked_markdown(child)))
         elif child.is_dir():
@@ -380,18 +385,22 @@ def _list_entries(base: Path) -> list[tuple[Path, bool]]:
     return results
 
 
-def _list_recursive_entries(base: Path) -> list[tuple[Path, bool]]:
+def _list_recursive_entries(
+    base: Path, *, cancelled: Callable[[], bool] | None = None
+) -> list[tuple[Path, bool]]:
     """Find ``skills`` directories under ``base`` up to :data:`MAX_WALK_DEPTH`."""
+    check_cancelled(cancelled)
     found: list[tuple[Path, bool]] = []
     base_depth = len(base.parts)
     for dirpath, dirnames, _filenames in os.walk(base):
+        check_cancelled(cancelled)
         current = Path(dirpath)
         if len(current.parts) - base_depth >= MAX_WALK_DEPTH:
             dirnames[:] = []
             continue
         dirnames[:] = [d for d in dirnames if d != ".git"]
         if current.name == "skills":
-            found.extend(_list_entries(current))
+            found.extend(_list_entries(current, cancelled=cancelled))
             dirnames[:] = []
     return found
 
@@ -403,17 +412,23 @@ def discover(
     home: Path,
     cwd: Path,
     registry: dict[str, AgentDefinition] | None = None,
+    *,
+    cancelled: Callable[[], bool] | None = None,
 ) -> DiscoveryIndex:
     """Scan every agent's roots and return a tagged :class:`DiscoveryIndex`."""
+    check_cancelled(cancelled)
     agents = registry if registry is not None else load_registry()
     cwd = normalize_cwd(cwd, home)
     index = DiscoveryIndex(home=str(home), cwd=str(cwd))
 
     seen: set[tuple[str, str, str]] = set()
     for agent in agents.values():
+        check_cancelled(cancelled)
         boundary = find_walk_boundary(cwd, agent.walk_boundary)
         for root in agent.roots:
+            check_cancelled(cancelled)
             for base, nested in _directories_for_root(home, cwd, root, boundary):
+                check_cancelled(cancelled)
                 try:
                     if not base.exists() and not base.is_symlink():
                         continue
@@ -435,8 +450,13 @@ def discover(
                     # whole walk (Python 3.11-3.13 re-raise PermissionError from
                     # ``exists``/``is_dir``; 3.14 swallows it).
                     continue
-                listing = _list_recursive_entries(base) if root.recursive else _list_entries(base)
+                listing = (
+                    _list_recursive_entries(base, cancelled=cancelled)
+                    if root.recursive
+                    else _list_entries(base, cancelled=cancelled)
+                )
                 for entrypoint, is_file in listing:
+                    check_cancelled(cancelled)
                     key = (agent.id, root.id, str(entrypoint))
                     if key in seen:
                         continue
@@ -454,7 +474,9 @@ def discover(
                         specificity=len(Path(root.path).parts),
                         entrypoint_path=str(entrypoint),
                     )
-                    index.entries.append(_build_entry(entrypoint, is_file, hit))
+                    index.entries.append(
+                        _build_entry(entrypoint, is_file, hit, cancelled=cancelled)
+                    )
 
     index.entries = _merge_entries(index.entries)
     return index
@@ -468,14 +490,23 @@ def _unreadable(path: Path) -> bool:
     return False
 
 
-def _build_entry(entrypoint: Path, is_file: bool, hit: RootHit) -> DiscoveredEntry:
+def _build_entry(
+    entrypoint: Path,
+    is_file: bool,
+    hit: RootHit,
+    *,
+    cancelled: Callable[[], bool] | None = None,
+) -> DiscoveredEntry:
+    check_cancelled(cancelled)
     canonical = canonicalize(entrypoint)
     parse: ParseResult | None = None
     content_hash: str | None = None
     if canonical.status is CanonicalStatus.OK:
+        check_cancelled(cancelled)
         parse = parse_skill(entrypoint)
+        check_cancelled(cancelled)
         try:
-            content_hash = hash_path(entrypoint)
+            content_hash = hash_path(entrypoint, cancelled=cancelled)
         except OSError:
             content_hash = None
 

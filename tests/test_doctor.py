@@ -15,8 +15,9 @@ import os
 from pathlib import Path
 
 import skill_lens.core.doctor as doctor_module
+from skill_lens.core.cancellation import CaptureCancelled
 from skill_lens.core.doctor import CODEX_CONTEXT_BUDGET_CHARS, build_doctor_report
-from skill_lens.core.system import ERR_NOT_JSON, read_json_guarded
+from skill_lens.core.system import ERR_NOT_JSON, live_discovery, read_json_guarded
 from skill_lens.models import dumps
 from skill_lens.models.doctor import DoctorFinding, DoctorReport
 from skill_lens.models.enums import Evidence, Severity
@@ -495,3 +496,11 @@ def test_doctor_evidence_definitions_bypass_list_agents() -> None:
         findings_list = _registry_evidence_findings([guessed])
         assert len(findings_list) == 1
         assert findings_list[0].code == "registry_uncited_agent"
+
+
+def test_live_discovery_cancelled(mock_home: Path) -> None:
+    """live_discovery forwards cancelled predicate and raises CaptureCancelled."""
+    import pytest
+
+    with pytest.raises(CaptureCancelled):
+        live_discovery(cwd=mock_home, cancelled=lambda: True)
