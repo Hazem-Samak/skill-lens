@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: Hazem approved the reviewed findings and requested migration on 2026-10-10. Sol 6.1 coordinates; Antigravity Gemini 3.8 Flash High is the sole implementer; Pi, Grok and OpenCode are the native planning/review pool with models chosen per session. MCode MiniMax M3.1 Flash is a future ACP addition, not part of this migration. No push, release, provider reconfiguration or C4 work is authorized.
-Reference: Freeze commit hash will be recorded in a following plan-only provenance commit.
+Reference: `bd3b1e2fc6ef2a250506bb3ff93a65c3512ad991` (frozen plan; this reference is recorded in a following plan-only provenance commit).
 Source baseline: `5c03d11` on `main`, clean working tree.
 
 ## Outcome
