@@ -245,6 +245,44 @@ text corrections is sufficient before freeze; no third broad planning wave is
 required. Existing accepted decisions retain fixed roles, archive preservation,
 future-only MCode and unchanged product/phase scope.
 
+## Permission amendment — 2026-10-10
+
+Authorization: Hazem explicitly requested, "I don't want to click approve for anyone
+else please, make them yolo or give them full access."
+
+This operational choice supersedes Step 2's Supervised dispatch requirement,
+Step 4's Auto dispatch requirement, the prohibition on blanket Full access, and
+the matching mode-specific acceptance language for the remaining migration work.
+The frozen document scope, roles, model choices, independence, gates, archive
+preservation and read-only product guarantee are unchanged.
+
+- Dispatch every remaining migration worker with runtimeMode=full-access;
+  reviewers retain interactionMode=plan and role=review, and Antigravity retains
+  interactionMode=default and role=implementation. Do not silently lower the mode
+  and leave the user handling repeated permission prompts.
+- Antigravity's first task was cancelled before any repository edit. Confirmed
+  terminal status: interrupted, hasPendingChildRuns=false. Restart it once with
+  the complete original brief, this amendment and a distinct request/task ID.
+- Critics still receive the verbatim read-only guard and report-only assignments.
+  Full access permits writes at the permission layer: reviewer restraint is now
+  instruction-based, with coordinator status/fingerprints for detection. Plan
+  interaction mode does not prevent writes. Never claim enforced read-only review.
+- Record this as Hazem's standing workflow permission preference in active docs;
+  both loops reuse existing authorization until the user changes it. Model/settings
+  choices remain per-session. Explain Full access and Supervised accurately;
+  preserve explicit user choice rather than silently widening permissions.
+- Full access does not expand the task's authorized file/data scope, authorize
+  critic edits, global configuration, commits by workers, publishing, C4 or ACP
+  integration. The coordinator continues to own acceptance and commits.
+- Provider prompts and automatic approval review are separate. Full access is
+  intended to remove provider permission prompts, but does not disable automatic
+  approval review. If T3 refuses this mode or automatic review rejects an action,
+  report the exact limitation and narrow the action when possible; do not bypass
+  that rejection or promise an unavailable approval-free guarantee.
+- Verify each new child with t3_thread_configuration. Record configured mode and
+  distinguish it from provider behavior. Independent final reviews check these
+  amended permission statements along with the original frozen migration contract.
+
 ## Verification and acceptance record
 
 Pending execution. Record baseline/final gate results, reviewer task IDs and actual
