@@ -1,263 +1,100 @@
 # Machine Profile — this Mac
 
-**What this is.** Everything about *this* computer: where Orca lives, which agents are
-installed, which flags actually block writes, which model each one really uses.
+**What this is.** Environment facts and provider capabilities on this computer: live T3 Code orchestration, model configurations, permission modes, and workspace behavior.
 
-**This file goes stale.** Machines get reinstalled, agents get upgraded, flags move.
-**When this file and the live command help disagree, the live command help wins.**
-Check `orca <command> --help` and the agent's own config rather than trusting anything
-written here.
-
-Nothing in this file belongs in `AGENTS.md` or in the project specification. Live paths,
-installed binaries and model names are machine facts, not project rules.
+**This file records live machine facts.** When this file and live discovery disagree, **the live catalog wins.** Run `orchestrator_capabilities` and inspect `t3_thread_configuration` rather than relying on stale text.
 
 ---
 
-## 1. The Orca executable
+## 1. T3 Code Orchestrator
 
-```
-/Applications/Orca.app/Contents/Resources/bin/orca
-```
+T3 Code provides the product-native collaborative orchestration environment on this Mac.
 
-Not on `PATH`. Create the symlink once per session, before anything else:
-
-```bash
-ln -sf /Applications/Orca.app/Contents/Resources/bin/orca ~/.local/bin/orca
-```
-
-Then confirm it resolves and the app is actually up:
-
-```bash
-~/.local/bin/orca open --json && ~/.local/bin/orca status --json
-```
-
-Expect `app.running: true` and `runtime.reachable: true`.
-
-- **Last confirmed:** version **1.4.221**, runtime `connected`. The read-only flags, launch
-  routes and model rules in §2–§5 were re-verified against this version's live
-  `agent-context` schema on **2026-10-07**, after the C2 and C3 runs.
-- If `orca status` says not running, run `orca open --json` and retry once.
-- If it still fails, **report the exact error**. Do not go hunting for another
-  executable or another tool.
-- If you get `orca: command not found`, the symlink is missing — redo §1.
-
-`orca status --json` is also the cheapest way to confirm the runtime version matches
-what these documents assume. If Orca was upgraded, re-verify §2 and §3 before trusting
-them.
+- **Observed point-in-time build:** `0.0.46-nightly.20261010.2935`.
+- **Live authority:** The live catalog (`orchestrator_capabilities`) is the authority for installed providers and active models.
+- **Archived legacy workflow:** The Orca-based workflow was archived on 2026-10-10 under `docs/archive/orca-process-2026-10-10/`. This records repository process history and does not imply the external Orca application was uninstalled or decommissioned beyond the scope of this repository's documentation. Active workflows operate natively in T3 Code without assuming an Orca workflow fallback.
 
 ---
 
-## 2. The agent roster
+## 2. Models and Providers
 
-**As actually used** — this is what the C2 and C3 plans ran, with models read back from
-each agent's own banner and session metadata:
-
-| Role | Agent | Verified model | Family | Launch |
+| Role | Provider / Agent | Configured Model | Family | Dispatch Policy |
 |---|---|---|---|---|
-| **Coordinator** | Hermes | `gpt-6.1-sol-900k` | OpenAI | runs **inside an Orca terminal** |
-| Implementer + feasibility critic | Antigravity (`agy`) | `gemini-3.8-flash-high` | Google | native `--agent` |
-| Critic | OpenCode | `opencode/space-bunny-free`, variant `max` | Space Bunny / Muse | native `--agent` |
-| Critic | MCode | `minimax/MiniMax-M3.1-Flash-Preview`, effort `xhigh` | minimax | Route C only |
+| **Coordinator** | `codex` | `gpt-6.1-sol` (reasoning `xhigh`) | OpenAI | **Fixed coordinator.** Never writes product code. (Replaces historical `gpt-6.1-sol-900k`). |
+| **Implementer** | `antigravity` | `gemini-3.8-flash-high` | Google | **Sole implementer.** Never reviews or commits. |
+| **Critic Pool** | `pi`, `grok`, `opencode` | Chosen per session | Varies | **USER selects models AND settings per session** from live catalog. Coordinator asks once if missing. |
+| **Deferred** | MCode | MiniMax M3.1 Flash | MiniMax | Future ACP integration only; not native in T3. |
 
-Also installed, **not in the current roster** — do not add them without the user asking:
+### Session model evidence vs defaults
 
-| Agent | Note |
-|---|---|
-| Cline | Would need `--plan --auto-approve false` via the terminal route |
-| Pi / OMP | No read-only flag; OMP takes `--model` but not `--effort` |
-
-Four different families across coordinator, implementer and two critics — that is the
-point. A critic on the coordinator's model is not an independent check.
-
-Other installed CLIs: the `*-delegate` skills wrap these same binaries and are a
-different, simpler route. The loops use Orca directly, because Orca gives task
-ownership, completion tracking and worker cleanup.
-
----
-
-## 3. Read-only flags, per critic
-
-**Verified on Orca 1.4.221: `worker-start` has no agent-argument forwarding.** These
-flags cannot be passed to it and will be rejected:
-
-```text
---mode plan                     # Antigravity
---plan --auto-approve false     # Cline
-```
-
-To deliver an agent's own read-only flag, launch its CLI in a terminal yourself and
-attach with `--terminal` — see `../council.md` §5.
-
-| Critic | Enforcing flags | How to reach it |
-|---|---|---|
-| Antigravity | `--mode plan` | `orca terminal create --command "agy --mode plan"`, then `worker-start --terminal` |
-| Cline | `--plan --auto-approve false` | same terminal route (**both** required; `auto-approve` defaults to **true**) |
-| OpenCode | *(none)* | guard text + `git status` afterwards |
-| MCode | *(none)* | guard text + `git status` afterwards |
-| Pi / OMP | *(none)* | guard text + `git status` afterwards |
-
-**Pi's `-p` is not read-only.** It is print mode with full write tools. Never describe
-it otherwise.
-
-Cline's config already sets `planActMode: "plan"` as a second safety layer.
-
-**Flag placement has changed between Orca versions.** Confirm with
-`orca orchestration worker-start --help` before the first dispatch of a session.
+- **USER selection:** Critic models AND settings (options) are selected by the user per session from the live catalog. If choices are missing, the coordinator presents an ask-once menu showing live options with recommended risk-sized choices. Authorized choices are reused across rounds within the session.
+- **Model family diversity and evidence:** Distinguish role and context independence (separate prompt, separate subagent turn) from verified family diversity. Avoid categorical claims that same-family models cannot provide independent context. High-risk reviews strictly require verified distinct model families when established. Sharing coordinator or implementer family does not satisfy the requirement. Different providers do not automatically prove different model families (unknown family identity stays unverified).
+- **Unverified family operational path:** If a selected model family cannot be verified, disclose which identity is unverified and obtain explicit user acceptance of the named pair for that session before proceeding. Never claim verified family diversity when unverified.
+- **Session evidence (2026-10-10 migration):**
+  - OpenCode ran `opencode/space-bunny-free` with `variant=max`.
+  - Pi ran `tokenharbor/deepseek-v4.1-flash:free` with `thinking=max` (authorized fallback after Grok hit usage limits).
+  - Because Space Bunny's upstream model family could not be verified, this session operated under an explicit user-accepted exception ("Keep the selected pair and record the unverified family") rather than verified family diversity. This is an explicit session-specific accepted exception, not a permanent default or blanket future waiver. USER model and settings choice per session remains mandatory.
+- **Not permanent defaults:** Reviewer models are selected per session from the live catalog. Reuse selected choices within the session; do not ask repeatedly.
+- **No silent substitution:** If a model becomes unavailable or exhausts quota, ask the user once or use an authorized fallback. Never silently switch models.
+- **Evidence channels:** Always pass explicit `providerInstanceId`, `model`, and options in `delegate_task`. Distinguish requested vs configured vs provider-confirmed/unverified:
+  - Task receipts and `task_status` show target provider/model.
+  - `t3_thread_configuration` readback shows configured options and modes.
+  - Provider banner/session output corroborates effective use when available (otherwise unverified).
+  - Catalog `currentValue` reflects live catalog configuration, NOT task execution evidence.
 
 ---
 
-## 4. Which agent is on which model
+## 3. Permission Modes and Preflight
 
-**Most agents read their own config, not Orca's arguments.**
+### Operational standing preference
 
-- **`--model` is honoured only for** Claude, Codex, Cursor, Antigravity and Muse
-  provider model ids. **OMP takes `--model` but not `--effort`.**
-- **Everything else — OpenCode, ZCode, MCode and the rest** — launches on whatever its
-  own config says. Changing an Orca argument changes nothing for them.
+Hazem explicitly authorized **Full access (`runtimeMode=full-access`)** for both planning and implementation loops to eliminate routine approval prompts. This standing preference is reused until changed.
 
-**Therefore: record the effective model in every report.** Read it back from the agent's
-own banner or session metadata, as the C2/C3 plans did. Never infer it from the dispatch
-command. A council that silently ran the wrong model has no review value at all — if you
-discover this happened, the review is void: stop, fix that agent's own config, restart.
+### Caller-mode preflight
 
-Keep the coordinator and the critics in **different model families on purpose.**
+T3 Code prevents privilege escalation:
+- If a child task is dispatched with a broader runtime mode than its parent (for example, child `full-access` when parent is `auto`), T3 Code rejects the dispatch with:
+  ```text
+  runtime_mode_escalation_denied / Child runtime mode full-access is broader than parent mode auto
+  ```
+- **Preflight rule:** The coordinator must verify its own active mode via `t3_thread_configuration` before dispatching children.
+- **Narrow parent remedy:** Do not dispatch a broader child or silently downgrade child permissions (silent lowering is forbidden). Reuse existing Full access authorization without repeatedly asking for already approved choices. If the coordinator is not in Full access, request that the user switch to Full access in the composer to activate the authorized mode, and verify active mode via `t3_thread_configuration` readback on the subsequent turn. If the surface cannot operate in the authorized mode, report the actual needed human step.
+- **Composer readback:** Selecting Full access in the composer applies to the subsequent turn; readback via `t3_thread_configuration` is required to verify the active turn configuration.
 
----
+### Protection realities under Full access
 
-## 5. Launch routes
-
-### Antigravity and OpenCode — native
-
-```bash
-orca orchestration worker-start --task <task_id> --worktree current --agent antigravity --json
-orca orchestration worker-start --task <task_id> --worktree current --agent opencode --json
-```
-
-### Antigravity in plan mode — terminal you launch, then attach
-
-```bash
-orca terminal create --worktree current --title "agy-critic" --command "agy --mode plan" --json
-orca orchestration worker-start --task <task_id> --terminal <handle> --worktree current --json
-```
-
-`--command` is typed into the terminal, so `agy --mode plan` finally reaches agy.
-This is what the C2 plan used. Note `terminal create` is the right call for a fresh
-agent in the current checkout — not `worktree create`.
-
-### MCode — Route C, because Route B is rejected
-
-`worker-start --terminal` against MCode's terminal fails with **`agent_unconfigured`**
-(observed 2026-10-07). The working low-level route:
-
-```bash
-orca orchestration task-create --spec "<critic task, including the guard text>" --json
-orca orchestration dispatch --task <task_id> --to <handle> --return-preamble --json
-orca terminal send --terminal <handle> --text "<exact returned preamble>" --enter --json
-```
-
-`dispatch` runs **without** `--inject`; you send the returned preamble literally into
-the verified-idle terminal.
-
-**This lane is unsupervised.** Orca owns no terminal resource for it, and `release`
-returns `retained / no_owned_resource / processAction none`. Never claim supervised
-cleanup for MCode. The Task/Dispatch pair and `worker_done` stay authoritative.
-
-Note on readiness: `worker-start` **exits 0 only when the worker is ready**. `failed` or
-`outcome_unknown` exits 1, with `stage`/`failedStage`, `setup`, `effects`,
-`residualResources` and recovery commands in the JSON.
+- **Writes permitted at provider level:** Full access removes provider permission prompts. Reviewer restraint is instruction-based (the verbatim guard).
+- **Plan mode is interaction guidance:** `interactionMode=plan` guides turn structure; it does not block file edits.
+- **Worktrees are not security boundaries:** Worktrees share user permissions and filesystem access.
+- **Fingerprint verification:** The coordinator takes SHA-256 fingerprints before and after reviewer runs to detect edits. Never claim hard enforced read-only reviews under Full access.
+- **Automatic approval review:** Full access does not disable automatic approval review. If an action is rejected by automatic review, narrow the action or report the limitation.
+- **Supervised mode contrast:** In Supervised mode (`runtimeMode=approval-required`), provider actions trigger prompts. MCP question tools cannot approve permissions; native app controls must be used if available.
 
 ---
 
-## 6. Cline's repair wrapper — a known trap
+## 4. Provider Policy and Source Mapping Evidence
 
-Cline runs only through `~/.local/shims/cline`, which repairs an invalid macOS code
-signature on Cline's Bun binary. **Skip the wrapper and Cline dies with exit 137 and no
-output at all.**
+Inspected provider policies show different static mappings:
 
-Check it before relying on Cline:
+- **OpenCode:** In Supervised mode (`approval-required`), maps reads to `allow` and edits/bash to `ask`. Constant always-allowed tools: `question`, `read`, `glob`, `grep`, `lsp`, `todowrite`, `task`, `skill`. Restricted tools: `bash`, `edit`, `webfetch`, `websearch`, `codesearch`, `external_directory`, `doom_loop`.
+- **Codex:** In Supervised mode, maps untrusted user approvals with a `readOnly` sandbox.
+- **Pi:** Inspected source symbol `PI_T3_MCP_EXTENSION_SOURCE` in installed bundle `/Applications/T3 Code (Nightly).app/Contents/Resources/app.asar!/apps/server/dist/binCli-DBAO6Yxt.mjs` for build `0.0.46-nightly.20261010.2935` reveals deferred-tool/`tool_search` discovery and native allowance for `read`, `grep`, `find`, `ls`. (A temporary inspection receipt `installed-policy-2.txt` outside the repository is not retained and not authoritative). Other tools map to prompts even in Auto.
+- **Grok:** Inspected installed source symbol `grokAcpSpawnArgs` in `/Applications/T3 Code (Nightly).app/Contents/Resources/app.asar!/apps/server/dist/binCli-DBAO6Yxt.mjs` for build `0.0.46-nightly.20261010.2935` proves:
+  - `approval-required` (Supervised) uses `[--permission-mode, default, agent, stdio]`
+  - `auto` uses `[--permission-mode, auto, agent, stdio]`
+  - `full-access` uses `[agent, --always-approve, stdio]`
 
-```bash
-zsh -l -c 'command -v cline'    # must print /Users/corvette/.local/shims/cline
-```
-
-**Re-check after any `npm install -g cline@latest`** — the global install is what
-breaks the signature, so the shim must be reinstalled or repaired afterwards.
-
-Confirmed working on this machine as of the last check.
+*Evidence qualification:* These are static policy mappings and observed ordinary read behaviors from build `0.0.46-nightly.20261010.2935`. Both Pi and Grok bundle chunk mappings (`binCli-DBAO6Yxt.mjs`) are build-specific and must be re-derived after T3 upgrades per the live-catalog-wins rule. These static code observations are not live adversarial security proofs. Hard adversarial write prevention remains unverified.
 
 ---
 
-## 7. Other known traps
+## 5. Workspace and Worktree Handling
 
-| Symptom | Cause | Do this |
-|---|---|---|
-| `orca: command not found` | symlink missing | `ln -sf ... ~/.local/bin/orca` (§1) |
-| `Could not read Orca runtime metadata` | app closed or quit | `orca open --json`, retry, report the exact error |
-| `no_active_sender_terminal` | the command ran **outside** an Orca terminal | see §7a — the coordinator must run inside Orca |
-| `agent_unconfigured` | `worker-start --terminal` used against MCode | use Route C (§5) |
-| `unknown flag: --mode` / `--plan` | agent flags passed to `worker-start` | those flags do not exist there; use the terminal route (§3, §5) |
-| Cline exits 137, no output | the shim was skipped | `zsh -l -c 'command -v cline'` (§6) |
-| `nested_worker_depth_exceeded` | Hermes was dispatched as a worker | Hermes is the coordinator; it never works (§8) |
-| A critic edited files | missing flag or weak brief | verify which files, `git restore`, fix the brief or flags |
-| A critic ran the wrong model | the agent read its own config | stop the run; the review is void |
-| A worker never reports | usually nothing | see the waiting rules in `../planning-loop.md` |
-| Live terminals vanished between sessions | Orca restarted | Orca had quit; `terminal list` returns 0. Worker terminals do not survive a restart — treat any pre-restart worker handle as lost, and re-dispatch rather than polling a dead handle |
-
----
-
-## 7a. The coordinator must run inside an Orca terminal
-
-**Verified 2026-10-07.** Run `orca orchestration run-current` from an ordinary shell
-whose working directory is the project, and Orca answers:
-
-```text
-no_active_sender_terminal — Could not determine the sender terminal for this
-orchestration command. Pass --from with your own terminal's handle — another pane's
-handle would act on its mailbox — or run the command inside a live Orca terminal
-with ORCA_TERMINAL_HANDLE set.
-```
-
-So Orca identifies the calling agent by the **`ORCA_TERMINAL_HANDLE`** environment
-variable, which exists only inside an Orca-managed terminal. Confirmed: that variable
-is unset in a normal shell.
-
-`run-list` shows the same thing from the other side — each Run records a
-`coordinator_handle` that is an Orca terminal id (`term_…`).
-
-What this means in practice:
-
-| From an external shell | Works? |
-|---|---|
-| `status`, `agent-context`, `run-list`, `worker-list`, `terminal list` | yes — global reads |
-| `run-current`, `check`, `task-create`, `worker-start`, any mailbox command | **no** — `no_active_sender_terminal` |
-
-The `--from` escape hatch exists but it makes the caller act **as another terminal's
-mailbox** — Orca's own message says so. That is impersonation, not integration. Do not
-use it to fake a coordinator.
-
-**Therefore: the coordinator runs in a terminal inside the Orca app.** A desktop
-coordinator app that is not an Orca terminal cannot drive the loops.
-
----
-
-## 8. Hermes is never a worker
-
-Hermes (`gpt-6.1-sol-900k`, OpenAI) runs as the **top-level coordinator** of the whole
-run, inside an Orca terminal (§7a). Dispatched as a worker, Orca's nested-depth limit
-stops it from spawning a council at all (`nested_worker_depth_exceeded`).
-
-Hermes plans, dispatches, checks and judges. It does not type product code.
-
-Confirmed in use: the C3 plan names Hermes as the coordinating agent.
-
----
-
-## 9. When to distrust this file
-
-- Orca was upgraded or reinstalled
-- an agent CLI was upgraded globally (`npm i -g`, `brew upgrade`)
-- a model name here disagrees with what an agent reports
-- a flag in §3 is rejected by the CLI
-
-In all four cases: read the current config and `--help`, fix this file, and note that
-you did.
+- **Current checkout binding:** The current coordinator thread is bound to the project root on `main` (`worktreePath: null`). Respect existing caller binding; do not assume every clean checkout is project root. A clean root checkout requires no worktree creation.
+- **Worktree handoff procedure:** If an isolated worktree is required:
+  1. Inspect `t3_worktree_status` AND inspect the project setup script BEFORE calling handoff.
+  2. Note that an already-attached thread cannot handoff (`t3_worktree_handoff` moves the calling thread, not another thread, and cannot move a thread already attached to a worktree).
+  3. Call `t3_worktree_handoff` with explicit `branch`, `baseRef`, `startFromOrigin: false` (to base on local commits) or `true` (from origin), explicitly pass `runSetupScript: true` (the live `t3_worktree_handoff` tool description notes it runs the setup script by default, though no default is declared in the schema field; pass the argument explicitly), and provide `continuationPrompt` as the last tool action of the turn.
+  4. Inspect setup and continuation outcomes upon resumption. If setup or continuation fails, stop and report that outcome instead of treating failure as skipped.
+- **Worktree persistence and cleanup:** Worktrees survive thread deletion. Record ownership, and clean up only owned, unused worktrees after checking bindings and absence of uncommitted user edits.
+- **Top-level threads:** Use `t3_thread_launch` only when the user explicitly requests a separate top-level conversation. State `t3_thread_launch` must have explicit `workspaceStrategy` on user-requested top-level work; omission chooses project root, not caller worktree. `t3_thread_launch` has no idempotency key; inspect `t3_thread_list` before retrying lost responses. `create_threads` inherits the caller's checkout with no workspace override. No unrequested top-level launch.

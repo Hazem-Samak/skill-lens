@@ -345,6 +345,126 @@ the reviews.
 
 ## Verification and acceptance record
 
-Pending execution. Record baseline/final gate results, reviewer task IDs and actual
-model/settings, archive/link/scope checks, permission observations, limitations and
-task cleanup here. Do not mark migration complete from an implementer's self-report.
+Recorded on 2026-10-11 (Africa/Cairo). The coordinator inspected the active
+documents and complete permitted change set; acceptance is based on reproduced
+findings, direct checks and two completed final reviews, not implementer claims.
+
+### Final review decisions
+
+- OpenCode round 2: **pass**, no blockers. It independently reproduced resolution
+  of both round-1 blockers: the accepted unknown-family path and the amended frozen
+  reference. Pi round 2: **pass**, no blockers; it independently confirmed the same
+  resolutions and preservation of permission, role and project guarantees.
+- Accepted Pi round-2's escaped-quote suggestion after a direct JSON parser failed
+  on the council example. Antigravity removed the structural quote escapes only.
+  The final example parses as JSON with the expected target, options and modes.
+  Re-escaping its quotes reproduces the pre-review SHA-256 exactly, proving no
+  other council content changed. This deterministic formatting correction after
+  both passes required no third broad review wave.
+- Non-blocking suggestions about an optional wait-mode example, the optional Open
+  questions heading and illustrative dispatch wording do not change acceptance.
+  The existing async, bounded-status, timeout and per-session selection rules are
+  accurate. Defer further wording expansion; no confirmed blocker is deferred.
+- Do not adopt OpenCode's suggested use of `t3_thread_configuration` alone for
+  child workspace binding: its actual readback proves model, options and modes,
+  not a worktree path. Caller binding was directly verified with
+  `t3_worktree_status`; child checkout sharing remains qualified as observed.
+- Pi's suggestion to add source-symbol names is already satisfied: the machine
+  profile names `PI_T3_MCP_EXTENSION_SOURCE` and `grokAcpSpawnArgs`. Its optional
+  setup-script phrasing change adds no evidence. The tool-description default
+  remains qualified correctly.
+- The original Acceptance bullet naming Supervised/Plan is historical: it is
+  explicitly superseded by the committed Permission amendment. The operative
+  frozen reference contains that amendment. Current workers use Full access.
+- Preserve the project profile's original missing trailing newline: its permitted
+  changes are the seven relative-link repairs only.
+
+### Verification evidence and limits
+
+- Coordinator gates: `pytest --cov=skill_lens` — **542 passed, 1 skipped**;
+  **94.19% coverage** exceeds 90%. The skip is the existing case-insensitive
+  filesystem limitation for two distinct files differing only in letter case.
+  `mypy` — no issues in 28 source files; `ruff check .` — pass;
+  `ruff format --check .` — pass, 85 files already formatted.
+  Commands use the checkout's `.venv`, a synthetic outer HOME, disabled local
+  caches or external cache paths, and coverage output outside the repository.
+  No formatter write, snapshot update, dependency installation or live-home test
+  was used. All four gates are the coordinator's evidence, not reviewer reruns.
+- Disposable checks compared all 128 original tracked files. Only the five
+  authorized active documents changed; product, tests, configuration, AGENTS.md,
+  specifications, previous plans and completed phase records are unchanged.
+  The final manifest relative to `5c03d11` is those five modified documents plus
+  seven new files: this plan and the six-file archive.
+- All five archived originals byte-match their `5c03d11` source and README
+  digests. The archive contains exactly those originals in their original layout
+  and the new README. All active and archive-README Markdown links resolve.
+  The exact critic guard is preserved. Project-profile bytes equal the original
+  plus only the seven approved link substitutions.
+- Both final review rounds left all 135 captured tracked/untracked fingerprints
+  and `git status --porcelain` unchanged. No coordinator checkout mutation ran
+  concurrently with critics. After round 2, the quote-only council correction was
+  independently attributed and verified as described above.
+- Final readbacks confirm OpenCode `opencode/space-bunny-free`, `variant=max`,
+  and Pi `tokenharbor/deepseek-v4.1-flash:free`, `thinking=max`, each
+  `full-access` / `plan`. Antigravity is `gemini-3.8-flash-high`,
+  `full-access` / `default`, with no separate model options.
+  Coordinator is `codex/gpt-6.1-sol`, configured `reasoningEffort=xhigh`,
+  `serviceTier=default`, `full-access` / `default`.
+  These are requested/configured identity receipts; provider-side banners or
+  actual upstream execution are unverified where unavailable. Catalog defaults
+  are not execution proof.
+- Space Bunny's upstream family remains unverified. Hazem explicitly accepted
+  the named pair after disclosure for this migration session. The two delegated
+  reviewer contexts are independent; verified family diversity is not claimed.
+- Source-mapping probes and ordinary supervised read approvals are different
+  evidence. Full access permits provider-layer writes; the critic guard provides
+  instructions and fingerprints detect changes. No live adversarial write-denial
+  guarantee was proved. Plan interaction and worktrees are not security boundaries.
+  Full access does not disable automatic approval review. The earlier rejected
+  TokenHarbor payload was retried only after explicit destination/payload approval;
+  broad reads were narrowed to named evidence.
+- The original Auto implementer was interrupted before repository edits. A broader
+  Full access child was refused until the user approved and activated coordinator
+  Full access; subsequent-turn readback confirmed it. All remaining workers used
+  the already-authorized Full access mode without changing document/data scope.
+
+### Task ledger and cleanup
+
+These are exact ledger identities, compressed by their shared prefixes. For each
+row, the actual `taskId` is the prefix below followed by its `clientRequestId`.
+The actual `childRunId` is the run prefix followed by the same ID and
+`:ordinal:1`; every receipt was checked against this construction. All fourteen
+tasks are terminal with `workState=result_available` and
+`hasPendingChildRuns=false`.
+
+```text
+taskId prefix: node:delegated-task:command%3Amcp%3Acb5db2f0-8fde-4511-bf5e-195aa420c027%3Adelegate-task%3A
+childRunId prefix: run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Acb5db2f0-8fde-4511-bf5e-195aa420c027%253Adelegate-task%253A
+```
+
+| clientRequestId | Configured provider / model; options | Runtime / interaction | Terminal result |
+|---|---|---|---|
+| `skill-lens-t3-migration-plan-opencode-r1-20261010` | `opencode` / `opencode/space-bunny-free`; variant=max | `approval-required` / `plan` | completed; changes_required, adjudicated above |
+| `skill-lens-t3-migration-plan-grok-r1-20261010` | `grok` / `grok-4.7`; reasoningEffort=high | `approval-required` / `plan` | failed; quota failure, no verdict |
+| `skill-lens-t3-migration-plan-opencode-r2-20261010` | `opencode` / `opencode/space-bunny-free`; variant=max | `approval-required` / `plan` | completed; changes_required, adjudicated above |
+| `skill-lens-t3-migration-plan-pi-r1-20261010` | `pi` / `tokenharbor/deepseek-v4.1-flash:free`; thinking=max | `approval-required` / `plan` | completed; changes_required, adjudicated above |
+| `skill-lens-t3-migration-implementation-agy-r1-20261010` | `antigravity` / `gemini-3.8-flash-high`; none | `auto` / `default` | interrupted; cancelled before edits |
+| `skill-lens-t3-migration-implementation-agy-r2-fullaccess-20261010` | `antigravity` / `gemini-3.8-flash-high`; none | `full-access` / `default` | completed; succeeded, checks reserved for coordinator |
+| `skill-lens-t3-migration-agy-corrections-r1-20261010` | `antigravity` / `gemini-3.8-flash-high`; none | `full-access` / `default` | completed; succeeded, checks reserved for coordinator |
+| `skill-lens-t3-migration-final-opencode-r1-20261010` | `opencode` / `opencode/space-bunny-free`; variant=max | `full-access` / `plan` | completed; changes_required, adjudicated above |
+| `skill-lens-t3-migration-final-pi-r1-20261010` | `pi` / `tokenharbor/deepseek-v4.1-flash:free`; thinking=max | `full-access` / `plan` | completed; pass |
+| `skill-lens-t3-migration-agy-final-corrections-r1-20261010` | `antigravity` / `gemini-3.8-flash-high`; none | `full-access` / `default` | completed; succeeded, checks reserved for coordinator |
+| `skill-lens-t3-migration-agy-cancel-wording-r1-20261010` | `antigravity` / `gemini-3.8-flash-high`; none | `full-access` / `default` | completed; succeeded, checks reserved for coordinator |
+| `skill-lens-t3-migration-final-opencode-r2-20261010` | `opencode` / `opencode/space-bunny-free`; variant=max | `full-access` / `plan` | completed; pass |
+| `skill-lens-t3-migration-final-pi-r2-20261010` | `pi` / `tokenharbor/deepseek-v4.1-flash:free`; thinking=max | `full-access` / `plan` | completed; pass |
+| `skill-lens-t3-migration-agy-json-example-r1-20261011` | `antigravity` / `gemini-3.8-flash-high`; none | `full-access` / `default` | completed; succeeded, checks reserved for coordinator |
+
+No worktree was created for this migration. Final `t3_worktree_status` confirmed
+the existing project root, `attached=false`, `worktreePath=null`, branch `main`.
+There is no owned unused worktree to remove and no pending child work to cancel.
+Historical child threads remain as T3 records; no claim of automatic thread or
+worktree deletion is made.
+
+The coordinator owns the final local migration commit after the four-gate barrier.
+C4 is the next separate TUI assignment. No push, release, publication, global
+provider configuration, ACP integration or C4 implementation is included.

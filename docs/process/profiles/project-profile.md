@@ -131,13 +131,13 @@ cheapest way to reintroduce a bug someone already paid for.
 
 | File | Read it before touching |
 |---|---|
-| [`DEVELOPMENT.md`](../../DEVELOPMENT.md) | build record, the verification gate, snapshot/golden regeneration, the release steps. Also: `README.md` links must be absolute URLs, because PyPI renders the README as the project page and `./FILE.md` 404s there. |
-| [`PHASE2_FINDINGS.md`](../../docs/archive/PHASE2_FINDINGS.md) | precedence, variant labels, canonical paths, registry, discovery, resolver |
-| [`PHASE3_FINDINGS.md`](../../docs/archive/PHASE3_FINDINGS.md) | `diff` truncation, the presentation layer |
-| [`PHASE4_FINDINGS.md`](../../docs/archive/PHASE4_FINDINGS.md) | `doctor`, `compare`, the golden-file harness |
-| [`PHASE6_PLAN.md`](../../docs/archive/PHASE6_PLAN.md) | the exit-code contract, `--fail-on`, evidence integrity |
-| [`PHASE6_WALKTHROUGH.md`](../../docs/archive/PHASE6_WALKTHROUGH.md) | `core/exitcodes.py`, adding a `--fail-on`, editing any agent's `evidence` / `source` fields |
-| [`PHASE5_WALKTHROUGH.md`](../../docs/archive/PHASE5_WALKTHROUGH.md) | `pyproject.toml`, wheel contents, the release steps |
+| [`DEVELOPMENT.md`](../../../DEVELOPMENT.md) | build record, the verification gate, snapshot/golden regeneration, the release steps. Also: `README.md` links must be absolute URLs, because PyPI renders the README as the project page and `./FILE.md` 404s there. |
+| [`PHASE2_FINDINGS.md`](../../archive/PHASE2_FINDINGS.md) | precedence, variant labels, canonical paths, registry, discovery, resolver |
+| [`PHASE3_FINDINGS.md`](../../archive/PHASE3_FINDINGS.md) | `diff` truncation, the presentation layer |
+| [`PHASE4_FINDINGS.md`](../../archive/PHASE4_FINDINGS.md) | `doctor`, `compare`, the golden-file harness |
+| [`PHASE6_PLAN.md`](../../archive/PHASE6_PLAN.md) | the exit-code contract, `--fail-on`, evidence integrity |
+| [`PHASE6_WALKTHROUGH.md`](../../archive/PHASE6_WALKTHROUGH.md) | `core/exitcodes.py`, adding a `--fail-on`, editing any agent's `evidence` / `source` fields |
+| [`PHASE5_WALKTHROUGH.md`](../../archive/PHASE5_WALKTHROUGH.md) | `pyproject.toml`, wheel contents, the release steps |
 
 Two habits came out of those reviews and are not optional:
 

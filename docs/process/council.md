@@ -1,102 +1,47 @@
 # The Critic Council
 
-**What this is.** The council is the set of *other* AI agents the coordinator asks to
-check a plan or a change. They read and report. They never edit the project.
+**What this is.** The council is the independent review system in T3 Code for Skill Lens. Other AI models check plans and code diffs before work is frozen or accepted. They read and report; they never edit the project.
 
-- A **critic** (also called a reviewer) is an agent given read-only access to check
-  somebody else's work.
-- The **coordinator** is Sol/Hermes, the agent that plans, dispatches, checks and
-  accepts. It never writes product code.
-- The **implementer** is Antigravity, the agent that writes code and tests.
+- A **critic** (or reviewer) is an agent dispatched with read-only instructions to inspect a plan or diff.
+- The **coordinator** is Sol (`gpt-6.1-sol`, configured reasoning `xhigh`, OpenAI). It plans, dispatches, inspects, runs verification gates, judges, and commits. It never writes product code.
+- The **implementer** is Antigravity (`gemini-3.8-flash-high`, Google). It is the sole implementer: it writes code and tests, runs checks, and reports. It never reviews, never delegates, and never commits.
 
-Read this file together with `profiles/project-profile.md` (what "correct" means here)
-and `profiles/machine-profile.md` (which agents exist on this machine).
+Read this together with `profiles/project-profile.md` (what "correct" means here) and `profiles/machine-profile.md` (live environment and provider facts).
 
 ---
 
-## 1. The roster
+## 1. The Roster and Roles
 
-The roster that matters in practice is small: **Hermes coordinates, Antigravity
-implements, OpenCode and MCode review.** Cline and Pi are installed but not in use —
-adding a critic is the user's decision.
+The operational roster has clear role separation:
 
-| Critic | Model | Model family | Installed |
+| Role | Agent / Model | Family | Selection Policy |
 |---|---|---|---|
-| Antigravity | Gemini 3.8 Flash High | Google | yes (`agy`) |
-| Cline | `cline-free/mimo-v2.6-flash`, thinking `xhigh` | Xiaomi / MiMo | yes |
-| OpenCode | Space Bunny Max, fallback Muse 1.3 Free Max | Space Bunny / Muse | yes |
-| MCode | Minimax M3.1F | minimax | yes — **not native to Orca**, see §5 |
-| Pi | chosen at dispatch | varies | yes |
-| Hermes | `gpt-6.1-sol-900k` | OpenAI | yes — **this is the coordinator** |
+| **Coordinator** | Codex (`gpt-6.1-sol`, reasoning `xhigh`) | OpenAI | **Fixed coordinator.** Never writes product code. |
+| **Implementer** | Antigravity (`gemini-3.8-flash-high`) | Google | **Sole implementer.** Never reviews or commits. |
+| **Critic Pool** | Native `pi`, `grok`, `opencode` | Varies | **USER selects models AND settings per session** from live T3 catalog. |
+| **Deferred** | MCode (`MiniMax M3.1 Flash`) | MiniMax | Future ACP integration only; not native in T3. |
 
-### What each critic is for
+### Role rules and independence
 
-- **Antigravity — feasibility.** It is also our implementer, but in `--mode plan` it
-  answers a different question: *can this actually be built, and what breaks if we do?*
-  Its verdicts are the only ones that carry a `FEASIBILITY:` line.
-- **Cline — the strict reader.** Different family, deliberately hostile by default: it
-  has to agree before it may touch anything.
-- **OpenCode — the second pair of eyes.** A cheap second opinion on structure and
-  naming.
-- **MCode — a third family** that has never seen this project's history.
-- **Pi — the wildcard.** Whatever it is at dispatch time; record which one.
-
-Do not give every critic the same question. Give each one a **different** review
-question (project rules vs behaviour vs test gaps), or you get five copies of the
-same opinion.
-
-### Why the coordinator is not on this list
-
-Two reasons, both hard:
-
-1. **It cannot be.** Sol/Hermes is the top-level coordinator of the run. Dispatched as
-   a worker it hits Orca's `nested_worker_depth_exceeded` and cannot spawn a council
-   at all. Sol coordinates; it never works.
-2. **It would not be independent.** A critic on the same model as the coordinator is
-   the same mind reviewing itself. Model diversity is not a guarantee of independence,
-   but sharing a model is a guarantee of *not* getting it.
-
-**Rule: if a critic turns out to be running the coordinator's model, the review is
-void.** Stop the run, fix the agent's own config, restart.
+1. **Strict role independence:** The coordinator judges and commits; the implementer writes code; critics review. Antigravity does not review; its former feasibility review role is removed.
+2. **Role/context independence vs. family diversity:** Distinguish role and context independence from verified family diversity.
+   - **Context independence:** Running a critic in a fresh delegated task provides role and context independence (isolated subagent context, dedicated prompt, separate reasoning chain). Avoid categorical claims that same-family models cannot provide independent context.
+   - **Family diversity requirement:** High-risk reviews strictly require verified distinct model families when established. A critic sharing a model family with the coordinator (OpenAI) or implementer (Google) does not satisfy the independent family diversity requirement for high-risk review, regardless of context separation. Different providers alone do not prove different model families (e.g. multiple providers wrapping open weights or upstream APIs).
+   - **Unverified-family operational path:** Unknown family identity stays unverified. If a selected model family cannot be verified, disclose which model identity is unverified and obtain explicit user acceptance of the named pair for that session before proceeding. Never claim verified family diversity when identity is unverified.
+3. **USER selects critic models AND settings:** The human user explicitly selects critic models AND their settings (options) from the live T3 catalog (`orchestrator_capabilities`). If choices are missing, the coordinator presents an ask-once menu showing the live pool and options with recommended risk-sized choices. Authorized choices are reused across rounds within the session. No silent defaults or substitutions.
+4. **Post-freeze execution record:** The implementation-session roster is logged as an append-only execution record after freeze. Selecting or updating models under existing per-session authorization is an authorized operational record, not silently rewriting frozen behavior.
+5. **Session evidence (2026-10-10 migration):** OpenCode was selected with `opencode/space-bunny-free` (`variant=max`), and Pi was selected with `tokenharbor/deepseek-v4.1-flash:free` (`thinking=max`) after an authorized Grok quota fallback. Because Space Bunny's upstream model family could not be verified, this session operated under an explicit user-accepted exception ("Keep the selected pair and record the unverified family") rather than verified family diversity. This is an explicit session-specific accepted exception, not a permanent default or blanket future waiver. USER model and settings choice per session remains mandatory.
+6. **No silent substitutes:** If a selected critic model exhausts quota or becomes unavailable, ask the user once or use an already authorized fallback. Never silently dispatch an unapproved substitute model.
 
 ---
 
-## 2. Read-only, per critic
+## 2. Read-Only Protection and Permissions
 
-Read-only means read-only. **No critic can be made read-only by a flag on
-`worker-start`** — that command has no agent-argument forwarding at all. Verified
-against Orca 1.4.221.
+Reviewers must inspect plans and diffs without modifying repository files.
 
-`worker-start` accepts exactly these flags:
+### The verbatim guard text
 
-```text
---help --json --pairing-code --environment --task --spec --task-title --deps --parent
---on --worktree --name --repo --base-branch --display-name --comment --setup --agent
---model --effort --terminal --retry-of --timeout-ms --run --from --retry-request
-```
-
-So `--mode plan` and `--plan --auto-approve false` **cannot be passed here** — Orca
-would reject them as unknown flags. To get a CLI's own read-only mode you must launch
-that CLI yourself in a terminal and attach the worker with `--terminal` (§5).
-
-| Critic | How read-only is actually achieved | Roster status |
-|---|---|---|
-| Antigravity | launch `agy --mode plan` yourself in a terminal, attach with `--terminal` | **in use — implementer + feasibility critic** |
-| OpenCode | the guard text below, then check files afterwards | **in use — critic** |
-| MCode | the guard text below, then check files afterwards | **in use — critic** |
-| Cline | would need `--plan --auto-approve false` via the terminal route | **not in the current roster** |
-| Pi / OMP | guard text only; no CLI read-only flag | **not in the current roster** |
-
-**Pi's `-p` does NOT make it read-only.** It is *print mode* and still has every write
-tool. Never describe it as read-only.
-
-**The roster is explicit.** Per the C2 and C3 plans: *"do not silently add Cline, MCode,
-Pi or a different OpenCode model."* Adding a critic is a user decision, not a default.
-
-### The guard text — copy this into every critic task
-
-The CLI enforces nothing for most agents, so the instruction has to be in the task, not
-in your head. Paste this block verbatim into the `--spec` of every critic dispatch:
+Paste this block **verbatim** into the prompt of every critic dispatch:
 
 ```text
 READ-ONLY CRITIC TASK. You are reviewing, not implementing.
@@ -112,50 +57,87 @@ If you believe a change is required, do not make it. Report it instead.
 Return only the report format below. Nothing else.
 ```
 
-### After every critic dispatch, check
+### Operational permission mode (Hazem's standing authorization)
 
-```bash
-cd "/Users/corvette/Documents/Projects Coding/Skill Lens"
-git status --porcelain        # must be identical before and after the dispatch
-```
+The user (Hazem) explicitly authorized **Full access (`runtimeMode=full-access`)** for both planning and implementation loops to eliminate routine approval prompts. This standing preference is reused until changed:
 
-A critic that edited files is not a disaster — it is a broken brief or a missing flag.
-Verify **which** files, `git restore` them, then fix the brief or the flags before
-retrying. A copy of the project does not protect the rest of your machine; checking
-afterwards detects the edit, it does not prevent it.
+- **Reviewer tasks:** Dispatched with `runtimeMode=full-access`, `interactionMode=plan`, and `role=review`.
+- **Implementer tasks:** Dispatched with `runtimeMode=full-access`, `interactionMode=default`, and `role=implementation`.
 
----
+### Protection realities and safeguards
 
-## 3. Report format — critic
-
-Every critic returns exactly these fields. A missing field is an incomplete report.
-
-```text
-VERDICT:       pass | changes_required | unverified
-FEASIBILITY:   sound | risky | infeasible      (Antigravity only)
-BLOCKERS:      [ location, problem, expected behaviour, evidence ]
-SUGGESTIONS:   [ ... ]        non-blocking
-FILES_AT_RISK: [ ... ]
-CONCEDED:      [ ... ]        points withdrawn after argument
-```
-
-Rules for the fields:
-
-- **Every blocker needs four things**: where it is (`path:line`), what is wrong, what
-  should happen instead, and a real example or failing test. A blocker missing the
-  evidence is a suggestion.
-- **Anything you did not confirm stays a concern**, labelled as one. Do not promote a
-  hunch to a blocker because it sounds right.
-- **`unverified`** is an honest verdict. It means you could not check. It is more
-  useful than a confident `pass`.
+1. **Caller-mode preflight:** T3 enforces that child runtime modes cannot be broader than parent modes (`runtime_mode_escalation_denied`). Do not dispatch a broader child or silently downgrade child permissions (silent lowering is forbidden). The coordinator must verify its own active mode via `t3_thread_configuration` before dispatching children. Reuse existing Full access authorization without repeatedly asking for already approved choices. If the caller is not in Full access, request that the user switch to Full access in the composer to activate the authorized mode, and verify active mode via readback on the subsequent turn. If the surface cannot operate in the authorized mode, report the actual needed human step.
+2. **Instruction-based restraint under Full access:** Full access permits writes at the provider layer. Reviewer restraint is instruction-based (the verbatim guard). `interactionMode=plan` is interaction guidance, not hard write prevention. Worktree isolation is not a security boundary. Never claim an enforced read-only guarantee.
+3. **Detection via fingerprints:** The coordinator records `git status --porcelain` and SHA-256 fingerprints before and after every critic dispatch.
+4. **Safeguard against blind restore:** If a critic touches files, the coordinator does **not** blindly run `git restore`. The coordinator detects, inspects, attributes, and preserves user work. It reports the unexpected modification and stops.
+5. **Automatic approval review:** Full access eliminates routine provider prompts, but does not disable automatic approval review. If an action is rejected by automatic review, narrow the action or report the specific limitation; do not attempt a bypass.
+6. **Supervised mode contrast:** In Supervised mode (`runtimeMode=approval-required`), provider actions trigger prompts. MCP question tools cannot approve permissions; native app controls must be used if available. Critics must avoid broad scans and focus on named files.
 
 ---
 
-## 4. Report format — implementer
+## 3. T3 Task Lifecycle and Ledger
 
-Antigravity (and any future implementer) returns:
+T3 Code provides product-native app orchestration. Child tasks must be driven accurately:
+
+### Structured dispatch example
+
+To dispatch a critic via `delegate_task`:
+
+```json
+{
+  "task": "<prompt with verbatim guard and review brief>",
+  "target": {
+    "providerInstanceId": "opencode",
+    "model": "opencode/space-bunny-free",
+    "options": {
+      "variant": "max"
+    }
+  },
+  "role": "review",
+  "runtimeMode": "full-access",
+  "interactionMode": "plan",
+  "mode": "async",
+  "clientRequestId": "round-1-opencode-review"
+}
+```
+
+*Note:* `target.providerInstanceId`, `model`, and `options` above are illustrative placeholders representing user-selected choices from the live catalog; there is no fixed critic default.
+
+### Lifecycle and ledger rules
+
+1. **Task dispatch:** Calling `delegate_task` returns `taskId` and `childRunId` (which is `string | null` and may be null until assigned by the runner). `delegate_task` has no workspace or worktree parameter; child tasks execute bound to the caller's active checkout (this migration observed the caller's main checkout). Inspect caller and child bindings via `t3_thread_configuration` and `t3_worktree_status` rather than assuming isolated worktree boundaries or making unsupported universal security claims. Do not imply passing `taskId` into dispatch.
+2. **Ledger tracking:** Retain both `taskId` and `childRunId` in the task ledger to match the original delegated run. If `childRunId` is initially null, retain the null receipt and refresh via `task_status` readback once assigned; do not treat an initial null `childRunId` as a missing ledger failure. Distinguish `workState=waiting_for_children` (while children are active) from terminal `result_available`, and check `hasPendingChildRuns` on later turns. A completed turn alone is not task acceptance. The returned `childThreadId` is backing storage for the subagent, **not** a target for continuing review rounds (`t3_thread_send` is not used).
+3. **Fresh review rounds:** For every review round, call `delegate_task` again with a fresh task and distinct `clientRequestId`. Include the original brief, prior findings, responses, and unresolved objections. The call returns a new `taskId`.
+4. **Waiting and barriers:** Async child dispatches wake the parent on completion; end the turn to wait reactively. For mid-turn inspection, use bounded `task_status` checks (no infinite wait). A wait timeout **never** cancels a task.
+5. **Cancellation and terminal states:** `task_cancel` accepts its own stable `clientRequestId`, distinct from the dispatch `delegate_task` request ID. `task_cancel` may return `cancel_requested` (non-terminal) or an existing terminal status; `task_status`/pending run readback remains required. Task terminal states include `completed`, `failed`, `cancelled`, and `interrupted` (actual cancellation yielded `interrupted` with `hasPendingChildRuns=false`). Continue bounded `task_status` checks until one of the terminal states (`completed`, `failed`, `cancelled`, `interrupted`) is confirmed and `hasPendingChildRuns=false`.
+6. **Cleanup:** On completion, inspect `hasPendingChildRuns=false`. Cancel and clean up remaining child tasks. Worktrees survive thread deletion: clean up only owned, unused worktrees after checking bindings and absence of uncommitted user edits.
+7. **Top-level threads:** Use `t3_thread_launch` only when the user explicitly requests a separate top-level conversation, and always provide an explicit `workspaceStrategy` (omission selects project root). `create_threads` inherits caller's checkout with no workspace override. No unrequested top-level launch.
+
+---
+
+## 4. Report Formats
+
+Critic and implementer formats both require `EFFECTIVE_MODEL` for execution provenance.
+
+### Critic report format
+
+Every critic must return exactly these fields:
 
 ```text
+EFFECTIVE_MODEL: [ provider/model, settings, runtimeMode, interactionMode | evidence: requested vs configured vs confirmed/unverified ]
+VERDICT:         pass | changes_required | unverified
+BLOCKERS:        [ location, problem, expected behaviour, evidence ]
+SUGGESTIONS:     [ ... ]        non-blocking
+FILES_AT_RISK:   [ ... ]
+CONCEDED:        [ ... ]        points withdrawn after argument
+```
+
+### Implementer report format
+
+Antigravity returns:
+
+```text
+EFFECTIVE_MODEL:       [ provider/model, settings, runtimeMode, interactionMode | evidence: requested vs configured vs confirmed/unverified ]
 OUTCOME:               succeeded | failed
 FILES_CHANGED:         [ ... ]
 CHECKS:                pytest= mypy= ruff-check= ruff-format=
@@ -164,97 +146,37 @@ DEVIATIONS_FROM_PLAN:  [ ... ]   empty, or each explained
 BLOCKED_ON:            [ ... ]
 ```
 
-The coordinator verifies the report against the actual files and actual check results.
-**Do not trust a report. Read the files, and run the gates yourself.**
+### Format rules and EFFECTIVE_MODEL specification
+
+- **Required components:** `provider/model`, `settings` (options such as reasoning/thinking/variant), and `modes` (`runtimeMode` and `interactionMode`).
+- **Evidence channels:** Must distinguish requested vs configured vs provider-confirmed/unverified:
+  - Task dispatch and `task_status` receipts corroborate target provider and model.
+  - `t3_thread_configuration` corroborates configured options and runtime/interaction modes.
+  - Provider banner / session output corroborates actual model use when available (otherwise marked unverified).
+  - Catalog `currentValue` reflects catalog defaults, NOT task execution evidence.
+- **Blockers require evidence:** Location (`path:line`), problem, expected behaviour, and concrete evidence (command output or failing test). Without evidence, it is a suggestion.
+- **Blocker discipline:** No unresolved blocker affecting frozen or accepted work may be deferred. Deferral is permitted only for points proved outside current scope or non-blocking suggestions.
+- **`unverified`:** An honest verdict when conditions prevent verification.
+- **No FEASIBILITY line:** Antigravity does not review; feasibility lines are removed.
 
 ---
 
-## 5. Launch routes — verified
+## 5. Review Risk Levels and Escalation
 
-Two different routes. Pick by critic.
+| Risk Level | Trigger | Planning Review | Implementation Review |
+|---|---|---|---|
+| **Low** | Obvious low-impact work (typos, docs, formatting fixes) | Coordinator plans alone | Coordinator reading + 4 gates |
+| **Normal** | Features, substantive refactors, non-load-bearing fixes | 1 independent critic | 1 independent critic |
+| **High** | Path resolution, data formats, registry TOML, exit codes, permissions, load-bearing areas (`AGENTS.md` §4), internal refactors touching load-bearing behavior | **2 critics, verified different families** (or explicit user acceptance of unverified family pair) | **2 critics, verified different families** (or explicit user acceptance of unverified family pair) |
 
-### Route A — native `--agent` launch
+*Risk policy notes:*
+- Low risk is strictly limited to obvious low-impact work.
+- Internal refactors touching load-bearing behavior remain High risk.
+- Substantive refactors are at least Normal risk.
+- High risk strictly requires verified distinct model families when established. If a selected model family cannot be verified, disclose which identity is unverified and obtain explicit user acceptance of the named pair for that session before proceeding; never claim verified family diversity.
 
-Antigravity and OpenCode both launch natively:
+### Two-round non-convergence escalation
 
-```bash
-orca orchestration worker-start --task <task_id> --worktree current --agent antigravity --json
-orca orchestration worker-start --task <task_id> --worktree current --agent opencode --json
-```
-
-`--agent` takes an Orca agent id — `claude, codex, cursor, antigravity, muse, zcode,
-opencode, opencode2` are documented examples, and the list is **not exhaustive**. Do not
-assume an id works; try it and read the error.
-
-### Route B — terminal you launch, then attach
-
-Use this when a critic needs its own CLI flags, because `worker-start` cannot carry
-them. This is how Antigravity gets `--mode plan`:
-
-```bash
-orca terminal create --worktree current --title "agy-critic" --command "agy --mode plan" --json
-orca orchestration worker-start --task <task_id> --terminal <handle> --worktree current --json
-```
-
-The `--command` text is typed into the terminal, so the agent's own read-only flag
-finally reaches it. Verified on Orca 1.4.221 — this is the route the C2 plan used.
-
-### MCode — Route B fails, use Route C
-
-Recorded on 2026-10-07: **`worker-start --terminal` on MCode's terminal is rejected as
-`agent_unconfigured`.** The working low-level route:
-
-```bash
-orca orchestration task-create --spec "<critic task, including the guard text>" --json
-orca orchestration dispatch --task <task_id> --to <handle> --return-preamble --json
-orca terminal send --terminal <handle> --text "<exact returned preamble>" --enter --json
-```
-
-Note `dispatch` runs **without** `--inject`, and the preamble Orca returns is sent
-literally into the verified-idle terminal.
-
-**MCode's lane is unsupervised.** Orca owns no terminal resource for it, and `release`
-returns `retained / no_owned_resource / processAction none`. Never claim supervised
-cleanup for MCode. The Task/Dispatch pair and `worker_done` remain authoritative.
-
-`--model` is not portable either: it is accepted for Claude, Codex, Cursor, Antigravity
-and Muse ids; **OMP takes `--model` but not `--effort`**; everything else (OpenCode,
-ZCode, …) launches on whatever its own config says.
-
----
-
-## 6. How many critics
-
-Do not run five agents on a typo fix.
-
-| Change type | Planning review | Implementation review |
-|---|---|---|
-| Obvious, low impact | none — the coordinator plans alone | the four gates + coordinator's own reading |
-| Normal feature or bug fix | 1 independent critic | 1 independent critic |
-| **High risk** | **2 critics, different families** | **2 critics, different families** |
-
-**High risk** = touching path resolution, public data formats, registry TOML,
-permissions, exit codes, compatibility, or anything `AGENTS.md` §4 flags as
-load-bearing. On Skill Lens this is often true.
-
-Expand review when the evidence warrants it, never by standing habit.
-
-**As actually practised:** C2 and C3 each ran **two critics from different model
-families** — OpenCode `space-bunny-free` (Space Bunny/Muse) and MCode
-`minimax/MiniMax-M3.1-Flash-Preview` (minimax), with Antigravity
-`gemini-3.8-flash-high` (Google) as feasibility reviewer and implementer, and Hermes
-`gpt-6.1-sol-900k` (OpenAI) coordinating — a fourth family. No five-agent council has
-been run, and none is needed for this risk profile.
-
----
-
-## 7. Before you trust any of this
-
-- **Record the effective model in every report.** `--model` is only honoured for Claude,
-  Codex, Cursor, Antigravity and Muse provider ids; **OMP takes `--model` but not
-  `--effort`**; everything else — OpenCode, ZCode and the rest — launches on whatever
-  its own config says. Never claim a model from the dispatch arguments; read back what
-  the agent actually used, from its own banner or session metadata. A council quietly
-  running the wrong model has destroyed the point of having a council.
-- **Read current config and command help, not these files, when they disagree.**
-- Machines change. An agent roster written down last month is a guess.
+If two rounds of review between the coordinator and critics do not converge on agreement:
+- **Stop immediately.** Do not start a third broad wave of reviews.
+- **Escalate to the user:** Present the disagreement, evidence, and options in plain English. Non-convergence indicates a specification ambiguity or plan issue requiring human decision.
