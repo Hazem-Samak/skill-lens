@@ -2,7 +2,8 @@
 
 Status: Agreed
 Authorization: Hazem approved the reviewed findings and requested migration on 2026-10-10. Sol 6.1 coordinates; Antigravity Gemini 3.8 Flash High is the sole implementer; Pi, Grok and OpenCode are the native planning/review pool with models chosen per session. MCode MiniMax M3.1 Flash is a future ACP addition, not part of this migration. No push, release, provider reconfiguration or C4 work is authorized.
-Reference: `bd3b1e2fc6ef2a250506bb3ff93a65c3512ad991` (frozen plan; this reference is recorded in a following plan-only provenance commit).
+Reference: pending amended-plan freeze; record the exact commit in a following plan-only provenance commit before further implementation.
+Previous reference: `bd3b1e2fc6ef2a250506bb3ff93a65c3512ad991` (original frozen plan, retained in Git history).
 Source baseline: `5c03d11` on `main`, clean working tree.
 
 ## Outcome
@@ -282,6 +283,65 @@ preservation and read-only product guarantee are unchanged.
 - Verify each new child with t3_thread_configuration. Record configured mode and
   distinguish it from provider behavior. Independent final reviews check these
   amended permission statements along with the original frozen migration contract.
+
+## Review-standard amendment — 2026-10-10
+
+Authorization: after disclosure that Space Bunny's underlying model family could
+not be verified, Hazem explicitly chose, "Keep the selected pair and record the
+unverified family."
+
+- High-risk review ordinarily requires two critics from verified different model
+  families. If a selected family cannot be verified, disclose the limitation and
+  proceed only after the user explicitly accepts the named pair for that session.
+  Record the acceptance and the unverified identity; never claim verified family
+  diversity. A different provider alone does not establish a different family.
+- This migration retains OpenCode `opencode/space-bunny-free`, `variant=max`, and
+  Pi `tokenharbor/deepseek-v4.1-flash:free`, `thinking=max`, under that explicitly
+  accepted path. Space Bunny's upstream family remains unverified. This is a
+  session-specific exception, not permanent reviewer defaults or a future waiver.
+- Fresh delegated critic tasks retain role/context independence. Verified family
+  diversity is a separate claim. Sharing the coordinator's or implementer's family
+  does not satisfy the verified-family requirement, even with a separate context.
+- Re-freeze this complete plan, including the already-authorized Full access
+  amendment and this review-standard amendment, using two plan-only commits.
+  The new `Reference:` must contain every operative amendment. Preserve the
+  original freeze and permission-amendment commits as historical evidence.
+- Teach the same provenance rule in the active loops: approved changes to the
+  frozen execution contract require a new two-commit freeze before affected work.
+  Ordinary execution-roster, provenance and acceptance records cannot silently
+  change that contract. An arbitrary newer plan commit is not fresh authorization.
+
+## Final review, round 1 — adjudication
+
+OpenCode: changes_required. Pi: pass. Both tasks are completed/result_available
+with `hasPendingChildRuns=false`. The coordinator verified that all 135 captured
+tracked/untracked file fingerprints and repository status were unchanged during
+the reviews.
+
+- Accepted OpenCode's family-rule blocker. The explicit user choice above resolves
+  the review-standard decision; Antigravity will document the unknown-family path.
+- Accepted OpenCode's frozen-reference blocker as a provenance clarity defect.
+  Re-freeze all approved amendments before the next correction task. Do not make
+  the newest arbitrary plan-only commit the execution authority.
+- Accepted both reviewers' literal `\\n` prompt correction and source-path clarity
+  suggestions. Record the Pi extension symbol, installed build and archive path;
+  qualify disposable receipts as not retained, and re-derive mappings on upgrades.
+- Accepted OpenCode's preflight remedy, nullable `childRunId`, distinct cancellation
+  request identity and non-terminal `cancel_requested` clarification. Preserve
+  observed caller/child checkout binding without inventing a security boundary.
+- Rejected OpenCode's claim that the setup-script default lacks tool support:
+  the live `t3_worktree_handoff` description explicitly says it runs the project
+  setup script by default. Qualify the description source and still pass the option
+  explicitly; do not claim the schema itself declares a default.
+- Rejected Pi's suggestion to dispatch at a narrowed caller mode. Hazem's standing
+  Full access choice forbids silent downgrades. Activate the already-authorized
+  mode and verify a following-turn readback, or report the actual activation limit.
+- Pi's shorthand file total is not a manifest. Coordinator scope verification is
+  authoritative: five modified active docs and seven new files (plan plus six
+  archive files) relative to `5c03d11`; every other baseline file is unchanged.
+- Antigravity owns the narrow active-document corrections; the coordinator owns
+  this plan, freeze/provenance, gates, final acceptance and commit. No product,
+  global setting, ACP, C4, push or publication scope is added.
 
 ## Verification and acceptance record
 
