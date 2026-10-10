@@ -3,7 +3,7 @@
 **What this is.** The council is the independent review system in T3 Code for Skill Lens. Other AI models check plans and code diffs before work is frozen or accepted. They read and report; they never edit the project.
 
 - A **critic** (or reviewer) is an agent dispatched with read-only instructions to inspect a plan or diff.
-- The **coordinator** is Sol (`gpt-6.1-sol`, configured reasoning `xhigh`, OpenAI). It plans, dispatches, inspects, runs verification gates, judges, and commits. It never writes product code.
+- The **coordinator** is Sol (`gpt-6.1-sol`, default reasoning `high`, OpenAI). It plans, dispatches, inspects, runs verification gates, judges, and commits. It never writes product code.
 - The **implementer** is Antigravity (`gemini-3.8-flash-high`, Google). It is the sole implementer: it writes code and tests, runs checks, and reports. It never reviews, never delegates, and never commits.
 
 Read this together with `profiles/project-profile.md` (what "correct" means here) and `profiles/machine-profile.md` (live environment and provider facts).
@@ -16,7 +16,7 @@ The operational roster has clear role separation:
 
 | Role | Agent / Model | Family | Selection Policy |
 |---|---|---|---|
-| **Coordinator** | Codex (`gpt-6.1-sol`, reasoning `xhigh`) | OpenAI | **Fixed coordinator.** Never writes product code. |
+| **Coordinator** | Codex (`gpt-6.1-sol`, reasoning `high` by default) | OpenAI | **Fixed coordinator.** Never writes product code. |
 | **Implementer** | Antigravity (`gemini-3.8-flash-high`) | Google | **Sole implementer.** Never reviews or commits. |
 | **Critic Pool** | Native `pi`, `grok`, `opencode` | Varies | **USER selects models AND settings per session** from live T3 catalog. |
 | **Deferred** | MCode (`MiniMax M3.1 Flash`) | MiniMax | Future ACP integration only; not native in T3. |

@@ -20,13 +20,14 @@ T3 Code provides the product-native collaborative orchestration environment on t
 
 | Role | Provider / Agent | Configured Model | Family | Dispatch Policy |
 |---|---|---|---|---|
-| **Coordinator** | `codex` | `gpt-6.1-sol` (reasoning `xhigh`) | OpenAI | **Fixed coordinator.** Never writes product code. (Replaces historical `gpt-6.1-sol-900k`). |
+| **Coordinator** | `codex` | `gpt-6.1-sol` (default reasoning `high`) | OpenAI | **Fixed coordinator.** Never writes product code. (Replaces historical `gpt-6.1-sol-900k`). |
 | **Implementer** | `antigravity` | `gemini-3.8-flash-high` | Google | **Sole implementer.** Never reviews or commits. |
 | **Critic Pool** | `pi`, `grok`, `opencode` | Chosen per session | Varies | **USER selects models AND settings per session** from live catalog. Coordinator asks once if missing. |
 | **Deferred** | MCode | MiniMax M3.1 Flash | MiniMax | Future ACP integration only; not native in T3. |
 
 ### Session model evidence vs defaults
 
+- **Coordinator default:** Use `reasoningEffort=high`. The migration session used `xhigh` as a session override; its historical receipts remain unchanged.
 - **USER selection:** Critic models AND settings (options) are selected by the user per session from the live catalog. If choices are missing, the coordinator presents an ask-once menu showing live options with recommended risk-sized choices. Authorized choices are reused across rounds within the session.
 - **Model family diversity and evidence:** Distinguish role and context independence (separate prompt, separate subagent turn) from verified family diversity. Avoid categorical claims that same-family models cannot provide independent context. High-risk reviews strictly require verified distinct model families when established. Sharing coordinator or implementer family does not satisfy the requirement. Different providers do not automatically prove different model families (unknown family identity stays unverified).
 - **Unverified family operational path:** If a selected model family cannot be verified, disclose which identity is unverified and obtain explicit user acceptance of the named pair for that session before proceeding. Never claim verified family diversity when unverified.
