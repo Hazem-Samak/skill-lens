@@ -21,41 +21,19 @@ from skill_lens.core.scanner import ScanReport
 from skill_lens.models.compare import CompareReport
 from skill_lens.models.diff import DiffCopy, DiffFile, DiffReport
 from skill_lens.models.doctor import DoctorReport
-from skill_lens.models.enums import CompareRelation, HeadlineState, Scope, Severity
-from skill_lens.models.parsing import (
-    ERR_DANGLING_SYMLINK,
-    ERR_PERMISSION_DENIED,
-    ERR_SYMLINK_CYCLE,
-)
+from skill_lens.models.enums import CompareRelation, Severity
 from skill_lens.models.resolution import ResolutionReport
+from skill_lens.presentation import (
+    SCOPE_LABEL,
+    STATE_MARK,
+    STATE_STYLE,
+    copy_heading,
+    needs_listing,
+    no_differences_message,
+    unified_text,
+    unreadable_reason,
+)
 from skill_lens.registry.loader import AgentDefinition
-
-_STATE_STYLE = {
-    HeadlineState.ACTIVE: "bold green",
-    HeadlineState.COEXISTS: "bold cyan",
-    HeadlineState.SHADOWED: "yellow",
-    HeadlineState.DISABLED: "dim",
-    HeadlineState.UNSEARCHED: "dim",
-    HeadlineState.INVALID: "bold red",
-    HeadlineState.AMBIGUOUS: "bold magenta",
-}
-
-_STATE_MARK = {
-    HeadlineState.ACTIVE: "*",
-    HeadlineState.COEXISTS: "+",
-    HeadlineState.SHADOWED: "o",
-    HeadlineState.DISABLED: "-",
-    HeadlineState.UNSEARCHED: ".",
-    HeadlineState.INVALID: "x",
-    HeadlineState.AMBIGUOUS: "?",
-}
-
-_SCOPE_LABEL = {
-    Scope.USER: "Global",
-    Scope.PROJECT: "Project",
-    Scope.SYSTEM: "System",
-    Scope.PLUGIN: "Plugin",
-}
 
 
 def _short(path: str) -> str:
@@ -86,7 +64,7 @@ def render_scan(report: ScanReport, console: Console | None = None) -> None:
     for skill in report.skills:
         table.add_row(
             escape(skill.name),
-            _SCOPE_LABEL.get(skill.scope, skill.scope.value),
+            SCOPE_LABEL.get(skill.scope, skill.scope.value),
             escape(_short(skill.canonical_path)),
             escape(", ".join(skill.agents)),
         )
@@ -114,7 +92,7 @@ def render_why(report: ResolutionReport, console: Console | None = None) -> None
             expand=False,
         )
     )
-    console.print(f"Headline: [{_STATE_STYLE[report.headline]}]{report.headline.value}[/]")
+    console.print(f"Headline: [{STATE_STYLE[report.headline]}]{report.headline.value}[/]")
     console.print()
 
     if not report.candidates:
@@ -125,8 +103,8 @@ def render_why(report: ResolutionReport, console: Console | None = None) -> None
         console.print()
 
     for candidate in report.candidates:
-        style = _STATE_STYLE[candidate.state]
-        mark = _STATE_MARK[candidate.state]
+        style = STATE_STYLE[candidate.state]
+        mark = STATE_MARK[candidate.state]
         installation = candidate.installation
         title = Text()
         title.append(f"{mark} ", style=style)
@@ -178,52 +156,18 @@ def render_agents(agents: Sequence[AgentDefinition], console: Console | None = N
 
 # --- diff ------------------------------------------------------------------
 
-_UNREADABLE_REASON = {
-    ERR_SYMLINK_CYCLE: "symlink cycle",
-    ERR_DANGLING_SYMLINK: "dangling symlink",
-    ERR_PERMISSION_DENIED: "permission denied",
-}
-
-
-def _range_text(start: int, count: int) -> str:
-    """Format one side of a unified hunk header the way ``difflib`` does."""
-    return str(start) if count == 1 else f"{start},{count}"
-
-
-def _unified_text(file: DiffFile) -> str:
-    """The unified diff body for one file, ready for Rich's ``diff`` lexer."""
-    lines = [f"--- {file.path}", f"+++ {file.path}"]
-    for hunk in file.hunks:
-        old = _range_text(hunk.old_start, hunk.old_count)
-        new = _range_text(hunk.new_start, hunk.new_count)
-        lines.append(f"@@ -{old} +{new} @@")
-        lines.extend(hunk.lines)
-    return "\n".join(lines)
-
-
-def _unreadable_reason(copy: DiffCopy) -> str:
-    return _UNREADABLE_REASON.get(copy.error or "", "no readable content")
-
 
 def _copy_heading(copy: DiffCopy, *, baseline_exists: bool) -> str:
     """One copy's heading line: marker, Variant letter, path, scope, status."""
-    if copy.is_baseline:
-        mark, style, status = "=", "bold cyan", "baseline (no diff shown)"
-    elif not copy.is_readable:
-        mark, style, status = "x", "bold red", f"cannot be read: {_unreadable_reason(copy)}"
-    elif copy.files:
-        mark, style, status = "*", "bold yellow", f"{len(copy.files)} file(s) differ"
-    elif not baseline_exists:
-        # Nothing was compared, so claiming identity would be a lie.
-        mark, style, status = "-", "dim", "not compared: no baseline"
-    else:
-        mark, style, status = "=", "dim", "identical to the baseline"
-
-    variant = f" [Variant {copy.variant_label}]" if copy.variant_label else ""
+    parts = copy_heading(
+        copy,
+        baseline_exists=baseline_exists,
+        display_path=paths.display(copy.path),
+    )
     return (
-        f"[{style}]{mark}[/] {escape(paths.display(copy.path))}{escape(variant)}"
-        f" [dim]({escape(copy.scope.value)}, {escape(copy.parse_status)})[/dim]"
-        f"  [{style}]{escape(status)}[/]"
+        f"[{parts.style}]{parts.mark}[/] {escape(parts.path)}{escape(parts.variant)}"
+        f" [dim]({escape(parts.scope)}, {escape(parts.parse_status)})[/dim]"
+        f"  [{parts.style}]{escape(parts.status)}[/]"
     )
 
 
@@ -242,7 +186,7 @@ def _render_file(file: DiffFile, console: Console) -> None:
     # Pygments treats them as ordinary characters.
     console.print(
         Syntax(
-            _unified_text(file),
+            unified_text(file),
             "diff",
             background_color="default",
             indent_guides=False,
@@ -251,30 +195,13 @@ def _render_file(file: DiffFile, console: Console) -> None:
 
 
 def _no_differences_message(report: DiffReport) -> str:
-    """The headline when nothing differs -- which is not the same as "identical".
+    """The headline when nothing differs -- which is not the same as 'identical'.
 
     With no baseline nothing was compared at all, so the honest headline is that
     no comparison happened, not that the copies match.
     """
-    if report.baseline_path is None:
-        return "[yellow]Not compared:[/yellow] no copy could serve as a baseline."
-    readable = [copy for copy in report.copies if copy.is_readable]
-    if len(report.copies) == 1:
-        return (
-            "[green]No differences:[/green] only one copy exists, so there is nothing to compare."
-        )
-    if len(readable) < 2:
-        return "[green]No differences:[/green] fewer than two copies could be read."
-    return f"[green]No differences:[/green] all {len(readable)} readable copies are identical."
-
-
-def _needs_listing(report: DiffReport) -> bool:
-    """True when the copies must be listed even though nothing differs.
-
-    A second copy, or a copy that could not be read at all, is itself a finding:
-    printing only "no differences" would hide it.
-    """
-    return len(report.copies) > 1 or any(not copy.is_readable for copy in report.copies)
+    notice = no_differences_message(report)
+    return f"[{notice.style}]{escape(notice.label)}[/{notice.style}]{escape(notice.body)}"
 
 
 def _print_notes(report: DiffReport, console: Console) -> None:
@@ -324,7 +251,7 @@ def render_diff(report: DiffReport, console: Console | None = None) -> None:
 
     if not report.has_differences:
         console.print(_no_differences_message(report))
-        if not _needs_listing(report):
+        if not needs_listing(report):
             if show_notes:
                 _print_notes(report, console)
             return
@@ -337,7 +264,7 @@ def render_diff(report: DiffReport, console: Console | None = None) -> None:
             console.print("  [dim]Reference copy; every diff below is against it.[/dim]")
         elif not copy.is_readable:
             console.print(
-                f"  [dim]No content to compare ({escape(_unreadable_reason(copy))}).[/dim]"
+                f"  [dim]No content to compare ({escape(unreadable_reason(copy))}).[/dim]"
             )
         elif not copy.files:
             if baseline_exists:

@@ -104,3 +104,64 @@ launch changes, publishing or remote push. Workers do not commit or delegate.
   not acceptance evidence. The completed fresh task supplies acceptance.
 - User authorization covers C4 and the named one-reviewer roster; no additional
   scope is authorized. C5 remains a separate assignment.
+
+## Execution and acceptance record — 2026-10-11
+
+This appendix records execution evidence; it does not amend the frozen contract.
+
+- Coordinator: Codex `gpt-6.1-sol`, reasoning High, Full access/default.
+  Implementer: Antigravity `gemini-3.8-flash-high`, Full access/default.
+  Sole reviewer: OpenCode `opencode/step-5-preview-free`, `variant=high`,
+  Full access/plan, as explicitly selected by the user. Targets/options/modes
+  were checked using T3 dispatch and child configuration receipts. Provider-side
+  execution identity was not independently verified; no family-diversity claim.
+- The two-commit freeze is `476478ac2d3c9792c3c3f9dc7609007474e309d8` plus
+  reference-only record `897aa77`. Both implementer rounds verified the authority.
+- Five product files changed: shared package `__init__.py`, `state.py`, `text.py`,
+  `render.py`, and `tests/test_presentation.py`. No other product files, models,
+  engines, CLI, registry, snapshots, goldens, dependencies or screens changed.
+- Coordinator found and reproduced the new renderer test's missing temporary-home
+  fixture: `_copy_heading` reaches `paths.home()` through `paths.display()`.
+  Gemini corrected that test to use `mock_home` and assert the shortened path;
+  the literal-parts test also uses the exact contract test name. No product
+  behavior changed during correction.
+- Coordinator final verification: **561 passed, 1 skipped, 94.58% coverage**;
+  strict mypy clean across 31 source files; Ruff lint and format checks clean.
+  Skip reason: case-insensitive filesystem cannot hold two distinct case-only
+  filenames. All 17 existing render snapshots pass and their SHA-256 hashes
+  match the pre-implementation files. Nineteen presentation tests were added.
+- Step 5 final verdict: **pass**, no blockers. Reviewer reported 30 old/new
+  renderer comparisons with identical output and supplemental isolated mutation
+  checks (21 of 28 caught). These are supplemental reviewer observations, not
+  completion of the separate C5 audit. Planning and final reviewer before/after
+  repository fingerprints match; neither completed review changed project files.
+- Optional suggestions deferred: stronger real-tag cases for variant/parse-status
+  escaping, styled-output assertions, and a wider static dependency guard. The
+  current implementation preserves each escape/style operation; source inspection,
+  required tests and unchanged output support acceptance. Some fields are fixed
+  strings or enums, and unused hypothetical filesystem code is not a current live
+  read. These are test-hardening suggestions, not unresolved behavior defects.
+  The unrelated docstring quote change is harmless and retained to avoid another
+  correction round. No current acceptance blocker is deferred.
+- Expected launches: 3; actual: 5. Extra tasks were the restarted cancelled plan
+  review and the test-isolation correction. Elapsed wall time from first review
+  dispatch at 07:51:38 UTC to final review completion at 09:47:10 UTC: about
+  1 hour 56 minutes, including the user interruption. Final review itself took
+  about 53 minutes. Token usage is unavailable from the retained T3 receipts;
+  no token/cost savings claim is made.
+- All five tasks are terminal with `hasPendingChildRuns=false`. No worktree was
+  created; the original root checkout and preceding local commits are preserved.
+  C4 is accepted; C5 remains the next separately authorized assignment.
+
+### Task ledger
+
+1. Task `node:delegated-task:command%3Amcp%3A9623ff41-db65-40bb-9c29-04c59cb4ac66%3Adelegate-task%3Ac4-20261011-plan-step5-r1`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A9623ff41-db65-40bb-9c29-04c59cb4ac66%253Adelegate-task%253Ac4-20261011-plan-step5-r1:ordinal:1`;
+   status `cancelled`, `hasPendingChildRuns=false`.
+2. Task `node:delegated-task:command%3Amcp%3A6c73761f-2aaa-4d4b-a710-f95db38b0476%3Adelegate-task%3Ac4-20261011-plan-step5-retry-r1`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6c73761f-2aaa-4d4b-a710-f95db38b0476%253Adelegate-task%253Ac4-20261011-plan-step5-retry-r1:ordinal:1`;
+   status `completed`, `hasPendingChildRuns=false`.
+3. Task `node:delegated-task:command%3Amcp%3A6c73761f-2aaa-4d4b-a710-f95db38b0476%3Adelegate-task%3Ac4-20261011-agy-implementation-r1`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6c73761f-2aaa-4d4b-a710-f95db38b0476%253Adelegate-task%253Ac4-20261011-agy-implementation-r1:ordinal:1`;
+   status `completed`, `hasPendingChildRuns=false`.
+4. Task `node:delegated-task:command%3Amcp%3A6c73761f-2aaa-4d4b-a710-f95db38b0476%3Adelegate-task%3Ac4-20261011-agy-test-isolation-r1`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6c73761f-2aaa-4d4b-a710-f95db38b0476%253Adelegate-task%253Ac4-20261011-agy-test-isolation-r1:ordinal:1`;
+   status `completed`, `hasPendingChildRuns=false`.
+5. Task `node:delegated-task:command%3Amcp%3A6c73761f-2aaa-4d4b-a710-f95db38b0476%3Adelegate-task%3Ac4-20261011-final-step5-r1`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6c73761f-2aaa-4d4b-a710-f95db38b0476%253Adelegate-task%253Ac4-20261011-final-step5-r1:ordinal:1`;
+   status `completed`, `hasPendingChildRuns=false`.
