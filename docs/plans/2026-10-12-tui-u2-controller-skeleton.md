@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: User on 2026-10-12 instructed start U2 in Synara with GPT 6.1 Sol High coordinating/planning/judging, Antigravity Gemini 3.8 Flash High implementing, OpenCode Muse Spark 1.3 free and Pi/9 Router MiMo V2.6 Flash free reviewing; Sol chooses critic effort by task value. Earlier instruction requires pushing every coordinator commit to GitHub. This authorizes the Synara execution adaptation below and U2 only.
-Reference: b696b28813b99702b80c1dd18adfb83eeba932da
+Reference: pending (prior product contract b696b28813b99702b80c1dd18adfb83eeba932da)
 Risk and review: High: cancellation/publication, internal-error exits and read-only protection. Two fresh independent planning reviews and two fresh final reviews. User explicitly selected the named pair; model-family identity beyond catalog labels remains unverified and no verified diversity claim is made.
 Expected child tasks: 5 before corrections: Muse plan review, MiMo plan review, Gemini implementation, Muse final review, MiMo final review. Additional targeted rounds only for affected unresolved findings; escalate after two non-converging rounds.
 
@@ -72,10 +72,24 @@ synara_wait_for_threads, then read complete reports with pagination. Wait
 timeouts are progress, not retries. Creator notifications are passive, not a
 guaranteed wakeup. Respect the catalog's one-creation-plan-per-active-turn limit:
 the observed creation_plan_locked rejection explicitly requires a new user turn
-before another batch. Report that required interaction while preserving existing
-authorization; do not use self-messages or role-changing follow-ups to bypass it.
-Use queue-mode synara_send_message only for implementer corrections; reviews
-use fresh contexts. Carry original human contextMessageIds when delegating a
+before another batch. Do not use self-messages or role-changing follow-ups to
+bypass it. The user subsequently explicitly instructed autonomous implementation
+and both final reviews without further permission. For that instruction, reserve
+the worker and two dedicated final-review threads, plus the focused scheduling
+critic, in one exact four-thread native batch. Dedicated means single-purpose
+standalone threads, not automation reuse or reused completed-review contexts.
+Their initial turn is a preparation handshake only: no product edits or review.
+After this scheduling amendment is independently reviewed and two-commit frozen,
+activate the implementer using the new frozen reference. After coordinator diff
+inspection and all four passing gates, activate the reserved critics with exact
+tree identity, full guard and complementary review briefs. These are fresh final
+review contexts: their only preceding message is administrative readiness, with
+no planning findings, implementation reasoning or early source inspection.
+Use queue-mode synara_send_message for worker activation/corrections and first
+activation of reserved critics. Subsequent review rounds still require new
+contexts, never reuse a completed review thread. If fresh additional contexts
+cannot be created, report the native limit rather than waive review or bypass it.
+Carry original human contextMessageIds when delegating a
 prior turn. Interrupt/read back terminal states if necessary. Before acceptance,
 list/read all owned threads and confirm settled turns and no owned active or
 queued work; do not invent T3's hasPendingChildRuns field. Keep exact critic guard,
@@ -267,5 +281,44 @@ creation targets, with no independent provider-confirmed effort evidence.
 Coordinator pre-freeze gates on unchanged product tree: 605 passed, 1 existing
 filesystem skip, 94.67% coverage; strict mypy clean over 31 files; ruff check
 and format check passed. Logs /tmp/skill-lens-u2-freeze-{pytest,mypy,ruff,format}.log.
-Only this dated plan differs from base. Implementation dispatch needs the next
-native user turn because the round-2 review used this turn's creation batch.
+Only this dated plan differed from base at the first freeze. The first frozen
+product contract is b696b28813b99702b80c1dd18adfb83eeba932da, recorded by
+646e352ca0dac3f028691e04f5b3e5d0bceb996c; both were pushed and verified.
+
+## Execution scheduling amendment
+
+Authorization: the user's subsequent explicit instruction to start implementation
+and then both independent reviews, continuing without additional permission.
+Only preparation/activation timing changes as described above. Preserve named
+providers, role independence, no code before freeze, coordinator verification,
+guard/fingerprints and independent final acceptance. Product scope, permission
+settings, algorithms and acceptance are unchanged.
+Risk: Normal operational amendment; one fresh Muse critic reviews scheduling and
+context independence before its two-commit freeze. Retain accepted High-risk
+product-plan verdicts. The worker and two final critics perform only a readiness
+handshake before activation; they do not inspect or edit product sources early.
+Expected extra launch: one focused scheduling critic. No product work until the
+new frozen reference is recorded and pushed.
+
+Scheduling review: Muse pass, no blockers, thread
+agent-535517b777674f295364e032bef0a8f9, run
+opencode-turn-8ac6dc0b-d34d-497b-bd04-a1ec538b1b05. Accepted wording suggestions:
+explicit four-thread batch and single-purpose standalone context. Rejected the
+suggestion to treat the scheduling critic as readiness-only: that critic must
+read this amendment; only worker and final-review preparation turns are inert.
+Its report incorrectly says no source read: native activity records confirm
+read calls, and its preceding message reports amendment inspection. Native
+identity receipts supersede its mixed-role EFFECTIVE_MODEL field. Provider-
+confirmed use remains unverified. Before/after 209-file fingerprints unchanged.
+Baseline gates repeated: 605 passed, 1 existing skip, 94.67%; mypy/ruff/format green.
+
+Batch request skill-lens-u2-autonomous-implementation-review-batch-20261012,
+operation gateway:create:b92fe9aa21dd2997062e7f6ec812f40c. Prepared worker:
+agent-44c2d346e57e5b479374648afb9ae3ed, initial run
+9b042b9d-9c17-4826-afab-6448a0d5f909. Prepared final Muse:
+agent-7e8d8d9ed9a16500042a416258338151, initial run
+opencode-turn-5a2635cb-2c69-4656-a6a1-246e371bb3e4. Prepared final MiMo:
+agent-141af8854ec19adaf1791f93710423f2, initial run
+927ad9f6-8a8e-4fed-addd-af0160f6d578. All three initial turns settled with READY,
+not completion/acceptance. No product inspection or edits occurred in preparation.
+Actual implementation and final review run ids will be recorded on activation.
