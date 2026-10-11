@@ -173,3 +173,87 @@ continues; C5 cannot claim completion with a surviving relevant mutation.
 - Accepted round 2 suggestions as clarifications: verify complete clean-copy
   test collection, require provenance from the actual test process, and enumerate
   every acceptance row using realized test names. No contract scope expanded.
+
+
+## Execution and acceptance record — 2026-10-11
+
+This appendix records execution evidence and the coordinator's acceptance. It
+adds no operative amendment to the frozen contract above.
+
+- **Decision:** Sol accepts C5. MiniMax's final independent verdict was `pass`
+  with no blockers. Sol inspected the full diff and actual files, independently
+  reproduced the campaign and runner guard faults, and evaluated the review;
+  the review was evidence for the decision, not an automatic approval.
+- **Authority:** User authorized C5 and the named sole-reviewer roster. The
+  two-commit freeze is `3665e7a38a9b7366c259da61c87f8b0cab656947` followed by
+  reference-only commit `6030c3dea99fbb97738378c16a669787dcc2b453`. No later
+  contract amendment was made. The user's clarification retains Sol as final
+  judge and orchestrator, with evidence-based debate when reviewers disagree.
+- **Roster and provenance:** Sol/Codex `gpt-6.1-sol`, reasoning High;
+  Antigravity `gemini-3.8-flash-high` is the sole implementer;
+  mcode `m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking`, `thinkingEffort=high`,
+  `permissionMode=bypassPermissions` is the only planning/final reviewer.
+  T3 dispatch/configuration receipts confirm targets and options, Full access
+  for every task, plan interaction for critics and default for implementers.
+  Child reports corroborate model identities; provider-side effort/permission
+  confirmation remains unverified. Gemini's last report labelled runtime mode
+  `default`; the T3 configuration receipt confirms `full-access` and default
+  **interaction** mode. The receipt, not that mislabeled field, records the mode.
+- **Delivered:** Two tests close the hybrid/either real-resolver and distinct
+  settings-key gaps. The walkthrough maps all 16 acceptance rows to actual tests,
+  documents files/APIs/read boundaries, and records limitations. The single
+  standalone campaign script and JSON artifact reproduce 12 specified faults.
+  No persistent production, CLI, registry, dependency, UI, golden or snapshot
+  change occurred. All 17 snapshot bytes and documented hashes match `6030c3d`.
+- **Corrections judged by Sol:** Both planning gaps were independently reproduced
+  before acceptance. The first runner could accept invalid runs; a later version
+  missed selector/outcome consistency and rewrote the retained artifact despite
+  external output. Sol reproduced those failures and Gemini corrected them in
+  two batches. The initial walkthrough's invented snapshot names and incorrect
+  source descriptions/signature were corrected against actual files.
+- **Coordinator proof:** All 12 mutants fail through the expected named behavior;
+  all 12 controls and restorations pass, with source bytes restored and loaded
+  package/test-module provenance in the disposable copy. Collection parity is
+  564 items. Retained artifact and coordinator rerun match on inspected hashes,
+  selectors and outcomes: 12 caught, zero survivors, zero invalids. External
+  output left checkout hashes/status unchanged. Fifteen classifier scenarios
+  pass; deliberately breaking seven rejection/survivor outcomes makes the
+  protecting self-tests fail, then all pass restored.
+- **Gates:** Coordinator verified 563 passed, one expected case-insensitive
+  filesystem skip, 94.58% coverage; strict mypy clean over 31 source files;
+  Ruff lint and format clean (93 files). Current logs, campaign rerun and guard
+  fault evidence reside under `/tmp/skill-lens-c5-cv7cl74b/`. These are temporary
+  session evidence; the committed harness/artifact/walkthrough preserve the
+  reproducible audit, not a promise that temporary logs remain available.
+- **Reviewer protection:** Before/after status and SHA-256 fingerprints match
+  for both planning rounds and final review. All six tasks are `completed` with
+  `hasPendingChildRuns=false`. No separate worktree was created or needs cleanup.
+- **Optional review suggestions:** Defer disabling root collection's ignored
+  pytest/bytecode caches: those are development artifacts, no skill target or
+  tracked file is changed; critics were instructed not to run the harness in
+  the active checkout. Defer replacing MUT-06's product-invariant failure marker
+  with a test-owned marker: its actual named test call genuinely fails on the
+  behavioral regression, so current proof is valid. Defer splitting hybrid and
+  either tests: controls verify both consumers and the shared mutated branch is
+  caught; independently killing each policy is not a frozen acceptance condition.
+  These are follow-up suggestions, not unresolved C5 blockers.
+- **Execution receipt:** Expected 3 launches; actual 6. Extra launches: one focused
+  planning correction review and two batched implementer evidence corrections.
+  First dispatch 10:08:29 UTC; final review completed 11:14:57 UTC: approximately
+  1 hour 6 minutes, including coordinator work and turn handoffs. Final review
+  took approximately 5 minutes. Token/cost metrics are unavailable; no savings
+  claim is made. C5 is complete; U1 has not started.
+
+### Task ledger
+
+- Planning review round 1: task `node:delegated-task:command%3Amcp%3Aba3341d2-357d-46da-87ed-2eba81c974e7%3Adelegate-task%3Ac5-20261011-plan-mcode-r1`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Aba3341d2-357d-46da-87ed-2eba81c974e7%253Adelegate-task%253Ac5-20261011-plan-mcode-r1:ordinal:1`; `completed`, `hasPendingChildRuns=false`.
+
+- Planning corrections round 2: task `node:delegated-task:command%3Amcp%3Aba3341d2-357d-46da-87ed-2eba81c974e7%3Adelegate-task%3Ac5-20261011-plan-mcode-r2`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Aba3341d2-357d-46da-87ed-2eba81c974e7%253Adelegate-task%253Ac5-20261011-plan-mcode-r2:ordinal:1`; `completed`, `hasPendingChildRuns=false`.
+
+- C5 implementation: task `node:delegated-task:command%3Amcp%3Aba3341d2-357d-46da-87ed-2eba81c974e7%3Adelegate-task%3Ac5-20261011-agy-implementation-r1`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Aba3341d2-357d-46da-87ed-2eba81c974e7%253Adelegate-task%253Ac5-20261011-agy-implementation-r1:ordinal:1`; `completed`, `hasPendingChildRuns=false`.
+
+- Evidence corrections round 1: task `node:delegated-task:command%3Amcp%3Aba3341d2-357d-46da-87ed-2eba81c974e7%3Adelegate-task%3Ac5-20261011-agy-evidence-corrections-r1`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Aba3341d2-357d-46da-87ed-2eba81c974e7%253Adelegate-task%253Ac5-20261011-agy-evidence-corrections-r1:ordinal:1`; `completed`, `hasPendingChildRuns=false`.
+
+- Evidence corrections round 2: task `node:delegated-task:command%3Amcp%3Aba3341d2-357d-46da-87ed-2eba81c974e7%3Adelegate-task%3Ac5-20261011-agy-evidence-corrections-r2`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Aba3341d2-357d-46da-87ed-2eba81c974e7%253Adelegate-task%253Ac5-20261011-agy-evidence-corrections-r2:ordinal:1`; `completed`, `hasPendingChildRuns=false`.
+
+- Final independent review: task `node:delegated-task:command%3Amcp%3Aba3341d2-357d-46da-87ed-2eba81c974e7%3Adelegate-task%3Ac5-20261011-final-mcode-r1`; run `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Aba3341d2-357d-46da-87ed-2eba81c974e7%253Adelegate-task%253Ac5-20261011-final-mcode-r1:ordinal:1`; `completed`, `hasPendingChildRuns=false`.

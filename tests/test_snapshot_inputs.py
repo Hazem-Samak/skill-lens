@@ -409,6 +409,47 @@ def test_disabled_overrides_from_bytes(tmp_path: Path) -> None:
     assert _load_disabled_overrides(claude, missing_home) == set()
 
 
+def test_disabled_overrides_respects_configured_key(tmp_path: Path) -> None:
+    """Configured disabled_key governs overrides; conflicting skillOverrides data is ignored."""
+    registry = load_registry()
+    claude = registry["claude"]
+    assert claude.disabled_key == "skillOverrides"
+
+    # Replace configured key with a distinct key
+    custom_agent = replace(
+        claude,
+        disabled_key="customOverrides",
+        disabled_settings=".custom/settings.json",
+    )
+
+    # Payload with both distinct configured key and conflicting skillOverrides
+    payload = json.dumps(
+        {
+            "customOverrides": {
+                "disabled-by-custom": False,
+                "enabled-by-custom": True,
+            },
+            "skillOverrides": {
+                "disabled-by-shipped": False,
+                "enabled-by-shipped": True,
+            },
+        }
+    ).encode("utf-8")
+
+    # Pure bytes decoder
+    result = disabled_overrides_from_bytes(custom_agent, payload)
+    assert result == frozenset({"disabled-by-custom"})
+    assert "disabled-by-shipped" not in result
+    assert "enabled-by-custom" not in result
+
+    # File loader delegation in _load_disabled_overrides
+    settings_file = tmp_path / ".custom" / "settings.json"
+    _write(settings_file, payload)
+    loaded = _load_disabled_overrides(custom_agent, tmp_path)
+    assert loaded == {"disabled-by-custom"}
+    assert "disabled-by-shipped" not in loaded
+
+
 # ---------------------------------------------------------------------------
 # 5. Snapshot Model Structure and Invariant Tests (Assignment C2, §21.2)
 # ---------------------------------------------------------------------------

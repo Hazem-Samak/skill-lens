@@ -1,0 +1,714 @@
+{
+  "scratch_directory": "/private/tmp/c5-mutations-misjonfe",
+  "evidence_directory": "/private/tmp/c5-evidence-bc0yirvm",
+  "python_interpreter": "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+  "provenance_metadata": {
+    "git_revision": "6030c3dea99fbb97738378c16a669787dcc2b453",
+    "plan_reference": "3665e7a38a9b7366c259da61c87f8b0cab656947",
+    "inspected_file_hashes": {
+      "skill_lens/core/resolver.py": "178fad23aeb35fa2c4f67c8a587e17d3d25032e50e3ca5469c1afc162e29f6c9",
+      "skill_lens/core/diff.py": "46cd665d547b3505f65264f4a49560389d14da53a7ed119b6fde7cad0446fa59",
+      "skill_lens/core/snapshot.py": "86d50b2b5e8b6dccc18c7e8920decd9aa6b789ba07906231858d92be181a3fe8",
+      "tests/test_phase2_gate.py": "8b604e9f7281aa37d342ef5518e8873f811208f7ed28f13560b95d958ef5b406",
+      "tests/test_snapshot_inputs.py": "583ed1ce8c33aab89008e1331cd8a42819272d12e3e216379da0e95e1c460b46",
+      "tests/test_session_snapshot.py": "e15ad0c96eb3a4399fdf6b05086ef82dcbab409117fe5ac03ce05ae7127f4903",
+      "docs/validation/c5/run_campaign.py": "1b5cf2f7458428641ff63c0249c5f38fb8f874b241979e84cb46b7da66d80cbd"
+    }
+  },
+  "collection_parity": {
+    "status": "matched",
+    "collected_count": 564
+  },
+  "runner_self_test": [
+    {
+      "scenario": "syntax_error_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_syntaxerror",
+      "passed_validation": true
+    },
+    {
+      "scenario": "pytest_internal_error_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_process_exit_3",
+      "passed_validation": true
+    },
+    {
+      "scenario": "missing_provenance_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_missing_provenance_and_run_log",
+      "passed_validation": true
+    },
+    {
+      "scenario": "provenance_outside_scratch_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_provenance_mismatch",
+      "passed_validation": true
+    },
+    {
+      "scenario": "non_assertion_error_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_non_assertion_error_KeyError",
+      "passed_validation": true
+    },
+    {
+      "scenario": "mismatched_failure_marker_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_mismatched_failure_marker",
+      "passed_validation": true
+    },
+    {
+      "scenario": "marker_only_in_process_output_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_mismatched_failure_marker",
+      "passed_validation": true
+    },
+    {
+      "scenario": "wrong_mutant_selector_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_selector_mismatch",
+      "passed_validation": true
+    },
+    {
+      "scenario": "zero_exit_with_failure_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_zero_exit_with_call_failure",
+      "passed_validation": true
+    },
+    {
+      "scenario": "call_failure_and_teardown_error_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_teardown_failure_OSError",
+      "passed_validation": true
+    },
+    {
+      "scenario": "mutant_test_count_mismatch_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_test_count_mismatch",
+      "passed_validation": true
+    },
+    {
+      "scenario": "duplicate_call_records_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "invalid_duplicate_call_records",
+      "passed_validation": true
+    },
+    {
+      "scenario": "wrong_control_selector_rejection",
+      "result_status": "INVALID",
+      "killed": false,
+      "verdict": "selector_mismatch_got_tests/test_wrong.py::test_wrong_expected_tests/test_expected.py::test_expected",
+      "passed_validation": true
+    },
+    {
+      "scenario": "genuine_survivor_detection",
+      "result_status": "SURVIVOR",
+      "killed": false,
+      "verdict": "survived",
+      "passed_validation": true
+    },
+    {
+      "scenario": "genuine_kill_acceptance",
+      "result_status": "KILLED",
+      "killed": true,
+      "verdict": "killed_by_expected_assertion",
+      "passed_validation": true
+    }
+  ],
+  "mutations": [
+    {
+      "id": "MUT-01",
+      "category": "explicit-empty inputs",
+      "name": "resolver_empty_overrides_treated_as_falsy",
+      "description": "resolve_skill treats empty frozenset() as falsy and falls back to loader",
+      "file": "skill_lens/core/resolver.py",
+      "before": "    overrides = (\n        disabled_overrides\n        if disabled_overrides is not None\n        else _load_disabled_overrides(agent, Path(index.home))\n    )",
+      "after": "    overrides = (\n        disabled_overrides\n        if disabled_overrides\n        else _load_disabled_overrides(agent, Path(index.home))\n    )",
+      "selector": "tests/test_phase2_gate.py::test_resolver_explicit_empty_overrides_keeps_enabled_without_settings_read",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_phase2_gate.py::test_resolver_explicit_empty_overrides_keeps_enabled_without_settings_read",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase2_gate.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "Live settings loader must not be called",
+        "found_expected_substr": true,
+        "exc_type": "AssertionError",
+        "provenance": {
+          "nodeid": "tests/test_phase2_gate.py::test_resolver_explicit_empty_overrides_keeps_enabled_without_settings_read",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase2_gate.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "ion(id='claude', name='Claude Code', identity_source='directory_name', collision_policy='Personal > Proje...3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-vWCytI/pytest-of-corvette/pytest-69/test_resolver_explicit_empty_o0/home'))\nkwargs = {}\n\n    def _execute_mock_call(self, /, *args, **kwargs):\n        # separate from _increment_mock_call so that awaited functions are\n        # executed separately from their call, also AsyncMock overrides this method\n    \n        effect = self.side_effect\n        if effect is not None:\n            if _is_exception(effect):\n>               raise effect\nE               AssertionError: Live settings loader must not be called\n\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/unittest/mock.py:1183: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_phase2_gate.py::test_resolver_explicit_empty_overrides_keeps_enabled_without_settings_read\n1 failed in 0.10s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_phase2_gate.py::test_resolver_explicit_empty_overrides_keeps_enabled_without_settings_read",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase2_gate.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-02",
+      "category": "explicit-empty inputs (settings key)",
+      "name": "disabled_overrides_hardcodes_shipped_key",
+      "description": "disabled_overrides_from_bytes hardcodes 'skillOverrides' instead of respecting agent.disabled_key",
+      "file": "skill_lens/core/resolver.py",
+      "before": "    override = parsed.get(agent.disabled_key)",
+      "after": "    override = parsed.get(\"skillOverrides\")",
+      "selector": "tests/test_snapshot_inputs.py::test_disabled_overrides_respects_configured_key",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_snapshot_inputs.py::test_disabled_overrides_respects_configured_key",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_snapshot_inputs.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "disabled-by-shipped",
+        "found_expected_substr": true,
+        "exc_type": "AssertionError",
+        "provenance": {
+          "nodeid": "tests/test_snapshot_inputs.py::test_disabled_overrides_respects_configured_key",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_snapshot_inputs.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "ides\": {\n                    \"disabled-by-custom\": False,\n                    \"enabled-by-custom\": True,\n                },\n                \"skillOverrides\": {\n                    \"disabled-by-shipped\": False,\n                    \"enabled-by-shipped\": True,\n                },\n            }\n        ).encode(\"utf-8\")\n    \n        # Pure bytes decoder\n        result = disabled_overrides_from_bytes(custom_agent, payload)\n>       assert result == frozenset({\"disabled-by-custom\"})\nE       AssertionError: assert frozenset({'d...-by-shipped'}) == frozenset({'d...d-by-custom'})\nE         \nE         Extra items in the left set:\nE         'disabled-by-shipped'\nE         Extra items in the right set:\nE         'disabled-by-custom'\nE         Use -v to get more diff\n\ntests/test_snapshot_inputs.py:441: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_snapshot_inputs.py::test_disabled_overrides_respects_configured_key\n1 failed in 0.05s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_snapshot_inputs.py::test_disabled_overrides_respects_configured_key",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_snapshot_inputs.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-03",
+      "category": "captured diff branch (outer)",
+      "name": "diff_outer_bypasses_captured_files_for_baseline",
+      "description": "build_diff_report passes captured_files=None to baseline _copy_files call",
+      "file": "skill_lens/core/diff.py",
+      "before": "        if baseline_files is None:\n            baseline_files = _copy_files(baseline, captured_files=captured_files)",
+      "after": "        if baseline_files is None:\n            baseline_files = _copy_files(baseline, captured_files=None)",
+      "selector": "tests/test_phase3_gate.py::test_diff_falsey_mapping_exercises_captured_branch_without_live_reads",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_phase3_gate.py::test_diff_falsey_mapping_exercises_captured_branch_without_live_reads",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase3_gate.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "Path.is_dir banned",
+        "found_expected_substr": true,
+        "exc_type": "AssertionError",
+        "provenance": {
+          "nodeid": "tests/test_phase3_gate.py::test_diff_falsey_mapping_exercises_captured_branch_without_live_reads",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase3_gate.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "k_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <MagicMock name='is_dir' id='4414788880'>, args = (), kwargs = {}\n\n    def _execute_mock_call(self, /, *args, **kwargs):\n        # separate from _increment_mock_call so that awaited functions are\n        # executed separately from their call, also AsyncMock overrides this method\n    \n        effect = self.side_effect\n        if effect is not None:\n            if _is_exception(effect):\n>               raise effect\nE               AssertionError: Path.is_dir banned\n\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/unittest/mock.py:1183: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_phase3_gate.py::test_diff_falsey_mapping_exercises_captured_branch_without_live_reads\n1 failed in 0.09s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_phase3_gate.py::test_diff_falsey_mapping_exercises_captured_branch_without_live_reads",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase3_gate.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-04",
+      "category": "captured diff branch (inner)",
+      "name": "diff_inner_copy_files_checks_truthiness_of_captured_files",
+      "description": "_copy_files treats falsey mapping as None, bypassing captured files",
+      "file": "skill_lens/core/diff.py",
+      "before": "    if captured_files is not None:\n        key = canonical_key(entry)",
+      "after": "    if captured_files:\n        key = canonical_key(entry)",
+      "selector": "tests/test_phase3_gate.py::test_diff_falsey_mapping_exercises_captured_branch_without_live_reads",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_phase3_gate.py::test_diff_falsey_mapping_exercises_captured_branch_without_live_reads",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase3_gate.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "Path.is_dir banned",
+        "found_expected_substr": true,
+        "exc_type": "AssertionError",
+        "provenance": {
+          "nodeid": "tests/test_phase3_gate.py::test_diff_falsey_mapping_exercises_captured_branch_without_live_reads",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase3_gate.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "k_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <MagicMock name='is_dir' id='4445412432'>, args = (), kwargs = {}\n\n    def _execute_mock_call(self, /, *args, **kwargs):\n        # separate from _increment_mock_call so that awaited functions are\n        # executed separately from their call, also AsyncMock overrides this method\n    \n        effect = self.side_effect\n        if effect is not None:\n            if _is_exception(effect):\n>               raise effect\nE               AssertionError: Path.is_dir banned\n\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/unittest/mock.py:1183: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_phase3_gate.py::test_diff_falsey_mapping_exercises_captured_branch_without_live_reads\n1 failed in 0.09s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_phase3_gate.py::test_diff_falsey_mapping_exercises_captured_branch_without_live_reads",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase3_gate.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-05",
+      "category": "identity translation (real consumer)",
+      "name": "resolver_identity_names_directory_only_for_hybrid_and_either",
+      "description": "_identity_names returns only directory_name for hybrid and either policies",
+      "file": "skill_lens/core/resolver.py",
+      "before": "    if agent.identity_source == \"frontmatter_name\":\n        return {frontmatter_name}\n    return {directory_name, frontmatter_name}",
+      "after": "    if agent.identity_source == \"frontmatter_name\":\n        return {frontmatter_name}\n    return {directory_name}",
+      "selector": "tests/test_phase2_gate.py::test_hybrid_and_either_resolver_identity",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_phase2_gate.py::test_hybrid_and_either_resolver_identity",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase2_gate.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "assert rep_declared_ag.found is True",
+        "found_expected_substr": true,
+        "exc_type": "AssertionError",
+        "provenance": {
+          "nodeid": "tests/test_phase2_gate.py::test_hybrid_and_either_resolver_identity",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase2_gate.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "anonical.resolved_path\n        )\n        assert rep_helper_either.candidates[0].installation.name == \"either-folder\"\n        assert rep_helper_either.candidates[0].installation.frontmatter_name == \"either-declared\"\n    \n        # Direct declared name into actual resolver\n        rep_declared_ag = resolve_skill(\n            \"ag-declared\", \"antigravity\", home, home, index=index, registry=registry\n        )\n>       assert rep_declared_ag.found is True\nE       AssertionError: assert False is True\nE        +  where False = ResolutionReport(skill_name='ag-declared', agent='antigravity', agent_name='Antigravity CLI', cwd='/Users/corvette/.t3...ARCHED: 'UNSEARCHED'>, candidates=(), notes=('No copy of this skill name was found in any search root.',), found=False).found\n\ntests/test_phase2_gate.py:1053: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_phase2_gate.py::test_hybrid_and_either_resolver_identity - ...\n1 failed in 0.07s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_phase2_gate.py::test_hybrid_and_either_resolver_identity",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_phase2_gate.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-06",
+      "category": "identity translation (helper)",
+      "name": "lookup_name_for_entry_ignores_frontmatter_policy",
+      "description": "lookup_name_for_entry always selects directory_name regardless of agent policy",
+      "file": "skill_lens/core/resolver.py",
+      "before": "    chosen = frontmatter_name if agent.identity_source == \"frontmatter_name\" else directory_name",
+      "after": "    chosen = directory_name",
+      "selector": "tests/test_snapshot_inputs.py::test_selected_entry_uses_agent_identity",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_snapshot_inputs.py::test_selected_entry_uses_agent_identity",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_snapshot_inputs.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "assert chosen in _identity_names(agent, entry)",
+        "found_expected_substr": true,
+        "exc_type": "AssertionError",
+        "provenance": {
+          "nodeid": "tests/test_snapshot_inputs.py::test_selected_entry_uses_agent_identity",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_snapshot_inputs.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "name for a discovered entry under an agent's policy.\n    \n        Reuses _identity_names() and agent policy:\n        - When no parse exists, returns entry.name.\n        - For 'frontmatter_name', chooses frontmatter name with directory fallback.\n        - For 'directory_name' or 'either', chooses directory name.\n        The returned name always belongs to _identity_names(agent, entry).\n        \"\"\"\n        parse = entry.parse\n        if parse is None:\n            return entry.name\n    \n        directory_name = parse.directory_name\n        frontmatter_name = parse.frontmatter_name or directory_name\n    \n        chosen = directory_name\n>       assert chosen in _identity_names(agent, entry)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AssertionError\n\nskill_lens/core/resolver.py:181: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_snapshot_inputs.py::test_selected_entry_uses_agent_identity\n1 failed in 0.06s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_snapshot_inputs.py::test_selected_entry_uses_agent_identity",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_snapshot_inputs.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-07",
+      "category": "identity translation (service)",
+      "name": "snapshot_why_uses_raw_directory_name",
+      "description": "snapshot_why bypasses lookup_name_for_entry and passes entry.name directly",
+      "file": "skill_lens/core/snapshot.py",
+      "before": "    agent = registry_dict[agent_id]\n    lookup_name = lookup_name_for_entry(entry, agent)",
+      "after": "    agent = registry_dict[agent_id]\n    lookup_name = entry.name",
+      "selector": "tests/test_session_snapshot.py::test_snapshot_reports_match_live_reports",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_snapshot_reports_match_live_reports",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "assert snap_why.to_dict() == live_why.to_dict()",
+        "found_expected_substr": true,
+        "exc_type": "AssertionError",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_snapshot_reports_match_live_reports",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "      )\n>               assert snap_why.to_dict() == live_why.to_dict()\nE               AssertionError: assert {'skill_name'...project', ...} == {'skill_name'...project', ...}\nE                 \nE                 Omitting 6 identical items, use -vv to show\nE                 Differing items:\nE                 {'found': False} != {'found': True}\nE                 {'candidates': []} != {'candidates': [{'state': 'UNSEARCHED', 'visibility': 'unsearched_root', 'collision': 'unverified_policy', 'rule_id': 'codex_search_roots', ...}]}\nE                 {'skill_name': 'folder_name'} != {'skill_name': 'frontmatter_name'}\nE                 {'notes': ['No copy of this skill name was found in any search root.']} != {'notes': []}\nE                 Use -v to get more diff\n\ntests/test_session_snapshot.py:384: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_session_snapshot.py::test_snapshot_reports_match_live_reports\n1 failed in 0.13s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_snapshot_reports_match_live_reports",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-08",
+      "category": "capture validation (captured-byte)",
+      "name": "capture_session_bypasses_source_reparse_check",
+      "description": "capture_session suppresses reparsed.to_dict() / body comparison against entry.parse",
+      "file": "skill_lens/core/snapshot.py",
+      "before": "            if (\n                reparsed.to_dict() != entry.parse.to_dict()\n                or reparsed.body != entry.parse.body\n                or reparsed.frontmatter != entry.parse.frontmatter\n            ):",
+      "after": "            if False and (\n                reparsed.to_dict() != entry.parse.to_dict()\n                or reparsed.body != entry.parse.body\n                or reparsed.frontmatter != entry.parse.frontmatter\n            ):",
+      "selector": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "Failed: DID NOT RAISE SnapshotChanged",
+        "found_expected_substr": true,
+        "exc_type": "Failed",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "ase B1: Frontmatter metadata date-coercion drift during source reparse check\n        # where to_dict() and body remain identical, but raw frontmatter differs (date vs string)\n        def mutating_parse_bytes_fm(data: bytes, *, source_path: str) -> Any:\n            res = orig_parse_skill_bytes(data, source_path=source_path)\n            if res.frontmatter and \"released\" in res.frontmatter:\n                mutated_fm = dict(res.frontmatter)\n                mutated_fm[\"released\"] = \"2024-01-01\"\n                return replace(res, frontmatter=mutated_fm)\n            return res\n    \n        monkeypatch.setattr(snapshot_module, \"parse_skill_bytes\", mutating_parse_bytes_fm)\n>       with pytest.raises(SnapshotChanged) as exc_info:\nE       Failed: DID NOT RAISE SnapshotChanged\n\ntests/test_session_snapshot.py:897: Failed\n=========================== short test summary info ============================\nFAILED tests/test_session_snapshot.py::test_change_during_capture_is_rejected\n1 failed in 0.12s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-09",
+      "category": "capture validation (second-pass discovery)",
+      "name": "capture_session_bypasses_second_discovery_hash_check",
+      "description": "capture_session suppresses second-discovery content_hash drift check in second pass",
+      "file": "skill_lens/core/snapshot.py",
+      "before": "e1.content_hash != e2.content_hash",
+      "after": "False and e1.content_hash != e2.content_hash",
+      "selector": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "Failed: DID NOT RAISE SnapshotChanged",
+        "found_expected_substr": true,
+        "exc_type": "Failed",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "                  new_e[target_idx] = mutated\n                        return replace(idx, entries=tuple(new_e))\n                    return idx\n    \n                return field_disc\n    \n            monkeypatch.setattr(snapshot_module, \"live_discovery\", make_field_disc(mut_fn, field_name))\n            monkeypatch.setattr(snapshot_module, \"build_scan_report\", n_scan)\n            monkeypatch.setattr(snapshot_module, \"run_doctor\", n_doc)\n            monkeypatch.setattr(\n                snapshot_module,\n                \"_collect_display_paths_and_locations\",\n                lambda *args, **kwargs: ({}, set()),\n            )\n>           with pytest.raises(SnapshotChanged, match=\"Files changed while scanning\") as exc_info:\nE           Failed: DID NOT RAISE SnapshotChanged\n\ntests/test_session_snapshot.py:1147: Failed\n=========================== short test summary info ============================\nFAILED tests/test_session_snapshot.py::test_change_during_capture_is_rejected\n1 failed in 0.23s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-10",
+      "category": "capture validation (second-pass config)",
+      "name": "capture_session_bypasses_config_reread_comparison",
+      "description": "capture_session suppresses the reread config validation comparison in second pass",
+      "file": "skill_lens/core/snapshot.py",
+      "before": "    for path_str, ci in config_inputs.items():\n        new_ci = _read_input_guarded(Path(path_str), cancelled=cancelled)\n        if ci != new_ci:",
+      "after": "    for path_str, ci in config_inputs.items():\n        new_ci = _read_input_guarded(Path(path_str), cancelled=cancelled)\n        if False and ci != new_ci:",
+      "selector": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "Failed: DID NOT RAISE SnapshotChanged",
+        "found_expected_substr": true,
+        "exc_type": "Failed",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": " decoder-equivalent trailing whitespace)\n        orig_read_guarded = snapshot_module._read_input_guarded\n        read_guarded_calls: dict[str, int] = {}\n    \n        def mutating_config_reread(p: Path, *, cancelled: object = None) -> Any:\n            key = str(p)\n            count = read_guarded_calls.get(key, 0) + 1\n            read_guarded_calls[key] = count\n            ci = orig_read_guarded(p, cancelled=cancelled)  # type: ignore[arg-type]\n            if count == 2 and ci.data is not None:\n                return replace(ci, data=ci.data + b\" \")\n            return ci\n    \n        monkeypatch.setattr(snapshot_module, \"_read_input_guarded\", mutating_config_reread)\n>       with pytest.raises(SnapshotChanged) as exc_info:\nE       Failed: DID NOT RAISE SnapshotChanged\n\ntests/test_session_snapshot.py:1299: Failed\n=========================== short test summary info ============================\nFAILED tests/test_session_snapshot.py::test_change_during_capture_is_rejected\n1 failed in 0.40s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_change_during_capture_is_rejected",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-11",
+      "category": "no-live-read boundary (display paths)",
+      "name": "snapshot_path_calls_live_paths_display",
+      "description": "snapshot_path falls back to live paths.display rather than stored mapping",
+      "file": "skill_lens/core/snapshot.py",
+      "before": "def snapshot_path(snapshot: SessionSnapshot, path: str) -> str:\n    \"\"\"Return stored display path or the literal string unchanged.\"\"\"\n    return snapshot.display_paths.get(path, path)",
+      "after": "def snapshot_path(snapshot: SessionSnapshot, path: str) -> str:\n    \"\"\"Return stored display path or the literal string unchanged.\"\"\"\n    return paths.display(Path(path))",
+      "selector": "tests/test_session_snapshot.py::test_navigation_has_no_filesystem_fallback",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_navigation_has_no_filesystem_fallback",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "Forbidden live probe invoked during navigation",
+        "found_expected_substr": true,
+        "exc_type": "AssertionError",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_navigation_has_no_filesystem_fallback",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "== \"~\"\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntests/test_session_snapshot.py:694: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nskill_lens/core/snapshot.py:494: in snapshot_path\n    return paths.display(Path(path))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-vWCytI/pytest-of-corvette/pytest-96/test_navigation_has_no_filesys0/home'),)\nkwargs = {}\n\n    def forbid(*args: object, **kwargs: object) -> object:\n>       raise AssertionError(\"Forbidden live probe invoked during navigation\")\nE       AssertionError: Forbidden live probe invoked during navigation\n\ntests/test_session_snapshot.py:618: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_session_snapshot.py::test_navigation_has_no_filesystem_fallback\n1 failed in 0.12s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_navigation_has_no_filesystem_fallback",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      }
+    },
+    {
+      "id": "MUT-12",
+      "category": "no-live-read boundary (same location)",
+      "name": "snapshot_same_location_calls_live_paths_probe",
+      "description": "snapshot_same_location falls back to live paths.same_location probe",
+      "file": "skill_lens/core/snapshot.py",
+      "before": "def snapshot_same_location(snapshot: SessionSnapshot, a: str, b: str) -> bool:\n    \"\"\"Return whether two paths refer to the same location without disk probes.\"\"\"\n    return a == b or (a, b) in snapshot.same_locations",
+      "after": "def snapshot_same_location(snapshot: SessionSnapshot, a: str, b: str) -> bool:\n    \"\"\"Return whether two paths refer to the same location without disk probes.\"\"\"\n    return paths.same_location(Path(a), Path(b))",
+      "selector": "tests/test_session_snapshot.py::test_navigation_has_no_filesystem_fallback",
+      "control": {
+        "exit_code": 0,
+        "status": "PASS",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_navigation_has_no_filesystem_fallback",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      },
+      "mutant": {
+        "exit_code": 1,
+        "status": "KILLED",
+        "verdict": "killed_by_expected_assertion",
+        "killed": true,
+        "expected_substr": "Forbidden live probe invoked during navigation",
+        "found_expected_substr": true,
+        "exc_type": "AssertionError",
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_navigation_has_no_filesystem_fallback",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1,
+        "reason": null,
+        "tail_output": "       assert snapshot_same_location(snapshot, \"same\", \"same\") is True\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntests/test_session_snapshot.py:698: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nskill_lens/core/snapshot.py:499: in snapshot_same_location\n    return paths.same_location(Path(a), Path(b))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (PosixPath('same'), PosixPath('same')), kwargs = {}\n\n    def forbid(*args: object, **kwargs: object) -> object:\n>       raise AssertionError(\"Forbidden live probe invoked during navigation\")\nE       AssertionError: Forbidden live probe invoked during navigation\n\ntests/test_session_snapshot.py:618: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_session_snapshot.py::test_navigation_has_no_filesystem_fallback\n1 failed in 0.12s\n\n"
+      },
+      "restored": {
+        "exit_code": 0,
+        "status": "PASS",
+        "bytes_restored_verified": true,
+        "provenance": {
+          "nodeid": "tests/test_session_snapshot.py::test_navigation_has_no_filesystem_fallback",
+          "skill_lens_file": "/private/tmp/c5-mutations-misjonfe/skill_lens/__init__.py",
+          "test_module_file": "/private/tmp/c5-mutations-misjonfe/tests/test_session_snapshot.py"
+        },
+        "test_count": 1
+      }
+    }
+  ],
+  "summary": {
+    "total_mutations": 12,
+    "killed_count": 12,
+    "survivors": [],
+    "invalids": [],
+    "status": "PASS"
+  }
+}

@@ -948,3 +948,127 @@ def test_resolver_direct_builder_preserves_explicit_cwd(mock_home: Path, tmp_pat
         disabled_overrides=frozenset(),
     )
     assert report.cwd == str(custom_cwd)
+
+
+def test_hybrid_and_either_resolver_identity(mock_home: Path) -> None:
+    """Hybrid (antigravity) and either policies resolve by both helper name and declared name."""
+    from skill_lens.registry.loader import AgentDefinition, AgentRoot
+
+    home = mock_home.resolve()
+
+    # 1. Antigravity (shipped hybrid): global root .gemini/config/skills
+    ag_skill = home / ".gemini" / "config" / "skills" / "ag-folder"
+    ag_skill.mkdir(parents=True, exist_ok=True)
+    (ag_skill / "SKILL.md").write_text(
+        "---\nname: ag-declared\ndescription: Antigravity hybrid test\n---\n# Body\n",
+        encoding="utf-8",
+    )
+
+    # 2. Supplied registry definition with identity_source=\"either\"
+    either_agent = AgentDefinition(
+        id="either_agent",
+        name="Either Agent",
+        identity_source="either",
+        collision_policy="Personal > Project",
+        policy_evidence=Evidence.DOCUMENTED,
+        coexist_policy="shadow",
+        walk_boundary="git_worktree_root",
+        unsearched_rule_id="either_unsearched",
+        disabled_rule_id="either_disabled",
+        disabled_settings=None,
+        disabled_key=None,
+        source="test",
+        roots=(
+            AgentRoot(
+                id="either_root",
+                kind="global",
+                path=".either/skills",
+                scope=Scope.USER,
+                rank=100,
+                rule_id="either_user_rule",
+                evidence=Evidence.DOCUMENTED,
+            ),
+        ),
+    )
+    either_skill = home / ".either" / "skills" / "either-folder"
+    either_skill.mkdir(parents=True, exist_ok=True)
+    (either_skill / "SKILL.md").write_text(
+        "---\nname: either-declared\ndescription: Either agent test\n---\n# Body\n",
+        encoding="utf-8",
+    )
+
+    registry = dict(load_registry())
+    registry["either_agent"] = either_agent
+    antigravity = registry["antigravity"]
+    assert antigravity.identity_source == "hybrid"
+    assert either_agent.identity_source == "either"
+
+    index = discover(home, home, registry)
+    entry_ag = next(e for e in index.entries if "ag-folder" in e.entrypoint_path)
+    entry_either = next(e for e in index.entries if "either-folder" in e.entrypoint_path)
+
+    assert entry_ag.name == "ag-folder"
+    assert entry_ag.parse is not None and entry_ag.parse.frontmatter_name == "ag-declared"
+    assert entry_either.name == "either-folder"
+    assert (
+        entry_either.parse is not None and entry_either.parse.frontmatter_name == "either-declared"
+    )
+
+    # Helper chooses directory name for both under lookup_name_for_entry
+    helper_name_ag = lookup_name_for_entry(entry_ag, antigravity)
+    assert helper_name_ag == "ag-folder"
+    helper_name_either = lookup_name_for_entry(entry_either, either_agent)
+    assert helper_name_either == "either-folder"
+
+    # Feed helper-selected name into actual resolver
+    rep_helper_ag = resolve_skill(
+        helper_name_ag, "antigravity", home, home, index=index, registry=registry
+    )
+    assert rep_helper_ag.found is True
+    assert rep_helper_ag.headline is HeadlineState.ACTIVE
+    assert len(rep_helper_ag.candidates) == 1
+    assert (
+        rep_helper_ag.candidates[0].installation.canonical_path == entry_ag.canonical.resolved_path
+    )
+    assert rep_helper_ag.candidates[0].installation.name == "ag-folder"
+    assert rep_helper_ag.candidates[0].installation.frontmatter_name == "ag-declared"
+
+    rep_helper_either = resolve_skill(
+        helper_name_either, "either_agent", home, home, index=index, registry=registry
+    )
+    assert rep_helper_either.found is True
+    assert rep_helper_either.headline is HeadlineState.ACTIVE
+    assert len(rep_helper_either.candidates) == 1
+    assert (
+        rep_helper_either.candidates[0].installation.canonical_path
+        == entry_either.canonical.resolved_path
+    )
+    assert rep_helper_either.candidates[0].installation.name == "either-folder"
+    assert rep_helper_either.candidates[0].installation.frontmatter_name == "either-declared"
+
+    # Direct declared name into actual resolver
+    rep_declared_ag = resolve_skill(
+        "ag-declared", "antigravity", home, home, index=index, registry=registry
+    )
+    assert rep_declared_ag.found is True
+    assert rep_declared_ag.headline is HeadlineState.ACTIVE
+    assert len(rep_declared_ag.candidates) == 1
+    assert (
+        rep_declared_ag.candidates[0].installation.canonical_path
+        == entry_ag.canonical.resolved_path
+    )
+    assert rep_declared_ag.candidates[0].installation.name == "ag-folder"
+    assert rep_declared_ag.candidates[0].installation.frontmatter_name == "ag-declared"
+
+    rep_declared_either = resolve_skill(
+        "either-declared", "either_agent", home, home, index=index, registry=registry
+    )
+    assert rep_declared_either.found is True
+    assert rep_declared_either.headline is HeadlineState.ACTIVE
+    assert len(rep_declared_either.candidates) == 1
+    assert (
+        rep_declared_either.candidates[0].installation.canonical_path
+        == entry_either.canonical.resolved_path
+    )
+    assert rep_declared_either.candidates[0].installation.name == "either-folder"
+    assert rep_declared_either.candidates[0].installation.frontmatter_name == "either-declared"
