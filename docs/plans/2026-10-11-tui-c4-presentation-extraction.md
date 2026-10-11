@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: User instruction on 2026-10-11 to start C4; Gemini 3.8 Flash High through Agy implements, Step 5 Preview Free through OpenCode is the only reviewer. User selected High reasoning for both reviews.
-Reference: pending
+Reference: 476478ac2d3c9792c3c3f9dc7609007474e309d8
 Risk and review: High because the Phase 3 presentation behavior is load-bearing (AGENTS.md section 4). The user's explicit one-reviewer-only instruction overrides the usual two-critic roster for this session; retain all behavior checks and use Step 5 for both planning and final code review. Do not claim verified family diversity.
 Expected child tasks: 3 before corrections: planning critic, sole implementer, final critic.
 
