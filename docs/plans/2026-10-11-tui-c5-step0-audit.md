@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: User instruction on 2026-10-11 to start C5, with Gemini 3.8 Flash High through Antigravity as implementer and MiniMax Code (mcode) as the only planning council member and independent reviewer. User selected High thinking effort for both reviews.
-Reference: pending until freeze
+Reference: 3665e7a38a9b7366c259da61c87f8b0cab656947
 Risk and review: High assurance audit of load-bearing captured inputs, identity and read boundaries. The explicit one-reviewer-only instruction overrides the usual two-critic roster for this session. MiniMax independently checks contract coverage and mutation evidence; Sol inspects and verifies. No claim of verified two-critic family diversity.
 Expected child tasks: 3 before corrections: planning critic, sole implementer, final critic.
 
