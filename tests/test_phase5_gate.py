@@ -101,7 +101,7 @@ def test_every_spec_command_is_wired() -> None:
     # command name from the callback when it builds the Click command, so the
     # callback is the only reliable source here.
     registered = {info.callback.__name__ for info in app.registered_commands}
-    expected = {"scan", "why", "agents", "diff", "doctor", "compare"}
+    expected = {"scan", "why", "agents", "diff", "doctor", "compare", "tui"}
     assert expected <= registered, f"missing CLI commands: {sorted(expected - registered)}"
 
 

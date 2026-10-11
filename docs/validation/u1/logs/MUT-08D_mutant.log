@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_tui_packaging.py F                                            [100%]
+
+=================================== FAILURES ===================================
+______________________ test_uv_lock_pins_textual_and_rich ______________________
+
+    def test_uv_lock_pins_textual_and_rich() -> None:
+        """uv.lock must pin Textual 8.2.8 and Rich 15.0.0, and provide the tui extra."""
+        lock = _read_uv_lock()
+        packages = {pkg["name"]: pkg for pkg in lock.get("package", [])}
+    
+        assert "textual" in packages, "uv.lock must contain textual"
+>       assert packages["textual"]["version"] == "8.2.8", (
+            f"textual must be pinned to 8.2.8; found {packages['textual']['version']!r}"
+        )
+E       AssertionError: textual must be pinned to 8.2.8; found '0.80.0'
+E       assert '0.80.0' == '8.2.8'
+E         
+E         - 8.2.8
+E         + 0.80.0
+
+tests/test_tui_packaging.py:75: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_uv_lock_pins_textual_and_rich - Asse...
+============================== 1 failed in 0.05s ===============================

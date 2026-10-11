@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_tui_routing.py F                                              [100%]
+
+=================================== FAILURES ===================================
+__________________ test_explicit_tui_missing_textual_exits_2 ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106a892d0>
+
+    def test_explicit_tui_missing_textual_exits_2(monkeypatch: pytest.MonkeyPatch) -> None:
+        """Explicit `skill-lens tui` without Textual outputs install hint to stderr and exits 2."""
+        monkeypatch.setattr(cli, "_is_textual_available", lambda: False)
+        result = runner.invoke(app, ["tui"])
+>       assert result.exit_code == int(ExitCode.USAGE)
+E       assert 0 == 2
+E        +  where 0 = <Result okay>.exit_code
+E        +  and   2 = int(<ExitCode.USAGE: 2>)
+E        +    where <ExitCode.USAGE: 2> = ExitCode.USAGE
+
+tests/test_tui_routing.py:247: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_routing.py::test_explicit_tui_missing_textual_exits_2
+============================== 1 failed in 0.05s ===============================

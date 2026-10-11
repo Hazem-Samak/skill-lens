@@ -1,0 +1,72 @@
+{
+  "benchmark": "U1 Step 1 capture_session empirical measurement",
+  "timestamp": "2026-10-11T12:56:11Z",
+  "conditions": {
+    "platform": "Darwin arm64",
+    "python_version": "3.11.16",
+    "filesystem_cache": "Warm operating system page cache likely; cold disk performance may vary.",
+    "comparison_caveat": "P3 cost probe used simulated components with different tracing modes; timings cannot imply speed improvement across differing environments or tracing configurations."
+  },
+  "scenarios": [
+    {
+      "scenario": "Scenario A (Mostly Unique)",
+      "dataset": {
+        "total_files": 775,
+        "total_bytes": 1127715,
+        "largest_file_bytes": 51200
+      },
+      "canonical_skills": 621,
+      "total_entrypoints": 651,
+      "clean_run_tracing_off": {
+        "discovery_1_ms": 392.37537500230246,
+        "config_reads_ms": 0.3252080023230519,
+        "scan_report_ms": 7.2435430010955315,
+        "doctor_report_ms": 11.519499999849359,
+        "display_locations_ms": 95.24529100235668,
+        "discovery_2_ms": 390.7772919992567,
+        "unattributed_residual_ms": 93.90683199308114,
+        "total_wall_ms": 991.3930410002649
+      },
+      "memory_run_tracing_on": {
+        "peak_traced_first_capture_bytes": 7370853,
+        "peak_traced_simulated_refresh_bytes": 10465259
+      },
+      "retained_partial_memory": {
+        "retained_file_payload_bytes": 1126924,
+        "retained_selected_containers_bytes": 170843,
+        "retained_partial_total_bytes": 1297767,
+        "note": "Partial memory only: measures retained file bytes and selected container dictionaries/tuples, excluding full Python object graphs and snapshot metadata."
+      }
+    },
+    {
+      "scenario": "Scenario B (Heavily Duplicated)",
+      "dataset": {
+        "total_files": 1001,
+        "total_bytes": 2080686,
+        "largest_file_bytes": 81920
+      },
+      "canonical_skills": 615,
+      "total_entrypoints": 615,
+      "clean_run_tracing_off": {
+        "discovery_1_ms": 242.3943750000035,
+        "config_reads_ms": 0.10550000661169179,
+        "scan_report_ms": 7.3522090024198405,
+        "doctor_report_ms": 9.837167996010976,
+        "display_locations_ms": 89.90825000000768,
+        "discovery_2_ms": 237.01333300050464,
+        "unattributed_residual_ms": 95.2096229957533,
+        "total_wall_ms": 681.8204580013116
+      },
+      "memory_run_tracing_on": {
+        "peak_traced_first_capture_bytes": 6408238,
+        "peak_traced_simulated_refresh_bytes": 10226482
+      },
+      "retained_partial_memory": {
+        "retained_file_payload_bytes": 2080650,
+        "retained_selected_containers_bytes": 184286,
+        "retained_partial_total_bytes": 2264936,
+        "note": "Partial memory only: measures retained file bytes and selected container dictionaries/tuples, excluding full Python object graphs and snapshot metadata."
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_tui_packaging.py F                                            [100%]
+
+=================================== FAILURES ===================================
+________________ test_base_runtime_dependencies_exclude_textual ________________
+
+    def test_base_runtime_dependencies_exclude_textual() -> None:
+        """The base package runtime dependencies must never declare Textual.
+    
+        Skill Lens base must remain lean and usable without any full-screen TUI.
+        """
+        pyproject = _read_pyproject()
+        deps = pyproject["project"]["dependencies"]
+        for dep in deps:
+>           assert not dep.lower().startswith("textual"), (
+                f"base dependencies must not include Textual; found {dep!r}"
+            )
+E           AssertionError: base dependencies must not include Textual; found 'textual>=8.2.8'
+E           assert not True
+E            +  where True = <built-in method startswith of str object at 0x108d026b0>('textual')
+E            +    where <built-in method startswith of str object at 0x108d026b0> = 'textual>=8.2.8'.startswith
+E            +      where 'textual>=8.2.8' = <built-in method lower of str object at 0x108d02ef0>()
+E            +        where <built-in method lower of str object at 0x108d02ef0> = 'textual>=8.2.8'.lower
+
+tests/test_tui_packaging.py:47: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_base_runtime_dependencies_exclude_textual
+============================== 1 failed in 0.04s ===============================

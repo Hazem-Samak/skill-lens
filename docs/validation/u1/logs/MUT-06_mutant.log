@@ -1,0 +1,44 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_tui_routing.py F                                              [100%]
+
+=================================== FAILURES ===================================
+_______ test_explicit_tui_escaped_cwd_rejected_before_availability_check _______
+
+tmp_path = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/pytest-of-corvette/pytest-39/test_explicit_tui_escaped_cwd_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b02abd0>
+
+    def test_explicit_tui_escaped_cwd_rejected_before_availability_check(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """An escaped cwd must fail with BadParameter (2) before checking Textual."""
+        availability_checked: list[bool] = []
+    
+        def spy_available() -> bool:
+            availability_checked.append(True)
+            return False
+    
+        monkeypatch.setattr(cli, "_is_textual_available", spy_available)
+    
+        sandbox = tmp_path / "sandbox_home"
+        sandbox.mkdir()
+        outside = tmp_path / "outside_dir"
+        outside.mkdir()
+    
+        result = runner.invoke(app, ["tui", "--sandbox", str(sandbox), "--cwd", str(outside)])
+        assert result.exit_code == 2
+        msg = "--cwd must stay inside --sandbox"
+>       assert msg in result.stderr or msg in result.stdout
+E       assert ('--cwd must stay inside --sandbox' in "Error: The terminal UI requires 'skill-lens-cli[tui]'. Install it with: pip install 'skill-lens-cli[tui]'\n" or '--cwd must stay inside --sandbox' in '')
+E        +  where "Error: The terminal UI requires 'skill-lens-cli[tui]'. Install it with: pip install 'skill-lens-cli[tui]'\n" = <Result SystemExit(2)>.stderr
+E        +  and   '' = <Result SystemExit(2)>.stdout
+
+tests/test_tui_routing.py:300: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_routing.py::test_explicit_tui_escaped_cwd_rejected_before_availability_check
+============================== 1 failed in 0.05s ===============================

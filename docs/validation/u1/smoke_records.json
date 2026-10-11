@@ -1,0 +1,40 @@
+{
+  "platform": "Darwin arm64",
+  "python": "3.11.16",
+  "wheel": "skill_lens_cli-0.1.1-py3-none-any.whl",
+  "wheel_sha256": "1bcc4b2b46feac61dfbda10f6d333b8f81971d2aa42be886892c6d9a256805b7",
+  "registry_files_count": 10,
+  "registry_files": [
+    "skill_lens/registry/agents/antigravity.toml",
+    "skill_lens/registry/agents/claude.toml",
+    "skill_lens/registry/agents/codex.toml",
+    "skill_lens/registry/agents/dsh.toml",
+    "skill_lens/registry/agents/grok.toml",
+    "skill_lens/registry/agents/omp.toml",
+    "skill_lens/registry/agents/opencode.toml",
+    "skill_lens/registry/agents/pi.toml",
+    "skill_lens/registry/agents/qoder.toml",
+    "skill_lens/registry/agents/windsurf.toml"
+  ],
+  "base_lane": {
+    "provenance": "/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-smoke-base-bd38y6rj/venv/lib/python3.14/site-packages/skill_lens/__init__.py",
+    "textual_absent": true,
+    "bare_exit_code": 0,
+    "bare_has_tip": false,
+    "tui_exit_code": 2,
+    "tui_has_hint": true,
+    "tui_has_traceback": false
+  },
+  "tui_lane": {
+    "provenance": "/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-smoke-tui-6y_h17ao/venv/lib/python3.14/site-packages/skill_lens/__init__.py",
+    "textual_version": "Textual 8.2.8",
+    "suites_run": [
+      "tests/test_render_snapshots.py",
+      "tests/test_fixtures.py",
+      "tests/test_phase3_gate.py",
+      "tests/test_phase4_gate.py"
+    ],
+    "suites_exit_code": 0,
+    "parity_verified": true
+  }
+}

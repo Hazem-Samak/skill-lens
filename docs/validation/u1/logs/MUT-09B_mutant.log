@@ -1,0 +1,52 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_tui_packaging.py F                                            [100%]
+
+=================================== FAILURES ===================================
+_________________ test_ci_packaging_job_has_base_and_tui_lanes _________________
+
+    def test_ci_packaging_job_has_base_and_tui_lanes() -> None:
+        """The CI packaging job must test both base fallback and [tui] extra parity."""
+        ci = _read_ci_workflow()
+        packaging_job = ci["jobs"]["packaging"]
+        steps = packaging_job["steps"]
+    
+        step_runs = "\n".join(str(s.get("run", "")) for s in steps)
+    
+        # 1. Base install assertions
+        assert "importlib.util.find_spec('textual') is None" in step_runs, (
+            "CI packaging job must assert Textual is absent in base install"
+        )
+        assert "bare_output=" in step_runs and "Usage: skill-lens" in step_runs, (
+            "CI packaging job must assert noninteractive bare invocation prints help"
+        )
+        assert "Tip:" in step_runs, (
+            "CI packaging job must assert tip absence in noninteractive bare invocation"
+        )
+        assert "skill-lens-cli\\[tui\\]" in step_runs, (
+            "CI packaging job must assert explicit tui hint mentions skill-lens-cli[tui]"
+        )
+        assert 'test "$code" -eq 2' in step_runs, (
+            "CI packaging job must assert explicit tui exit code 2"
+        )
+    
+        # 2. [tui] extra lane assertions
+        assert "[tui]" in step_runs, "CI packaging job must install built wheel with [tui] extra"
+        assert "import textual" in step_runs, (
+            "CI packaging job must verify textual is present in [tui] lane"
+        )
+>       assert "assert '/tmp/smoke-tui' in skill_lens.__file__" in step_runs, (
+            "CI packaging job must assert skill_lens.__file__ is inside installed lane"
+        )
+E       AssertionError: CI packaging job must assert skill_lens.__file__ is inside installed lane
+E       assert "assert '/tmp/smoke-tui' in skill_lens.__file__" in '\n\nuv build --out-dir dist\nwheel=$(ls dist/*.whl)\ncount=$(unzip -l "$wheel" | grep -c \'registry/agents/.*\\.toml\...pytest tests/test_render_snapshots.py tests/test_fixtures.py tests/test_phase3_gate.py tests/test_phase4_gate.py -ra\n'
+
+tests/test_tui_packaging.py:122: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_ci_packaging_job_has_base_and_tui_lanes
+============================== 1 failed in 0.04s ===============================

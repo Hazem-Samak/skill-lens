@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_tui_routing.py F                                              [100%]
+
+=================================== FAILURES ===================================
+_________________________ test_plain_subcommand_bypass _________________________
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/pytest-of-corvette/pytest-36/test_plain_subcommand_bypass0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10729eb10>
+
+    def test_plain_subcommand_bypass(mock_home: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Root --plain is ignored when an explicit subcommand is provided."""
+        build_scenario("claude_personal_beats_project", mock_home)
+        result = runner.invoke(app, ["--plain", "scan", "--sandbox", str(mock_home), "--json"])
+        assert result.exit_code == 0
+>       assert '"skills":' in result.stdout
+E       assert '"skills":' in '                                                                                \n Usage: skill-lens [OPTIONS] COMMAN...                               │\n╰──────────────────────────────────────────────────────────────────────────────╯\n\n'
+E        +  where '                                                                                \n Usage: skill-lens [OPTIONS] COMMAN...                               │\n╰──────────────────────────────────────────────────────────────────────────────╯\n\n' = <Result okay>.stdout
+
+tests/test_tui_routing.py:173: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_routing.py::test_plain_subcommand_bypass - assert '"ski...
+============================== 1 failed in 0.07s ===============================

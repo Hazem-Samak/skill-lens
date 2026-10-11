@@ -187,3 +187,217 @@ Tracked/untracked SHA-256 fingerprints and status are unchanged after the wave.
   clean. Logs: `/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u1-5ufh0qvx/baseline-{0,1,2,3}.log`.
   Tree/environment unchanged apart from this plan, so the session baseline receipt
   remains valid for implementation dispatch.
+
+## Execution record (append-only)
+
+Plan frozen at `e59993cad3cd1079dd040bf0831965f1a2fcbf2a`; reference-only
+commit `bc7d04c`. Session roster as authorized above. One extra planning task
+was needed to independently check batched clarifications; Muse planning remained
+one dispatch. Baseline gates reused on unchanged product tree/environment.
+Dispatch ledger at implementation start (2026-10-11):
+
+```json
+[
+  {
+    "label": "planning MiniMax round 1",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-plan-minimax-r1-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-plan-minimax-r1-20261011:ordinal:1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-plan-minimax-r1-20261011",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "label": "planning Muse use 1/2",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-plan-muse-use1-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-plan-muse-use1-20261011:ordinal:1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-plan-muse-use1-20261011",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "label": "planning MiniMax round 2",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-plan-minimax-r2-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-plan-minimax-r2-20261011:ordinal:1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-plan-minimax-r2-20261011",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "label": "Gemini implementation",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-implement-gemini-r1-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-implement-gemini-r1-20261011:ordinal:1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-implement-gemini-r1-20261011",
+    "status": "running",
+    "hasPendingChildRuns": false
+  }
+]
+```
+
+Token usage unavailable from task receipts; no token-savings claim. Final metrics
+and acceptance evidence will be appended after implementation and reviews.
+
+Coordinator inspection of first implementation: four gates reproduced (600 passed,
+one skip, 94.44%; mypy/Ruff clean) with logs under
+`/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u1-coordinator-0lba9mef/initial-{0,1,2,3}.log`.
+Acceptance withheld: arbitrary benchmark 52/48 residual splits and incomplete
+refresh tracing, invalid-Python MUT-04, inadequate mutation assertions/provenance,
+single-render/count-only parity and source-checkout CI execution after wheel
+installation, plus optional-availability error conflation and raw launch diagnostics.
+Gemini received one batched correction task; no scope or frozen-contract change.
+Muse final use remains unused.
+
+Final coordinator pre-review inspection:
+- Second correction task (node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-implement-gemini-correction-r3-20261011), childRunId
+  `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-implement-gemini-correction-r3-20261011:ordinal:1`, completed with no pending runs.
+- Original CI job setup/actions/matrix preserved; smoke now runs provenance checks
+  outside checkout. Derived timing residual and exact P3 record replace invented
+  phase/comparison values. Full 51 mutation logs retained for 17 controls/failures/
+  restorations; coordinator confirms intended assertions and statuses 0/1/0.
+- Coordinator final gates: 605 passed, one filesystem skip, 94.67%; strict mypy31
+  clean; Ruff lint/format clean. Logs under
+  `/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u1-final-aqog_lqc/gate-{0,1,2,3}.log`.
+- Coordinator independently built/installed wheel in disposable outside copy:
+  both lanes pass, ten registry TOMLs, base Textual absent/help0/hint2, extra
+  Textual8.2.8 and all128 pinned-output tests pass from installed wheel.
+
+  Receipt/log: same temporary directory's `smoke.log` and
+  `smoke-copy/docs/validation/u1/smoke_records.json`.
+- No pinned snapshot/golden file changed. Administrative EOF/link corrections
+  do not change product behavior. Final reviewers pending; no acceptance yet.
+
+
+Correction task ledger:
+```json
+{
+  "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-implement-gemini-correction-r2-20261011",
+  "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-implement-gemini-correction-r2-20261011:ordinal:1",
+  "childThreadId": "thread:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-implement-gemini-correction-r2-20261011",
+  "status": "running"
+}
+```
+
+## Final acceptance — 2026-10-11
+
+Sol accepts U1 against frozen reference `e59993cad3cd1079dd040bf0831965f1a2fcbf2a`.
+Both final independent reviews pass; all in-scope blockers resolved:
+
+- Muse use 2/2: pass, no blockers. Optional bare exit assertion is redundant with
+  CI shell fail-fast assignment status; extra stderr check is nonblocking.
+  Sandbox-without-cwd concern assumes an outside terminal cwd, while
+  `paths.terminal_cwd()` intentionally returns the sandbox root. Future invalid
+  app exit values belong to U2's 0/3 contract. Full installed-wheel suites remain
+  authoritative parity evidence; no additional Muse dispatch or reply.
+- MiniMax Xhigh final round 1: only blocker was stale walkthrough timing range.
+  Sol reproduced and corrected it to 682–991 ms from raw 681.820/991.393 ms.
+  MiniMax High targeted round 2 passes and verifies links/wording/evidence.
+  Exact Rich pin policy is a nonblocking future dependency-upgrade suggestion;
+  U1 intentionally preserves the existing pin and output evidence.
+- Post-review fingerprints unchanged except the reviewed administrative
+  walkthrough correction. No product code changed after the final review wave.
+  Frozen operative contract remains unchanged; plan additions are execution records.
+- All allowed file scope accounted for. No core/model/registry/render or pinned
+  fixture changes, new TUI package, version bump, remote push or publishing.
+  Installed wheels contain ten registry TOMLs; both installation lanes pass,
+  and full installed-extra parity suites pass 128 tests. All 17 mutants have
+  control0/failure1/restoration0 with retained assertion logs and no survivors.
+- Benchmark records real production capture: A: 621 canonical/651 entrypoints,
+  991.39 ms; B: 615 canonical/615 entrypoints, 681.82 ms (warm-cache likely, tracing
+  off). Refresh allocation peaks 9.98/9.75 MiB with old snapshot captured while
+  tracing. These are machine/fixture measurements, not UI responsiveness claims.
+- Final four-gate evidence remains 605 passed, one case-insensitive filesystem
+  skip, 94.67% coverage; strict mypy 31 clean; Ruff lint/format clean. Final
+  acceptance rerun logs are stored in the same coordinator temporary directory
+  as `acceptance-{0,1,2,3}.log`; final commit follows only on all-zero exits.
+- Actual child launches 9 vs expected 5: one targeted planning follow-up, two
+  implementer correction batches, one targeted final documentation follow-up.
+  Muse exactly 2 uses. Approximately 98 minutes from first planning dispatch to
+  acceptance; token usage unavailable in task receipts. No savings claimed.
+- All tasks completed with no pending child runs; root/main binding retained,
+  no owned git worktree to clean up. Disposable validation artifacts preserved.
+
+Final complete task ledger:
+```json
+[
+  {
+    "requestId": "u1-plan-minimax-r1-20261011",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-plan-minimax-r1-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-plan-minimax-r1-20261011:ordinal:1",
+    "providerInstanceId": "mcode",
+    "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "requestId": "u1-plan-muse-use1-20261011",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-plan-muse-use1-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-plan-muse-use1-20261011:ordinal:1",
+    "providerInstanceId": "opencode",
+    "model": "opencode/muse-spark-1.3-contributor-free",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "requestId": "u1-plan-minimax-r2-20261011",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-plan-minimax-r2-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-plan-minimax-r2-20261011:ordinal:1",
+    "providerInstanceId": "mcode",
+    "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "requestId": "u1-implement-gemini-r1-20261011",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-implement-gemini-r1-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-implement-gemini-r1-20261011:ordinal:1",
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "requestId": "u1-implement-gemini-correction-r2-20261011",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-implement-gemini-correction-r2-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-implement-gemini-correction-r2-20261011:ordinal:1",
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "requestId": "u1-implement-gemini-correction-r3-20261011",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-implement-gemini-correction-r3-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-implement-gemini-correction-r3-20261011:ordinal:1",
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "requestId": "u1-final-minimax-r1-20261011",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-final-minimax-r1-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-final-minimax-r1-20261011:ordinal:1",
+    "providerInstanceId": "mcode",
+    "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "requestId": "u1-final-muse-use2-20261011",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-final-muse-use2-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-final-muse-use2-20261011:ordinal:1",
+    "providerInstanceId": "opencode",
+    "model": "opencode/muse-spark-1.3-contributor-free",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  },
+  {
+    "requestId": "u1-final-minimax-r2-doc-fix-20261011",
+    "taskId": "node:delegated-task:command%3Amcp%3A92f15da3-ebad-44b2-ab77-43cfe272d3e7%3Adelegate-task%3Au1-final-minimax-r2-doc-fix-20261011",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A92f15da3-ebad-44b2-ab77-43cfe272d3e7%253Adelegate-task%253Au1-final-minimax-r2-doc-fix-20261011:ordinal:1",
+    "providerInstanceId": "mcode",
+    "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+    "status": "completed",
+    "hasPendingChildRuns": false
+  }
+]
+```

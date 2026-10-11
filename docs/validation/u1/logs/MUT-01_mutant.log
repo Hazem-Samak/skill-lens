@@ -1,0 +1,312 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 16 items
+
+tests/test_tui_routing.py .....FF......FF.                               [100%]
+
+=================================== FAILURES ===================================
+__________ test_bare_invocation_stream_matrix[True-False-True-False] ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b91add0>
+stdin_tty = False, stdout_tty = True, plain = False, textual_available = True
+
+    @pytest.mark.parametrize("stdin_tty", [True, False])
+    @pytest.mark.parametrize("stdout_tty", [True, False])
+    @pytest.mark.parametrize("plain", [True, False])
+    @pytest.mark.parametrize("textual_available", [True, False])
+    def test_bare_invocation_stream_matrix(
+        monkeypatch: pytest.MonkeyPatch,
+        stdin_tty: bool,
+        stdout_tty: bool,
+        plain: bool,
+        textual_available: bool,
+    ) -> None:
+        """Validate all 16 bare-invocation combinations of stream interactivity,
+        the ``--plain`` flag, and Textual availability.
+    
+        Only interactive input AND interactive output AND plain=False AND Textual
+        present triggers TUI launch.
+        Only interactive input AND interactive output AND plain=False AND Textual
+        absent prints help plus the one-line install tip (exit 0).
+        All other 14 fallback cases print help without the tip (exit 0).
+        """
+        called_with: list[tuple[Path, Path]] = []
+    
+        def fake_runner(home: Path, cwd: Path) -> int:
+            called_with.append((home, cwd))
+            return 0
+    
+        _install_fake_tui(monkeypatch, fake_runner)
+        monkeypatch.setattr(cli, "_is_textual_available", lambda: textual_available)
+    
+        def fake_isatty(stream: object) -> bool:
+            if stream is sys.stdin:
+                return stdin_tty
+            if stream is sys.stdout:
+                return stdout_tty
+            return False
+    
+        monkeypatch.setattr(cli, "_stream_isatty", fake_isatty)
+    
+        args = ["--plain"] if plain else []
+        result = runner.invoke(app, args)
+    
+        is_both_tty = stdin_tty and stdout_tty
+    
+        if is_both_tty and not plain and textual_available:
+            # Full interactive launch
+            assert result.exit_code == 0
+            assert len(called_with) == 1
+            assert called_with[0][0] == paths.home()
+            assert called_with[0][1] == paths.terminal_cwd()
+        elif is_both_tty and not plain and not textual_available:
+            # Interactive fallback without Textual: help + tip, exit 0
+            assert result.exit_code == 0
+            assert len(called_with) == 0
+            assert "Usage: skill-lens" in result.stdout
+            expected_tip = "Tip: Install the terminal UI with: pip install 'skill-lens-cli[tui]'"
+            assert expected_tip in result.stdout
+            assert result.stderr == ""
+        else:
+            # All other 14 fallback combinations: help without tip, exit 0
+            assert result.exit_code == 0
+>           assert len(called_with) == 0
+E           AssertionError: assert 1 == 0
+E            +  where 1 = len([(PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/home...osixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo'))])
+
+tests/test_tui_routing.py:114: AssertionError
+__________ test_bare_invocation_stream_matrix[True-False-False-True] ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b981350>
+stdin_tty = True, stdout_tty = False, plain = False, textual_available = True
+
+    @pytest.mark.parametrize("stdin_tty", [True, False])
+    @pytest.mark.parametrize("stdout_tty", [True, False])
+    @pytest.mark.parametrize("plain", [True, False])
+    @pytest.mark.parametrize("textual_available", [True, False])
+    def test_bare_invocation_stream_matrix(
+        monkeypatch: pytest.MonkeyPatch,
+        stdin_tty: bool,
+        stdout_tty: bool,
+        plain: bool,
+        textual_available: bool,
+    ) -> None:
+        """Validate all 16 bare-invocation combinations of stream interactivity,
+        the ``--plain`` flag, and Textual availability.
+    
+        Only interactive input AND interactive output AND plain=False AND Textual
+        present triggers TUI launch.
+        Only interactive input AND interactive output AND plain=False AND Textual
+        absent prints help plus the one-line install tip (exit 0).
+        All other 14 fallback cases print help without the tip (exit 0).
+        """
+        called_with: list[tuple[Path, Path]] = []
+    
+        def fake_runner(home: Path, cwd: Path) -> int:
+            called_with.append((home, cwd))
+            return 0
+    
+        _install_fake_tui(monkeypatch, fake_runner)
+        monkeypatch.setattr(cli, "_is_textual_available", lambda: textual_available)
+    
+        def fake_isatty(stream: object) -> bool:
+            if stream is sys.stdin:
+                return stdin_tty
+            if stream is sys.stdout:
+                return stdout_tty
+            return False
+    
+        monkeypatch.setattr(cli, "_stream_isatty", fake_isatty)
+    
+        args = ["--plain"] if plain else []
+        result = runner.invoke(app, args)
+    
+        is_both_tty = stdin_tty and stdout_tty
+    
+        if is_both_tty and not plain and textual_available:
+            # Full interactive launch
+            assert result.exit_code == 0
+            assert len(called_with) == 1
+            assert called_with[0][0] == paths.home()
+            assert called_with[0][1] == paths.terminal_cwd()
+        elif is_both_tty and not plain and not textual_available:
+            # Interactive fallback without Textual: help + tip, exit 0
+            assert result.exit_code == 0
+            assert len(called_with) == 0
+            assert "Usage: skill-lens" in result.stdout
+            expected_tip = "Tip: Install the terminal UI with: pip install 'skill-lens-cli[tui]'"
+            assert expected_tip in result.stdout
+            assert result.stderr == ""
+        else:
+            # All other 14 fallback combinations: help without tip, exit 0
+            assert result.exit_code == 0
+>           assert len(called_with) == 0
+E           AssertionError: assert 1 == 0
+E            +  where 1 = len([(PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/home...osixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo'))])
+
+tests/test_tui_routing.py:114: AssertionError
+__________ test_bare_invocation_stream_matrix[False-False-True-False] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b7606d0>
+stdin_tty = False, stdout_tty = True, plain = False, textual_available = False
+
+    @pytest.mark.parametrize("stdin_tty", [True, False])
+    @pytest.mark.parametrize("stdout_tty", [True, False])
+    @pytest.mark.parametrize("plain", [True, False])
+    @pytest.mark.parametrize("textual_available", [True, False])
+    def test_bare_invocation_stream_matrix(
+        monkeypatch: pytest.MonkeyPatch,
+        stdin_tty: bool,
+        stdout_tty: bool,
+        plain: bool,
+        textual_available: bool,
+    ) -> None:
+        """Validate all 16 bare-invocation combinations of stream interactivity,
+        the ``--plain`` flag, and Textual availability.
+    
+        Only interactive input AND interactive output AND plain=False AND Textual
+        present triggers TUI launch.
+        Only interactive input AND interactive output AND plain=False AND Textual
+        absent prints help plus the one-line install tip (exit 0).
+        All other 14 fallback cases print help without the tip (exit 0).
+        """
+        called_with: list[tuple[Path, Path]] = []
+    
+        def fake_runner(home: Path, cwd: Path) -> int:
+            called_with.append((home, cwd))
+            return 0
+    
+        _install_fake_tui(monkeypatch, fake_runner)
+        monkeypatch.setattr(cli, "_is_textual_available", lambda: textual_available)
+    
+        def fake_isatty(stream: object) -> bool:
+            if stream is sys.stdin:
+                return stdin_tty
+            if stream is sys.stdout:
+                return stdout_tty
+            return False
+    
+        monkeypatch.setattr(cli, "_stream_isatty", fake_isatty)
+    
+        args = ["--plain"] if plain else []
+        result = runner.invoke(app, args)
+    
+        is_both_tty = stdin_tty and stdout_tty
+    
+        if is_both_tty and not plain and textual_available:
+            # Full interactive launch
+            assert result.exit_code == 0
+            assert len(called_with) == 1
+            assert called_with[0][0] == paths.home()
+            assert called_with[0][1] == paths.terminal_cwd()
+        elif is_both_tty and not plain and not textual_available:
+            # Interactive fallback without Textual: help + tip, exit 0
+            assert result.exit_code == 0
+            assert len(called_with) == 0
+            assert "Usage: skill-lens" in result.stdout
+            expected_tip = "Tip: Install the terminal UI with: pip install 'skill-lens-cli[tui]'"
+            assert expected_tip in result.stdout
+            assert result.stderr == ""
+        else:
+            # All other 14 fallback combinations: help without tip, exit 0
+            assert result.exit_code == 0
+            assert len(called_with) == 0
+            assert "Usage: skill-lens" in result.stdout
+>           assert "Tip:" not in result.stdout
+E           assert 'Tip:' not in "           ...-cli[tui]'\n"
+E             
+E             'Tip:' is contained here:
+E               ──────╯
+E               
+E               
+E               Tip: Install the terminal UI with: pip install 'skill-lens-cli[tui]'
+E             ? ++++
+
+tests/test_tui_routing.py:116: AssertionError
+__________ test_bare_invocation_stream_matrix[False-False-False-True] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b8f17d0>
+stdin_tty = True, stdout_tty = False, plain = False, textual_available = False
+
+    @pytest.mark.parametrize("stdin_tty", [True, False])
+    @pytest.mark.parametrize("stdout_tty", [True, False])
+    @pytest.mark.parametrize("plain", [True, False])
+    @pytest.mark.parametrize("textual_available", [True, False])
+    def test_bare_invocation_stream_matrix(
+        monkeypatch: pytest.MonkeyPatch,
+        stdin_tty: bool,
+        stdout_tty: bool,
+        plain: bool,
+        textual_available: bool,
+    ) -> None:
+        """Validate all 16 bare-invocation combinations of stream interactivity,
+        the ``--plain`` flag, and Textual availability.
+    
+        Only interactive input AND interactive output AND plain=False AND Textual
+        present triggers TUI launch.
+        Only interactive input AND interactive output AND plain=False AND Textual
+        absent prints help plus the one-line install tip (exit 0).
+        All other 14 fallback cases print help without the tip (exit 0).
+        """
+        called_with: list[tuple[Path, Path]] = []
+    
+        def fake_runner(home: Path, cwd: Path) -> int:
+            called_with.append((home, cwd))
+            return 0
+    
+        _install_fake_tui(monkeypatch, fake_runner)
+        monkeypatch.setattr(cli, "_is_textual_available", lambda: textual_available)
+    
+        def fake_isatty(stream: object) -> bool:
+            if stream is sys.stdin:
+                return stdin_tty
+            if stream is sys.stdout:
+                return stdout_tty
+            return False
+    
+        monkeypatch.setattr(cli, "_stream_isatty", fake_isatty)
+    
+        args = ["--plain"] if plain else []
+        result = runner.invoke(app, args)
+    
+        is_both_tty = stdin_tty and stdout_tty
+    
+        if is_both_tty and not plain and textual_available:
+            # Full interactive launch
+            assert result.exit_code == 0
+            assert len(called_with) == 1
+            assert called_with[0][0] == paths.home()
+            assert called_with[0][1] == paths.terminal_cwd()
+        elif is_both_tty and not plain and not textual_available:
+            # Interactive fallback without Textual: help + tip, exit 0
+            assert result.exit_code == 0
+            assert len(called_with) == 0
+            assert "Usage: skill-lens" in result.stdout
+            expected_tip = "Tip: Install the terminal UI with: pip install 'skill-lens-cli[tui]'"
+            assert expected_tip in result.stdout
+            assert result.stderr == ""
+        else:
+            # All other 14 fallback combinations: help without tip, exit 0
+            assert result.exit_code == 0
+            assert len(called_with) == 0
+            assert "Usage: skill-lens" in result.stdout
+>           assert "Tip:" not in result.stdout
+E           assert 'Tip:' not in "           ...-cli[tui]'\n"
+E             
+E             'Tip:' is contained here:
+E               ──────╯
+E               
+E               
+E               Tip: Install the terminal UI with: pip install 'skill-lens-cli[tui]'
+E             ? ++++
+
+tests/test_tui_routing.py:116: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_routing.py::test_bare_invocation_stream_matrix[True-False-True-False]
+FAILED tests/test_tui_routing.py::test_bare_invocation_stream_matrix[True-False-False-True]
+FAILED tests/test_tui_routing.py::test_bare_invocation_stream_matrix[False-False-True-False]
+FAILED tests/test_tui_routing.py::test_bare_invocation_stream_matrix[False-False-False-True]
+========================= 4 failed, 12 passed in 0.13s =========================

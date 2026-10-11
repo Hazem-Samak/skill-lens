@@ -7,8 +7,11 @@ Rich layer is presentation only.
 
 from __future__ import annotations
 
+import importlib
+import importlib.util
+import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Protocol, cast
 
 import typer
 from rich.console import Console
@@ -37,12 +40,75 @@ from skill_lens.render import (
 app = typer.Typer(
     name="skill-lens",
     help="Local, read-only diagnostics and resolution for AI agent skills.",
-    no_args_is_help=True,
+    no_args_is_help=False,
     add_completion=False,
 )
 
 console = Console()
 error_console = Console(stderr=True)
+
+
+class TuiRunner(Protocol):
+    """Callable interface for the TUI entry point."""
+
+    def __call__(self, home: Path, cwd: Path) -> int: ...
+
+
+def _is_textual_available() -> bool:
+    """Return True if the optional Textual library is installed and available.
+
+    Only find_spec returning None indicates Textual is absent.
+    Any exception encountered while checking availability is treated as an
+    internal fault (exit code 3) in plain English.
+    """
+    try:
+        spec = importlib.util.find_spec("textual")
+    except Exception as exc:
+        error_console.print(
+            f"Error: Failed to check Textual availability: {exc}",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
+        raise typer.Exit(code=int(ExitCode.INTERNAL)) from None
+    return spec is not None
+
+
+def _stream_isatty(stream: object) -> bool:
+    """Return True if the stream is an interactive terminal."""
+    try:
+        return bool(stream is not None and hasattr(stream, "isatty") and stream.isatty())
+    except Exception:
+        return False
+
+
+def _load_tui_runner() -> TuiRunner:
+    """Lazily load the TUI runner callable."""
+    mod = importlib.import_module("skill_lens.tui")
+    runner = getattr(mod, "run", None)
+    if not callable(runner):
+        raise ImportError("skill_lens.tui does not expose a callable 'run'")
+    return cast(TuiRunner, runner)
+
+
+def _launch_tui(home: Path, cwd: Path) -> None:
+    """Launch the terminal UI through the lazy adapter boundary."""
+    try:
+        runner = _load_tui_runner()
+        code = runner(home, cwd)
+    except typer.Exit:
+        raise
+    except Exception as exc:
+        error_console.print(
+            f"Error: Failed to start the terminal UI: {exc}",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
+        raise typer.Exit(code=int(ExitCode.INTERNAL)) from None
+
+    if code != int(ExitCode.OK):
+        raise typer.Exit(code=int(code))
 
 
 def _emit_json(payload: object) -> None:
@@ -60,14 +126,38 @@ def _version_callback(value: bool) -> None:
         raise typer.Exit()
 
 
-@app.callback()
+@app.callback(invoke_without_command=True)
 def main(
+    ctx: typer.Context,
     version: Annotated[
         bool,
         typer.Option("--version", callback=_version_callback, is_eager=True, help="Show version."),
     ] = False,
+    plain: Annotated[
+        bool,
+        typer.Option(
+            "--plain",
+            help="Print help instead of opening the terminal UI on bare invocation.",
+        ),
+    ] = False,
 ) -> None:
     """Skill Lens: know what skills you have, and why each one wins."""
+    if ctx.invoked_subcommand is not None:
+        return
+
+    is_interactive = _stream_isatty(sys.stdin) and _stream_isatty(sys.stdout)
+    if plain or not is_interactive:
+        typer.echo(ctx.get_help())
+        raise typer.Exit(code=int(ExitCode.OK))
+
+    if not _is_textual_available():
+        typer.echo(ctx.get_help())
+        typer.echo("\nTip: Install the terminal UI with: pip install 'skill-lens-cli[tui]'")
+        raise typer.Exit(code=int(ExitCode.OK))
+
+    home = _effective_home()
+    working_dir = _effective_cwd(None, None)
+    _launch_tui(home, working_dir)
 
 
 def _apply_sandbox(sandbox: Path | None) -> None:
@@ -124,6 +214,35 @@ def _finish(severities: tuple[Severity, ...], fail_on: FailOn) -> None:
     code = exit_code_for(severities, fail_on)
     if code is not ExitCode.OK:
         raise typer.Exit(code=int(code))
+
+
+@app.command()
+def tui(
+    sandbox: Annotated[
+        Path | None,
+        typer.Option("--sandbox", help="Treat this directory as a mock $HOME."),
+    ] = None,
+    cwd: Annotated[
+        Path | None,
+        typer.Option("--cwd", help=_CWD_HELP),
+    ] = None,
+) -> None:
+    """Open the interactive terminal UI."""
+    _apply_sandbox(sandbox)
+    home = _effective_home()
+    working_dir = _effective_cwd(cwd, sandbox)
+    if sandbox is not None:
+        _assert_inside_sandbox(working_dir, home)
+    if not _is_textual_available():
+        error_console.print(
+            "Error: The terminal UI requires 'skill-lens-cli[tui]'. "
+            "Install it with: pip install 'skill-lens-cli[tui]'",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
+        raise typer.Exit(code=int(ExitCode.USAGE))
+    _launch_tui(home, working_dir)
 
 
 @app.command()

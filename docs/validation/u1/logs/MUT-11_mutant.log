@@ -1,0 +1,86 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_tui_packaging.py F                                            [100%]
+
+=================================== FAILURES ===================================
+______________________ test_installed_extra_output_parity ______________________
+
+tmp_path = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/pytest-of-corvette/pytest-42/test_installed_extra_output_pa0')
+
+    def test_installed_extra_output_parity(tmp_path: Path) -> None:
+        """Focused in-process output parity check: verifying core command renders
+        and goldens remain unchanged with Textual installed.
+    
+        Full comprehensive parity across all 17 snapshots and 16 goldens is executed
+        by the installed wheel packaging lanes in CI and smoke_wheel.py.
+        """
+        # 1. Verify Textual is actually present in the running test environment
+        assert importlib.util.find_spec("textual") is not None, (
+            "This parity gate requires Textual to be installed in the environment"
+        )
+    
+        from skill_lens.core import paths
+        from tests import test_fixtures, test_phase3_gate, test_phase4_gate, test_render_snapshots
+    
+        try:
+    
+            def _make_home(label: str) -> Path:
+                h = (tmp_path / label).resolve()
+                h.mkdir(parents=True, exist_ok=True)
+                paths.set_sandbox(h)
+                return h
+    
+            # Focused verification across command render surfaces
+>           test_render_snapshots.test_scan_snapshot(_make_home("snap_scan"), update_snapshots=False)
+
+tests/test_tui_packaging.py:175: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_render_snapshots.py:88: in test_scan_snapshot
+    _check(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'scan_variant_hash_detection', update = False
+render = <function test_scan_snapshot.<locals>.<lambda> at 0x10b576ca0>
+home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/pytest-of-corvette/pytest-42/test_installed_extra_output_pa0/snap_scan')
+
+    def _check(name: str, update: bool, render: Callable[[], str], home: Path) -> str:
+        """Compare a rendered snapshot against its golden, or rewrite the golden."""
+        path = SNAPSHOT_DIR / f"{name}.txt"
+        rendered = render()
+        if update:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(rendered, encoding="utf-8")
+            return rendered
+        assert path.exists(), f"missing snapshot {path.name}; run with --update-snapshots"
+>       assert rendered == path.read_text(encoding="utf-8"), (
+            f"snapshot {path.name} changed. Review the difference, then re-run with "
+            "--update-snapshots if the new output is correct."
+        )
+E       AssertionError: snapshot scan_variant_hash_detection.txt changed. Review the difference, then re-run with --update-snapshots if the new output is correct.
+E       assert '╭───────────...──────────┘\n' == '╭───────────...──────────┘\n'
+E         
+E         Skipping 735 identical trailing characters in diff, use -v to show
+E         - ╭─────────────── Skill Lens: Discovered Skills ───────────
+E         + ╭────────────── Skill Lens: Mutated Render Title ─────────
+
+tests/test_render_snapshots.py:74: AssertionError
+----------------------------- Captured stdout call -----------------------------
+╭────────────── Skill Lens: Mutated Render Title ──────────────╮
+│ Detected Agents: claude, codex, dsh, omp, opencode           │
+│ Canonical Library: 2 skills (0 symlink entrypoints)          │
+│ Local Project Skills: 0  System/Bundled: 0  Plugin Skills: 0 │
+╰──────────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Skill Name ┃ Scope  ┃ Canonical Path          ┃ Active Entrypoints        ┃
+┡━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ deploy     │ Global │ ~/.claude/skills/deploy │ claude                    │
+│ deploy     │ Global │ ~/.agents/skills/deploy │ codex, dsh, omp, opencode │
+└────────────┴────────┴─────────────────────────┴───────────────────────────┘
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_installed_extra_output_parity - Asse...
+============================== 1 failed in 0.06s ===============================

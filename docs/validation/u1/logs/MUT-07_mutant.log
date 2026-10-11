@@ -1,0 +1,29 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_tui_routing.py F                                              [100%]
+
+=================================== FAILURES ===================================
+____________________ test_tui_runner_exit_code_3_propagates ____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ac92450>
+
+    def test_tui_runner_exit_code_3_propagates(monkeypatch: pytest.MonkeyPatch) -> None:
+        """Runner returning 3 exits process with 3."""
+        monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
+        _install_fake_tui(monkeypatch, lambda h, c: 3)
+        result = runner.invoke(app, ["tui"])
+>       assert result.exit_code == int(ExitCode.INTERNAL)
+E       assert 0 == 3
+E        +  where 0 = <Result okay>.exit_code
+E        +  and   3 = int(<ExitCode.INTERNAL: 3>)
+E        +    where <ExitCode.INTERNAL: 3> = ExitCode.INTERNAL
+
+tests/test_tui_routing.py:320: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_routing.py::test_tui_runner_exit_code_3_propagates - as...
+============================== 1 failed in 0.05s ===============================

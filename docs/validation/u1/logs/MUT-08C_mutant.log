@@ -1,0 +1,30 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_tui_packaging.py F                                            [100%]
+
+=================================== FAILURES ===================================
+_______________ test_optional_dependencies_declare_textual_floor _______________
+
+    def test_optional_dependencies_declare_textual_floor() -> None:
+        """The [tui] extra and [dev] extra must declare textual>=8.2.8."""
+        pyproject = _read_pyproject()
+        optional = pyproject["project"].get("optional-dependencies", {})
+        assert "tui" in optional, "pyproject.toml must declare optional-dependencies.tui"
+    
+        tui_deps = optional["tui"]
+>       assert any(dep.startswith("textual>=8.2.8") for dep in tui_deps), (
+            f"[tui] extra must declare textual>=8.2.8; found {tui_deps!r}"
+        )
+E       AssertionError: [tui] extra must declare textual>=8.2.8; found ['textual>=0.80.0']
+E       assert False
+E        +  where False = any(<generator object test_optional_dependencies_declare_textual_floor.<locals>.<genexpr> at 0x10948e7a0>)
+
+tests/test_tui_packaging.py:59: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_optional_dependencies_declare_textual_floor
+============================== 1 failed in 0.04s ===============================

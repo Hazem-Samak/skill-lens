@@ -1,0 +1,23 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-35stmw/skill-lens-u1-mutation-txv_9zry/repo
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_tui_packaging.py F                                            [100%]
+
+=================================== FAILURES ===================================
+________________________ test_tui_command_is_registered ________________________
+
+    def test_tui_command_is_registered() -> None:
+        """`tui` must be registered in app.registered_commands."""
+        registered = {cmd.callback.__name__ for cmd in cli.app.registered_commands if cmd.callback}
+>       assert "tui" in registered, f"`tui` must be a registered CLI command; found {registered!r}"
+E       AssertionError: `tui` must be a registered CLI command; found {'why', 'compare', 'diff', 'agents', 'doctor', 'scan', 'tui_disabled'}
+E       assert 'tui' in {'agents', 'compare', 'diff', 'doctor', 'scan', 'tui_disabled', ...}
+
+tests/test_tui_packaging.py:148: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_tui_command_is_registered - Assertio...
+============================== 1 failed in 0.04s ===============================
