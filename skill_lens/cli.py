@@ -23,6 +23,7 @@ from skill_lens.core.diff import build_diff_report
 from skill_lens.core.discovery import normalize_cwd
 from skill_lens.core.doctor import run_doctor
 from skill_lens.core.exitcodes import ExitCode, FailOn, exit_code_for, fail_on_help
+from skill_lens.core.hasher import IncompleteTreeError
 from skill_lens.core.resolver import resolve_skill
 from skill_lens.core.scanner import build_scan_report, scan_severities
 from skill_lens.models import dumps
@@ -359,7 +360,16 @@ def diff(
     working_dir = _effective_cwd(cwd, sandbox)
     if sandbox is not None:
         _assert_inside_sandbox(working_dir, home)
-    report = build_diff_report(skill_name, working_dir, home)
+    try:
+        report = build_diff_report(skill_name, working_dir, home)
+    except IncompleteTreeError as exc:
+        error_console.print(
+            f"Error: {exc}",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
+        raise typer.Exit(code=int(ExitCode.USAGE)) from None
     if as_json:
         _emit_json(report.to_dict())
         return

@@ -29,6 +29,15 @@ _IGNORED_DIRS = frozenset({".git"})
 _IGNORED_FILES = frozenset({".DS_Store"})
 
 
+class IncompleteTreeError(OSError):
+    """Raised when directory traversal or file reading is incomplete."""
+
+    def __init__(self, path: Path | str, reason: str = "denied") -> None:
+        self.path = Path(path)
+        self.reason = reason
+        super().__init__(f"Cannot read '{self.path}': {self.reason}")
+
+
 def _is_ignored(relative: Path) -> bool:
     """True for paths the fingerprint must skip (VCS, macOS metadata)."""
     if any(part in _IGNORED_DIRS for part in relative.parts):
@@ -45,7 +54,12 @@ def iter_files(root: Path, *, cancelled: Callable[[], bool] | None = None) -> li
     """
     check_cancelled(cancelled)
     collected: list[Path] = []
-    for dirpath, dirnames, filenames in os.walk(root):
+    walk_errors: list[OSError] = []
+
+    def _on_walk_error(err: OSError) -> None:
+        walk_errors.append(err)
+
+    for dirpath, dirnames, filenames in os.walk(root, onerror=_on_walk_error):
         check_cancelled(cancelled)
         dirnames[:] = sorted(d for d in dirnames if d not in _IGNORED_DIRS)
         for filename in sorted(filenames):
@@ -54,6 +68,18 @@ def iter_files(root: Path, *, cancelled: Callable[[], bool] | None = None) -> li
             relative = candidate.relative_to(root)
             if not _is_ignored(relative):
                 collected.append(relative)
+
+    if walk_errors:
+        first = walk_errors[0]
+        p = Path(getattr(first, "filename", None) or root)
+        if isinstance(first, PermissionError):
+            reason = "denied"
+        elif isinstance(first, FileNotFoundError):
+            reason = "disappeared"
+        else:
+            reason = "io"
+        raise IncompleteTreeError(path=p, reason=reason) from first
+
     collected.sort(key=lambda p: p.as_posix())
     return collected
 
@@ -104,8 +130,27 @@ def hash_file(path: Path, *, cancelled: Callable[[], bool] | None = None) -> str
         _update_text(text_hasher, path, cancelled=cancelled)
     except UnicodeDecodeError:
         binary_hasher = hashlib.sha256()
-        _update_binary(binary_hasher, path, cancelled=cancelled)
+        try:
+            _update_binary(binary_hasher, path, cancelled=cancelled)
+        except IncompleteTreeError:
+            raise
+        except OSError as err:
+            reason = (
+                "denied"
+                if isinstance(err, PermissionError)
+                else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+            )
+            raise IncompleteTreeError(path=path, reason=reason) from err
         return HASH_PREFIX + binary_hasher.hexdigest()
+    except IncompleteTreeError:
+        raise
+    except OSError as err:
+        reason = (
+            "denied"
+            if isinstance(err, PermissionError)
+            else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+        )
+        raise IncompleteTreeError(path=path, reason=reason) from err
     return HASH_PREFIX + text_hasher.hexdigest()
 
 
@@ -125,7 +170,17 @@ def hash_directory(root: Path, *, cancelled: Callable[[], bool] | None = None) -
     for relative in iter_files(root, cancelled=cancelled):
         check_cancelled(cancelled)
         posix = relative.as_posix()
-        file_hash = hash_file(root / relative, cancelled=cancelled)
+        try:
+            file_hash = hash_file(root / relative, cancelled=cancelled)
+        except IncompleteTreeError:
+            raise
+        except OSError as err:
+            reason = (
+                "denied"
+                if isinstance(err, PermissionError)
+                else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+            )
+            raise IncompleteTreeError(path=root / relative, reason=reason) from err
         hasher.update(format_directory_entry(posix, file_hash))
     return HASH_PREFIX + hasher.hexdigest()
 

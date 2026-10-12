@@ -23,6 +23,7 @@ from skill_lens.core.discovery import (
 )
 from skill_lens.core.doctor import run_doctor
 from skill_lens.core.hasher import (
+    IncompleteTreeError,
     hash_bytes,
     hash_captured_directory,
     iter_files,
@@ -43,6 +44,7 @@ from skill_lens.core.snapshot_models import (
 from skill_lens.core.system import installer_lockfile, live_discovery, shared_library
 from skill_lens.models.compare import CompareReport
 from skill_lens.models.diff import DiffReport
+from skill_lens.models.parsing import CanonicalStatus
 from skill_lens.models.resolution import ResolutionReport
 from skill_lens.registry.loader import AgentDefinition, load_registry
 
@@ -180,13 +182,28 @@ def capture_session(
     for entry in index_1.entries:
         check_cancelled(cancelled)
         key = canonical_key(entry)
-        if entry.content_hash is None:
+        if entry.canonical.status is not CanonicalStatus.OK:
             captured_files[key] = ()
             continue
 
+        if not entry.traversal_complete or entry.content_hash is None:
+            root = Path(entry.canonical_path or entry.entrypoint_path)
+            reason = entry.traversal_error or "denied"
+            raise IncompleteTreeError(path=root, reason=reason)
+
         root = Path(entry.canonical_path or entry.entrypoint_path)
         if root.is_dir():
-            rel_paths = iter_files(root, cancelled=cancelled)
+            try:
+                rel_paths = iter_files(root, cancelled=cancelled)
+            except IncompleteTreeError:
+                raise
+            except OSError as err:
+                reason = (
+                    "denied"
+                    if isinstance(err, PermissionError)
+                    else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+                )
+                raise IncompleteTreeError(path=root, reason=reason) from err
             items: list[CapturedFile] = []
             for rel in rel_paths:
                 file_path = root / rel
@@ -200,10 +217,14 @@ def capture_session(
                                 break
                             chunks.append(chunk)
                     data = b"".join(chunks)
-                except OSError:
+                except PermissionError as err:
+                    raise IncompleteTreeError(path=file_path, reason="denied") from err
+                except FileNotFoundError:
                     raise SnapshotChanged(
                         "Files changed while scanning. Press r to retry."
                     ) from None
+                except OSError as err:
+                    raise IncompleteTreeError(path=file_path, reason="io") from err
                 fingerprint = hash_bytes(data)
                 items.append(
                     CapturedFile(
@@ -228,8 +249,12 @@ def capture_session(
                             break
                         chunks.append(chunk)
                 data = b"".join(chunks)
-            except OSError:
+            except PermissionError as err:
+                raise IncompleteTreeError(path=root, reason="denied") from err
+            except FileNotFoundError:
                 raise SnapshotChanged("Files changed while scanning. Press r to retry.") from None
+            except OSError as err:
+                raise IncompleteTreeError(path=root, reason="io") from err
             fingerprint = hash_bytes(data)
             if fingerprint != entry.content_hash:
                 raise SnapshotChanged("Files changed while scanning. Press r to retry.")

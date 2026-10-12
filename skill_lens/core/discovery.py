@@ -17,7 +17,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from skill_lens.core.cancellation import check_cancelled
-from skill_lens.core.hasher import hash_path
+from skill_lens.core.hasher import IncompleteTreeError, hash_path
 from skill_lens.core.parser import canonicalize, find_skill_document, parse_skill
 from skill_lens.models.enums import ParseStatus, Scope
 from skill_lens.models.parsing import (
@@ -194,6 +194,8 @@ class DiscoveredEntry:
     hits: tuple[RootHit, ...] = ()
     entrypoint_paths: tuple[str, ...] = ()
     variant_label: str | None = None
+    traversal_complete: bool = True
+    traversal_error: str | None = None
 
     @property
     def canonical_path(self) -> str | None:
@@ -501,14 +503,26 @@ def _build_entry(
     canonical = canonicalize(entrypoint)
     parse: ParseResult | None = None
     content_hash: str | None = None
+    traversal_complete = True
+    traversal_error: str | None = None
     if canonical.status is CanonicalStatus.OK:
         check_cancelled(cancelled)
         parse = parse_skill(entrypoint)
         check_cancelled(cancelled)
         try:
             content_hash = hash_path(entrypoint, cancelled=cancelled)
-        except OSError:
+        except IncompleteTreeError as err:
             content_hash = None
+            traversal_complete = False
+            traversal_error = err.reason
+        except OSError as err:
+            content_hash = None
+            traversal_complete = False
+            traversal_error = (
+                "denied"
+                if isinstance(err, PermissionError)
+                else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+            )
 
     name = _entry_name(entrypoint, is_file, parse)
     return DiscoveredEntry(
@@ -521,6 +535,8 @@ def _build_entry(
         content_hash=content_hash,
         hits=(hit,),
         entrypoint_paths=(str(entrypoint),),
+        traversal_complete=traversal_complete,
+        traversal_error=traversal_error,
     )
 
 
@@ -560,9 +576,15 @@ def _merge_entries(entries: list[DiscoveredEntry]) -> list[DiscoveredEntry]:
             is_symlink=existing.is_symlink or entry.is_symlink,
             canonical=existing.canonical,
             parse=existing.parse or entry.parse,
-            content_hash=existing.content_hash or entry.content_hash,
+            content_hash=(
+                None
+                if not (existing.traversal_complete and entry.traversal_complete)
+                else (existing.content_hash or entry.content_hash)
+            ),
             hits=hits,
             entrypoint_paths=_union_paths(existing.entrypoint_paths, entry.entrypoint_paths),
+            traversal_complete=existing.traversal_complete and entry.traversal_complete,
+            traversal_error=existing.traversal_error or entry.traversal_error,
         )
     return [merged[key] for key in order]
 

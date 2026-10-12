@@ -29,6 +29,7 @@ from typer.testing import CliRunner
 from skill_lens.cli import app
 from skill_lens.core.doctor import _registry_evidence_findings
 from skill_lens.core.exitcodes import ExitCode, FailOn, exit_code_for, fail_on_help
+from skill_lens.core.health import HealthCondition
 from skill_lens.core.scanner import ScanEntry, ScanReport, ScanSummary, scan_severities
 from skill_lens.models.enums import ParseStatus, Scope, Severity
 
@@ -138,6 +139,26 @@ def _scan_report(*entries: ScanEntry, unreadable: tuple[dict[str, str], ...] = (
 
 
 def _entry(name: str, status: str) -> ScanEntry:
+    sev = None
+    code = "ok"
+    reason = None
+    if status == ParseStatus.VALID.value:
+        sev = None
+        code = "ok"
+    elif status in (ParseStatus.MALFORMED_YAML.value, ParseStatus.MISSING_DESCRIPTION.value):
+        sev = Severity.ERROR
+        code = "malformed_frontmatter"
+        reason = status
+    elif status == ParseStatus.UNREADABLE.value:
+        sev = Severity.ERROR
+        code = "unreadable_skill"
+        reason = "denied"
+    condition = HealthCondition(
+        code=code,
+        severity=sev,
+        is_complete=(sev is None or code == "malformed_frontmatter"),
+        reason=reason,
+    )
     return ScanEntry(
         name=name,
         scope=Scope.USER,
@@ -146,7 +167,8 @@ def _entry(name: str, status: str) -> ScanEntry:
         agents=("claude",),
         entrypoint_count=1,
         is_symlink=False,
-        content_hash="h",
+        content_hash="h" if status == ParseStatus.VALID.value else None,
+        condition=condition,
     )
 
 
@@ -163,9 +185,9 @@ def test_malformed_scan_entries_are_errors(status: ParseStatus) -> None:
     assert scan_severities(report) == (Severity.ERROR,)
 
 
-def test_unreadable_entry_is_a_warning_not_an_error() -> None:
+def test_unreadable_entry_is_an_error() -> None:
     report = _scan_report(_entry("a", ParseStatus.UNREADABLE.value))
-    assert scan_severities(report) == (Severity.WARNING,)
+    assert scan_severities(report) == (Severity.ERROR,)
 
 
 def test_unreadable_root_is_reported_even_with_no_entries() -> None:
@@ -174,20 +196,248 @@ def test_unreadable_root_is_reported_even_with_no_entries() -> None:
     assert scan_severities(report) == (Severity.WARNING,)
 
 
-def test_scan_severities_match_doctor_severities_for_the_same_conditions() -> None:
-    """``scan --fail-on`` and ``doctor --fail-on`` must agree about one machine.
+def test_agreement_clean(sandbox: Path) -> None:
+    """Clean skills produce no errors in either scan or doctor."""
+    from skill_lens.core.discovery import discover
+    from skill_lens.core.doctor import run_doctor
+    from skill_lens.core.scanner import build_scan_report, scan_severities
 
-    Malformed frontmatter is an error in both, and an unreadable root is a
-    warning in both. If these ever diverge, the same setup passes one gate and
-    fails the other, which is worse than either being slightly strict.
-    """
-    from skill_lens.core.doctor import _frontmatter_findings  # noqa: PLC0415
+    clean = sandbox / ".claude" / "skills" / "clean"
+    clean.mkdir(parents=True, exist_ok=True)
+    (clean / "SKILL.md").write_text("---\nname: clean\ndescription: clean skill\n---\n")
+    idx = discover(sandbox, sandbox)
+    scan = build_scan_report(sandbox, sandbox, idx)
+    doc = run_doctor(sandbox, index=idx)
+    scan_sevs = set(scan_severities(scan))
+    doc_sevs = {f.severity for f in doc.findings}
+    assert Severity.ERROR not in scan_sevs
+    assert Severity.ERROR not in doc_sevs
+    assert (Severity.ERROR in scan_sevs) == (Severity.ERROR in doc_sevs)
 
-    # The shared mapping is the contract; assert both sides read from the same
-    # severities rather than merely agreeing today.
-    malformed = _scan_report(_entry("a", ParseStatus.MALFORMED_YAML.value))
-    assert Severity.ERROR in scan_severities(malformed)
-    assert _frontmatter_findings.__doc__ is not None
+
+def test_agreement_malformed_frontmatter(sandbox: Path) -> None:
+    """Malformed frontmatter produces error in both scan and doctor."""
+    from skill_lens.core.discovery import discover
+    from skill_lens.core.doctor import run_doctor
+    from skill_lens.core.scanner import build_scan_report, scan_severities
+
+    malformed = sandbox / ".claude" / "skills" / "malformed"
+    malformed.mkdir(parents=True, exist_ok=True)
+    (malformed / "SKILL.md").write_text("no frontmatter\n")
+    idx = discover(sandbox, sandbox)
+    scan = build_scan_report(sandbox, sandbox, idx)
+    doc = run_doctor(sandbox, index=idx)
+    scan_sevs = set(scan_severities(scan))
+    doc_sevs = {f.severity for f in doc.findings}
+    assert Severity.ERROR in scan_sevs
+    assert Severity.ERROR in doc_sevs
+    assert (Severity.ERROR in scan_sevs) == (Severity.ERROR in doc_sevs)
+
+
+def test_agreement_undecodable_skill(sandbox: Path) -> None:
+    """Undecodable skill produces error in both scan and doctor."""
+    from skill_lens.core.discovery import discover
+    from skill_lens.core.doctor import run_doctor
+    from skill_lens.core.scanner import build_scan_report, scan_severities
+
+    undecodable = sandbox / ".claude" / "skills" / "undecodable"
+    undecodable.mkdir(parents=True, exist_ok=True)
+    (undecodable / "SKILL.md").write_bytes(b"\xff\xfe invalid utf8")
+    idx = discover(sandbox, sandbox)
+    scan = build_scan_report(sandbox, sandbox, idx)
+    doc = run_doctor(sandbox, index=idx)
+    scan_sevs = set(scan_severities(scan))
+    doc_sevs = {f.severity for f in doc.findings}
+    assert Severity.ERROR in scan_sevs
+    assert any(f.code == "undecodable_skill" and f.severity == Severity.ERROR for f in doc.findings)
+    assert (Severity.ERROR in scan_sevs) == (Severity.ERROR in doc_sevs)
+
+
+def test_agreement_dangling_symlink(sandbox: Path) -> None:
+    """Dangling symlink produces error in both scan and doctor."""
+    from skill_lens.core.discovery import discover
+    from skill_lens.core.doctor import run_doctor
+    from skill_lens.core.scanner import build_scan_report, scan_severities
+
+    skills_dir = sandbox / ".claude" / "skills"
+    skills_dir.mkdir(parents=True, exist_ok=True)
+    dangling = skills_dir / "dangling"
+    if dangling.is_symlink() or dangling.exists():
+        dangling.unlink()
+    dangling.symlink_to(sandbox / "nonexistent")
+    idx = discover(sandbox, sandbox)
+    scan = build_scan_report(sandbox, sandbox, idx)
+    doc = run_doctor(sandbox, index=idx)
+    scan_sevs = set(scan_severities(scan))
+    doc_sevs = {f.severity for f in doc.findings}
+    assert Severity.ERROR in scan_sevs
+    assert any(f.code == "dangling_symlink" and f.severity == Severity.ERROR for f in doc.findings)
+    assert (Severity.ERROR in scan_sevs) == (Severity.ERROR in doc_sevs)
+
+
+def test_agreement_invalid_skill_missing_document(sandbox: Path) -> None:
+    """Entrypoint with missing SKILL.md produces error in both scan and doctor."""
+    from skill_lens.core.discovery import discover
+    from skill_lens.core.doctor import run_doctor
+    from skill_lens.core.scanner import build_scan_report, scan_severities
+
+    docs = sandbox / "documents"
+    docs.mkdir(parents=True, exist_ok=True)
+    stray = sandbox / ".claude" / "skills" / "stray"
+    stray.parent.mkdir(parents=True, exist_ok=True)
+    if stray.is_symlink() or stray.exists():
+        stray.unlink()
+    stray.symlink_to(docs)
+
+    idx = discover(sandbox, sandbox)
+    scan = build_scan_report(sandbox, sandbox, idx)
+    doc = run_doctor(sandbox, index=idx)
+    scan_sevs = set(scan_severities(scan))
+    doc_sevs = {f.severity for f in doc.findings}
+    assert Severity.ERROR in scan_sevs
+    assert any(f.code == "invalid_skill" and f.severity == Severity.ERROR for f in doc.findings)
+    assert (Severity.ERROR in scan_sevs) == (Severity.ERROR in doc_sevs)
+
+
+def test_agreement_invalid_skill_cli_parity_and_output(sandbox: Path) -> None:
+    """Parity across gate thresholds, plus JSON and literal output for invalid skill."""
+    import json
+
+    docs = sandbox / "documents"
+    docs.mkdir(parents=True, exist_ok=True)
+    stray = sandbox / ".claude" / "skills" / "stray"
+    stray.parent.mkdir(parents=True, exist_ok=True)
+    if stray.is_symlink() or stray.exists():
+        stray.unlink()
+    stray.symlink_to(docs)
+
+    # Threshold parity
+    scan_never = runner.invoke(app, ["scan", "--sandbox", str(sandbox), "--fail-on", "never"])
+    doc_never = runner.invoke(app, ["doctor", "--sandbox", str(sandbox), "--fail-on", "never"])
+    assert scan_never.exit_code == doc_never.exit_code == int(ExitCode.OK)
+
+    scan_warn = runner.invoke(app, ["scan", "--sandbox", str(sandbox), "--fail-on", "warning"])
+    doc_warn = runner.invoke(app, ["doctor", "--sandbox", str(sandbox), "--fail-on", "warning"])
+    assert scan_warn.exit_code == doc_warn.exit_code == int(ExitCode.FINDINGS)
+
+    scan_err = runner.invoke(app, ["scan", "--sandbox", str(sandbox), "--fail-on", "error"])
+    doc_err = runner.invoke(app, ["doctor", "--sandbox", str(sandbox), "--fail-on", "error"])
+    assert scan_err.exit_code == doc_err.exit_code == int(ExitCode.FINDINGS)
+
+    # JSON output
+    scan_json = runner.invoke(app, ["scan", "--sandbox", str(sandbox), "--json"])
+    assert scan_json.exit_code == int(ExitCode.OK)
+    scan_data = json.loads(scan_json.output)
+    stray_skill = next(s for s in scan_data["skills"] if s["name"] == "stray")
+    assert stray_skill["health_status"] == "invalid"
+    assert stray_skill["error_reason"] == "missing_document"
+
+    doc_json = runner.invoke(app, ["doctor", "--sandbox", str(sandbox), "--json"])
+    assert doc_json.exit_code == int(ExitCode.OK)
+    doc_data = json.loads(doc_json.output)
+    stray_finding = next(f for f in doc_data["findings"] if f["code"] == "invalid_skill")
+    assert stray_finding["severity"] == "error"
+    assert stray_finding["detail"] == "missing_document"
+
+    # Literal output: render table does not print invalid (invalid)
+    assert "invalid (invalid)" not in scan_never.output
+    assert "invalid (missing_document)" in scan_never.output or "invalid" in scan_never.output
+    assert "has no skill document (SKILL.md)" in doc_never.output
+
+
+def test_agreement_unreadable_root(sandbox: Path) -> None:
+    """Unreadable root produces warning in both scan and doctor."""
+    from skill_lens.core.discovery import DiscoveryIndex, UnreadableRoot
+    from skill_lens.core.doctor import run_doctor
+    from skill_lens.core.scanner import build_scan_report, scan_severities
+
+    ur = UnreadableRoot(
+        agent_id="claude",
+        root_id="personal",
+        path=str(sandbox / ".claude/skills"),
+        detail="permission",
+    )
+    idx_root = DiscoveryIndex(
+        home=str(sandbox), cwd=str(sandbox), entries=[], unreadable_roots=[ur]
+    )
+    scan_r = build_scan_report(sandbox, sandbox, idx_root)
+    doc_r = run_doctor(sandbox, index=idx_root)
+    scan_sevs = set(scan_severities(scan_r))
+    doc_sevs = {f.severity for f in doc_r.findings}
+    assert Severity.WARNING in scan_sevs
+    assert Severity.WARNING in doc_sevs
+    assert Severity.ERROR not in scan_sevs
+    assert Severity.ERROR not in doc_sevs
+    assert (Severity.WARNING in scan_sevs) == (Severity.WARNING in doc_sevs)
+
+
+def test_agreement_cli_exit_codes(sandbox: Path) -> None:
+    """scan --fail-on and doctor --fail-on produce identical exit codes."""
+    broken = sandbox / ".claude" / "skills" / "broken"
+    broken.mkdir(parents=True, exist_ok=True)
+    (broken / "SKILL.md").write_text("no frontmatter\n")
+
+    scan_res_never = runner.invoke(app, ["scan", "--sandbox", str(sandbox), "--fail-on", "never"])
+    doc_res_never = runner.invoke(app, ["doctor", "--sandbox", str(sandbox), "--fail-on", "never"])
+    assert scan_res_never.exit_code == doc_res_never.exit_code == int(ExitCode.OK)
+
+    scan_res_err = runner.invoke(app, ["scan", "--sandbox", str(sandbox), "--fail-on", "error"])
+    doc_res_err = runner.invoke(app, ["doctor", "--sandbox", str(sandbox), "--fail-on", "error"])
+    assert scan_res_err.exit_code == doc_res_err.exit_code == int(ExitCode.FINDINGS)
+
+    scan_res_warn = runner.invoke(app, ["scan", "--sandbox", str(sandbox), "--fail-on", "warning"])
+    doc_res_warn = runner.invoke(app, ["doctor", "--sandbox", str(sandbox), "--fail-on", "warning"])
+    assert scan_res_warn.exit_code == doc_res_warn.exit_code == int(ExitCode.FINDINGS)
+
+
+def test_scan_severities_match_doctor_severities_for_the_same_conditions(sandbox: Path) -> None:
+    """Comprehensive check invoking the isolated condition agreement guards."""
+    test_agreement_clean(sandbox / "clean_env")
+    test_agreement_malformed_frontmatter(sandbox / "malformed_env")
+    test_agreement_undecodable_skill(sandbox / "undecodable_env")
+    test_agreement_dangling_symlink(sandbox / "dangling_env")
+    test_agreement_invalid_skill_missing_document(sandbox / "invalid_env")
+    test_agreement_invalid_skill_cli_parity_and_output(sandbox / "cli_invalid_env")
+    test_agreement_unreadable_root(sandbox / "unreadable_env")
+    test_agreement_cli_exit_codes(sandbox / "cli_env")
+
+
+def test_severity_agreement_guard_detects_divergence(
+    monkeypatch: pytest.MonkeyPatch, sandbox: Path
+) -> None:
+    """Mutating doctor or scan severity causes the agreement test to catch divergence."""
+    from dataclasses import replace
+    from typing import Any
+
+    from skill_lens.core import doctor, scanner
+
+    orig_frontmatter = doctor._frontmatter_findings
+
+    def mutated_findings(index: Any) -> list[Any]:
+        findings = orig_frontmatter(index)
+        return [replace(f, severity=Severity.INFO) for f in findings]
+
+    monkeypatch.setattr(doctor, "_frontmatter_findings", mutated_findings)
+
+    # Calling the agreement guard under doctor mutation fails
+    with pytest.raises(AssertionError):
+        test_agreement_malformed_frontmatter(sandbox / "doc_mutant")
+
+    # Calling the agreement guard under scan mutation fails
+    monkeypatch.undo()
+    monkeypatch.setattr(scanner, "scan_severities", lambda report: ())
+    with pytest.raises(AssertionError):
+        test_agreement_malformed_frontmatter(sandbox / "scan_mutant")
+
+
+def test_build_scan_report_index_keyword_call(sandbox: Path) -> None:
+    """build_scan_report preserves index keyword argument contract."""
+    from skill_lens.core.discovery import discover
+    from skill_lens.core.scanner import build_scan_report
+
+    idx = discover(sandbox, sandbox)
+    report = build_scan_report(sandbox, sandbox, index=idx)
+    assert report is not None
 
 
 # --------------------------------------------------------------------------
@@ -197,7 +447,7 @@ def test_scan_severities_match_doctor_severities_for_the_same_conditions() -> No
 
 def _break_a_skill(sandbox: Path) -> None:
     """Create one skill with no frontmatter, which ``doctor`` calls an error."""
-    (sandbox / ".claude" / "skills" / "broken").mkdir(parents=True)
+    (sandbox / ".claude" / "skills" / "broken").mkdir(parents=True, exist_ok=True)
     (sandbox / ".claude" / "skills" / "broken" / "SKILL.md").write_text("no frontmatter here\n")
 
 

@@ -14,10 +14,14 @@ class CompareEntry:
 
     ``path_a`` / ``path_b`` are the entrypoint paths each agent actually
     sees -- under a symlink farm those differ even when the library is one.
-    ``canonical_a`` / ``canonical_b`` are the resolved targets: equal
-    canonicals is what makes the relation ``shared`` rather than merely
-    "the same name twice". A relation that leaves one agent without the
-    name stores ``None`` on that agent's side.
+    ``canonical_a`` / ``canonical_b`` are the resolved targets: verified
+    canonical equality (with complete, verified content) or verified identical
+    content is what makes the relation ``shared`` rather than merely
+    "the same name twice". When copies cannot be verified (e.g. unreadable
+    or incomplete traversal), the entry falls back to legacy ``diverged``
+    with an explicit diagnostic note rather than certifying shared equality.
+    A relation that leaves one agent without the name stores ``None`` on
+    that agent's side.
     """
 
     name: str

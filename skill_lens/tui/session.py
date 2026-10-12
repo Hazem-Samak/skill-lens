@@ -17,6 +17,7 @@ from typing import Literal
 from skill_lens.core.cancellation import CaptureCancelled
 from skill_lens.core.discovery import canonical_key
 from skill_lens.core.exitcodes import ExitCode
+from skill_lens.core.hasher import IncompleteTreeError
 from skill_lens.core.snapshot import SnapshotChanged
 from skill_lens.core.snapshot_models import SessionSnapshot
 from skill_lens.models.compare import CompareReport
@@ -157,7 +158,8 @@ class SessionController:
         """Accept an error from a capture worker.
 
         Rejects stale errors before affecting any state.
-        Expected SnapshotChanged displays its retry message without setting failed.
+        Expected SnapshotChanged and IncompleteTreeError display retry message
+        without setting failed.
         CaptureCancelled is quiet.
         Unexpected errors keep previous usable data, set sticky failed=True, and
         keep traceback details in memory only.
@@ -171,8 +173,11 @@ class SessionController:
         self.pending_generation = None
         self._capture_events.pop(generation, None)
 
-        if isinstance(error, SnapshotChanged):
-            self.retry_message = str(error)
+        if isinstance(error, (SnapshotChanged, IncompleteTreeError)):
+            msg = str(error)
+            if "retry" not in msg.lower():
+                msg = f"{msg}. Press r to retry."
+            self.retry_message = msg
             return True
         if isinstance(error, CaptureCancelled):
             return True
@@ -253,6 +258,7 @@ class SessionController:
 
         self.active_requests.pop(view, None)
         self._report_events.pop(request_id, None)
+
         self.cache[(generation, view, arguments)] = result
         return True
 
@@ -266,9 +272,10 @@ class SessionController:
     ) -> bool:
         """Accept an error from a view report worker.
 
-        Rejects stale errors. Unexpected errors set sticky failed=True and
-        record traceback details in memory.
-        Returns True if accepted, False otherwise.
+        Rejects stale errors that do not match current generation, active
+        request ID, view, or arguments.
+        Sets sticky failed=True on unexpected errors without destroying usable data.
+        Returns True if accepted, False if rejected as stale or closed.
         """
         if self.closed:
             return False

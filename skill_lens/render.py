@@ -59,12 +59,26 @@ def render_scan(report: ScanReport, console: Console | None = None) -> None:
     table = Table(show_header=True, header_style="bold")
     table.add_column("Skill Name")
     table.add_column("Scope")
+    table.add_column("Status")
     table.add_column("Canonical Path", overflow="fold")
     table.add_column("Active Entrypoints")
     for skill in report.skills:
+        if skill.traversal_complete and skill.parse_status == "valid":
+            status_text = "valid"
+        elif not skill.traversal_complete:
+            reason = skill.error_reason or "denied"
+            status_text = f"unreadable ({reason})"
+        else:
+            reason = (
+                f" ({skill.error_reason})"
+                if skill.error_reason and skill.error_reason != skill.parse_status
+                else ""
+            )
+            status_text = f"{skill.parse_status}{reason}"
         table.add_row(
             escape(skill.name),
             SCOPE_LABEL.get(skill.scope, skill.scope.value),
+            escape(status_text),
             escape(_short(skill.canonical_path)),
             escape(", ".join(skill.agents)),
         )

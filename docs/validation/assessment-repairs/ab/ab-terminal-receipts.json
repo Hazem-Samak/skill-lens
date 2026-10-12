@@ -1,0 +1,86 @@
+[
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3Abe347248-4abc-46a4-b6e7-ff9b0be36307%3Adelegate-task%3Aassessment-20261012-ab-implementation-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Abe347248-4abc-46a4-b6e7-ff9b0be36307%253Adelegate-task%253Aassessment-20261012-ab-implementation-r1:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3Ad3251151-a4d5-4726-95b4-a69ce82e6d62%3Adelegate-task%3Aassessment-20261012-ab-correction-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad3251151-a4d5-4726-95b4-a69ce82e6d62%253Adelegate-task%253Aassessment-20261012-ab-correction-r1:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3Ae788146a-4bf1-41e6-bd5f-933b770f6bb5%3Adelegate-task%3Aassessment-20261012-ab-cleanup-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ae788146a-4bf1-41e6-bd5f-933b770f6bb5%253Adelegate-task%253Aassessment-20261012-ab-cleanup-r1:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A4df97a92-bcd2-4ca5-b9f2-689ee53ad045%3Adelegate-task%3Aassessment-20261012-ab-opencode-review-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A4df97a92-bcd2-4ca5-b9f2-689ee53ad045%253Adelegate-task%253Aassessment-20261012-ab-opencode-review-r1:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A4df97a92-bcd2-4ca5-b9f2-689ee53ad045%3Adelegate-task%3Aassessment-20261012-ab-mcode-review-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A4df97a92-bcd2-4ca5-b9f2-689ee53ad045%253Adelegate-task%253Aassessment-20261012-ab-mcode-review-r1:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A4df97a92-bcd2-4ca5-b9f2-689ee53ad045%3Adelegate-task%3Aassessment-20261012-ab-review-corrections-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A4df97a92-bcd2-4ca5-b9f2-689ee53ad045%253Adelegate-task%253Aassessment-20261012-ab-review-corrections-r1:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A4df97a92-bcd2-4ca5-b9f2-689ee53ad045%3Adelegate-task%3Aassessment-20261012-ab-opencode-review-r2",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A4df97a92-bcd2-4ca5-b9f2-689ee53ad045%253Adelegate-task%253Aassessment-20261012-ab-opencode-review-r2:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A4df97a92-bcd2-4ca5-b9f2-689ee53ad045%3Adelegate-task%3Aassessment-20261012-ab-mcode-review-r2",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A4df97a92-bcd2-4ca5-b9f2-689ee53ad045%253Adelegate-task%253Aassessment-20261012-ab-mcode-review-r2:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A589bcd00-cc10-4e38-a139-059ee13bcaed%3Adelegate-task%3Aassessment-20261012-ab-approved-correction-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A589bcd00-cc10-4e38-a139-059ee13bcaed%253Adelegate-task%253Aassessment-20261012-ab-approved-correction-r1:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A589bcd00-cc10-4e38-a139-059ee13bcaed%3Adelegate-task%3Aassessment-20261012-ab-opencode-approved-review",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A589bcd00-cc10-4e38-a139-059ee13bcaed%253Adelegate-task%253Aassessment-20261012-ab-opencode-approved-review:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A589bcd00-cc10-4e38-a139-059ee13bcaed%3Adelegate-task%3Aassessment-20261012-ab-mcode-approved-review",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A589bcd00-cc10-4e38-a139-059ee13bcaed%253Adelegate-task%253Aassessment-20261012-ab-mcode-approved-review:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A589bcd00-cc10-4e38-a139-059ee13bcaed%3Adelegate-task%3Aassessment-20261012-ab-compare-note-fix",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A589bcd00-cc10-4e38-a139-059ee13bcaed%253Adelegate-task%253Aassessment-20261012-ab-compare-note-fix:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A589bcd00-cc10-4e38-a139-059ee13bcaed%3Adelegate-task%3Aassessment-20261012-ab-compare-note-recovery",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A589bcd00-cc10-4e38-a139-059ee13bcaed%253Adelegate-task%253Aassessment-20261012-ab-compare-note-recovery:ordinal:1",
+    "status": "completed",
+    "pending": false
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A589bcd00-cc10-4e38-a139-059ee13bcaed%3Adelegate-task%3Aassessment-20261012-ab-opencode-comparison-followup",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A589bcd00-cc10-4e38-a139-059ee13bcaed%253Adelegate-task%253Aassessment-20261012-ab-opencode-comparison-followup:ordinal:1",
+    "status": "completed",
+    "pending": false
+  }
+]

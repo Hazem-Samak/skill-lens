@@ -639,13 +639,21 @@ def resolve_skill(
     }
     ordered = [_label_resolution(resolution, labels) for resolution in ordered]
 
-    notes: tuple[str, ...] = ()
+    report_notes: list[str] = []
     if not candidates:
         # F-10: UNSEARCHED means "on disk, outside this agent's search rules".
         # Zero candidates is a different fact: the name is nowhere on disk.
-        notes = (_NOT_FOUND_NOTE,)
+        report_notes.append(_NOT_FOUND_NOTE)
     elif headline is HeadlineState.AMBIGUOUS:
-        notes = (f"{agent.name} has no documented winner for duplicate names.",)
+        report_notes.append(f"{agent.name} has no documented winner for duplicate names.")
+    seen_notes = set(report_notes)
+    for c in candidates:
+        if not c.entry.traversal_complete:
+            reason = c.entry.traversal_error or "denied"
+            note = f"Skill content at '{c.entrypoint_path}' is incomplete ({reason})."
+            if note not in seen_notes:
+                report_notes.append(note)
+                seen_notes.add(note)
     return ResolutionReport(
         skill_name=name,
         agent=agent.id,
@@ -655,7 +663,7 @@ def resolve_skill(
         policy_evidence=agent.policy_evidence,
         headline=headline,
         candidates=tuple(ordered),
-        notes=notes,
+        notes=tuple(report_notes),
         found=bool(candidates),
     )
 

@@ -1,0 +1,513 @@
+=== MUTATION PROOF RUN (DISPOSABLE COPY) ===
+
+Source provenance: /Users/corvette/Documents/Projects Coding/Skill Lens
+Disposable copy: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable
+Executable: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable/.venv/bin/pytest
+
+--- 1. Coverage Threshold Guard: test_coverage_threshold_is_declared_and_meaningful ---
+CLEAN RUN (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable):
+$ /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable/.venv/bin/pytest tests/test_phase5_gate.py -k test_coverage_threshold_is_declared_and_meaningful
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 19 items / 18 deselected / 1 selected
+
+tests/test_phase5_gate.py .                                              [100%]
+
+======================= 1 passed, 18 deselected in 0.03s =======================
+[rc=0]
+
+MUTANT RUN (fail_under=89 in disposable copy pyproject.toml):
+$ /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable/.venv/bin/pytest tests/test_phase5_gate.py -k test_coverage_threshold_is_declared_and_meaningful
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 19 items / 18 deselected / 1 selected
+
+tests/test_phase5_gate.py F                                              [100%]
+
+=================================== FAILURES ===================================
+______________ test_coverage_threshold_is_declared_and_meaningful ______________
+
+    def test_coverage_threshold_is_declared_and_meaningful() -> None:
+        """An unenforced coverage number erodes silently on the next refactor."""
+        coverage = _pyproject()["tool"]["coverage"]
+        assert coverage["run"]["source"] == ["skill_lens"], "coverage must measure the shipped package"
+>       assert coverage["report"]["fail_under"] >= 90, (
+            f"a threshold of {coverage['report'].get('fail_under')!r} is too low to gate anything"
+        )
+E       AssertionError: a threshold of 89 is too low to gate anything
+E       assert 89 >= 90
+
+tests/test_phase5_gate.py:243: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_phase5_gate.py::test_coverage_threshold_is_declared_and_meaningful
+======================= 1 failed, 18 deselected in 0.03s =======================
+[rc=1]
+
+RESTORE RUN (fail_under=90 restored in disposable copy pyproject.toml):
+$ /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable/.venv/bin/pytest tests/test_phase5_gate.py -k test_coverage_threshold_is_declared_and_meaningful
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 19 items / 18 deselected / 1 selected
+
+tests/test_phase5_gate.py .                                              [100%]
+
+======================= 1 passed, 18 deselected in 0.48s =======================
+[rc=0]
+
+--- 2. Severity Agreement Guard: test_agreement_malformed_frontmatter ---
+CLEAN RUN (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable):
+$ /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable/.venv/bin/pytest tests/test_phase6_gate.py -k test_agreement_malformed_frontmatter
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 41 items / 40 deselected / 1 selected
+
+tests/test_phase6_gate.py .                                              [100%]
+
+======================= 1 passed, 40 deselected in 0.07s =======================
+[rc=0]
+
+MUTANT RUN (scanner severity mutated to Severity.INFO in disposable copy scanner.py):
+$ /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable/.venv/bin/pytest tests/test_phase6_gate.py -k test_agreement_malformed_frontmatter
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 41 items / 40 deselected / 1 selected
+
+tests/test_phase6_gate.py F                                              [100%]
+
+=================================== FAILURES ===================================
+_____________________ test_agreement_malformed_frontmatter _____________________
+
+sandbox = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-NQBdbV/pytest-of-corvette/pytest-5/test_agreement_malformed_front0/home')
+
+    def test_agreement_malformed_frontmatter(sandbox: Path) -> None:
+        """Malformed frontmatter produces error in both scan and doctor."""
+        from skill_lens.core.discovery import discover
+        from skill_lens.core.doctor import run_doctor
+        from skill_lens.core.scanner import build_scan_report, scan_severities
+    
+        malformed = sandbox / ".claude" / "skills" / "malformed"
+        malformed.mkdir(parents=True, exist_ok=True)
+        (malformed / "SKILL.md").write_text("no frontmatter\n")
+        idx = discover(sandbox, sandbox)
+        scan = build_scan_report(sandbox, sandbox, idx)
+        doc = run_doctor(sandbox, index=idx)
+        scan_sevs = set(scan_severities(scan))
+        doc_sevs = {f.severity for f in doc.findings}
+>       assert Severity.ERROR in scan_sevs
+E       AssertionError: assert <Severity.ERROR: 'error'> in {<Severity.INFO: 'info'>}
+E        +  where <Severity.ERROR: 'error'> = Severity.ERROR
+
+tests/test_phase6_gate.py:232: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_phase6_gate.py::test_agreement_malformed_frontmatter - Asse...
+======================= 1 failed, 40 deselected in 0.05s =======================
+[rc=1]
+
+RESTORE RUN (original scanner.py restored in disposable copy):
+$ /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable/.venv/bin/pytest tests/test_phase6_gate.py -k test_agreement_malformed_frontmatter
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-mutation-scratch/skill-lens-disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 41 items / 40 deselected / 1 selected
+
+tests/test_phase6_gate.py .                                              [100%]
+
+======================= 1 passed, 40 deselected in 0.04s =======================
+[rc=0]
+
+
+=== REPAIR WAVE 2 MUTATION PROOFS (DISPOSABLE COPY) ===
+
+Source provenance: /Users/corvette/Documents/Projects Coding/Skill Lens
+Disposable copy: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable
+Executable: /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest
+
+--- 1. Capture Refusal Guard: test_incomplete_tree.py -k test_failed_refresh_preserves_prior_generation_and_reports_real_error ---
+CLEAN RUN (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable):
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_incomplete_tree.py -k test_failed_refresh_preserves_prior_generation_and_reports_real_error
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 14 items / 13 deselected / 1 selected
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+======================= 1 passed, 13 deselected in 0.09s =======================
+[rc=0]
+
+MUTANT RUN (snapshot.py swallowed IncompleteTreeError from iter_files) (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable):
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_incomplete_tree.py -k test_failed_refresh_preserves_prior_generation_and_reports_real_error
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 14 items / 13 deselected / 1 selected
+
+tests/test_incomplete_tree.py F                                          [100%]
+
+=================================== FAILURES ===================================
+____ test_failed_refresh_preserves_prior_generation_and_reports_real_error _____
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-Meinab/pytest-of-corvette/pytest-14/test_failed_refresh_preserves_0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109d5d690>
+
+    def test_failed_refresh_preserves_prior_generation_and_reports_real_error(
+        mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """When refresh encounters IncompleteTreeError, prior generation is preserved."""
+        skill_dir = mock_home / ".claude" / "skills" / "deploy"
+        skill_dir.mkdir(parents=True)
+        (skill_dir / "SKILL.md").write_text("---\nname: deploy\ndescription: Test\n---\n# Deploy\n")
+    
+        controller = SessionController()
+        req = controller.request_refresh()
+        assert req is not None
+        gen1, _ = req
+    
+        snap1 = capture_session(generation=gen1, home=mock_home, cwd=mock_home)
+        assert controller.accept_capture(snap1, gen1) is True
+        assert controller.current is not None
+        assert controller.current.generation == gen1
+        target1 = next(e for e in snap1.index.entries if e.name == "deploy")
+        assert target1.content_hash is not None
+    
+        # Now add unreadable assets
+        assets = skill_dir / "assets"
+        assets.mkdir()
+        (assets / "file.bin").write_text("payload")
+    
+        orig_walk = os.walk
+    
+        def guarded_walk(top: Any, *args: Any, **kwargs: Any):
+            for dirpath, dirnames, filenames in orig_walk(top, *args, **kwargs):
+                if "assets" in dirnames:
+                    onerror = kwargs.get("onerror")
+                    if onerror:
+                        onerror(PermissionError(13, "Permission denied", str(Path(dirpath) / "assets")))
+                    dirnames.remove("assets")
+                yield dirpath, dirnames, filenames
+    
+        monkeypatch.setattr(os, "walk", guarded_walk)
+    
+        req2 = controller.request_refresh()
+        assert req2 is not None
+        gen2, _ = req2
+    
+        with pytest.raises(IncompleteTreeError) as exc_info:
+>           capture_session(generation=gen2, home=mock_home, cwd=mock_home)
+
+tests/test_incomplete_tree.py:383: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+generation = 2
+home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-Meinab/pytest-of-corvette/pytest-14/test_failed_refresh_preserves_0/home')
+cwd = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-Meinab/pytest-of-corvette/pytest-14/test_failed_refresh_preserves_0/home')
+cancelled = None
+
+    def capture_session(
+        *,
+        generation: int,
+        home: Path,
+        cwd: Path,
+        cancelled: Callable[[], bool] | None = None,
+    ) -> SessionSnapshot:
+        """Capture a consistent photograph of the skill inventory, files, and health."""
+        check_cancelled(cancelled)
+        if home != paths.home():
+            raise ValueError(f"supplied home '{home}' does not match effective home '{paths.home()}'")
+    
+        check_cancelled(cancelled)
+        registry_dict = load_registry()
+    
+        check_cancelled(cancelled)
+        index_1 = live_discovery(cwd=cwd, registry=registry_dict, cancelled=cancelled)
+        norm_home = Path(index_1.home)
+        norm_cwd = Path(index_1.cwd)
+    
+        # 2. Capture settings and lock bytes/status through guarded reader
+        check_cancelled(cancelled)
+        config_paths: list[Path] = [installer_lockfile(norm_home)]
+        for agent in registry_dict.values():
+            if agent.disabled_settings:
+                config_paths.append(norm_home / agent.disabled_settings)
+    
+        config_inputs: dict[str, CapturedInput] = {}
+        for p in config_paths:
+            p_str = str(p)
+            if p_str not in config_inputs:
+                config_inputs[p_str] = _read_input_guarded(p, cancelled=cancelled)
+    
+        disabled_overrides: dict[str, frozenset[str]] = {}
+        for agent in registry_dict.values():
+            if not agent.disabled_settings:
+                disabled_overrides[agent.id] = frozenset()
+            else:
+                sett_p = str(norm_home / agent.disabled_settings)
+                ci = config_inputs.get(sett_p)
+                data = ci.data if ci is not None else None
+                disabled_overrides[agent.id] = disabled_overrides_from_bytes(agent, data)
+    
+        # 3. Capture file bytes for each discovered canonical copy
+        captured_files: dict[str, tuple[CapturedFile, ...]] = {}
+        for entry in index_1.entries:
+            check_cancelled(cancelled)
+            key = canonical_key(entry)
+            if entry.canonical.status is not CanonicalStatus.OK:
+                captured_files[key] = ()
+                continue
+    
+            if False and (not getattr(entry, "traversal_complete", True) or entry.content_hash is None):
+                root = Path(entry.canonical_path or entry.entrypoint_path)
+                reason = getattr(entry, "traversal_error", None) or "denied"
+                raise IncompleteTreeError(path=root, reason=reason)
+    
+            root = Path(entry.canonical_path or entry.entrypoint_path)
+            if root.is_dir():
+                try:
+                    rel_paths = iter_files(root, cancelled=cancelled)
+                except IncompleteTreeError:
+                    rel_paths = []  # mutated to swallow IncompleteTreeError
+                except OSError as err:
+                    reason = (
+                        "denied"
+                        if isinstance(err, PermissionError)
+                        else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+                    )
+                    raise IncompleteTreeError(path=root, reason=reason) from err
+                items: list[CapturedFile] = []
+                for rel in rel_paths:
+                    file_path = root / rel
+                    try:
+                        with file_path.open("rb") as f:
+                            chunks: list[bytes] = []
+                            while True:
+                                check_cancelled(cancelled)
+                                chunk = f.read(64 * 1024)
+                                if not chunk:
+                                    break
+                                chunks.append(chunk)
+                        data = b"".join(chunks)
+                    except PermissionError as err:
+                        raise IncompleteTreeError(path=file_path, reason="denied") from err
+                    except FileNotFoundError:
+                        raise SnapshotChanged(
+                            "Files changed while scanning. Press r to retry."
+                        ) from None
+                    except OSError as err:
+                        raise IncompleteTreeError(path=file_path, reason="io") from err
+                    fingerprint = hash_bytes(data)
+                    items.append(
+                        CapturedFile(
+                            relative_path=rel.as_posix(),
+                            data=data,
+                            fingerprint=fingerprint,
+                        )
+                    )
+                agg_hash = hash_captured_directory([(cf.relative_path, cf.fingerprint) for cf in items])
+                if agg_hash != entry.content_hash:
+>                   raise SnapshotChanged("Files changed while scanning. Press r to retry.")
+E                   skill_lens.core.snapshot.SnapshotChanged: Files changed while scanning. Press r to retry.
+
+skill_lens/core/snapshot.py:238: SnapshotChanged
+=========================== short test summary info ============================
+FAILED tests/test_incomplete_tree.py::test_failed_refresh_preserves_prior_generation_and_reports_real_error
+======================= 1 failed, 13 deselected in 0.11s =======================
+[rc=1]
+
+RESTORE RUN (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable):
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_incomplete_tree.py -k test_failed_refresh_preserves_prior_generation_and_reports_real_error
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 14 items / 13 deselected / 1 selected
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+======================= 1 passed, 13 deselected in 0.09s =======================
+[rc=0]
+
+--- 2. CLI Diff Error Gate: test_incomplete_tree.py -k test_cli_diff_mid_run_failure_exit2_and_unpolluted_json ---
+CLEAN RUN (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable):
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_incomplete_tree.py -k test_cli_diff_mid_run_failure_exit2_and_unpolluted_json
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 14 items / 13 deselected / 1 selected
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+======================= 1 passed, 13 deselected in 0.09s =======================
+[rc=0]
+
+MUTANT RUN (cli.py diff() unguarded against IncompleteTreeError) (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable):
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_incomplete_tree.py -k test_cli_diff_mid_run_failure_exit2_and_unpolluted_json
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 14 items / 13 deselected / 1 selected
+
+tests/test_incomplete_tree.py F                                          [100%]
+
+=================================== FAILURES ===================================
+___________ test_cli_diff_mid_run_failure_exit2_and_unpolluted_json ____________
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-Meinab/pytest-of-corvette/pytest-17/test_cli_diff_mid_run_failure_0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109a45750>
+
+    def test_cli_diff_mid_run_failure_exit2_and_unpolluted_json(
+        mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Mid-run unreadable/disappeared file produces visible plain CLI usage error exit 2, JSON unpolluted."""
+        from skill_lens.core import diff
+    
+        copy1 = mock_home / ".claude" / "skills" / "demo"
+        copy1.mkdir(parents=True)
+        (copy1 / "SKILL.md").write_text("---\nname: demo\ndescription: Demo 1\n---\n# A\n")
+        (copy1 / "assets").mkdir()
+        (copy1 / "assets" / "data.txt").write_text("data 1\n")
+    
+        copy2 = mock_home / ".agents" / "skills" / "demo"
+        copy2.mkdir(parents=True)
+        (copy2 / "SKILL.md").write_text("---\nname: demo\ndescription: Demo 2\n---\n# B\n")
+        (copy2 / "assets").mkdir()
+        target_data = copy2 / "assets" / "data.txt"
+        target_data.write_text("data 2\n")
+    
+        orig_collect = diff._collect
+    
+        def failing_collect(path: Path):
+            if path == target_data:
+                raise IncompleteTreeError(target_data, reason="denied")
+            return orig_collect(path)
+    
+        monkeypatch.setattr(diff, "_collect", failing_collect)
+    
+        # 1. Plain text invocation
+        res_plain = runner.invoke(app, ["diff", "demo", "--sandbox", str(mock_home)])
+>       assert res_plain.exit_code == int(ExitCode.USAGE)
+E       assert 1 == 2
+E        +  where 1 = <Result IncompleteTreeError("Cannot read '/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-Meinab/pytest-of-corvette/pytest-17/test_cli_diff_mid_run_failure_0/home/.agents/skills/demo/assets/data.txt': denied")>.exit_code
+E        +  and   2 = int(<ExitCode.USAGE: 2>)
+E        +    where <ExitCode.USAGE: 2> = ExitCode.USAGE
+
+tests/test_incomplete_tree.py:569: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_incomplete_tree.py::test_cli_diff_mid_run_failure_exit2_and_unpolluted_json
+======================= 1 failed, 13 deselected in 0.11s =======================
+[rc=1]
+
+RESTORE RUN (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable):
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_incomplete_tree.py -k test_cli_diff_mid_run_failure_exit2_and_unpolluted_json
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 14 items / 13 deselected / 1 selected
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+======================= 1 passed, 13 deselected in 0.09s =======================
+[rc=0]
+
+--- 3. Invalid Skill Agreement Gate: test_phase6_gate.py -k test_agreement_invalid_skill_missing_document ---
+CLEAN RUN (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable):
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_phase6_gate.py -k test_agreement_invalid_skill_missing_document
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 43 items / 42 deselected / 1 selected
+
+tests/test_phase6_gate.py .                                              [100%]
+
+======================= 1 passed, 42 deselected in 0.06s =======================
+[rc=0]
+
+MUTANT RUN (doctor.py ignores invalid entries) (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable):
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_phase6_gate.py -k test_agreement_invalid_skill_missing_document
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 43 items / 42 deselected / 1 selected
+
+tests/test_phase6_gate.py F                                              [100%]
+
+=================================== FAILURES ===================================
+________________ test_agreement_invalid_skill_missing_document _________________
+
+sandbox = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-Meinab/pytest-of-corvette/pytest-20/test_agreement_invalid_skill_m0/home')
+
+    def test_agreement_invalid_skill_missing_document(sandbox: Path) -> None:
+        """Entrypoint with missing SKILL.md produces error in both scan and doctor."""
+        from skill_lens.core.discovery import discover
+        from skill_lens.core.doctor import run_doctor
+        from skill_lens.core.scanner import build_scan_report, scan_severities
+    
+        docs = sandbox / "documents"
+        docs.mkdir(parents=True, exist_ok=True)
+        stray = sandbox / ".claude" / "skills" / "stray"
+        stray.parent.mkdir(parents=True, exist_ok=True)
+        if stray.is_symlink() or stray.exists():
+            stray.unlink()
+        stray.symlink_to(docs)
+    
+        idx = discover(sandbox, sandbox)
+        scan = build_scan_report(sandbox, sandbox, idx)
+        doc = run_doctor(sandbox, index=idx)
+        scan_sevs = set(scan_severities(scan))
+        doc_sevs = {f.severity for f in doc.findings}
+        assert Severity.ERROR in scan_sevs
+>       assert any(f.code == "invalid_skill" and f.severity == Severity.ERROR for f in doc.findings)
+E       assert False
+E        +  where False = any(<generator object test_agreement_invalid_skill_missing_document.<locals>.<genexpr> at 0x10b45af60>)
+
+tests/test_phase6_gate.py:298: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_phase6_gate.py::test_agreement_invalid_skill_missing_document
+======================= 1 failed, 42 deselected in 0.06s =======================
+[rc=1]
+
+RESTORE RUN (cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable):
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_phase6_gate.py -k test_agreement_invalid_skill_missing_document
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-repair-20261012-fb5xn2ms/mutation_disposable
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 43 items / 42 deselected / 1 selected
+
+tests/test_phase6_gate.py .                                              [100%]
+
+======================= 1 passed, 42 deselected in 0.04s =======================
+[rc=0]
+

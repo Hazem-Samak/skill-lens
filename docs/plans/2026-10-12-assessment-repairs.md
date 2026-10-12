@@ -620,3 +620,22 @@ Some old registry URLs were missing, redirected, or insufficiently specific. A b
 The next agent should not blindly implement every recommendation from all nine reviews. Use this report's reproduced cases, explicit limitations, and staged acceptance conditions. Prioritize trustworthy discovery, complete content comparisons, correct health gating, and supported-version evidence before adding the remaining browsing screens.
 
 **No fixes were applied during this assessment. The only permanent deliverable created outside scratch verification storage is this Desktop Markdown report.**
+
+
+## Execution record — Stages A/B accepted, 12 October 2026
+
+This append-only record does not alter the supplied operative plan or its frozen reference.
+
+- Implemented F03/F04, F12, and F11 assurance items 1–4. F11 agents rendering remains assigned to Stage F.
+- Incomplete traversal/read cannot issue a verified hash, certify shared content, or replace the prior complete capture. Scan and doctor classify common health causes consistently. Invalid UTF-8 is distinct from denied, disappeared, and I/O input.
+- Document parse validity stays separate from content completeness. `why` preserves evidence-backed agent resolution and reports incomplete content as an observed note; no asset failure is attributed to a documented frontmatter rule. Comparison retains existing relation values and explicitly explains unverifiable rows rather than promising known text differences.
+- Default fixtures isolate system roots; strict test guards reject unintended protected-root probes. Target-preservation tests enter accepted fault and cleanup-failure paths. AST write controls and the 90% coverage erosion guard are discriminating.
+- Deliberate output changes: scan JSON adds `traversal_complete`, `error_reason`, and `health_status`; the scan table gains Status. Broken skills now trip opt-in scan error thresholds. Mid-run diff read failures give literal stderr and exit 2, with JSON stdout unpolluted. Only the reviewed scan snapshot changed.
+- Coordinator verification: **825 passed, 1 skipped**, **93.31% combined coverage with branch measurement**, strict mypy clean on 35 files, Ruff lint and format checks clean. This is local macOS/Python 3.11 evidence; unexecuted CI lanes are not claimed.
+- Independent acceptance: MiniMax xHigh pass on the approved correction tree; Space Bunny Max pass after the final comparison-note follow-up. Coordinator checked the intervening three-file delta: comparison notes/tests and model docstring only, unchanged JSON keys/enums and safety contracts. MiniMax's unaffected safety/shape verdict was retained.
+- Requested and T3-configured reviewer options agree. Actual serving effort remains unverified where provider introspection does not expose it. Space Bunny family identity remains unverified under the user's explicit selected-pair authorization. Reviewer restraint is instruction-based; status/SHA-256 checks confirmed no repository changes during reviews.
+- After two review rounds failed to converge, the owner explicitly approved focused corrections and targeted follow-up. All original objections and the subsequent false comparison-note claim were resolved; no acceptance blocker is deferred.
+- Receipt: expected first batch 3 child tasks (one implementer plus two critics); actual **14 launches** including corrections, focused review rounds, and one internal-error implementer run/recovery. All 14 terminal with no pending child runs at acceptance. Approximately 5h28m elapsed from first dispatch to acceptance, including asynchronous turnaround and the owner-decision interval; active compute time and provider token usage unavailable. No measured token-savings claim.
+- Non-blocking duplicate test calls, fixture-directory overhead, redundant defenses, and pre-existing cleanup ordering are retained suggestions. Current-version registry/configuration, paths/entry identities, packaging, reporting, and resource risks remain assigned to C–H. U3–U9, publishing, dependency policy, and old artifact replacement remain outside this batch.
+
+Durable evidence: [Stage A/B validation files](../validation/assessment-repairs/ab/). This includes coordinator gate logs, actual disposable control/mutant/restore receipts, terminal task receipts, and final reviewer reports. Tests used synthetic HOME/targets only. Raw reviewer assertions about enforced read-only modes are not coordinator claims; T3 caller configuration and fingerprint evidence determine the recorded protection above.

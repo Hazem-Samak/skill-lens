@@ -1,0 +1,375 @@
+Disposable cwd: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv
+/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv/skill_lens/__init__.py
+/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv/tests/__init__.py
+
+legacy indiscriminate diverged note on shared canonical CLEAN cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_shared_canonical_symlink_farm_incomplete_merge_and_consumers']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.59s ===============================
+
+rc=0
+
+legacy indiscriminate diverged note on shared canonical MUTANT cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_shared_canonical_symlink_farm_incomplete_merge_and_consumers']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py F                                          [100%]
+
+=================================== FAILURES ===================================
+______ test_shared_canonical_symlink_farm_incomplete_merge_and_consumers _______
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/pytest-of-corvette/pytest-4/test_shared_canonical_symlink_0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1077fcf90>
+
+    def test_shared_canonical_symlink_farm_incomplete_merge_and_consumers(
+        mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Shared-canonical symlink-farm: incomplete traversal prevents SHARED in compare.
+    
+        Merge invariant: incomplete => content_hash is None even if one input has hash.
+        Actual consumers with merged index:
+        - compare canonical SHARED branch refuses SHARED (returns DIVERGED)
+        - diff cannot certify equality (is_readable=False)
+        """
+        from skill_lens.core.discovery import DiscoveredEntry, _merge_entries
+        from skill_lens.core.parser import canonicalize, parse_skill
+        from skill_lens.models.enums import CompareRelation
+    
+        shared_dir = mock_home / ".shared" / "skills" / "deploy"
+        assets_dir = shared_dir / "assets"
+        assets_dir.mkdir(parents=True)
+        (shared_dir / "SKILL.md").write_text(
+            "---\nname: deploy\ndescription: Shared deploy skill\n---\n# Deploy\n"
+        )
+        (assets_dir / "asset.txt").write_text("data")
+    
+        claude_dir = mock_home / ".claude" / "skills" / "deploy"
+        claude_dir.parent.mkdir(parents=True, exist_ok=True)
+        claude_dir.symlink_to(shared_dir)
+    
+        codex_dir = mock_home / ".codex" / "skills" / "deploy"
+        codex_dir.parent.mkdir(parents=True, exist_ok=True)
+        codex_dir.symlink_to(shared_dir)
+    
+        orig_walk = os.walk
+    
+        def guarded_walk(top: Any, *args: Any, **kwargs: Any):
+            for dirpath, dirnames, filenames in orig_walk(top, *args, **kwargs):
+                if "assets" in dirnames:
+                    onerror = kwargs.get("onerror")
+                    if onerror:
+                        onerror(PermissionError(13, "Permission denied", str(Path(dirpath) / "assets")))
+                    dirnames.remove("assets")
+                yield dirpath, dirnames, filenames
+    
+        monkeypatch.setattr(os, "walk", guarded_walk)
+    
+        # Invariant test on _merge_entries directly: incomplete side clears content_hash
+        e_complete = DiscoveredEntry(
+            entrypoint_path=str(claude_dir),
+            name="deploy",
+            is_file=False,
+            is_symlink=True,
+            canonical=canonicalize(claude_dir),
+            parse=parse_skill(claude_dir),
+            content_hash="abc123verifiedhash",
+            traversal_complete=True,
+            traversal_error=None,
+        )
+        e_incomplete = DiscoveredEntry(
+            entrypoint_path=str(codex_dir),
+            name="deploy",
+            is_file=False,
+            is_symlink=True,
+            canonical=canonicalize(codex_dir),
+            parse=parse_skill(codex_dir),
+            content_hash=None,
+            traversal_complete=False,
+            traversal_error="denied",
+        )
+        merged = _merge_entries([e_complete, e_incomplete])
+        assert len(merged) == 1
+        assert merged[0].traversal_complete is False
+        assert merged[0].content_hash is None
+        assert merged[0].traversal_error == "denied"
+    
+        # End-to-end consumers with merged index
+        index = discover(mock_home, mock_home)
+        deploy_entries = [e for e in index.entries if e.name == "deploy"]
+        assert len(deploy_entries) == 1
+        shared_entry = deploy_entries[0]
+        assert shared_entry.canonical_path == str(shared_dir.resolve())
+        assert shared_entry.traversal_complete is False
+        assert shared_entry.content_hash is None
+    
+        # compare consumer: both agents reach the same canonical path, but incomplete => DIVERGED
+        comp_rep = build_compare_report("claude", "codex", mock_home, mock_home, index=index)
+        c_entry = next(e for e in comp_rep.entries if e.name == "deploy")
+        assert c_entry.relation is CompareRelation.DIVERGED
+    
+        # Shared canonical copy: explicit unreadable note, ABSENCE of false different-copies promise
+        expected_shared_note = (
+            "names where claude and codex share a canonical copy "
+            "but content is unreadable or unverifiable (denied): 'deploy'."
+        )
+>       assert comp_rep.notes == (expected_shared_note,)
+E       assert ('names where...ifferences.',) == ("names where...: 'deploy'.",)
+E         
+E         At index 0 diff: "names where claude and codex read different copies: 'deploy'. Run 'skill-lens diff <name>' to see the text differences." != "names where claude and codex share a canonical copy but content is unreadable or unverifiable (denied): 'deploy'."
+E         Use -v to get more diff
+
+tests/test_incomplete_tree.py:815: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_incomplete_tree.py::test_shared_canonical_symlink_farm_incomplete_merge_and_consumers
+============================== 1 failed in 0.16s ===============================
+
+rc=1
+
+legacy indiscriminate diverged note on shared canonical RESTORE cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_shared_canonical_symlink_farm_incomplete_merge_and_consumers']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.14s ===============================
+
+rc=0
+
+legacy indiscriminate diverged note on different canonicals CLEAN cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_unreadable_nested_assets_prevents_shared_comparison']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.12s ===============================
+
+rc=0
+
+legacy indiscriminate diverged note on different canonicals MUTANT cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_unreadable_nested_assets_prevents_shared_comparison']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py F                                          [100%]
+
+=================================== FAILURES ===================================
+___________ test_unreadable_nested_assets_prevents_shared_comparison ___________
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/pytest-of-corvette/pytest-7/test_unreadable_nested_assets_0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1073ad010>
+
+    def test_unreadable_nested_assets_prevents_shared_comparison(
+        mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Skills with unreadable asset folders must result in DIVERGED, never SHARED."""
+        claude_dir = mock_home / ".claude" / "skills" / "deploy"
+        codex_dir = mock_home / ".codex" / "skills" / "deploy"
+        for d in (claude_dir, codex_dir):
+            (d / "assets").mkdir(parents=True)
+            (d / "SKILL.md").write_text("---\nname: deploy\ndescription: Test skill\n---\n# Deploy\n")
+            (d / "assets" / "data.txt").write_text("data\n")
+    
+        orig_walk = os.walk
+    
+        def guarded_walk(top: Any, *args: Any, **kwargs: Any):
+            for dirpath, dirnames, filenames in orig_walk(top, *args, **kwargs):
+                if "assets" in dirnames:
+                    onerror = kwargs.get("onerror")
+                    if onerror:
+                        denied_path = Path(dirpath) / "assets"
+                        onerror(PermissionError(13, "Permission denied", str(denied_path)))
+                    dirnames.remove("assets")
+                yield dirpath, dirnames, filenames
+    
+        monkeypatch.setattr(os, "walk", guarded_walk)
+    
+        index = discover(mock_home, mock_home)
+        report = build_compare_report("claude", "codex", mock_home, mock_home, index=index)
+        deploy_entries = [e for e in report.entries if e.name == "deploy"]
+        assert len(deploy_entries) == 1
+        assert deploy_entries[0].relation is CompareRelation.DIVERGED
+    
+        # Truthful compare reporting for incomplete copies: explicit unreadable reason,
+        # ABSENCE of false different-copies or text-diff promises.
+        expected_note = "names where content is unreadable or unverifiable (denied): 'deploy'."
+>       assert report.notes == (expected_note,)
+E       assert ('names where...ifferences.',) == ("names where...: 'deploy'.",)
+E         
+E         At index 0 diff: "names where claude and codex read different copies: 'deploy'. Run 'skill-lens diff <name>' to see the text differences." != "names where content is unreadable or unverifiable (denied): 'deploy'."
+E         Use -v to get more diff
+
+tests/test_incomplete_tree.py:271: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_incomplete_tree.py::test_unreadable_nested_assets_prevents_shared_comparison
+============================== 1 failed in 0.15s ===============================
+
+rc=1
+
+legacy indiscriminate diverged note on different canonicals RESTORE cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_unreadable_nested_assets_prevents_shared_comparison']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.12s ===============================
+
+rc=0
+
+omit unreadable shared note entirely CLEAN cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_compare_conditional_notes_incomplete_and_verified_trees']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.13s ===============================
+
+rc=0
+
+omit unreadable shared note entirely MUTANT cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_compare_conditional_notes_incomplete_and_verified_trees']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py F                                          [100%]
+
+=================================== FAILURES ===================================
+_________ test_compare_conditional_notes_incomplete_and_verified_trees _________
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/pytest-of-corvette/pytest-10/test_compare_conditional_notes0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109894c10>
+
+    def test_compare_conditional_notes_incomplete_and_verified_trees(
+        mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Exercise all conditional compare notes in one report:
+        1. Shared canonical with unreadable content -> unverifiable shared note.
+        2. Different canonicals with unreadable content -> unverifiable diff note.
+        3. Different canonicals with verified differing hashes -> verified diverged note.
+        Asserts exact notes, JSON output, human rendering, and ABSENCE of false promises.
+        """
+        from io import StringIO
+    
+        from rich.console import Console
+    
+        from skill_lens.render import render_compare
+    
+        # 1. shared_inc: shared canonical target with denied nested assets
+        shared_dir = mock_home / ".shared" / "skills" / "shared_inc"
+        (shared_dir / "assets").mkdir(parents=True)
+        (shared_dir / "SKILL.md").write_text("---\nname: shared_inc\ndescription: Shared\n---\n")
+        (shared_dir / "assets" / "data.txt").write_text("secret\n")
+    
+        claude_shared = mock_home / ".claude" / "skills" / "shared_inc"
+        claude_shared.parent.mkdir(parents=True, exist_ok=True)
+        claude_shared.symlink_to(shared_dir)
+    
+        codex_shared = mock_home / ".codex" / "skills" / "shared_inc"
+        codex_shared.parent.mkdir(parents=True, exist_ok=True)
+        codex_shared.symlink_to(shared_dir)
+    
+        # 2. diff_inc: separate physical folders with denied assets
+        claude_inc = mock_home / ".claude" / "skills" / "diff_inc"
+        codex_inc = mock_home / ".codex" / "skills" / "diff_inc"
+        for d in (claude_inc, codex_inc):
+            (d / "assets").mkdir(parents=True)
+            (d / "SKILL.md").write_text("---\nname: diff_inc\ndescription: Inc\n---\n")
+            (d / "assets" / "data.txt").write_text("secret\n")
+    
+        # 3. diff_ver: separate physical folders, complete traversal, differing content
+        claude_ver = mock_home / ".claude" / "skills" / "diff_ver"
+        codex_ver = mock_home / ".codex" / "skills" / "diff_ver"
+        claude_ver.mkdir(parents=True)
+        codex_ver.mkdir(parents=True)
+        (claude_ver / "SKILL.md").write_text("---\nname: diff_ver\ndescription: Claude version\n---\n")
+        (codex_ver / "SKILL.md").write_text("---\nname: diff_ver\ndescription: Codex version\n---\n")
+    
+        orig_walk = os.walk
+    
+        def guarded_walk(top: Any, *args: Any, **kwargs: Any):
+            for dirpath, dirnames, filenames in orig_walk(top, *args, **kwargs):
+                if "assets" in dirnames:
+                    onerror = kwargs.get("onerror")
+                    if onerror:
+                        onerror(PermissionError(13, "Permission denied", str(Path(dirpath) / "assets")))
+                    dirnames.remove("assets")
+                yield dirpath, dirnames, filenames
+    
+        monkeypatch.setattr(os, "walk", guarded_walk)
+    
+        index = discover(mock_home, mock_home)
+        report = build_compare_report("claude", "codex", mock_home, mock_home, index=index)
+    
+        # Verify relations
+        by_name = {e.name: e for e in report.entries}
+        assert by_name["shared_inc"].relation is CompareRelation.DIVERGED
+        assert by_name["diff_inc"].relation is CompareRelation.DIVERGED
+        assert by_name["diff_ver"].relation is CompareRelation.DIVERGED
+    
+        # Exactly three notes in sorted category order
+        expected_notes = [
+            "names where claude and codex read different copies: 'diff_ver'. "
+            "Run 'skill-lens diff <name>' to see the text differences.",
+            "names where claude and codex share a canonical copy "
+            "but content is unreadable or unverifiable (denied): 'shared_inc'.",
+            "names where content is unreadable or unverifiable (denied): 'diff_inc'.",
+        ]
+>       assert list(report.notes) == expected_notes
+E       assert ['names where... 'diff_inc'."] == ['names where... 'diff_inc'."]
+E         
+E         At index 1 diff: "names where content is unreadable or unverifiable (denied): 'diff_inc'." != "names where claude and codex share a canonical copy but content is unreadable or unverifiable (denied): 'shared_inc'."
+E         Right contains one more item: "names where content is unreadable or unverifiable (denied): 'diff_inc'."
+E         Use -v to get more diff
+
+tests/test_incomplete_tree.py:975: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_incomplete_tree.py::test_compare_conditional_notes_incomplete_and_verified_trees
+============================== 1 failed in 0.14s ===============================
+
+rc=1
+
+omit unreadable shared note entirely RESTORE cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_compare_conditional_notes_incomplete_and_verified_trees']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.13s ===============================
+
+rc=0

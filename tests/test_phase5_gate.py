@@ -19,10 +19,12 @@ loader vs the data directory) and fails loudly when they do.
 
 from __future__ import annotations
 
+import copy
 import re
 import tomllib
 from pathlib import Path
 
+import pytest
 import yaml
 
 import skill_lens
@@ -238,9 +240,25 @@ def test_coverage_threshold_is_declared_and_meaningful() -> None:
     """An unenforced coverage number erodes silently on the next refactor."""
     coverage = _pyproject()["tool"]["coverage"]
     assert coverage["run"]["source"] == ["skill_lens"], "coverage must measure the shipped package"
-    assert coverage["report"]["fail_under"] >= 85, (
+    assert coverage["report"]["fail_under"] >= 90, (
         f"a threshold of {coverage['report'].get('fail_under')!r} is too low to gate anything"
     )
+
+
+def test_coverage_threshold_guard_rejects_eroded_floor(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """An erosion below the documented 90 floor must fail the guard."""
+    orig_pyproject = _pyproject
+
+    def eroded_pyproject() -> dict:
+        cfg = copy.deepcopy(orig_pyproject())
+        cfg["tool"]["coverage"]["report"]["fail_under"] = 89
+        return cfg
+
+    monkeypatch.setattr("tests.test_phase5_gate._pyproject", eroded_pyproject)
+    with pytest.raises(AssertionError, match="too low to gate anything"):
+        test_coverage_threshold_is_declared_and_meaningful()
 
 
 def test_ci_enforces_the_type_check_and_the_coverage_gate() -> None:
@@ -291,3 +309,14 @@ def test_readme_has_no_relative_links() -> None:
         f"README.md must link with absolute URLs; these resolve only on GitHub and "
         f"will 404 on the PyPI page: {relative!r}"
     )
+
+
+def test_readme_relative_links_guard_rejects_relative_link(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A relative link in README must be caught by the guard."""
+    bad_readme = tmp_path / "README.md"
+    bad_readme.write_text("[bad](./FILE.md)\n", encoding="utf-8")
+    monkeypatch.setattr("tests.test_phase5_gate.REPO_ROOT", tmp_path)
+    with pytest.raises(AssertionError, match="README.md must link with absolute URLs"):
+        test_readme_has_no_relative_links()

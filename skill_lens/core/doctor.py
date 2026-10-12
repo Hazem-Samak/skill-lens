@@ -19,6 +19,7 @@ from typing import Any
 
 from skill_lens.core import paths
 from skill_lens.core.discovery import DiscoveredEntry, DiscoveryIndex, discover
+from skill_lens.core.health import classify_entry_health
 from skill_lens.core.system import (
     ERR_MISSING_FILE,
     ERR_NOT_JSON,
@@ -30,9 +31,8 @@ from skill_lens.core.system import (
 from skill_lens.models.doctor import DoctorFinding, DoctorReport
 from skill_lens.models.enums import Evidence, ParseStatus, Severity
 from skill_lens.models.parsing import (
-    ERR_DANGLING_SYMLINK,
     ERR_PERMISSION_DENIED,
-    ERR_SYMLINK_CYCLE,
+    ERR_UNDECODABLE_TEXT,
 )
 from skill_lens.registry.loader import AgentDefinition
 
@@ -50,15 +50,6 @@ _BUDGET_AGENT = "codex"
 #: that recurse through installed dependency trees pick up third-party skill
 #: files nobody authored (spec section 6, check 5 -- observed live).
 _TRAVERSAL_MARKER = "node_modules"
-
-#: Discovery's symlink error tag -> (finding code, message clause). The engine
-#: only translates tags it already saw, so a new tag needs a row here -- and
-#: the ERROR severity is deliberate: an entrypoint that reaches nothing is
-#: exactly as un-loadable as a malformed file, whatever the reason.
-_SYMLINK_CLAUSES = {
-    ERR_DANGLING_SYMLINK: ("dangling_symlink", "links to a target that does not exist"),
-    ERR_SYMLINK_CYCLE: ("symlink_cycle", "is part of a symlink loop"),
-}
 
 
 def build_doctor_report(
@@ -112,29 +103,82 @@ def _symlink_findings(index: DiscoveryIndex) -> list[DoctorFinding]:
     """
     findings: list[DoctorFinding] = []
     for entry in index.entries:
-        code = entry.error_code
-        detail: str | None = code
-        if code in _SYMLINK_CLAUSES:
-            finding_code, clause = _SYMLINK_CLAUSES[code]
-        elif code == ERR_PERMISSION_DENIED:
-            finding_code, clause = ("unreadable_skill", "exists but the OS refuses to open it")
-        elif entry.parse is not None and entry.parse.status is ParseStatus.UNREADABLE:
-            finding_code, clause = ("unreadable_skill", "exists but the OS refuses to open it")
-            detail = ERR_PERMISSION_DENIED
-        else:
-            continue
-        shown = _entrypoint(entry)
-        findings.append(
-            DoctorFinding(
-                code=finding_code,
-                severity=Severity.ERROR,
-                message=f"'{shown}' {clause} -- {_reached_by(entry)} cannot load '{entry.name}'.",
-                rule_id="doctor_symlink_health",
-                evidence=Evidence.EMPIRICAL,
-                path=shown,
-                detail=detail,
+        cond = classify_entry_health(entry)
+        if cond.code in ("dangling_symlink", "symlink_cycle"):
+            clause = (
+                "links to a target that does not exist"
+                if cond.code == "dangling_symlink"
+                else "is part of a symlink loop"
             )
-        )
+            shown = _entrypoint(entry)
+            findings.append(
+                DoctorFinding(
+                    code=cond.code,
+                    severity=Severity.ERROR,
+                    message=(
+                        f"'{shown}' {clause} -- {_reached_by(entry)} cannot load '{entry.name}'."
+                    ),
+                    rule_id="doctor_symlink_health",
+                    evidence=Evidence.EMPIRICAL,
+                    path=shown,
+                    detail=cond.reason or cond.code,
+                )
+            )
+        elif cond.code == "unreadable_skill":
+            shown = _entrypoint(entry)
+            if cond.reason == "denied":
+                clause = "exists but the OS refuses to open it"
+            elif cond.reason == "disappeared":
+                clause = "or one of its files disappeared while scanning"
+            elif cond.reason == "io":
+                clause = "or one of its files cannot be read (I/O error)"
+            else:
+                clause = "or one of its files cannot be read (I/O error)"
+            findings.append(
+                DoctorFinding(
+                    code="unreadable_skill",
+                    severity=Severity.ERROR,
+                    message=(
+                        f"'{shown}' {clause} -- {_reached_by(entry)} cannot load '{entry.name}'."
+                    ),
+                    rule_id="doctor_symlink_health",
+                    evidence=Evidence.EMPIRICAL,
+                    path=shown,
+                    detail=cond.reason or "io",
+                )
+            )
+        elif cond.code == "undecodable_skill":
+            shown = _entrypoint(entry)
+            findings.append(
+                DoctorFinding(
+                    code="undecodable_skill",
+                    severity=Severity.ERROR,
+                    message=(
+                        f"'{shown}' contains invalid UTF-8 and cannot be read as text "
+                        f"-- {_reached_by(entry)} cannot load '{entry.name}'."
+                    ),
+                    rule_id="doctor_symlink_health",
+                    evidence=Evidence.EMPIRICAL,
+                    path=shown,
+                    detail=ERR_UNDECODABLE_TEXT,
+                )
+            )
+        elif cond.code == "invalid":
+            shown = _entrypoint(entry)
+            clause = cond.clause or "has no skill document (SKILL.md)"
+            findings.append(
+                DoctorFinding(
+                    code="invalid_skill",
+                    severity=Severity.ERROR,
+                    message=(
+                        f"'{shown}' {clause} -- {_reached_by(entry)} cannot load '{entry.name}'."
+                    ),
+                    rule_id="doctor_symlink_health",
+                    evidence=Evidence.EMPIRICAL,
+                    path=shown,
+                    detail=cond.reason or "missing_document",
+                )
+            )
     return findings
 
 
@@ -152,13 +196,15 @@ def _frontmatter_findings(index: DiscoveryIndex) -> list[DoctorFinding]:
     """
     findings: list[DoctorFinding] = []
     for entry in index.entries:
-        status = entry.parse.status if entry.parse else None
-        if status is ParseStatus.MALFORMED_YAML:
+        cond = classify_entry_health(entry)
+        if cond.code != "malformed_frontmatter":
+            continue
+        if cond.reason == "malformed_yaml":
             message = (
                 f"'{_entrypoint(entry)}' has no readable YAML frontmatter"
                 f" -- {_reached_by(entry)} will skip '{entry.name}'."
             )
-        elif status is ParseStatus.MISSING_DESCRIPTION:
+        elif cond.reason == "missing_description":
             message = (
                 f"'{_entrypoint(entry)}' is missing the required 'description' field"
                 f" -- {_reached_by(entry)} will skip '{entry.name}'."
@@ -173,7 +219,7 @@ def _frontmatter_findings(index: DiscoveryIndex) -> list[DoctorFinding]:
                 rule_id="doctor_frontmatter",
                 evidence=Evidence.EMPIRICAL,
                 path=_entrypoint(entry),
-                detail=(status.value if status else None),
+                detail=cond.reason,
             )
         )
     return findings

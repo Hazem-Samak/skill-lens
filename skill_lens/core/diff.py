@@ -35,10 +35,11 @@ from skill_lens.core.discovery import (
     entry_scope,
     labels_for_entries,
 )
-from skill_lens.core.hasher import hash_file, iter_files, normalized_text
+from skill_lens.core.hasher import IncompleteTreeError, hash_file, iter_files, normalized_text
 from skill_lens.core.snapshot_models import CapturedFile, FrozenDiscoveryIndex
 from skill_lens.models.diff import DiffChange, DiffCopy, DiffFile, DiffHunk, DiffReport
 from skill_lens.models.enums import ParseStatus
+from skill_lens.models.parsing import ERR_PERMISSION_DENIED
 from skill_lens.registry.loader import AgentDefinition, load_registry
 
 #: Changed (``+`` / ``-``) lines shown per copy before the diff is truncated.
@@ -85,17 +86,33 @@ def _read_normalized(path: Path) -> str | None:
     try:
         with path.open("r", encoding="utf-8", newline="") as handle:
             text = handle.read()
-    except (OSError, UnicodeDecodeError):
+    except UnicodeDecodeError:
         return None
+    except IncompleteTreeError:
+        raise
+    except OSError as err:
+        reason = (
+            "denied"
+            if isinstance(err, PermissionError)
+            else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+        )
+        raise IncompleteTreeError(path=path, reason=reason) from err
     return text.replace("\r\n", "\n")
 
 
-def _collect(path: Path) -> _Collected | None:
-    """Fingerprint and read one file, or ``None`` when it cannot be read."""
+def _collect(path: Path) -> _Collected:
+    """Fingerprint and read one file, preserving error cause on failure."""
     try:
         fingerprint = hash_file(path)
-    except OSError:
-        return None
+    except IncompleteTreeError:
+        raise
+    except OSError as err:
+        reason = (
+            "denied"
+            if isinstance(err, PermissionError)
+            else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+        )
+        raise IncompleteTreeError(path=path, reason=reason) from err
     text = _read_normalized(path)
     return _Collected(text=text, fingerprint=fingerprint, is_binary=text is None)
 
@@ -128,14 +145,20 @@ def _copy_files(
         return files
 
     root = Path(entry.canonical_path or entry.entrypoint_path)
+    if not entry.traversal_complete:
+        reason = entry.traversal_error or "denied"
+        raise IncompleteTreeError(root, reason=reason)
     if not root.is_dir():
         collected = _collect(root)
-        return {root.name: collected} if collected is not None else {}
+        if collected is None:
+            raise IncompleteTreeError(root, reason="io")
+        return {root.name: collected}
     files = {}
     for relative in iter_files(root):
         collected = _collect(root / relative)
-        if collected is not None:
-            files[relative.as_posix()] = collected
+        if collected is None:
+            raise IncompleteTreeError(root / relative, reason="io")
+        files[relative.as_posix()] = collected
     return files
 
 
@@ -376,10 +399,11 @@ def _is_valid(entry: DiscoveredEntry) -> bool:
 def _is_readable(entry: DiscoveredEntry) -> bool:
     """A copy can be compared when the hasher produced a fingerprint for it.
 
-    Dangling symlinks, cycles and permission-denied roots have no content, so
-    they are listed with no diff rather than silently dropped.
+    Dangling symlinks, cycles, unreadable roots, and incomplete directory traversals
+    have no verified content hash (content_hash is None), so they are listed
+    with no diff rather than falsely compared.
     """
-    return entry.content_hash is not None
+    return entry.content_hash is not None and entry.traversal_complete
 
 
 def _copy(
@@ -393,6 +417,12 @@ def _copy(
 ) -> DiffCopy:
     """Describe one copy of the skill as it takes part in the diff."""
     key = canonical_key(entry)
+    error = entry.error_code
+    if error is None and not entry.traversal_complete:
+        if entry.traversal_error == "denied":
+            error = ERR_PERMISSION_DENIED
+        else:
+            error = entry.traversal_error or ERR_PERMISSION_DENIED
     return DiffCopy(
         path=key,
         scope=entry_scope(entry),
@@ -402,7 +432,7 @@ def _copy(
         is_baseline=is_baseline,
         variant_label=labels.get(key),
         content_hash=entry.content_hash,
-        error=entry.error_code,
+        error=error,
         files=files,
         truncated=truncated,
         omitted_lines=omitted_lines,

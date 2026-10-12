@@ -3,10 +3,10 @@
 Pure function over one discovery pass. Both agents are read from the *same*
 :class:`~skill_lens.core.discovery.DiscoveryIndex` so the comparison is
 consistent: a skill counts as shared when the two entrypoints resolve to one
-canonical target, or -- when they are separate files -- to identical bytes.
-Names that exist in both agents with genuinely different content are called
-out as divergences, exactly the state where ``skill-lens diff`` is the
-follow-up command.
+canonical target with complete verified content, or -- when they are separate
+files -- to identical bytes. Names that exist in both agents with genuinely
+different content are called out as divergences, exactly the state where
+``skill-lens diff`` is the follow-up command.
 """
 
 from __future__ import annotations
@@ -62,13 +62,65 @@ def build_compare_report(
         for name in sorted(set(by_agent[agent_a]) | set(by_agent[agent_b]))
     ]
     notes: list[str] = []
-    diverged = [entry.name for entry in entries if entry.relation is CompareRelation.DIVERGED]
-    if diverged:
-        joined = ", ".join(f"'{name}'" for name in diverged)
+    verified_diverged: list[str] = []
+    unverifiable_shared: dict[str, list[str]] = {}
+    unverifiable_diff: dict[str, list[str]] = {}
+
+    for c_entry in entries:
+        if c_entry.relation is not CompareRelation.DIVERGED:
+            continue
+        list_a = by_agent[agent_a].get(c_entry.name, [])
+        list_b = by_agent[agent_b].get(c_entry.name, [])
+        if not list_a or not list_b:
+            continue
+
+        if c_entry.canonical_a and c_entry.canonical_a == c_entry.canonical_b:
+            target_a = next(
+                (e for e in list_a if e.canonical_path == c_entry.canonical_a),
+                list_a[0],
+            )
+            target_b = next(
+                (e for e in list_b if e.canonical_path == c_entry.canonical_b),
+                list_b[0],
+            )
+            reason = target_a.traversal_error or target_b.traversal_error or "denied"
+            unverifiable_shared.setdefault(reason, []).append(c_entry.name)
+            continue
+
+        item_a = list_a[0]
+        item_b = list_b[0]
+        if (
+            item_a.traversal_complete
+            and item_b.traversal_complete
+            and item_a.content_hash is not None
+            and item_b.content_hash is not None
+        ):
+            verified_diverged.append(c_entry.name)
+        else:
+            reason = (
+                (not item_a.traversal_complete and item_a.traversal_error)
+                or (not item_b.traversal_complete and item_b.traversal_error)
+                or "denied"
+            )
+            unverifiable_diff.setdefault(reason, []).append(c_entry.name)
+
+    if verified_diverged:
+        joined = ", ".join(f"'{name}'" for name in verified_diverged)
         notes.append(
             f"names where {agent_a} and {agent_b} read different copies: {joined}. "
             "Run 'skill-lens diff <name>' to see the text differences."
         )
+
+    for reason, names in sorted(unverifiable_shared.items()):
+        joined = ", ".join(f"'{name}'" for name in names)
+        notes.append(
+            f"names where {agent_a} and {agent_b} share a canonical copy "
+            f"but content is unreadable or unverifiable ({reason}): {joined}."
+        )
+
+    for reason, names in sorted(unverifiable_diff.items()):
+        joined = ", ".join(f"'{name}'" for name in names)
+        notes.append(f"names where content is unreadable or unverifiable ({reason}): {joined}.")
 
     return CompareReport(
         agent_a=agent_a,
@@ -116,7 +168,12 @@ def _classify(
     if entries_a and entries_b:
         canonicals_b = {entry.canonical_path for entry in entries_b if entry.canonical_path}
         shared = next((entry for entry in entries_a if entry.canonical_path in canonicals_b), None)
-        if shared is not None:
+        # Incomplete discovery clears content_hash (content_hash is None); in
+        # merged indexes, if any reaching entrypoint has incomplete traversal, the
+        # canonical entry has traversal_complete=False and content_hash=None.
+        # The canonical SHARED branch checks both traversal_complete and
+        # content_hash to guarantee incomplete or unverified copies never certify SHARED.
+        if shared is not None and shared.traversal_complete and shared.content_hash is not None:
             mirror = next(e for e in entries_b if e.canonical_path == shared.canonical_path)
             return CompareEntry(
                 name=name,
@@ -132,7 +189,12 @@ def _classify(
         # `diff` for copies that would then report "no differences".
         hash_a = entries_a[0].content_hash
         hash_b = entries_b[0].content_hash
-        if hash_a is not None and hash_a == hash_b:
+        if (
+            hash_a is not None
+            and hash_a == hash_b
+            and entries_a[0].traversal_complete
+            and entries_b[0].traversal_complete
+        ):
             return CompareEntry(
                 name=name,
                 relation=CompareRelation.SHARED,
@@ -140,6 +202,16 @@ def _classify(
                 path_b=_entrypoint_for(agent_b, entries_b[0]),
                 canonical_a=entries_a[0].canonical_path,
                 canonical_b=entries_b[0].canonical_path,
+            )
+        if shared is not None:
+            mirror = next(e for e in entries_b if e.canonical_path == shared.canonical_path)
+            return CompareEntry(
+                name=name,
+                relation=CompareRelation.DIVERGED,
+                path_a=_entrypoint_for(agent_a, shared),
+                path_b=_entrypoint_for(agent_b, mirror),
+                canonical_a=shared.canonical_path,
+                canonical_b=mirror.canonical_path,
             )
         return CompareEntry(
             name=name,

@@ -1828,21 +1828,18 @@ def test_effective_home_drift_rejected_before_publication(
 
 
 def test_stable_unreadable_copy_retains_parse_and_empty_files(mock_home: Path) -> None:
-    """Unreadable copy with no hash unconditionally retains its parse and empty tuple in files."""
+    """Unreadable copy with no hash refuses snapshot generation with IncompleteTreeError."""
+    from skill_lens.core.hasher import IncompleteTreeError
+
     home = paths.home()
     skill_dir = home / ".claude" / "skills" / "unreadable_chmod"
     make_skill(skill_dir, "unreadable_chmod", "Unreadable skill.")
     (skill_dir / "SKILL.md").chmod(0o000)
 
     try:
-        snapshot = capture_session(generation=1, home=home, cwd=home)
-        target = next((e for e in snapshot.index.entries if e.name == "unreadable_chmod"), None)
-        assert target is not None, "Target entry must be present in snapshot index"
-        assert target.content_hash is None, "content_hash must be None for unreadable copy"
-        assert target.parse is not None, "parse must be retained for unreadable copy"
-        key = canonical_key(target)
-        assert key in snapshot.files
-        assert snapshot.files[key] == (), "captured files must be empty tuple for unreadable copy"
+        with pytest.raises(IncompleteTreeError) as exc_info:
+            capture_session(generation=1, home=home, cwd=home)
+        assert exc_info.value.reason in ("denied", "io")
     finally:
         (skill_dir / "SKILL.md").chmod(0o644)
 

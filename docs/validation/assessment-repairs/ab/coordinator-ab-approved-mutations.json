@@ -1,0 +1,59 @@
+{
+  "copy": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h",
+  "results": [
+    {
+      "label": "parse fold CLEAN",
+      "test": "test_why_and_diff_fixtures_preserve_accurate_parse_and_agent_resolution",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "parse fold MUTANT",
+      "test": "test_why_and_diff_fixtures_preserve_accurate_parse_and_agent_resolution",
+      "exit_code": 1,
+      "expected": 1
+    },
+    {
+      "label": "parse fold RESTORE",
+      "test": "test_why_and_diff_fixtures_preserve_accurate_parse_and_agent_resolution",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "canonical SHARED guard CLEAN",
+      "test": "test_shared_canonical_symlink_farm_incomplete_merge_and_consumers",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "canonical SHARED guard MUTANT",
+      "test": "test_shared_canonical_symlink_farm_incomplete_merge_and_consumers",
+      "exit_code": 1,
+      "expected": 1
+    },
+    {
+      "label": "canonical SHARED guard RESTORE",
+      "test": "test_shared_canonical_symlink_farm_incomplete_merge_and_consumers",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "early capture refusal CLEAN",
+      "test": "test_truthful_early_capture_refusal_vs_snapshot_changed",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "early capture refusal MUTANT",
+      "test": "test_truthful_early_capture_refusal_vs_snapshot_changed",
+      "exit_code": 1,
+      "expected": 1
+    },
+    {
+      "label": "early capture refusal RESTORE",
+      "test": "test_truthful_early_capture_refusal_vs_snapshot_changed",
+      "exit_code": 0,
+      "expected": 0
+    }
+  ]
+}

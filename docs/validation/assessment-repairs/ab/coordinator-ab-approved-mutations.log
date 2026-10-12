@@ -1,0 +1,442 @@
+Disposable cwd: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h
+/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h/skill_lens/__init__.py
+/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h/tests/__init__.py
+
+parse fold CLEAN cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_why_and_diff_fixtures_preserve_accurate_parse_and_agent_resolution']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.74s ===============================
+
+rc=0
+
+parse fold MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_why_and_diff_fixtures_preserve_accurate_parse_and_agent_resolution']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py F                                          [100%]
+
+=================================== FAILURES ===================================
+___ test_why_and_diff_fixtures_preserve_accurate_parse_and_agent_resolution ____
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-31/test_why_and_diff_fixtures_pre0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10c2bcb50>
+
+    def test_why_and_diff_fixtures_preserve_accurate_parse_and_agent_resolution(
+        mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """DiscoveredEntry.parse_status describes document independently of traversal.
+    
+        why attributes state to accurate agent precedence rule (ACTIVE) rather than
+        falsely claiming frontmatter parser invalidity. Incomplete content is surfaced
+        via report notes with empirical evidence.
+        diff preserves valid document (is_valid=True) while distinctively reporting
+        unreadable content (is_readable=False, cannot be read: permission denied).
+        """
+        from skill_lens.core.resolver import resolve_skill
+        from skill_lens.models.enums import HeadlineState, ParseStatus
+        from skill_lens.models.parsing import ERR_PERMISSION_DENIED
+    
+        skill_dir = mock_home / ".claude" / "skills" / "deploy"
+        assets_dir = skill_dir / "assets"
+        assets_dir.mkdir(parents=True)
+        (skill_dir / "SKILL.md").write_text(
+            "---\nname: deploy\ndescription: Valid deploy skill\n---\n# Deploy\n"
+        )
+        (assets_dir / "payload.bin").write_text("asset")
+    
+        orig_walk = os.walk
+    
+        def guarded_walk(top: Any, *args: Any, **kwargs: Any):
+            for dirpath, dirnames, filenames in orig_walk(top, *args, **kwargs):
+                if "assets" in dirnames:
+                    onerror = kwargs.get("onerror")
+                    if onerror:
+                        onerror(PermissionError(13, "Permission denied", str(Path(dirpath) / "assets")))
+                    dirnames.remove("assets")
+                yield dirpath, dirnames, filenames
+    
+        monkeypatch.setattr(os, "walk", guarded_walk)
+    
+        index = discover(mock_home, mock_home)
+        entry = next(e for e in index.entries if e.name == "deploy")
+>       assert entry.parse_status == "valid"
+E       AssertionError: assert 'unreadable' == 'valid'
+E         
+E         - valid
+E         + unreadable
+
+tests/test_incomplete_tree.py:671: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_incomplete_tree.py::test_why_and_diff_fixtures_preserve_accurate_parse_and_agent_resolution
+============================== 1 failed in 0.17s ===============================
+
+rc=1
+
+parse fold RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_why_and_diff_fixtures_preserve_accurate_parse_and_agent_resolution']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.64s ===============================
+
+rc=0
+
+canonical SHARED guard CLEAN cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_shared_canonical_symlink_farm_incomplete_merge_and_consumers']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.13s ===============================
+
+rc=0
+
+canonical SHARED guard MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_shared_canonical_symlink_farm_incomplete_merge_and_consumers']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py F                                          [100%]
+
+=================================== FAILURES ===================================
+______ test_shared_canonical_symlink_farm_incomplete_merge_and_consumers _______
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-34/test_shared_canonical_symlink_0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107a84b10>
+
+    def test_shared_canonical_symlink_farm_incomplete_merge_and_consumers(
+        mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Shared-canonical symlink-farm: incomplete traversal prevents SHARED in compare.
+    
+        Merge invariant: incomplete => content_hash is None even if one input has hash.
+        Actual consumers with merged index:
+        - compare canonical SHARED branch refuses SHARED (returns DIVERGED)
+        - diff cannot certify equality (is_readable=False)
+        """
+        from skill_lens.core.discovery import DiscoveredEntry, _merge_entries
+        from skill_lens.core.parser import canonicalize, parse_skill
+        from skill_lens.models.enums import CompareRelation
+    
+        shared_dir = mock_home / ".shared" / "skills" / "deploy"
+        assets_dir = shared_dir / "assets"
+        assets_dir.mkdir(parents=True)
+        (shared_dir / "SKILL.md").write_text(
+            "---\nname: deploy\ndescription: Shared deploy skill\n---\n# Deploy\n"
+        )
+        (assets_dir / "asset.txt").write_text("data")
+    
+        claude_dir = mock_home / ".claude" / "skills" / "deploy"
+        claude_dir.parent.mkdir(parents=True, exist_ok=True)
+        claude_dir.symlink_to(shared_dir)
+    
+        codex_dir = mock_home / ".codex" / "skills" / "deploy"
+        codex_dir.parent.mkdir(parents=True, exist_ok=True)
+        codex_dir.symlink_to(shared_dir)
+    
+        orig_walk = os.walk
+    
+        def guarded_walk(top: Any, *args: Any, **kwargs: Any):
+            for dirpath, dirnames, filenames in orig_walk(top, *args, **kwargs):
+                if "assets" in dirnames:
+                    onerror = kwargs.get("onerror")
+                    if onerror:
+                        onerror(PermissionError(13, "Permission denied", str(Path(dirpath) / "assets")))
+                    dirnames.remove("assets")
+                yield dirpath, dirnames, filenames
+    
+        monkeypatch.setattr(os, "walk", guarded_walk)
+    
+        # Invariant test on _merge_entries directly: incomplete side clears content_hash
+        e_complete = DiscoveredEntry(
+            entrypoint_path=str(claude_dir),
+            name="deploy",
+            is_file=False,
+            is_symlink=True,
+            canonical=canonicalize(claude_dir),
+            parse=parse_skill(claude_dir),
+            content_hash="abc123verifiedhash",
+            traversal_complete=True,
+            traversal_error=None,
+        )
+        e_incomplete = DiscoveredEntry(
+            entrypoint_path=str(codex_dir),
+            name="deploy",
+            is_file=False,
+            is_symlink=True,
+            canonical=canonicalize(codex_dir),
+            parse=parse_skill(codex_dir),
+            content_hash=None,
+            traversal_complete=False,
+            traversal_error="denied",
+        )
+        merged = _merge_entries([e_complete, e_incomplete])
+        assert len(merged) == 1
+        assert merged[0].traversal_complete is False
+        assert merged[0].content_hash is None
+        assert merged[0].traversal_error == "denied"
+    
+        # End-to-end consumers with merged index
+        index = discover(mock_home, mock_home)
+        deploy_entries = [e for e in index.entries if e.name == "deploy"]
+        assert len(deploy_entries) == 1
+        shared_entry = deploy_entries[0]
+        assert shared_entry.canonical_path == str(shared_dir.resolve())
+        assert shared_entry.traversal_complete is False
+        assert shared_entry.content_hash is None
+    
+        # compare consumer: both agents reach the same canonical path, but incomplete => DIVERGED
+        comp_rep = build_compare_report("claude", "codex", mock_home, mock_home, index=index)
+        c_entry = next(e for e in comp_rep.entries if e.name == "deploy")
+>       assert c_entry.relation is CompareRelation.DIVERGED
+E       AssertionError: assert <CompareRelation.SHARED: 'shared'> is <CompareRelation.DIVERGED: 'diverged'>
+E        +  where <CompareRelation.SHARED: 'shared'> = CompareEntry(name='deploy', relation=<CompareRelation.SHARED: 'shared'>, path_a='/private/var/folders/tf/jsdyxcts6y72f...yxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-34/test_shared_canonical_symlink_0/home/.shared/skills/deploy').relation
+E        +  and   <CompareRelation.DIVERGED: 'diverged'> = <enum 'CompareRelation'>.DIVERGED
+
+tests/test_incomplete_tree.py:783: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_incomplete_tree.py::test_shared_canonical_symlink_farm_incomplete_merge_and_consumers
+============================== 1 failed in 0.14s ===============================
+
+rc=1
+
+canonical SHARED guard RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_shared_canonical_symlink_farm_incomplete_merge_and_consumers']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.12s ===============================
+
+rc=0
+
+early capture refusal CLEAN cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_truthful_early_capture_refusal_vs_snapshot_changed']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.12s ===============================
+
+rc=0
+
+early capture refusal MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_truthful_early_capture_refusal_vs_snapshot_changed']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py F                                          [100%]
+
+=================================== FAILURES ===================================
+___________ test_truthful_early_capture_refusal_vs_snapshot_changed ____________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-37/test_truthful_early_capture_re0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109e908d0>
+
+    def test_truthful_early_capture_refusal_vs_snapshot_changed(
+        mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Deterministic discovery hash reports denial, later capture walk/read succeeds.
+    
+        Asserts exact early IncompleteTreeError(reason='denied') at entry root rather
+        than downstream misleading SnapshotChanged. Controller accepts error and
+        retains prior generation.
+        """
+        from skill_lens.core import discovery as discovery_mod
+    
+        skill_dir = mock_home / ".claude" / "skills" / "deploy"
+        assets_dir = skill_dir / "assets"
+        assets_dir.mkdir(parents=True)
+        (skill_dir / "SKILL.md").write_text("---\nname: deploy\ndescription: Test\n---\n# Deploy\n")
+        (assets_dir / "data.txt").write_text("data payload\n")
+    
+        controller = SessionController()
+        req1 = controller.request_refresh()
+        assert req1 is not None
+        gen1, _ = req1
+        snap1 = capture_session(generation=gen1, home=mock_home, cwd=mock_home)
+        assert controller.accept_capture(snap1, gen1) is True
+        assert controller.current is not None
+        assert controller.current.generation == gen1
+    
+        # Simulate: discovery hash reports denial (e.g. transient PermissionError during discovery),
+        # but subsequent capture iter_files/file reading on disk succeeds!
+        orig_hash_path = discovery_mod.hash_path
+    
+        def discovery_denied_hash_path(path: Path, *args: Any, **kwargs: Any):
+            if path.resolve() == skill_dir.resolve():
+                raise IncompleteTreeError(path=skill_dir, reason="denied")
+            return orig_hash_path(path, *args, **kwargs)
+    
+        monkeypatch.setattr(discovery_mod, "hash_path", discovery_denied_hash_path)
+    
+        req2 = controller.request_refresh()
+        assert req2 is not None
+        gen2, _ = req2
+    
+        # Capture must refuse EARLY with IncompleteTreeError, NOT SnapshotChanged
+        with pytest.raises(IncompleteTreeError) as exc_info:
+>           capture_session(generation=gen2, home=mock_home, cwd=mock_home)
+
+tests/test_incomplete_tree.py:835: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+generation = 2
+home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-37/test_truthful_early_capture_re0/home')
+cwd = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-37/test_truthful_early_capture_re0/home')
+cancelled = None
+
+    def capture_session(
+        *,
+        generation: int,
+        home: Path,
+        cwd: Path,
+        cancelled: Callable[[], bool] | None = None,
+    ) -> SessionSnapshot:
+        """Capture a consistent photograph of the skill inventory, files, and health."""
+        check_cancelled(cancelled)
+        if home != paths.home():
+            raise ValueError(f"supplied home '{home}' does not match effective home '{paths.home()}'")
+    
+        check_cancelled(cancelled)
+        registry_dict = load_registry()
+    
+        check_cancelled(cancelled)
+        index_1 = live_discovery(cwd=cwd, registry=registry_dict, cancelled=cancelled)
+        norm_home = Path(index_1.home)
+        norm_cwd = Path(index_1.cwd)
+    
+        # 2. Capture settings and lock bytes/status through guarded reader
+        check_cancelled(cancelled)
+        config_paths: list[Path] = [installer_lockfile(norm_home)]
+        for agent in registry_dict.values():
+            if agent.disabled_settings:
+                config_paths.append(norm_home / agent.disabled_settings)
+    
+        config_inputs: dict[str, CapturedInput] = {}
+        for p in config_paths:
+            p_str = str(p)
+            if p_str not in config_inputs:
+                config_inputs[p_str] = _read_input_guarded(p, cancelled=cancelled)
+    
+        disabled_overrides: dict[str, frozenset[str]] = {}
+        for agent in registry_dict.values():
+            if not agent.disabled_settings:
+                disabled_overrides[agent.id] = frozenset()
+            else:
+                sett_p = str(norm_home / agent.disabled_settings)
+                ci = config_inputs.get(sett_p)
+                data = ci.data if ci is not None else None
+                disabled_overrides[agent.id] = disabled_overrides_from_bytes(agent, data)
+    
+        # 3. Capture file bytes for each discovered canonical copy
+        captured_files: dict[str, tuple[CapturedFile, ...]] = {}
+        for entry in index_1.entries:
+            check_cancelled(cancelled)
+            key = canonical_key(entry)
+            if entry.canonical.status is not CanonicalStatus.OK:
+                captured_files[key] = ()
+                continue
+    
+    
+            root = Path(entry.canonical_path or entry.entrypoint_path)
+            if root.is_dir():
+                try:
+                    rel_paths = iter_files(root, cancelled=cancelled)
+                except IncompleteTreeError:
+                    raise
+                except OSError as err:
+                    reason = (
+                        "denied"
+                        if isinstance(err, PermissionError)
+                        else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+                    )
+                    raise IncompleteTreeError(path=root, reason=reason) from err
+                items: list[CapturedFile] = []
+                for rel in rel_paths:
+                    file_path = root / rel
+                    try:
+                        with file_path.open("rb") as f:
+                            chunks: list[bytes] = []
+                            while True:
+                                check_cancelled(cancelled)
+                                chunk = f.read(64 * 1024)
+                                if not chunk:
+                                    break
+                                chunks.append(chunk)
+                        data = b"".join(chunks)
+                    except PermissionError as err:
+                        raise IncompleteTreeError(path=file_path, reason="denied") from err
+                    except FileNotFoundError:
+                        raise SnapshotChanged(
+                            "Files changed while scanning. Press r to retry."
+                        ) from None
+                    except OSError as err:
+                        raise IncompleteTreeError(path=file_path, reason="io") from err
+                    fingerprint = hash_bytes(data)
+                    items.append(
+                        CapturedFile(
+                            relative_path=rel.as_posix(),
+                            data=data,
+                            fingerprint=fingerprint,
+                        )
+                    )
+                agg_hash = hash_captured_directory([(cf.relative_path, cf.fingerprint) for cf in items])
+                if agg_hash != entry.content_hash:
+>                   raise SnapshotChanged("Files changed while scanning. Press r to retry.")
+E                   skill_lens.core.snapshot.SnapshotChanged: Files changed while scanning. Press r to retry.
+
+skill_lens/core/snapshot.py:234: SnapshotChanged
+=========================== short test summary info ============================
+FAILED tests/test_incomplete_tree.py::test_truthful_early_capture_refusal_vs_snapshot_changed
+============================== 1 failed in 0.15s ===============================
+
+rc=1
+
+early capture refusal RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_incomplete_tree.py::test_truthful_early_capture_refusal_vs_snapshot_changed']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-approved-ab-mutations-cpptf31h
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_incomplete_tree.py .                                          [100%]
+
+============================== 1 passed in 0.12s ===============================
+
+rc=0

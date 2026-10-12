@@ -19,7 +19,8 @@ from skill_lens.core.discovery import (
     entry_scope,
     labels_for_entries,
 )
-from skill_lens.models.enums import ParseStatus, Scope, Severity
+from skill_lens.core.health import HealthCondition, classify_entry_health
+from skill_lens.models.enums import Scope, Severity
 from skill_lens.registry.loader import AgentDefinition, load_registry
 
 _SCOPE_ORDER = SCOPE_SPECIFICITY
@@ -39,6 +40,11 @@ class ScanEntry:
     content_hash: str | None
     description: str | None = None
     variant_label: str | None = None
+    traversal_complete: bool = True
+    error_reason: str | None = None
+    condition: HealthCondition = field(
+        default_factory=lambda: HealthCondition("ok", None, True, None, "")
+    )
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -52,6 +58,9 @@ class ScanEntry:
             "content_hash": self.content_hash,
             "description": self.description,
             "variant_label": self.variant_label,
+            "traversal_complete": self.traversal_complete,
+            "error_reason": self.error_reason,
+            "health_status": self.condition.code,
         }
 
 
@@ -108,20 +117,6 @@ class ScanReport:
         }
 
 
-#: How a scan entry's parse status ranks as a health problem.
-#:
-#: These deliberately mirror the severities ``doctor`` assigns to the same
-#: conditions (``malformed_frontmatter`` is an error, ``unreadable_root`` is a
-#: warning). If the two ever disagree, ``--fail-on`` on ``scan`` and ``doctor``
-#: would disagree about whether the same machine is healthy, which is worse than
-#: either being slightly conservative.
-_PARSE_STATUS_SEVERITY: dict[str, Severity] = {
-    ParseStatus.MALFORMED_YAML.value: Severity.ERROR,
-    ParseStatus.MISSING_DESCRIPTION.value: Severity.ERROR,
-    ParseStatus.UNREADABLE.value: Severity.WARNING,
-}
-
-
 def scan_severities(report: ScanReport) -> tuple[Severity, ...]:
     """Every health problem visible in a scan report, as severities.
 
@@ -132,11 +127,10 @@ def scan_severities(report: ScanReport) -> tuple[Severity, ...]:
     warning even though no entry can be produced for it, because the absence of
     skills in a blocked directory is itself the finding.
     """
-    severities: list[Severity] = [
-        _PARSE_STATUS_SEVERITY[skill.parse_status]
-        for skill in report.skills
-        if skill.parse_status in _PARSE_STATUS_SEVERITY
-    ]
+    severities: list[Severity] = []
+    for skill in report.skills:
+        if skill.condition.severity is not None:
+            severities.append(skill.condition.severity)
     severities.extend(Severity.WARNING for _ in report.unreadable)
     return tuple(severities)
 
@@ -182,6 +176,7 @@ def build_scan_report(
     skills: list[ScanEntry] = []
     for entry, scope in indexed:
         canonical = entry.canonical_path or entry.entrypoint_path
+        cond = classify_entry_health(entry)
         skills.append(
             ScanEntry(
                 name=entry.name,
@@ -194,6 +189,11 @@ def build_scan_report(
                 content_hash=entry.content_hash,
                 description=entry.parse.description if entry.parse else None,
                 variant_label=labels.get(canonical),
+                traversal_complete=entry.traversal_complete,
+                error_reason=(
+                    entry.traversal_error or (cond.reason if not cond.is_healthy else None)
+                ),
+                condition=cond,
             )
         )
     skills.sort(key=lambda s: (_SCOPE_ORDER.get(s.scope, 9), s.name))

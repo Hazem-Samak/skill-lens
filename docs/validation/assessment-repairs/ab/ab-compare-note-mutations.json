@@ -1,0 +1,59 @@
+{
+  "copy": "/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-J31ubQ/sl-ab-compare-note-mutations-3gqcbtzv",
+  "results": [
+    {
+      "label": "legacy indiscriminate diverged note on shared canonical CLEAN",
+      "test": "test_shared_canonical_symlink_farm_incomplete_merge_and_consumers",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "legacy indiscriminate diverged note on shared canonical MUTANT",
+      "test": "test_shared_canonical_symlink_farm_incomplete_merge_and_consumers",
+      "exit_code": 1,
+      "expected": 1
+    },
+    {
+      "label": "legacy indiscriminate diverged note on shared canonical RESTORE",
+      "test": "test_shared_canonical_symlink_farm_incomplete_merge_and_consumers",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "legacy indiscriminate diverged note on different canonicals CLEAN",
+      "test": "test_unreadable_nested_assets_prevents_shared_comparison",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "legacy indiscriminate diverged note on different canonicals MUTANT",
+      "test": "test_unreadable_nested_assets_prevents_shared_comparison",
+      "exit_code": 1,
+      "expected": 1
+    },
+    {
+      "label": "legacy indiscriminate diverged note on different canonicals RESTORE",
+      "test": "test_unreadable_nested_assets_prevents_shared_comparison",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "omit unreadable shared note entirely CLEAN",
+      "test": "test_compare_conditional_notes_incomplete_and_verified_trees",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "omit unreadable shared note entirely MUTANT",
+      "test": "test_compare_conditional_notes_incomplete_and_verified_trees",
+      "exit_code": 1,
+      "expected": 1
+    },
+    {
+      "label": "omit unreadable shared note entirely RESTORE",
+      "test": "test_compare_conditional_notes_incomplete_and_verified_trees",
+      "exit_code": 0,
+      "expected": 0
+    }
+  ]
+}

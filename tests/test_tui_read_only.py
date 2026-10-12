@@ -53,6 +53,9 @@ BANNED_OS_METHODS = frozenset(
         "rmdir",
         "rename",
         "replace",
+        "chmod",
+        "fchmod",
+        "lchmod",
         "system",
         "popen",
     }
@@ -66,6 +69,10 @@ BANNED_PATH_METHODS = frozenset(
         "mkdir",
         "touch",
         "rename",
+        "replace",
+        "chmod",
+        "symlink_to",
+        "hardlink_to",
         "rmdir",
     }
 )
@@ -94,6 +101,7 @@ class ReadOnlyASTVisitor(ast.NodeVisitor):
         self.sys_stream_aliases: dict[str, str] = {}
         self.module_open_aliases: set[str] = {"io", "builtins", "_io"}
         self.open_func_aliases: set[str] = {"open"}
+        self.os_open_aliases: set[str] = set()
         self.print_aliases: set[str] = {"print"}
 
     def _add_violation(self, node: ast.AST, reason: str) -> None:
@@ -151,6 +159,8 @@ class ReadOnlyASTVisitor(ast.NodeVisitor):
                 if alias.name in BANNED_OS_METHODS:
                     self.os_banned_func_aliases[alias.asname or alias.name] = alias.name
                     self._add_violation(node, f"Banned import of os.{alias.name}")
+                elif alias.name == "open":
+                    self.os_open_aliases.add(alias.asname or alias.name)
         elif module == "sys":
             for alias in node.names:
                 if alias.name in ("stdout", "stderr"):
@@ -174,6 +184,8 @@ class ReadOnlyASTVisitor(ast.NodeVisitor):
             self._add_violation(node, f"Banned call to os.{orig}() via alias '{node.func.id}'")
 
         # 3. Direct calls to open or open alias (e.g. reader("path", "w"))
+        elif isinstance(node.func, ast.Name) and node.func.id in self.os_open_aliases:
+            self._check_os_open_call(node)
         elif isinstance(node.func, ast.Name) and node.func.id in self.open_func_aliases:
             self._check_open_call(node, mode_pos_idx=1)
 
@@ -194,14 +206,17 @@ class ReadOnlyASTVisitor(ast.NodeVisitor):
             if attr_name in BANNED_PATH_METHODS:
                 self._add_violation(node, f"Banned Path write method '{attr_name}()'")
 
-            # Open calls: builtin open(), io.open(), _io.open(), Path.open(), p.open()
+            # Open calls: builtin open(), io.open(), _io.open(), Path.open(), p.open(), os.open()
             if attr_name == "open":
-                is_module_call = isinstance(obj, ast.Name) and (
-                    obj.id in self.module_open_aliases
-                    or obj.id in ("Path", "PosixPath", "WindowsPath")
-                )
-                mode_pos_idx = 1 if is_module_call else 0
-                self._check_open_call(node, mode_pos_idx=mode_pos_idx)
+                if isinstance(obj, ast.Name) and obj.id in self.os_aliases:
+                    self._check_os_open_call(node)
+                else:
+                    is_module_call = isinstance(obj, ast.Name) and (
+                        obj.id in self.module_open_aliases
+                        or obj.id in ("Path", "PosixPath", "WindowsPath")
+                    )
+                    mode_pos_idx = 1 if is_module_call else 0
+                    self._check_open_call(node, mode_pos_idx=mode_pos_idx)
 
             # Terminal writes via stdout.write / stderr.write
             if attr_name == "write":
@@ -217,6 +232,63 @@ class ReadOnlyASTVisitor(ast.NodeVisitor):
                 self._add_violation(node, "Banned Console.print() terminal write")
 
         self.generic_visit(node)
+
+    def _check_os_open_call(self, node: ast.Call) -> None:
+        """Inspect flags argument on os.open(path, flags, ...)."""
+        if any(isinstance(arg, ast.Starred) for arg in node.args):
+            self._add_violation(node, "Unresolved or non-literal flags in os.open call (*args)")
+            return
+
+        flags_arg: ast.expr | None = None
+        for kw in node.keywords:
+            if kw.arg == "flags":
+                flags_arg = kw.value
+                break
+            elif kw.arg is None:
+                self._add_violation(
+                    node, "Unresolved or non-literal flags in os.open call (**kwargs)"
+                )
+                return
+
+        if flags_arg is None and len(node.args) > 1:
+            flags_arg = node.args[1]
+
+        if flags_arg is None:
+            self._add_violation(node, "Missing flags in os.open call")
+            return
+
+        banned_flag_names = {
+            "O_WRONLY",
+            "O_RDWR",
+            "O_CREAT",
+            "O_APPEND",
+            "O_TRUNC",
+            "O_EXCL",
+        }
+
+        def contains_banned(expr: ast.expr) -> bool:
+            if isinstance(expr, ast.Attribute) and expr.attr in banned_flag_names:
+                return True
+            if isinstance(expr, ast.Name) and expr.id in banned_flag_names:
+                return True
+            if isinstance(expr, ast.BinOp):
+                return contains_banned(expr.left) or contains_banned(expr.right)
+            if isinstance(expr, ast.Constant):
+                return bool(isinstance(expr.value, int) and expr.value != 0)
+            return True
+
+        def is_clean_read_only(expr: ast.expr) -> bool:
+            if isinstance(expr, ast.Attribute) and expr.attr == "O_RDONLY":
+                return True
+            if isinstance(expr, ast.Name) and expr.id == "O_RDONLY":
+                return True
+            return bool(isinstance(expr, ast.Constant) and expr.value == 0)
+
+        if not is_clean_read_only(flags_arg):
+            if contains_banned(flags_arg):
+                self._add_violation(node, "Banned write flags in os.open call")
+            else:
+                self._add_violation(node, "Unresolved or non-literal flags in os.open call")
 
     def _check_open_call(self, node: ast.Call, *, mode_pos_idx: int) -> None:
         """Inspect mode arguments on open(...), io.open(...), Path.open(...), and obj.open(...)."""
@@ -412,6 +484,26 @@ MUTATION_CASES: list[tuple[str, str, str]] = [
         "def f(p):\n    p.write_text('bad')",
         "Banned Path write method 'write_text()'",
     ),
+    (
+        "path_replace",
+        "from pathlib import Path\nPath('x').replace('y')",
+        "Banned Path write method 'replace()'",
+    ),
+    (
+        "path_chmod",
+        "from pathlib import Path\nPath('x').chmod(0o777)",
+        "Banned Path write method 'chmod()'",
+    ),
+    (
+        "os_chmod",
+        "import os\nos.chmod('x', 0o777)",
+        "Banned call to os.chmod()",
+    ),
+    (
+        "os_open_wronly",
+        "import os\nos.open('x', os.O_WRONLY | os.O_CREAT)",
+        "Banned write flags in os.open call",
+    ),
     # Category 4: Open write and unresolved modes
     ("builtin_open_w", "open('x', 'w')", "Banned write mode 'w'"),
     ("builtin_open_kw_w", "open('x', mode='w')", "Banned write mode 'w'"),
@@ -568,6 +660,8 @@ MUTATION_CASES: list[tuple[str, str, str]] = [
 
 
 VALID_READ_SNIPPETS: list[str] = [
+    "import os\nos.open('data.md', os.O_RDONLY)",
+    "import os\nos.open('data.md', 0)",
     "open('x')",
     "open('x', 'r')",
     "open('x', mode='r')",
@@ -739,11 +833,20 @@ def test_synthetic_target_preservation_across_lifecycle(mock_home: Path) -> None
         if app.controller.selected_key:
             app.request_report("why", (app.controller.selected_key, "claude"))
             await pilot.pause()
-        # 5. Inject in-memory error and test navigation
-        gen = app.controller.current.generation if app.controller.current else 1
-        app.controller.accept_view_error(
-            "why", 999, gen, ("dummy", "claude"), RuntimeError("injected error")
+        # 5. Inject genuinely accepted error and test navigation
+        for _ in range(50):
+            if app.controller.current is not None:
+                break
+            await pilot.pause(0.02)
+        assert app.controller.current is not None, "Current snapshot must be available"
+        gen = app.controller.current.generation
+        req, _, _ = app.controller.request_view("why", ("fault_injection_target", "claude"))
+        assert req is not None, "Active view request must be registered"
+        accepted = app.controller.accept_view_error(
+            "why", req.request_id, gen, req.arguments, RuntimeError("injected error")
         )
+        assert accepted is True, "Injected view error must be accepted by controller"
+        assert app.controller.failed is True, "Controller must be marked failed on unexpected error"
         app._update_ui()
         await pilot.pause()
         # 6. Retry refresh
@@ -753,7 +856,7 @@ def test_synthetic_target_preservation_across_lifecycle(mock_home: Path) -> None
         await pilot.press("q")
 
     code = tui.run(mock_home, mock_home, headless=True, auto_pilot=full_lifecycle)
-    assert code == int(ExitCode.OK)
+    assert code == int(ExitCode.INTERNAL)
 
     # Capture state after complete lifecycle
     after = _snapshot_tree_state(mock_home)
@@ -768,3 +871,41 @@ def test_synthetic_target_preservation_across_lifecycle(mock_home: Path) -> None
         assert before_bytes == after_bytes, f"Bytes changed for {rel_path}"
         assert before_mode == after_mode, f"File mode changed for {rel_path}"
         assert before_symlink == after_symlink, f"Symlink target changed for {rel_path}"
+
+
+def test_target_preservation_when_cleanup_fails(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """When cleanup fails (e.g. exception during shutdown), the target directory
+    remains untouched and byte-identical, and the failure path is entered."""
+    build_scenario("claude_personal_beats_project", mock_home)
+    target_skill_dir = mock_home / ".claude" / "skills" / "deploy"
+    real_target = target_skill_dir / "SKILL.md"
+    symlink_file = target_skill_dir / "symlink_doc.txt"
+    symlink_file.symlink_to("SKILL.md")
+    real_target.chmod(0o640)
+
+    before = _snapshot_tree_state(mock_home)
+
+    cleanup_called = False
+    orig_close = tui.SessionController.close
+
+    def failing_close(self: tui.SessionController) -> int:
+        nonlocal cleanup_called
+        cleanup_called = True
+        orig_close(self)
+        raise RuntimeError("simulated cleanup failure")
+
+    monkeypatch.setattr(tui.SessionController, "close", failing_close)
+
+    async def quit_pilot(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.press("q")
+
+    with pytest.raises(RuntimeError, match="simulated cleanup failure"):
+        tui.run(mock_home, mock_home, headless=True, auto_pilot=quit_pilot)
+
+    assert cleanup_called is True, "Cleanup path must have been entered"
+
+    after = _snapshot_tree_state(mock_home)
+    assert before == after, "Target files modified despite cleanup failure"
