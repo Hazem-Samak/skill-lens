@@ -1,0 +1,6 @@
+=== CASE open_kwargs_unresolved ===
+Expected pattern: Unresolved or non-literal mode in open call
+Control violations: []
+Mutant violations: ['module.py:1: Unresolved or non-literal mode in open call (**kwargs)']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

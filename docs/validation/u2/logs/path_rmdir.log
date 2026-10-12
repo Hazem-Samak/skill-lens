@@ -1,0 +1,6 @@
+=== CASE path_rmdir ===
+Expected pattern: Banned Path write method 'rmdir()'
+Control violations: []
+Mutant violations: ["module.py:2: Banned Path write method 'rmdir()'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

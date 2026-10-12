@@ -1,0 +1,6 @@
+=== CASE os_alias_remove ===
+Expected pattern: Banned call to os.remove()
+Control violations: []
+Mutant violations: ['module.py:2: Banned call to os.remove()']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

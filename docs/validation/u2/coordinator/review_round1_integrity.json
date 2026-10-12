@@ -1,0 +1,9 @@
+{
+  "tracked_and_untracked_file_count": 279,
+  "digest_algorithm": "sha256(json.dumps(path_to_sha256, sort_keys=True).encode())",
+  "before_review_digest": "5cecf9d6d711e9f47086541f611a7f2aff0f888af29a68ec622b54d9fd9973d0",
+  "after_review_digest": "5cecf9d6d711e9f47086541f611a7f2aff0f888af29a68ec622b54d9fd9973d0",
+  "unchanged": true,
+  "verification_note": "Temporary per-file receipt was unavailable after interruption; recomputed aggregate matches the preserved original digest exactly.",
+  "helper_sha256": "633235ce2a0fe9844f7ac8da116e9ae7dfbc8d8d8a531164d48e642d3ed5825a"
+}

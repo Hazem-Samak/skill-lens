@@ -1,0 +1,6 @@
+=== CASE builtin_open_r_plus ===
+Expected pattern: Banned write mode 'r+'
+Control violations: []
+Mutant violations: ["module.py:1: Banned write mode 'r+' in open call"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

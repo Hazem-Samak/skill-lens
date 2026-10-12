@@ -1,0 +1,520 @@
+{
+  "platform": "Darwin arm64 Python 3.11.16",
+  "total": 73,
+  "killed": 73,
+  "survivors": 0,
+  "elapsed_seconds": 1.131,
+  "records": [
+    {
+      "case_id": "import_shutil",
+      "mutant_snippet": "import shutil",
+      "expected_pattern": "Banned import 'shutil'",
+      "outcome": "KILLED",
+      "log": "logs/import_shutil.log"
+    },
+    {
+      "case_id": "import_subprocess",
+      "mutant_snippet": "import subprocess",
+      "expected_pattern": "Banned import 'subprocess'",
+      "outcome": "KILLED",
+      "log": "logs/import_subprocess.log"
+    },
+    {
+      "case_id": "import_tempfile",
+      "mutant_snippet": "import tempfile",
+      "expected_pattern": "Banned import 'tempfile'",
+      "outcome": "KILLED",
+      "log": "logs/import_tempfile.log"
+    },
+    {
+      "case_id": "import_sqlite3",
+      "mutant_snippet": "import sqlite3",
+      "expected_pattern": "Banned import 'sqlite3'",
+      "outcome": "KILLED",
+      "log": "logs/import_sqlite3.log"
+    },
+    {
+      "case_id": "import_socket",
+      "mutant_snippet": "import socket",
+      "expected_pattern": "Banned import 'socket'",
+      "outcome": "KILLED",
+      "log": "logs/import_socket.log"
+    },
+    {
+      "case_id": "import_requests",
+      "mutant_snippet": "import requests",
+      "expected_pattern": "Banned import 'requests'",
+      "outcome": "KILLED",
+      "log": "logs/import_requests.log"
+    },
+    {
+      "case_id": "import_httpx",
+      "mutant_snippet": "import httpx",
+      "expected_pattern": "Banned import 'httpx'",
+      "outcome": "KILLED",
+      "log": "logs/import_httpx.log"
+    },
+    {
+      "case_id": "import_render",
+      "mutant_snippet": "import skill_lens.render",
+      "expected_pattern": "Banned render import",
+      "outcome": "KILLED",
+      "log": "logs/import_render.log"
+    },
+    {
+      "case_id": "from_render",
+      "mutant_snippet": "from skill_lens.render import render_scan",
+      "expected_pattern": "Banned render import from",
+      "outcome": "KILLED",
+      "log": "logs/from_render.log"
+    },
+    {
+      "case_id": "import_rich",
+      "mutant_snippet": "import rich",
+      "expected_pattern": "Banned import 'rich'",
+      "outcome": "KILLED",
+      "log": "logs/import_rich.log"
+    },
+    {
+      "case_id": "from_rich",
+      "mutant_snippet": "from rich.console import Console",
+      "expected_pattern": "Banned import from 'rich.console'",
+      "outcome": "KILLED",
+      "log": "logs/from_rich.log"
+    },
+    {
+      "case_id": "os_remove",
+      "mutant_snippet": "import os\nos.remove('target.txt')",
+      "expected_pattern": "Banned call to os.remove()",
+      "outcome": "KILLED",
+      "log": "logs/os_remove.log"
+    },
+    {
+      "case_id": "os_unlink",
+      "mutant_snippet": "import os\nos.unlink('target.txt')",
+      "expected_pattern": "Banned call to os.unlink()",
+      "outcome": "KILLED",
+      "log": "logs/os_unlink.log"
+    },
+    {
+      "case_id": "os_rmdir",
+      "mutant_snippet": "import os\nos.rmdir('target_dir')",
+      "expected_pattern": "Banned call to os.rmdir()",
+      "outcome": "KILLED",
+      "log": "logs/os_rmdir.log"
+    },
+    {
+      "case_id": "os_rename",
+      "mutant_snippet": "import os\nos.rename('a', 'b')",
+      "expected_pattern": "Banned call to os.rename()",
+      "outcome": "KILLED",
+      "log": "logs/os_rename.log"
+    },
+    {
+      "case_id": "os_replace",
+      "mutant_snippet": "import os\nos.replace('a', 'b')",
+      "expected_pattern": "Banned call to os.replace()",
+      "outcome": "KILLED",
+      "log": "logs/os_replace.log"
+    },
+    {
+      "case_id": "os_alias_remove",
+      "mutant_snippet": "import os as custom_os\ncustom_os.remove('x')",
+      "expected_pattern": "Banned call to os.remove()",
+      "outcome": "KILLED",
+      "log": "logs/os_alias_remove.log"
+    },
+    {
+      "case_id": "os_from_import_remove",
+      "mutant_snippet": "from os import remove as custom_rm\ncustom_rm('x')",
+      "expected_pattern": "Banned import of os.remove",
+      "outcome": "KILLED",
+      "log": "logs/os_from_import_remove.log"
+    },
+    {
+      "case_id": "os_system",
+      "mutant_snippet": "import os\nos.system('echo hi')",
+      "expected_pattern": "Banned call to os.system()",
+      "outcome": "KILLED",
+      "log": "logs/os_system.log"
+    },
+    {
+      "case_id": "os_popen",
+      "mutant_snippet": "import os\nos.popen('echo hi')",
+      "expected_pattern": "Banned call to os.popen()",
+      "outcome": "KILLED",
+      "log": "logs/os_popen.log"
+    },
+    {
+      "case_id": "os_alias_system",
+      "mutant_snippet": "import os as custom_os\ncustom_os.system('echo hi')",
+      "expected_pattern": "Banned call to os.system()",
+      "outcome": "KILLED",
+      "log": "logs/os_alias_system.log"
+    },
+    {
+      "case_id": "os_alias_popen",
+      "mutant_snippet": "import os as custom_os\ncustom_os.popen('echo hi')",
+      "expected_pattern": "Banned call to os.popen()",
+      "outcome": "KILLED",
+      "log": "logs/os_alias_popen.log"
+    },
+    {
+      "case_id": "os_from_import_system",
+      "mutant_snippet": "from os import system as sys_exec\nsys_exec('echo hi')",
+      "expected_pattern": "Banned import of os.system",
+      "outcome": "KILLED",
+      "log": "logs/os_from_import_system.log"
+    },
+    {
+      "case_id": "os_from_import_popen",
+      "mutant_snippet": "from os import popen as pipe_open\npipe_open('echo hi')",
+      "expected_pattern": "Banned import of os.popen",
+      "outcome": "KILLED",
+      "log": "logs/os_from_import_popen.log"
+    },
+    {
+      "case_id": "path_write_text",
+      "mutant_snippet": "from pathlib import Path\nPath('x').write_text('content')",
+      "expected_pattern": "Banned Path write method 'write_text()'",
+      "outcome": "KILLED",
+      "log": "logs/path_write_text.log"
+    },
+    {
+      "case_id": "path_write_bytes",
+      "mutant_snippet": "from pathlib import Path\nPath('x').write_bytes(b'content')",
+      "expected_pattern": "Banned Path write method 'write_bytes()'",
+      "outcome": "KILLED",
+      "log": "logs/path_write_bytes.log"
+    },
+    {
+      "case_id": "path_unlink",
+      "mutant_snippet": "from pathlib import Path\nPath('x').unlink()",
+      "expected_pattern": "Banned Path write method 'unlink()'",
+      "outcome": "KILLED",
+      "log": "logs/path_unlink.log"
+    },
+    {
+      "case_id": "path_mkdir",
+      "mutant_snippet": "from pathlib import Path\nPath('x').mkdir()",
+      "expected_pattern": "Banned Path write method 'mkdir()'",
+      "outcome": "KILLED",
+      "log": "logs/path_mkdir.log"
+    },
+    {
+      "case_id": "path_touch",
+      "mutant_snippet": "from pathlib import Path\nPath('x').touch()",
+      "expected_pattern": "Banned Path write method 'touch()'",
+      "outcome": "KILLED",
+      "log": "logs/path_touch.log"
+    },
+    {
+      "case_id": "path_rename",
+      "mutant_snippet": "from pathlib import Path\nPath('x').rename('y')",
+      "expected_pattern": "Banned Path write method 'rename()'",
+      "outcome": "KILLED",
+      "log": "logs/path_rename.log"
+    },
+    {
+      "case_id": "path_rmdir",
+      "mutant_snippet": "from pathlib import Path\nPath('x').rmdir()",
+      "expected_pattern": "Banned Path write method 'rmdir()'",
+      "outcome": "KILLED",
+      "log": "logs/path_rmdir.log"
+    },
+    {
+      "case_id": "path_instance_write",
+      "mutant_snippet": "def f(p):\n    p.write_text('bad')",
+      "expected_pattern": "Banned Path write method 'write_text()'",
+      "outcome": "KILLED",
+      "log": "logs/path_instance_write.log"
+    },
+    {
+      "case_id": "builtin_open_w",
+      "mutant_snippet": "open('x', 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/builtin_open_w.log"
+    },
+    {
+      "case_id": "builtin_open_kw_w",
+      "mutant_snippet": "open('x', mode='w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/builtin_open_kw_w.log"
+    },
+    {
+      "case_id": "builtin_open_a",
+      "mutant_snippet": "open('x', 'a')",
+      "expected_pattern": "Banned write mode 'a'",
+      "outcome": "KILLED",
+      "log": "logs/builtin_open_a.log"
+    },
+    {
+      "case_id": "builtin_open_x",
+      "mutant_snippet": "open('x', 'x')",
+      "expected_pattern": "Banned write mode 'x'",
+      "outcome": "KILLED",
+      "log": "logs/builtin_open_x.log"
+    },
+    {
+      "case_id": "builtin_open_r_plus",
+      "mutant_snippet": "open('x', 'r+')",
+      "expected_pattern": "Banned write mode 'r+'",
+      "outcome": "KILLED",
+      "log": "logs/builtin_open_r_plus.log"
+    },
+    {
+      "case_id": "builtin_open_unresolved",
+      "mutant_snippet": "m = 'w'\nopen('x', m)",
+      "expected_pattern": "Unresolved or non-literal mode",
+      "outcome": "KILLED",
+      "log": "logs/builtin_open_unresolved.log"
+    },
+    {
+      "case_id": "io_open_w",
+      "mutant_snippet": "import io\nio.open('x', 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/io_open_w.log"
+    },
+    {
+      "case_id": "builtins_open_w",
+      "mutant_snippet": "import builtins\nbuiltins.open('probe.md', 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/builtins_open_w.log"
+    },
+    {
+      "case_id": "builtins_open_kw_w",
+      "mutant_snippet": "import builtins\nbuiltins.open('probe.md', mode='w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/builtins_open_kw_w.log"
+    },
+    {
+      "case_id": "builtins_open_a",
+      "mutant_snippet": "import builtins\nbuiltins.open('probe.md', 'a')",
+      "expected_pattern": "Banned write mode 'a'",
+      "outcome": "KILLED",
+      "log": "logs/builtins_open_a.log"
+    },
+    {
+      "case_id": "builtins_open_x",
+      "mutant_snippet": "import builtins\nbuiltins.open('probe.md', 'x')",
+      "expected_pattern": "Banned write mode 'x'",
+      "outcome": "KILLED",
+      "log": "logs/builtins_open_x.log"
+    },
+    {
+      "case_id": "builtins_open_r_plus",
+      "mutant_snippet": "import builtins\nbuiltins.open('probe.md', 'r+')",
+      "expected_pattern": "Banned write mode 'r+'",
+      "outcome": "KILLED",
+      "log": "logs/builtins_open_r_plus.log"
+    },
+    {
+      "case_id": "builtins_open_unresolved",
+      "mutant_snippet": "import builtins\nm = 'w'\nbuiltins.open('probe.md', m)",
+      "expected_pattern": "Unresolved or non-literal mode",
+      "outcome": "KILLED",
+      "log": "logs/builtins_open_unresolved.log"
+    },
+    {
+      "case_id": "builtins_open_args_unresolved",
+      "mutant_snippet": "import builtins\nbuiltins.open('probe.md', *args)",
+      "expected_pattern": "Unresolved or non-literal mode in open call (*args)",
+      "outcome": "KILLED",
+      "log": "logs/builtins_open_args_unresolved.log"
+    },
+    {
+      "case_id": "builtins_open_kwargs_unresolved",
+      "mutant_snippet": "import builtins\nbuiltins.open('probe.md', **kwargs)",
+      "expected_pattern": "Unresolved or non-literal mode in open call (**kwargs)",
+      "outcome": "KILLED",
+      "log": "logs/builtins_open_kwargs_unresolved.log"
+    },
+    {
+      "case_id": "builtins_open_alias_module_w",
+      "mutant_snippet": "import builtins as b\nb.open('probe.md', 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/builtins_open_alias_module_w.log"
+    },
+    {
+      "case_id": "io_open_kw_w",
+      "mutant_snippet": "import io\nio.open('probe.md', mode='w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/io_open_kw_w.log"
+    },
+    {
+      "case_id": "io_open_alias_module_w",
+      "mutant_snippet": "import io as my_io\nmy_io.open('probe.md', 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/io_open_alias_module_w.log"
+    },
+    {
+      "case_id": "_io_open_w",
+      "mutant_snippet": "import _io\n_io.open('probe.md', 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/_io_open_w.log"
+    },
+    {
+      "case_id": "_io_open_kw_w",
+      "mutant_snippet": "import _io\n_io.open('probe.md', mode='w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/_io_open_kw_w.log"
+    },
+    {
+      "case_id": "_io_open_alias_module_w",
+      "mutant_snippet": "import _io as raw_io\nraw_io.open('probe.md', 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/_io_open_alias_module_w.log"
+    },
+    {
+      "case_id": "_io_open_alias_func_w",
+      "mutant_snippet": "from _io import open as raw_open\nraw_open('probe.md', 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/_io_open_alias_func_w.log"
+    },
+    {
+      "case_id": "path_class_open_w",
+      "mutant_snippet": "from pathlib import Path\nPath.open(p, 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/path_class_open_w.log"
+    },
+    {
+      "case_id": "path_open_w",
+      "mutant_snippet": "from pathlib import Path\nPath('x').open('w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/path_open_w.log"
+    },
+    {
+      "case_id": "path_open_kw_a",
+      "mutant_snippet": "from pathlib import Path\nPath('x').open(mode='a')",
+      "expected_pattern": "Banned write mode 'a'",
+      "outcome": "KILLED",
+      "log": "logs/path_open_kw_a.log"
+    },
+    {
+      "case_id": "path_open_unresolved",
+      "mutant_snippet": "from pathlib import Path\nPath('x').open(some_mode)",
+      "expected_pattern": "Unresolved or non-literal mode",
+      "outcome": "KILLED",
+      "log": "logs/path_open_unresolved.log"
+    },
+    {
+      "case_id": "bare_print",
+      "mutant_snippet": "print('hello')",
+      "expected_pattern": "Banned bare print()",
+      "outcome": "KILLED",
+      "log": "logs/bare_print.log"
+    },
+    {
+      "case_id": "sys_stdout_write",
+      "mutant_snippet": "import sys\nsys.stdout.write('hello')",
+      "expected_pattern": "Banned direct sys.stdout.write()",
+      "outcome": "KILLED",
+      "log": "logs/sys_stdout_write.log"
+    },
+    {
+      "case_id": "sys_stderr_write",
+      "mutant_snippet": "import sys\nsys.stderr.write('hello')",
+      "expected_pattern": "Banned direct sys.stderr.write()",
+      "outcome": "KILLED",
+      "log": "logs/sys_stderr_write.log"
+    },
+    {
+      "case_id": "from_sys_stdout_write",
+      "mutant_snippet": "from sys import stdout\nstdout.write('hello')",
+      "expected_pattern": "Banned direct stdout.write()",
+      "outcome": "KILLED",
+      "log": "logs/from_sys_stdout_write.log"
+    },
+    {
+      "case_id": "console_print",
+      "mutant_snippet": "console.print('hello')",
+      "expected_pattern": "Banned Console.print()",
+      "outcome": "KILLED",
+      "log": "logs/console_print.log"
+    },
+    {
+      "case_id": "io_open_alias_w",
+      "mutant_snippet": "from io import open as reader\nreader('x', 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/io_open_alias_w.log"
+    },
+    {
+      "case_id": "builtins_open_alias_w",
+      "mutant_snippet": "from builtins import open as reader\nreader('x', 'w')",
+      "expected_pattern": "Banned write mode 'w'",
+      "outcome": "KILLED",
+      "log": "logs/builtins_open_alias_w.log"
+    },
+    {
+      "case_id": "builtins_print_alias",
+      "mutant_snippet": "from builtins import print as output\noutput('bad')",
+      "expected_pattern": "Banned bare print() call",
+      "outcome": "KILLED",
+      "log": "logs/builtins_print_alias.log"
+    },
+    {
+      "case_id": "from_skill_lens_render",
+      "mutant_snippet": "from skill_lens import render as renderer",
+      "expected_pattern": "Banned render import from 'skill_lens'",
+      "outcome": "KILLED",
+      "log": "logs/from_skill_lens_render.log"
+    },
+    {
+      "case_id": "relative_render_import",
+      "mutant_snippet": "from .. import render",
+      "expected_pattern": "Banned render relative import",
+      "outcome": "KILLED",
+      "log": "logs/relative_render_import.log"
+    },
+    {
+      "case_id": "open_kwargs_unresolved",
+      "mutant_snippet": "open('x', **options)",
+      "expected_pattern": "Unresolved or non-literal mode in open call",
+      "outcome": "KILLED",
+      "log": "logs/open_kwargs_unresolved.log"
+    },
+    {
+      "case_id": "open_args_unresolved",
+      "mutant_snippet": "open('x', *args)",
+      "expected_pattern": "Unresolved or non-literal mode in open call",
+      "outcome": "KILLED",
+      "log": "logs/open_args_unresolved.log"
+    },
+    {
+      "case_id": "waiting_runner_quit_watchdog",
+      "mutant_snippet": "def mutant_run(home, cwd, **kw):\n    code = tui.run(home, cwd, **kw)\n    worker_finished.wait()\n    return code",
+      "expected_pattern": "Watchdog fired before run() returned! Runner blocked waiting for worker completion.",
+      "outcome": "KILLED",
+      "log": "logs/waiting_runner_quit_watchdog.log"
+    },
+    {
+      "case_id": "command_palette_screenshot_write_discriminator",
+      "mutant_snippet": "class MutantApp(SkillLensApp):\n    ENABLE_COMMAND_PALETTE = True\n    save_screenshot = App.save_screenshot",
+      "expected_pattern": "Sentinel caught write attempt to screenshot file",
+      "outcome": "KILLED",
+      "log": "logs/command_palette_screenshot_write_discriminator.log"
+    },
+    {
+      "case_id": "status_display_precedence_discriminator",
+      "mutant_snippet": "class MutantController(SessionController):\n    @property\n    def status(self):\n        if self.failed: return 'error'\n        if self.retry_message is not None: return 'retry'...",
+      "expected_pattern": "Expected status 'retry' but mutant returned 'error'",
+      "outcome": "KILLED",
+      "log": "logs/status_display_precedence_discriminator.log"
+    }
+  ]
+}

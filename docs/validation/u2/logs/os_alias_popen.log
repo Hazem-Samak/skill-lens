@@ -1,0 +1,6 @@
+=== CASE os_alias_popen ===
+Expected pattern: Banned call to os.popen()
+Control violations: []
+Mutant violations: ['module.py:2: Banned call to os.popen()']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

@@ -1,0 +1,22 @@
+{
+  "selector": "tests/test_tui_app.py::test_synchronous_run_quit_proof_before_blocked_capture_release",
+  "source_sha256": "633235ce2a0fe9844f7ac8da116e9ae7dfbc8d8d8a531164d48e642d3ed5825a",
+  "provenance": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u2-selector-2yw8go60/skill_lens/tui/__init__.py",
+  "records": [
+    {
+      "stage": "control",
+      "exit_code": 0,
+      "expected_failure": false
+    },
+    {
+      "stage": "mutant",
+      "exit_code": 1,
+      "expected_failure": true
+    },
+    {
+      "stage": "restore",
+      "exit_code": 0,
+      "expected_failure": false
+    }
+  ]
+}

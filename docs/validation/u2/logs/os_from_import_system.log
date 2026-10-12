@@ -1,0 +1,6 @@
+=== CASE os_from_import_system ===
+Expected pattern: Banned import of os.system
+Control violations: []
+Mutant violations: ['module.py:1: Banned import of os.system', "module.py:2: Banned call to os.system() via alias 'sys_exec'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

@@ -1,0 +1,6 @@
+=== CASE path_unlink ===
+Expected pattern: Banned Path write method 'unlink()'
+Control violations: []
+Mutant violations: ["module.py:2: Banned Path write method 'unlink()'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

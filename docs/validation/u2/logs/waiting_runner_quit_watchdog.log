@@ -1,0 +1,8 @@
+=== CASE waiting_runner_quit_watchdog ===
+Expected pattern: Watchdog fired before run() returned! Runner blocked waiting for worker completion.
+Phase 1: Control (shipped real_tui.run)
+Control outcome: CLEAN (real runner returned before worker released)
+Phase 2: Mutant (waiting runner that blocks for worker)
+Mutant caught: Watchdog fired before run() returned! Runner blocked waiting for worker completion.
+Phase 3: Restore (clean capture restored)
+Outcome: KILLED (discriminating selector fired watchdog on waiting runner)

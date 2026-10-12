@@ -1,0 +1,6 @@
+=== CASE bare_print ===
+Expected pattern: Banned bare print()
+Control violations: []
+Mutant violations: ['module.py:1: Banned bare print() call']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

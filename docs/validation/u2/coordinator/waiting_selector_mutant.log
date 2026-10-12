@@ -1,0 +1,73 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_synchronous_run_quit_proof_before_blocked_capture_release ________
+
+tmp_path = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-45/test_synchronous_run_quit_proo0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10c149fd0>
+
+    def test_synchronous_run_quit_proof_before_blocked_capture_release(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """CRITICAL PROOF: Synchronous run() returns cleanly on 'q' BEFORE a blocked
+        capture worker is released, proving teardown does not wait for ThreadPoolExecutor joins.
+
+        Uses an active watchdog timer that sets release/timeout signal. If the runner
+        wrongly waits for thread completion, the watchdog fires before run() returns,
+        causing the test to fail.
+        """
+        monkeypatch.setattr(paths, "home", lambda: tmp_path)
+        build_scenario("claude_personal_beats_project", tmp_path)
+
+        capture_started = threading.Event()
+        release_capture = threading.Event()
+        worker_finished = threading.Event()
+        watchdog_fired = threading.Event()
+
+        def blocked_capture(*, generation: int, home: Path, cwd: Path, cancelled: Any = None) -> Any:
+            capture_started.set()
+            # Block indefinitely until release_capture is explicitly set
+            release_capture.wait()
+            worker_finished.set()
+            raise CaptureCancelled()
+
+        monkeypatch.setattr("skill_lens.tui.app.capture_session", blocked_capture)
+
+        # Active watchdog: fires after 2.0s and forcibly sets release_capture so runner doesn't hang
+        def on_watchdog() -> None:
+            watchdog_fired.set()
+            release_capture.set()
+
+        watchdog = threading.Timer(2.0, on_watchdog)
+        watchdog.daemon = True
+        watchdog.start()
+
+        run_completed = False
+        try:
+
+            async def auto_quit(pilot: Pilot) -> None:
+                # Wait for capture worker to begin
+                for _ in range(50):
+                    if capture_started.is_set():
+                        break
+                    await pilot.pause(0.02)
+                assert capture_started.is_set(), "capture worker must have started"
+                # Press 'q' while capture worker is STILL BLOCKED!
+                assert not release_capture.is_set()
+                await pilot.press("q")
+
+            code = tui.run(tmp_path, tmp_path, headless=True, auto_pilot=auto_quit)
+            run_completed = True
+
+            # Assert watchdog NEVER fired! If runner waited on worker, watchdog fired after 2.0s.
+>           assert not watchdog_fired.is_set(), (
+                "Watchdog fired before run() returned! Runner blocked waiting for worker completion."
+            )
+E           AssertionError: Watchdog fired before run() returned! Runner blocked waiting for worker completion.
+E           assert not True
+E            +  where True = is_set()
+E            +    where is_set = <threading.Event at 0x10c155910: set>.is_set
+
+tests/test_tui_app.py:324: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_app.py::test_synchronous_run_quit_proof_before_blocked_capture_release
+1 failed in 2.59s

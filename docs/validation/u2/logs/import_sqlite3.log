@@ -1,0 +1,6 @@
+=== CASE import_sqlite3 ===
+Expected pattern: Banned import 'sqlite3'
+Control violations: []
+Mutant violations: ["module.py:1: Banned import 'sqlite3'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

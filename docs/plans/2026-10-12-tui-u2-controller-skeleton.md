@@ -322,3 +322,177 @@ agent-141af8854ec19adaf1791f93710423f2, initial run
 927ad9f6-8a8e-4fed-addd-af0160f6d578. All three initial turns settled with READY,
 not completion/acceptance. No product inspection or edits occurred in preparation.
 Actual implementation and final review run ids will be recorded on activation.
+
+## Implementation execution record
+
+Scheduling amendment frozen at 4badd02fa48a59ce3971f6c1ed1c8ff47bb0d55e,
+reference-only commit f28c08c0ea90d3f73c29f977835f33f53a62c11d. Both pushed,
+local/origin/remote hashes verified. Implementer activated after both commits.
+First implementation run 218628e0-f5e5-41a3-a190-8d05e5b2c02b settled without a
+final report after coordinator steering; this is not implementation acceptance.
+Active continuation run 2d366397-68da-4b6c-a114-a4356c5ff364 on the same sole
+implementer thread. Steering caused a new native turn; later corrections use
+queue mode to preserve active work. Partial files and original brief preserved.
+
+Coordinator reproduced an in-scope cache handoff defect using actual controller
+and in-memory sentinels, with zero filesystem reads: requesting cached Why A
+while Why B is active left B's event unset and accepted B's late result. Sent
+the implementer the reproduction and required stale-result AND stale-error
+regressions. Verification and final independent reviews remain pending.
+
+Coordinator pre-review batch also reproduced mounted widget updates after
+controller close, swallowed cleanup faults returning 0, and six known alias/
+unresolved-mode survivors in the actual source checker. Requested lifecycle
+cleanup, real worker-ordering tests, a discriminating blocked-quit watchdog and
+mutation, and fixture preservation through errors/symlinks. These are existing
+acceptance corrections, not an operative scope amendment.
+
+A legacy U1 absence test removed only sys.modules['skill_lens.tui']; after U2
+appeared on disk it launched a real non-headless UI without explicit sandbox and
+hung. Coordinator stopped its owned pytest process with SIGINT and diagnosed the
+exact test using a 5-second faulthandler run with temporary HOME/XDG. Both new
+headless CLI cases passed individually. The legacy fault regression now inserts
+None in sys.modules to force an import failure without entering the app; no
+assertions are removed. Record this isolation failure in the final walkthrough.
+
+Run 2d366397-68da-4b6c-a114-a4356c5ff364 completed with a partial narrative, not
+the required implementer report. Queued corrections activated continuation run
+304bae73-cc7b-447f-99c5-25675649e18a. No implementation acceptance yet. Coordinator
+also identified validation harness repo-root error (parents[2] pointed at docs,
+creating owned docs/docs outputs) and requested corrected provenance/output
+paths, computed mutation summaries and a failing exit for survivors.
+
+Further concrete pre-review corrections: installed Textual 8.2.8 exposed an
+inherited Screenshot command through the default command palette. Source
+inspection only, no screenshot executed; requested disabling palette and known
+file-delivery APIs with real key/action regression and sensitivity proof. Also
+requested correct current version subtitle, honest non-daemon executor limits,
+expected retry visibility after sticky fault, unexpected-report fault visibility
+during refresh, and actual CLI plain-English output for framework startup faults.
+An in-flight report fixture constructed unsupported ResolutionReport fields;
+requested reusing the real snapshot service so its late success proof cannot
+pass by accidentally dropping TypeError.
+
+Coordinator mutation proof uses the ACTUAL shipped watchdog pytest selector in
+an owned disposable clone (verified import provenance), synthetic HOME/XDG and
+no cache writes. Added default-executor joining before loop.close() only in the
+clone: clean control exit 0, mutant exit 1 with the specific watchdog assertion,
+restore exit 0. Receipt and all three logs in docs/validation/u2/coordinator/.
+Shipped helper SHA-256 at proof:
+633235ce2a0fe9844f7ac8da116e9ae7dfbc8d8d8a531164d48e642d3ed5825a.
+Production source was never mutated. Final source hash must match this proof
+or coordinator repeats it before acceptance. Final independent reviews pending.
+
+## Final review round 1 and resumed corrections
+
+Both actual final-review runs completed: Muse thread
+agent-7e8d8d9ed9a16500042a416258338151, run
+opencode-turn-6f1e251b-41e9-4b51-8860-4ded7d532447 (pass, no blockers);
+MiMo thread agent-141af8854ec19adaf1791f93710423f2, run
+10e51b9f-c1d9-4aa8-b0d1-04f692e6dc39 (changes_required).
+Earlier READY notifications are preparation receipts, not these verdicts.
+Complete reports are in docs/validation/u2/coordinator/review_*_round1.md.
+Coordinator independently verified 719 passed, 1 existing filesystem skip,
+93.89% coverage; strict mypy 34 files, ruff and format clean; 51/51 mutations
+detected. Logs and actual-watchdog selector proof are in the same directory.
+After interruption the temporary per-file fingerprint receipt was unavailable.
+Recomputing all 279 file hashes and the sorted-JSON aggregate reproduced the
+original digest exactly: 5cecf9d6d711e9f47086541f611a7f2aff0f888af29a68ec622b54d9fd9973d0.
+Thus neither critic changed the reviewed files. Integrity receipt retained.
+
+Accepted MiMo blocker, reproduced independently: module-qualified
+builtins.open and _io.open use a filename at positional index 0 and a mode at
+index 1, but the checker treated them like Path.open. A positional write mode
+escaped detection, and some filenames caused false positives on valid reads.
+Require module/alias signature resolution, write/unresolved-mode mutations and
+positive read controls. This repairs the existing guard contract.
+Accepted focused proof suggestions: use the public set_selected_key API in the
+real-worker selection-change test (it previously manipulated internal request
+state); exercise actual worker report-error, Diff and Compare handoffs; assert
+the owned loop closes after constructor failure. Extend known-process guard
+cases to os.system/os.popen and aliases without claiming exhaustive protection.
+Do not execute mutation snippets; inspect their syntax in disposable trees.
+
+Deferred non-blocking suggestions: Textual private exception hooks remain
+version-sensitive; keep the existing Textual 8.2.8 environment and actual-fault
+regressions, with no dependency edits. The typed None check is harmless.
+Explicit read-mode kwargs cannot change that mode without TypeError; document
+this guard rationale. Implicit event-loop policy creation on older Python is a
+minor compatibility consideration; this correction leaves runtime sources and
+the proven prompt-quit helper unchanged. Indirect getattr/unknown receiver
+operations remain outside the stated known-source checker.
+
+The resumed user instruction preserves authorization and requires checking
+completed operations before continuing. Both critics and the implementer were
+confirmed terminal before the correction batch. Gemini alone edits the focused
+tests/guard/mutation evidence and factual walkthrough; no product source changes
+are requested. Fresh targeted Muse and MiMo contexts follow coordinator checks.
+This is rework within the frozen U2 contract, not a scope or execution amendment.
+For that focused follow-up Sol selects Medium effort. The refreshed live catalog
+now exposes Muse variant=medium; MiMo thinkingLevel=medium is available. These
+requested settings are session records under the user's explicit effort policy,
+not new defaults or provider-confirmed execution claims. U2 remains unaccepted
+until corrections, current gates and the affected independent reviews pass.
+
+Historical clarification: the final legacy missing-module regression patches
+importlib.import_module specifically, rather than the intermediate sys.modules
+approach described above. All launch tests use synthetic HOME/sandbox isolation.
+
+Correction run 441ada86-58fb-4be7-a245-e88278da5208 completed. Coordinator
+confirmed every production file unchanged against the recovered first-review
+fingerprints, including helper SHA-256 633235ce2a0fe9844f7ac8da116e9ae7dfbc8d8d8a531164d48e642d3ed5825a.
+Guard reproductions now reject positional builtins/_io writes and accept reads
+with filenames x/data.md; Path instance semantics remain correct. Public
+selection invalidation, actual worker report errors, Diff/Compare adapters and
+constructor-loop closure assertions inspected. Direct coordinator gates:
+785 passed, 1 existing filesystem skip, 94.30% coverage; strict mypy 34 files,
+ruff check clean, format check 115 files; 73/73 mutations detected. New logs and
+guard reproduction in docs/validation/u2/coordinator/round2/; original coordinator
+logs retained. Trimmed only trailing whitespace in the saved watchdog failure
+log for a clean commit diff, preserving all failure text and assertions.
+
+## Final acceptance and execution receipt
+
+Fresh targeted pair created in operation
+gateway:create:44099af20d823e9cb483673e130d2fcd, request
+skill-lens-u2-final-r2-targeted-pair-20261012. Muse thread
+agent-cfce370f8e451bf82456d0f3fda3569a, run
+opencode-turn-20f37dd7-159e-4c90-b767-69d2da44f7a4: pass, no blockers.
+MiMo thread agent-19728f71029df8aea3dc66aa611ebe8f, run
+f498dbf5-ecfb-4a8e-aa2c-8526803cfcdc: pass, no blockers. Full reports retained
+in docs/validation/u2/coordinator/round2/. Native creation receipt records
+Muse variant=medium and MiMo thinkingLevel=medium; model/provider slugs match
+the authorized roster. Actual provider family/effort execution stays unverified.
+
+Before/after 310-file fingerprints match exactly:
+81265c6c482e73b2c7d3616c48946bbba2ae36f227d655ea9760a4669772f599.
+Both critics left files unchanged. All nine owned U2 threads listed idle and
+the implementer and critic runs were confirmed terminal, with no owned active
+or queued work. No new worktrees were created or require cleanup.
+Required independent acceptance is satisfied. Coordinator accepts the corrected
+guard and meaningful actual-worker/public-selection/lifecycle proof under the
+unchanged frozen U2 contract. Only allowed product/test/record paths differ.
+
+MiMo round-2 non-blocking suggestions: defer bounded waits in the fast report
+adapter test as future hardening (no reproduced timing failure); accept the
+receipt improvement by recording the exact tested snippets with guard outcomes.
+These administrative acceptance records do not alter code or the frozen plan.
+No blocker is deferred. U3 or release work is not authorized by this acceptance.
+
+Launch accounting: 9 native child threads total: 3 product planning critics,
+1 scheduling critic, 1 sole implementer, and 4 final-review critic contexts.
+The planned 5 grew by 1 targeted planning follow-up, 1 scheduling critic, and
+2 targeted final-review follow-ups. The worker and first final pair had 3
+administrative READY turns; these are not implementation or review completion.
+Product planning had 2 rounds; final review had 2 rounds. Worker corrections
+used the same sole-implementer context, with the final focused correction run
+441ada86-58fb-4be7-a245-e88278da5208 completing before the last critic wave.
+Tokens/cost metrics unavailable; no efficiency or savings claim is made.
+Earlier frozen-plan commits are already synchronized to GitHub. Coordinator
+owns the accepted implementation commit and its immediate push/sync check.
+
+Final delivery checks after administrative acceptance records: 785 passed,
+1 existing filesystem skip, 94.30%; strict mypy 34 files, ruff check clean,
+format check 117 files. Logs in docs/validation/u2/coordinator/final/.
+All reviewed Python code/test/validation files remain byte-identical; JSON
+receipts parse and frozen-plan changes are append-only execution records.

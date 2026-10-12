@@ -1,0 +1,6 @@
+=== CASE builtins_print_alias ===
+Expected pattern: Banned bare print() call
+Control violations: []
+Mutant violations: ['module.py:2: Banned bare print() call']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

@@ -56,6 +56,7 @@ def _install_fake_tui(monkeypatch: pytest.MonkeyPatch, runner_func: Any) -> type
 @pytest.mark.parametrize("plain", [True, False])
 @pytest.mark.parametrize("textual_available", [True, False])
 def test_bare_invocation_stream_matrix(
+    mock_home: Path,
     monkeypatch: pytest.MonkeyPatch,
     stdin_tty: bool,
     stdout_tty: bool,
@@ -149,7 +150,7 @@ def test_tui_help_without_textual(monkeypatch: pytest.MonkeyPatch) -> None:
     assert "--cwd" in result.stdout
 
 
-def test_plain_tui_explicitly_launches(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_plain_tui_explicitly_launches(mock_home: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """`--plain tui` ignores root --plain and still explicitly dispatches tui."""
     called_with: list[tuple[Path, Path]] = []
 
@@ -160,7 +161,7 @@ def test_plain_tui_explicitly_launches(monkeypatch: pytest.MonkeyPatch) -> None:
     _install_fake_tui(monkeypatch, fake_runner)
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
 
-    result = runner.invoke(app, ["--plain", "tui"])
+    result = runner.invoke(app, ["--plain", "tui", "--sandbox", str(mock_home)])
     assert result.exit_code == 0
     assert len(called_with) == 1
 
@@ -221,6 +222,7 @@ def test_bypass_no_optional_probe_or_import_for_line_and_fallback(
 
 
 def test_explicit_tui_launches_without_terminal_checks(
+    mock_home: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Explicit `skill-lens tui` bypasses terminal isatty checks."""
@@ -235,15 +237,17 @@ def test_explicit_tui_launches_without_terminal_checks(
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, fake_runner)
 
-    result = runner.invoke(app, ["tui"])
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == 0
     assert called == [True]
 
 
-def test_explicit_tui_missing_textual_exits_2(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_explicit_tui_missing_textual_exits_2(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Explicit `skill-lens tui` without Textual outputs install hint to stderr and exits 2."""
     monkeypatch.setattr(cli, "_is_textual_available", lambda: False)
-    result = runner.invoke(app, ["tui"])
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.USAGE)
     assert "Error:" in result.stderr
     assert "skill-lens-cli[tui]" in result.stderr
@@ -304,23 +308,28 @@ def test_explicit_tui_escaped_cwd_rejected_before_availability_check(
 # --- Exit Code Propagation & Fault Boundaries ------------------------------
 
 
-def test_tui_runner_exit_code_0_propagates(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_tui_runner_exit_code_0_propagates(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Runner returning 0 exits process with 0."""
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, lambda h, c: 0)
-    result = runner.invoke(app, ["tui"])
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == 0
 
 
-def test_tui_runner_exit_code_3_propagates(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_tui_runner_exit_code_3_propagates(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Runner returning 3 exits process with 3."""
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, lambda h, c: 3)
-    result = runner.invoke(app, ["tui"])
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
 
 
 def test_tui_runner_unexpected_exception_exits_3_no_traceback(
+    mock_home: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Runner throwing an unexpected exception prints plain error to stderr and exits 3."""
@@ -331,7 +340,7 @@ def test_tui_runner_unexpected_exception_exits_3_no_traceback(
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, exploding_runner)
 
-    result = runner.invoke(app, ["tui"])
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     clean_err = " ".join(result.stderr.split())
     assert (
@@ -342,15 +351,24 @@ def test_tui_runner_unexpected_exception_exits_3_no_traceback(
 
 
 def test_tui_missing_u2_module_with_textual_present_exits_3_no_traceback(
+    mock_home: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """When Textual is present but `skill_lens.tui` does not exist (U1 state),
     launch fails as internal fault (3) rather than missing extra (2), with no traceback.
     """
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
-    monkeypatch.delitem(sys.modules, "skill_lens.tui", raising=False)
 
-    result = runner.invoke(app, ["tui"])
+    orig_import_module = importlib.import_module
+
+    def failing_import(name: str, *args: Any, **kwargs: Any) -> Any:
+        if name == "skill_lens.tui":
+            raise ModuleNotFoundError("No module named 'skill_lens.tui'")
+        return orig_import_module(name, *args, **kwargs)
+
+    monkeypatch.setattr(importlib, "import_module", failing_import)
+
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     assert "Error: Failed to start the terminal UI:" in result.stderr
     assert "skill_lens.tui" in result.stderr
@@ -359,16 +377,17 @@ def test_tui_missing_u2_module_with_textual_present_exits_3_no_traceback(
 
 
 def test_tui_bad_or_missing_callable_exits_3_no_traceback(
+    mock_home: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """When `skill_lens.tui` exists but does not export a callable `run`, exit 3."""
+    """When `skill_lens.tui` exists but does not expose a callable `run`, exit 3."""
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
 
     fake_mod = types.ModuleType("skill_lens.tui")
     fake_mod.run = "not_a_callable"
     monkeypatch.setitem(sys.modules, "skill_lens.tui", fake_mod)
 
-    result = runner.invoke(app, ["tui"])
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     assert "Error: Failed to start the terminal UI:" in result.stderr
     clean_err = " ".join(result.stderr.split())
@@ -377,6 +396,7 @@ def test_tui_bad_or_missing_callable_exits_3_no_traceback(
 
 
 def test_tui_unrelated_dependency_import_error_exits_3_no_traceback(
+    mock_home: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """When importing `skill_lens.tui` fails due to an unrelated dependency import failure,
@@ -384,14 +404,16 @@ def test_tui_unrelated_dependency_import_error_exits_3_no_traceback(
     """
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
 
+    orig_import = importlib.import_module
+
     def failing_import(name: str, *args: Any, **kwargs: Any) -> Any:
         if name == "skill_lens.tui":
             raise ImportError("No module named 'unrelated_dependency'")
-        return importlib.__import__(name, *args, **kwargs)
+        return orig_import(name, *args, **kwargs)
 
     monkeypatch.setattr(importlib, "import_module", failing_import)
 
-    result = runner.invoke(app, ["tui"])
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     assert (
         "Error: Failed to start the terminal UI: No module named 'unrelated_dependency'"
@@ -401,6 +423,7 @@ def test_tui_unrelated_dependency_import_error_exits_3_no_traceback(
 
 
 def test_textual_availability_exception_exits_3_plain_english(
+    mock_home: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """When find_spec raises an unexpected exception (e.g. ValueError / OSError),
@@ -413,7 +436,7 @@ def test_textual_availability_exception_exits_3_plain_english(
     monkeypatch.setattr(importlib.util, "find_spec", broken_find_spec)
 
     # 1. Test explicit tui command
-    res_explicit = runner.invoke(app, ["tui"])
+    res_explicit = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert res_explicit.exit_code == int(ExitCode.INTERNAL)
     clean_err = " ".join(res_explicit.stderr.split())
     assert (
@@ -435,6 +458,7 @@ def test_textual_availability_exception_exits_3_plain_english(
 
 
 def test_literal_bracket_details_rendered_safely(
+    mock_home: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Exception messages containing square brackets must be rendered literally
@@ -447,7 +471,7 @@ def test_literal_bracket_details_rendered_safely(
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, bracket_exploding_runner)
 
-    result = runner.invoke(app, ["tui"])
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     clean_err = " ".join(result.stderr.split())
     assert "[tag:error] device [127.0.0.1:8080] failed [fatal]" in clean_err
@@ -469,3 +493,61 @@ def test_stream_isatty_exception_resilience() -> None:
 def test_is_textual_available_real_environment() -> None:
     """In the test environment, Textual was installed via the dev extra."""
     assert cli._is_textual_available() is True
+
+
+# --- Real Lazy Runner CLI Sandbox Integration (Assignment U2) --------------
+
+
+def test_cli_tui_sandbox_real_runner_e2e_normal_quit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Invoke CLI tui --sandbox <tmp> through real lazy runner and SkillLensApp."""
+    build_scenario("claude_personal_beats_project", tmp_path)
+    from textual.pilot import Pilot
+
+    import skill_lens.tui as real_tui
+
+    orig_run = real_tui.run
+
+    def headless_autopilot_run(home: Path, cwd: Path) -> int:
+        async def auto_quit(pilot: Pilot) -> None:
+            await pilot.pause()
+            await pilot.press("q")
+
+        return orig_run(home, cwd, headless=True, auto_pilot=auto_quit)
+
+    monkeypatch.setattr(real_tui, "run", headless_autopilot_run)
+
+    result = runner.invoke(app, ["tui", "--sandbox", str(tmp_path)])
+    assert result.exit_code == 0
+    assert "Traceback" not in result.stderr
+
+
+def test_cli_tui_sandbox_real_runner_e2e_internal_fault_exits_3(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """CLI tui --sandbox with internal fault through real runner exits 3 without traceback."""
+    build_scenario("claude_personal_beats_project", tmp_path)
+    from textual.pilot import Pilot
+
+    import skill_lens.tui as real_tui
+
+    def failing_capture(*args: Any, **kwargs: Any) -> Any:
+        raise RuntimeError("Unrecoverable disk error")
+
+    monkeypatch.setattr("skill_lens.tui.app.capture_session", failing_capture)
+
+    orig_run = real_tui.run
+
+    def headless_autopilot_run(home: Path, cwd: Path) -> int:
+        async def auto_quit(pilot: Pilot) -> None:
+            await pilot.pause()
+            await pilot.press("q")
+
+        return orig_run(home, cwd, headless=True, auto_pilot=auto_quit)
+
+    monkeypatch.setattr(real_tui, "run", headless_autopilot_run)
+
+    result = runner.invoke(app, ["tui", "--sandbox", str(tmp_path)])
+    assert result.exit_code == int(ExitCode.INTERNAL)
+    assert "Traceback" not in result.stderr

@@ -1,0 +1,6 @@
+=== CASE from_sys_stdout_write ===
+Expected pattern: Banned direct stdout.write()
+Control violations: []
+Mutant violations: ["module.py:2: Banned direct stdout.write() via alias 'stdout'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

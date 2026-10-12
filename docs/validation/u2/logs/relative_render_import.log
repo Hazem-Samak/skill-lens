@@ -1,0 +1,6 @@
+=== CASE relative_render_import ===
+Expected pattern: Banned render relative import
+Control violations: []
+Mutant violations: ['module.py:1: Banned render relative import']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

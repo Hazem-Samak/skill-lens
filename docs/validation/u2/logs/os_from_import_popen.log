@@ -1,0 +1,6 @@
+=== CASE os_from_import_popen ===
+Expected pattern: Banned import of os.popen
+Control violations: []
+Mutant violations: ['module.py:1: Banned import of os.popen', "module.py:2: Banned call to os.popen() via alias 'pipe_open'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

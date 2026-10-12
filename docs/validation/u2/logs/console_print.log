@@ -1,0 +1,6 @@
+=== CASE console_print ===
+Expected pattern: Banned Console.print()
+Control violations: []
+Mutant violations: ['module.py:1: Banned Console.print() terminal write']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

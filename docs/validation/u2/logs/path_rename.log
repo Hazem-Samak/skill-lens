@@ -1,0 +1,6 @@
+=== CASE path_rename ===
+Expected pattern: Banned Path write method 'rename()'
+Control violations: []
+Mutant violations: ["module.py:2: Banned Path write method 'rename()'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

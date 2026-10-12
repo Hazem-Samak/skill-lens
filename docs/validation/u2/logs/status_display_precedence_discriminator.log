@@ -1,0 +1,10 @@
+=== CASE status_display_precedence_discriminator ===
+Expected pattern: Expected status 'retry' but mutant returned 'error'
+Phase 1: Control (shipped SessionController)
+Control passed: retry outranks failure, report error outranks loading.
+Phase 2: Mutant 1 (status checks failed before retry_message)
+Mutant 1 caught: Expected status 'retry' but mutant returned 'error'
+Phase 2: Mutant 2 (status checks pending_generation before failed)
+Mutant 2 caught: Expected status 'error' but mutant returned 'loading'
+Phase 3: Restore (clean SessionController verified)
+Outcome: KILLED (discriminator caught both defective status ordering mutants)

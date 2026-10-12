@@ -1,0 +1,6 @@
+=== CASE builtins_open_args_unresolved ===
+Expected pattern: Unresolved or non-literal mode in open call (*args)
+Control violations: []
+Mutant violations: ['module.py:2: Unresolved or non-literal mode in open call (*args)']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

@@ -1,0 +1,6 @@
+=== CASE builtins_open_x ===
+Expected pattern: Banned write mode 'x'
+Control violations: []
+Mutant violations: ["module.py:2: Banned write mode 'x' in open call"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

@@ -1,0 +1,6 @@
+=== CASE path_write_bytes ===
+Expected pattern: Banned Path write method 'write_bytes()'
+Control violations: []
+Mutant violations: ["module.py:2: Banned Path write method 'write_bytes()'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

@@ -1,0 +1,45 @@
+{
+  "builtins_write": {
+    "expected_rejection": true,
+    "violations": [
+      "probe.py:2: Banned write mode 'w' in open call"
+    ],
+    "source": "import builtins\nbuiltins.open('probe.md','w')\n"
+  },
+  "builtins_read_filename_x": {
+    "expected_rejection": false,
+    "violations": [],
+    "source": "import builtins\nbuiltins.open('x','r')\n"
+  },
+  "builtins_read_filename_data": {
+    "expected_rejection": false,
+    "violations": [],
+    "source": "import builtins\nbuiltins.open('data.md','r')\n"
+  },
+  "_io_write": {
+    "expected_rejection": true,
+    "violations": [
+      "probe.py:2: Banned write mode 'w' in open call"
+    ],
+    "source": "import _io\n_io.open('probe.md','w')\n"
+  },
+  "module_alias_write": {
+    "expected_rejection": true,
+    "violations": [
+      "probe.py:2: Banned write mode 'w' in open call"
+    ],
+    "source": "import builtins as b\nb.open('probe.md','w')\n"
+  },
+  "path_instance_write": {
+    "expected_rejection": true,
+    "violations": [
+      "probe.py:3: Banned write mode 'w' in open call"
+    ],
+    "source": "from pathlib import Path\np=Path('probe.md')\np.open('w')\n"
+  },
+  "path_instance_read": {
+    "expected_rejection": false,
+    "violations": [],
+    "source": "from pathlib import Path\np=Path('probe.md')\np.open('r')\n"
+  }
+}

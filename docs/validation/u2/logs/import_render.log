@@ -1,0 +1,6 @@
+=== CASE import_render ===
+Expected pattern: Banned render import
+Control violations: []
+Mutant violations: ["module.py:1: Banned render import 'skill_lens.render'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

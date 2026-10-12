@@ -1,0 +1,6 @@
+=== CASE os_replace ===
+Expected pattern: Banned call to os.replace()
+Control violations: []
+Mutant violations: ['module.py:2: Banned call to os.replace()']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

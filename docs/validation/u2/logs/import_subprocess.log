@@ -1,0 +1,6 @@
+=== CASE import_subprocess ===
+Expected pattern: Banned import 'subprocess'
+Control violations: []
+Mutant violations: ["module.py:1: Banned import 'subprocess'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

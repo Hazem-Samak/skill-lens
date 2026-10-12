@@ -1,0 +1,6 @@
+=== CASE builtin_open_unresolved ===
+Expected pattern: Unresolved or non-literal mode
+Control violations: []
+Mutant violations: ['module.py:2: Unresolved or non-literal mode in open call']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

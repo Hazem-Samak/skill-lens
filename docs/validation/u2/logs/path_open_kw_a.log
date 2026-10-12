@@ -1,0 +1,6 @@
+=== CASE path_open_kw_a ===
+Expected pattern: Banned write mode 'a'
+Control violations: []
+Mutant violations: ["module.py:2: Banned write mode 'a' in open call"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

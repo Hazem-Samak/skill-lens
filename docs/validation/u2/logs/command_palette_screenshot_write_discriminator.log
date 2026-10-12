@@ -1,0 +1,8 @@
+=== CASE command_palette_screenshot_write_discriminator ===
+Expected pattern: Sentinel caught write attempt to screenshot file
+Phase 1: Control (shipped SkillLensApp)
+Control outcome: CLEAN (zero writes, empty string return)
+Phase 2: Mutant (App with un-neutralized save_screenshot)
+Mutant caught: Sentinel caught write attempt to screenshot file: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/u2_mut_command_palette_screenshot_write_discriminator_tjua9xz0/mutant_shot.svg
+Phase 3: Restore (clean SkillLensApp verified)
+Outcome: KILLED (discriminator caught forbidden screenshot write)

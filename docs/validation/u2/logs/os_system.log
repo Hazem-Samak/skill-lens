@@ -1,0 +1,6 @@
+=== CASE os_system ===
+Expected pattern: Banned call to os.system()
+Control violations: []
+Mutant violations: ['module.py:2: Banned call to os.system()']
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)

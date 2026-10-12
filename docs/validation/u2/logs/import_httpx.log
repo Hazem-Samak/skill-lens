@@ -1,0 +1,6 @@
+=== CASE import_httpx ===
+Expected pattern: Banned import 'httpx'
+Control violations: []
+Mutant violations: ["module.py:1: Banned import 'httpx'"]
+Restore violations: []
+Outcome: KILLED (detected strictly matching pattern)
