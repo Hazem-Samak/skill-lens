@@ -1,7 +1,7 @@
 <!-- Authorized supplied implementation plan; imported without a planning loop. -->
 Status: Agreed
 Authorization: User instruction on 2026-10-12 to address the attached assessment through the implementation loop, skipping the planning loop; OpenCode V2 selected explicitly.
-Reference: pending
+Reference: fe6f89bc55eb3f4f04187567b968dd96ae9c86c1
 Risk: High
 
 Execution contract: Section 6 of the supplied assessment is the operative staged plan. The assessment below is preserved verbatim. Commit verified changes as coordinator under the implementation loop; do not push, publish, tag, or replace existing dist artifacts. Sole implementer: Antigravity gemini-3.8-flash-high. Independent critics: OpenCode opencode/space-bunny-free variant=max and MCode m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking thinkingEffort=xhigh. Space Bunny family identity is unverified; the user explicitly selected this named pair. OpenCode support: V2 only; disclose V1 as unsupported. Other version/surface corrections must follow primary evidence, preserving supported legacy roots. Measure resource risk without imposing a new memory policy. Test current Textual compatibility before proposing any dependency policy change. U3-U9 and release work remain outside scope.
