@@ -21,6 +21,7 @@ rank = 70
 rule_id = "antigravity_global_skills"
 file_rule_id = "antigravity_standalone_md"
 evidence = "empirical"
+entry_format = "standalone_md"
 
 [[roots]]
 id = "antigravity_builtin"
@@ -30,6 +31,7 @@ scope = "system"
 rank = 30
 rule_id = "antigravity_builtin"
 evidence = "documented"
+entry_format = "standalone_md"
 
 [[roots]]
 id = "antigravity_project_agents"

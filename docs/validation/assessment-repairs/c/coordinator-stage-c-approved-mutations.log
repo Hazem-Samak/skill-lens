@@ -1,0 +1,477 @@
+/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7/skill_lens/__init__.py
+/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7/tests/__init__.py
+
+alias file type CONTROL cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_entrypoint_alias_and_discovery_for_dot_md_named_directory']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.16s ===============================
+
+alias file type MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_entrypoint_alias_and_discovery_for_dot_md_named_directory']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+________ test_entrypoint_alias_and_discovery_for_dot_md_named_directory ________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-100/test_entrypoint_alias_and_disc0/home')
+
+    def test_entrypoint_alias_and_discovery_for_dot_md_named_directory(mock_home: Path) -> None:
+        """Directory ending in .md and symlink-to-directory ending in .md keep directory name as alias,
+        while supported standalone .md file keeps stem as alias, with cross-consumer agreement.
+        """
+        sb = mock_home.resolve()
+        paths.set_sandbox(sb)
+    
+        # 1. Real directory ending in .md under Pi root (.pi/agent/skills)
+        pi_root = sb / ".pi" / "agent" / "skills"
+        real_md_dir = pi_root / "shortcut.md"
+        _make_skill(real_md_dir, "declared_inside_shortcut", "Skill in .md-named dir")
+    
+        # 2. Symlink-to-directory ending in .md
+        ext_dir = sb / "outside_store" / "external_skill"
+        _make_skill(ext_dir, "ext_declared", "External target skill")
+        sym_dir_link = pi_root / "symlink_dir.md"
+        os.symlink(ext_dir, sym_dir_link)
+    
+        # 3. Supported standalone .md file (opposite control)
+        standalone_file = pi_root / "standalone.md"
+        standalone_file.write_text(
+            "---\nname: standalone_skill\ndescription: Standalone description.\n---\n# Body\n",
+            encoding="utf-8",
+        )
+    
+        reg = load_registry()
+        idx = discover(home=sb, cwd=sb, registry=reg)
+    
+        # Check discovered entries
+        sc_entry = next(e for e in idx.entries if e.entrypoint_path.endswith("shortcut.md"))
+        assert sc_entry.name == "shortcut.md"
+        assert sc_entry.is_file is False
+    
+        sym_entry = next(e for e in idx.entries if e.entrypoint_path.endswith("symlink_dir.md"))
+        assert sym_entry.name == "symlink_dir.md"
+        assert sym_entry.is_file is False
+    
+        sa_entry = next(e for e in idx.entries if e.entrypoint_path.endswith("standalone.md"))
+        assert sa_entry.name == "standalone"
+        assert sa_entry.is_file is True
+    
+        # Check resolver, diff, compare, and scan agreement
+        # 'shortcut.md' lookup:
+        why_sc_full = resolve_skill("shortcut.md", "pi", cwd=sb, home=sb, index=idx, registry=reg)
+        diff_sc_full = build_diff_report("shortcut.md", sb, sb, index=idx, registry=reg)
+>       assert why_sc_full.found is True
+E       AssertionError: assert False is True
+E        +  where False = ResolutionReport(skill_name='shortcut.md', agent='pi', agent_name='Pi Agent', cwd='/private/var/folders/tf/jsdyxcts6y7...ARCHED: 'UNSEARCHED'>, candidates=(), notes=('No copy of this skill name was found in any search root.',), found=False).found
+
+tests/test_stage_c_repairs.py:1470: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_entrypoint_alias_and_discovery_for_dot_md_named_directory
+============================== 1 failed in 0.78s ===============================
+
+alias file type RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_entrypoint_alias_and_discovery_for_dot_md_named_directory']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.12s ===============================
+
+same path rank max CONTROL cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_same_path_same_agent_precedence_rankmax']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.11s ===============================
+
+same path rank max MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_same_path_same_agent_precedence_rankmax']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+_________________ test_same_path_same_agent_precedence_rankmax _________________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-103/test_same_path_same_agent_prec0/home')
+
+    def test_same_path_same_agent_precedence_rankmax(mock_home: Path) -> None:
+        """When multiple roots of the same agent reach the exact same entrypoint path,
+        the highest-ranked rule represents that path regardless of root iteration order.
+        """
+        (mock_home / ".git").mkdir()
+        sb = mock_home.resolve()
+        paths.set_sandbox(sb)
+    
+        # DSH has both dsh_project (rank 95, rule "dsh_documented_project") and
+        # dsh_user (rank 70, rule "dsh_documented_user") resolving to sb / ".dsh" / "skills"
+        # when sb is a git project root.
+        collision_dir = sb / ".dsh" / "skills" / "collision"
+        _make_skill(collision_dir, "declared_name", "Same path collision skill")
+    
+        reg = load_registry()
+        permuted_reg = {k: replace(a, roots=tuple(reversed(a.roots))) for k, a in reg.items()}
+    
+        idx1 = discover(home=sb, cwd=sb, registry=reg)
+        idx2 = discover(home=sb, cwd=sb, registry=permuted_reg)
+    
+        res1 = resolve_skill("collision", "dsh", cwd=sb, home=sb, index=idx1, registry=reg)
+        res2 = resolve_skill("collision", "dsh", cwd=sb, home=sb, index=idx2, registry=permuted_reg)
+    
+        assert res1.found is True
+        assert res2.found is True
+        assert len(res1.candidates) == 1
+        assert len(res2.candidates) == 1
+    
+        assert res1.candidates[0].rank == 95
+>       assert res2.candidates[0].rank == 95
+E       AssertionError: assert 70 == 95
+E        +  where 70 = CandidateResolution(state=<HeadlineState.ACTIVE: 'ACTIVE'>, visibility=<Visibility.ACTIVE_ROOT: 'active_root'>, collis...st-of-corvette/pytest-103/test_same_path_same_agent_prec0/home/.dsh/skills/collision',), variant_label='A', errors=())).rank
+
+tests/test_stage_c_repairs.py:1420: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_same_path_same_agent_precedence_rankmax
+============================== 1 failed in 0.13s ===============================
+
+same path rank max RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_same_path_same_agent_precedence_rankmax']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.11s ===============================
+
+explicit format integrity CONTROL cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_all_shipped_agent_roots_declare_explicit_entry_format']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.11s ===============================
+
+explicit format integrity MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_all_shipped_agent_roots_declare_explicit_entry_format']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+__________ test_all_shipped_agent_roots_declare_explicit_entry_format __________
+
+    def test_all_shipped_agent_roots_declare_explicit_entry_format() -> None:
+        """Every root of the six affected agents explicitly declares entry_format in raw TOML.
+    
+        Total of 20 retained roots across claude (2), dsh (5), grok (3), qoder (3), omp (4),
+        windsurf (3).
+        Evaluated by root ID:
+        - Documented native directory roots declare entry_format = "directory"
+        - DSH native roots and the six unverified/non-native compatibility roots
+          declare entry_format = "standalone_md"
+        """
+        import tomllib
+    
+        agents_dir = Path("skill_lens/registry/agents")
+        expected_root_formats = {
+            "claude": {
+                "claude_personal": "directory",
+                "claude_project": "directory",
+            },
+            "dsh": {
+                "dsh_project": "standalone_md",
+                "dsh_project_agents": "standalone_md",
+                "dsh_profiles": "standalone_md",
+                "dsh_user": "standalone_md",
+                "dsh_shared_global": "standalone_md",
+            },
+            "grok": {
+                "grok_global": "directory",
+                "grok_bundled": "standalone_md",
+                "grok_project": "standalone_md",
+            },
+            "qoder": {
+                "qoder_global": "directory",
+                "qoder_project": "directory",
+                "qoder_project_agents": "standalone_md",
+            },
+            "omp": {
+                "omp_project": "directory",
+                "omp_project_agents": "directory",
+                "omp_shared_global": "directory",
+                "omp_agent": "standalone_md",
+            },
+            "windsurf": {
+                "windsurf_global": "directory",
+                "windsurf_project": "directory",
+                "windsurf_project_agents": "standalone_md",
+            },
+        }
+        total_roots = 0
+        for agent_name, root_map in expected_root_formats.items():
+            toml_path = agents_dir / f"{agent_name}.toml"
+            assert toml_path.is_file(), f"Missing agent file: {toml_path}"
+            data = tomllib.loads(toml_path.read_text("utf-8"))
+            roots = data.get("roots", [])
+            assert len(roots) == len(root_map), (
+                f"Agent {agent_name} expected {len(root_map)} roots, got {len(roots)}"
+            )
+            total_roots += len(roots)
+            for root in roots:
+                root_id = root.get("id")
+                assert root_id in root_map, f"Unexpected root {root_id} for agent {agent_name}"
+>               assert "entry_format" in root, (
+                    f"Agent {agent_name} root {root_id} lacks explicit entry_format declaration"
+                )
+E               AssertionError: Agent claude root claude_personal lacks explicit entry_format declaration
+E               assert 'entry_format' in {'id': 'claude_personal', 'kind': 'global', 'path': '.claude/skills', 'scope': 'user', ...}
+
+tests/test_stage_c_repairs.py:1583: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_all_shipped_agent_roots_declare_explicit_entry_format
+============================== 1 failed in 0.13s ===============================
+
+explicit format integrity RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_all_shipped_agent_roots_declare_explicit_entry_format']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.10s ===============================
+
+compatibility flatfile CONTROL cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_compatibility_roots_behavioral_positive_controls', '-k', 'grok_bundled']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 6 items / 5 deselected / 1 selected
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+======================= 1 passed, 5 deselected in 0.11s ========================
+
+compatibility flatfile MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_compatibility_roots_behavioral_positive_controls', '-k', 'grok_bundled']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 6 items / 5 deselected / 1 selected
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+_ test_compatibility_roots_behavioral_positive_controls[grok-grok_bundled-.grok/bundled/skills-False-frontmatter_name-grok_bundled-30] _
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-109/test_compatibility_roots_behav0/home')
+agent_id = 'grok', root_id = 'grok_bundled'
+root_relpath = '.grok/bundled/skills', is_recursive = False
+expected_id_policy = 'frontmatter_name', expected_rule_id = 'grok_bundled'
+expected_rank = 30
+
+    @pytest.mark.parametrize(
+        (
+            "agent_id",
+            "root_id",
+            "root_relpath",
+            "is_recursive",
+            "expected_id_policy",
+            "expected_rule_id",
+            "expected_rank",
+        ),
+        [
+            (
+                "grok",
+                "grok_bundled",
+                ".grok/bundled/skills",
+                False,
+                "frontmatter_name",
+                "grok_bundled",
+                30,
+            ),
+            (
+                "grok",
+                "grok_project",
+                ".agents/skills",
+                False,
+                "frontmatter_name",
+                "grok_project_shadow",
+                90,
+            ),
+            (
+                "qoder",
+                "qoder_project_agents",
+                ".agents/skills",
+                False,
+                "frontmatter_name",
+                "qoder_project_shadow",
+                85,
+            ),
+            (
+                "omp",
+                "omp_agent",
+                ".omp/agent",
+                False,
+                "frontmatter_name",
+                "omp_documented_managed_last",
+                40,
+            ),
+            (
+                "windsurf",
+                "windsurf_project_agents",
+                ".agents/skills",
+                False,
+                "hybrid",
+                "windsurf_project_shadow",
+                85,
+            ),
+            (
+                "dsh",
+                "dsh_profiles",
+                ".dsh/profiles",
+                True,
+                "directory_name",
+                "dsh_inferred_profiles",
+                40,
+            ),
+        ],
+    )
+    def test_compatibility_roots_behavioral_positive_controls(
+        mock_home: Path,
+        agent_id: str,
+        root_id: str,
+        root_relpath: str,
+        is_recursive: bool,
+        expected_id_policy: str,
+        expected_rule_id: str,
+        expected_rank: int,
+    ) -> None:
+        """Parametrized behavioral positive controls for the six unverified/non-native
+        compatibility roots:
+        - grok_bundled (.grok/bundled/skills)
+        - grok_project (.agents/skills)
+        - qoder_project_agents (.agents/skills)
+        - omp_agent (.omp/agent)
+        - windsurf_project_agents (.agents/skills)
+        - dsh_profiles (.dsh/profiles, nested skills container)
+    
+        Verifies:
+        1. Valid directory skill discovered with is_file=False and hit for (agent_id, root_id).
+        2. Valid flatfile skill (.md) discovered with is_file=True and hit for (agent_id, root_id).
+           (Shared path discovery by another agent does not count.)
+        3. Non-md negative control is omitted (no discovery / no hit).
+        4. Actual why resolution resolves with declared vs alias appropriate to current agent policy.
+        """
+        (mock_home / ".git").mkdir(exist_ok=True)
+        sb = mock_home.resolve()
+        paths.set_sandbox(sb)
+    
+        if is_recursive:
+            # For dsh_profiles plugin container: skills must reside in a nested skills directory
+            container = sb / root_relpath / f"profile_{root_id}" / "skills"
+        else:
+            container = sb / root_relpath
+        container.mkdir(parents=True, exist_ok=True)
+    
+        # 1. Valid directory skill
+        dir_name_alias = f"dir_{root_id}"
+        dir_fm_name = f"declared_fm_dir_{root_id}"
+        dir_path = container / dir_name_alias
+        _make_skill(dir_path, dir_fm_name, f"Valid {root_id} directory skill")
+    
+        # 2. Valid flatfile skill
+        flat_name_alias = f"flat_{root_id}"
+        flat_fm_name = f"declared_fm_flat_{root_id}"
+        flat_file = container / f"{flat_name_alias}.md"
+        flat_file.write_text(
+            f"---\nname: {flat_fm_name}\ndescription: Valid {root_id} flat skill\n---\n# Body\n",
+            encoding="utf-8",
+        )
+    
+        # 3. Non-md negative control
+        nonmd_file = container / f"negative_{root_id}.txt"
+        nonmd_file.write_text("Incidental non-markdown file\n", encoding="utf-8")
+    
+        reg = load_registry()
+        idx = discover(home=sb, cwd=sb, registry=reg)
+    
+        # 1. Directory skill assertion
+        dir_entry = next(
+            (e for e in idx.entries if e.entrypoint_path.endswith(dir_name_alias)),
+            None,
+        )
+        assert dir_entry is not None, f"Directory skill under {root_id} was not discovered"
+        assert dir_entry.is_file is False
+        assert any(h.agent_id == agent_id and h.root_id == root_id for h in dir_entry.hits), (
+            f"RootHit for ({agent_id}, {root_id}) missing on directory skill; "
+            f"other agent hit does not count"
+        )
+    
+        # 2. Flatfile skill assertion (INTENDED MISSING-FLAT ASSERTION when mutated to directory)
+        flat_entry = next(
+            (e for e in idx.entries if e.entrypoint_path.endswith(f"{flat_name_alias}.md")),
+            None,
+        )
+>       assert flat_entry is not None, (
+            f"Flatfile skill under {root_id} was not discovered (missing flatfile entry)"
+        )
+E       AssertionError: Flatfile skill under grok_bundled was not discovered (missing flatfile entry)
+E       assert None is not None
+
+tests/test_stage_c_repairs.py:1854: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_compatibility_roots_behavioral_positive_controls[grok-grok_bundled-.grok/bundled/skills-False-frontmatter_name-grok_bundled-30]
+======================= 1 failed, 5 deselected in 0.13s ========================
+
+compatibility flatfile RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7 cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_compatibility_roots_behavioral_positive_controls', '-k', 'grok_bundled']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 6 items / 5 deselected / 1 selected
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+======================= 1 passed, 5 deselected in 0.11s ========================

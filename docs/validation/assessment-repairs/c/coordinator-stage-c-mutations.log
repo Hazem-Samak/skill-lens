@@ -1,0 +1,440 @@
+Disposable cwd: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj/skill_lens/__init__.py
+/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj/tests/__init__.py
+
+Codex directory file ignore CONTROL cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_codex_directory_only_root_ignores_symlink_to_file']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.07s ===============================
+
+rc=0
+
+Codex directory file ignore MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_codex_directory_only_root_ignores_symlink_to_file']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+____________ test_codex_directory_only_root_ignores_symlink_to_file ____________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-50/test_codex_directory_only_root0/home')
+
+    def test_codex_directory_only_root_ignores_symlink_to_file(mock_home: Path) -> None:
+        """Directory-only roots ignore file targets, regardless of frontmatter metadata/name.
+    
+        Coordinator reproduction: .codex/skills/document-link -> outside/document.md with valid
+        frontmatter must NOT be discovered as Codex skill. Broken shortcuts remain diagnostic.
+        """
+        sb = mock_home.resolve()
+        outside = sb / "outside"
+        outside.mkdir(parents=True, exist_ok=True)
+        doc_file = outside / "document.md"
+        doc_file.write_text(
+            """---
+    name: document_skill
+    description: Document skill.
+    ---
+    # Content
+    """,
+            encoding="utf-8",
+        )
+    
+        codex_skills = sb / ".codex" / "skills"
+        codex_skills.mkdir(parents=True, exist_ok=True)
+        symlink_file = codex_skills / "document-link"
+        os.symlink(doc_file, symlink_file)
+    
+        # Broken directory shortcut
+        broken_shortcut = codex_skills / "broken-dir-link"
+        os.symlink(outside / "nonexistent_dir", broken_shortcut)
+    
+        reg = load_registry()
+        idx = discover(home=sb, cwd=sb, registry=reg)
+    
+        codex_entries = [e for e in idx.entries if any(h.agent_id == "codex" for h in e.hits)]
+        codex_paths = [e.entrypoint_path for e in codex_entries]
+    
+        # File symlink MUST be ignored
+>       assert not any("document-link" in p for p in codex_paths)
+E       assert not True
+E        +  where True = any(<generator object test_codex_directory_only_root_ignores_symlink_to_file.<locals>.<genexpr> at 0x1068f6190>)
+
+tests/test_stage_c_repairs.py:724: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_codex_directory_only_root_ignores_symlink_to_file
+============================== 1 failed in 0.08s ===============================
+
+rc=1
+
+Codex directory file ignore RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_codex_directory_only_root_ignores_symlink_to_file']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.07s ===============================
+
+rc=0
+
+Pi exact declaration CONTROL cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_pi_exact_skill_md_directory_discovery_and_case_sensitivity']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.07s ===============================
+
+rc=0
+
+Pi exact declaration MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_pi_exact_skill_md_directory_discovery_and_case_sensitivity']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+_______ test_pi_exact_skill_md_directory_discovery_and_case_sensitivity ________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-53/test_pi_exact_skill_md_directo0/home')
+
+    def test_pi_exact_skill_md_directory_discovery_and_case_sensitivity(mock_home: Path) -> None:
+        """Pi requires exact SKILL.md for directories and symlink targets across filesystems.
+    
+        - Positive exact directory: .pi/agent/skills/exact/SKILL.md -> discovered.
+        - Negative lowercase directory: .pi/agent/skills/lower/skill.md -> NOT discovered.
+        - Negative dot directory: .pi/agent/skills/dot/.skill.md -> NOT discovered.
+        - Positive exact symlink: .pi/agent/skills/sym_exact -> target with SKILL.md -> discovered.
+        - Negative lowercase symlink: target with skill.md -> NOT discovered.
+        - Root-level standalone: skill.md with description -> discovered (is_file=True).
+        - Incidental root markdown: .pi/agent/skills/notes.md without description -> ignored.
+        - Declared malformed SKILL: .pi/agent/skills/bad_decl/SKILL.md -> discovered with error.
+        """
+        sb = mock_home.resolve()
+        pi_root = sb / ".pi" / "agent" / "skills"
+        pi_root.mkdir(parents=True, exist_ok=True)
+    
+        # 1. Positive exact directory
+        exact_dir = pi_root / "exact_dir"
+        _make_skill(exact_dir, "exact_tool", "Exact tool")
+    
+        # 2. Negative lowercase directory
+        lower_dir = pi_root / "lower_dir"
+        lower_dir.mkdir(parents=True, exist_ok=True)
+        (lower_dir / "skill.md").write_text(
+            """---
+    name: lower_tool
+    description: Lower tool
+    ---
+    """,
+            encoding="utf-8",
+        )
+    
+        # 3. Negative dot directory
+        dot_dir = pi_root / "dot_dir"
+        dot_dir.mkdir(parents=True, exist_ok=True)
+        (dot_dir / ".skill.md").write_text(
+            """---
+    name: dot_tool
+    description: Dot tool
+    ---
+    """,
+            encoding="utf-8",
+        )
+    
+        # 4. Outside targets for symlinks
+        outside = sb / "outside_pi"
+        outside.mkdir(parents=True, exist_ok=True)
+        out_exact = outside / "out_exact"
+        _make_skill(out_exact, "sym_exact", "Sym exact")
+        out_lower = outside / "out_lower"
+        out_lower.mkdir(parents=True, exist_ok=True)
+        (out_lower / "skill.md").write_text(
+            """---
+    name: sym_lower
+    description: Sym lower
+    ---
+    """,
+            encoding="utf-8",
+        )
+    
+        os.symlink(out_exact, pi_root / "link_exact")
+        os.symlink(out_lower, pi_root / "link_lower")
+    
+        # 5. Root-level standalone skill.md with valid description
+        (pi_root / "skill.md").write_text(
+            """---
+    name: root_standalone
+    description: Root standalone Pi skill
+    ---
+    """,
+            encoding="utf-8",
+        )
+    
+        # 6. Root-level incidental notes.md without description
+        (pi_root / "notes.md").write_text("# Incidental notes\n", encoding="utf-8")
+    
+        # 7. Declared malformed SKILL.md inside directory
+        bad_dir = pi_root / "bad_dir"
+        bad_dir.mkdir(parents=True, exist_ok=True)
+        (bad_dir / "SKILL.md").write_text("---\nname: [unclosed yaml\n---\n", encoding="utf-8")
+    
+        reg = load_registry()
+        idx = discover(home=sb, cwd=sb, registry=reg)
+    
+        pi_entries = [e for e in idx.entries if any(h.agent_id == "pi" for h in e.hits)]
+        pi_paths = [e.entrypoint_path for e in pi_entries]
+    
+        # Positives
+        assert any("exact_dir" in p for p in pi_paths)
+        assert any("link_exact" in p for p in pi_paths)
+        assert any("bad_dir" in p for p in pi_paths)
+    
+        # Negatives
+>       assert not any("lower_dir" in p for p in pi_paths)
+E       assert not True
+E        +  where True = any(<generator object test_pi_exact_skill_md_directory_discovery_and_case_sensitivity.<locals>.<genexpr> at 0x10ac47100>)
+
+tests/test_stage_c_repairs.py:833: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_pi_exact_skill_md_directory_discovery_and_case_sensitivity
+============================== 1 failed in 0.09s ===============================
+
+rc=1
+
+Pi exact declaration RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_pi_exact_skill_md_directory_discovery_and_case_sensitivity']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.07s ===============================
+
+rc=0
+
+per-hit disabled identity CONTROL cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_synthetic_identity_source_disabled_overrides_matching']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.07s ===============================
+
+rc=0
+
+per-hit disabled identity MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_synthetic_identity_source_disabled_overrides_matching']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+__________ test_synthetic_identity_source_disabled_overrides_matching __________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-56/test_synthetic_identity_source0/home')
+
+    def test_synthetic_identity_source_disabled_overrides_matching(mock_home: Path) -> None:
+        """Disabled overrides match actual per-hit supported identity names:
+        - frontmatter_name identity: matches declared frontmatter name (synth_fm), not folder alias.
+        - directory_name identity: matches relevant hit alias (synth_folder), not frontmatter name.
+        - hybrid/either identity: matches either synonym.
+        """
+        sb = mock_home.resolve()
+        skill_dir = sb / ".agents" / "skills" / "synth_folder"
+        _make_skill(skill_dir, "synth_fm", "Synthetic frontmatter skill")
+    
+        # 1. Frontmatter identity agent:
+        fm_root = AgentRoot(
+            id="fm_root",
+            kind="global",
+            path=".agents/skills",
+            scope=Scope.USER,
+            rank=80,
+            rule_id="fm_root_rule",
+            evidence=Evidence.DOCUMENTED,
+        )
+        fm_agent = AgentDefinition(
+            id="synth_fm_agent",
+            name="Synth FM Agent",
+            identity_source="frontmatter_name",
+            collision_policy="Shadow",
+            policy_evidence=Evidence.DOCUMENTED,
+            coexist_policy="shadow",
+            walk_boundary="git_root",
+            unsearched_rule_id="synth_unsearched",
+            roots=(fm_root,),
+        )
+        dir_agent = AgentDefinition(
+            id="synth_dir_agent",
+            name="Synth Dir Agent",
+            identity_source="directory_name",
+            collision_policy="Shadow",
+            policy_evidence=Evidence.DOCUMENTED,
+            coexist_policy="shadow",
+            walk_boundary="git_root",
+            unsearched_rule_id="synth_unsearched",
+            roots=(fm_root,),
+        )
+        hybrid_agent = AgentDefinition(
+            id="synth_hybrid_agent",
+            name="Synth Hybrid Agent",
+            identity_source="hybrid",
+            collision_policy="Shadow",
+            policy_evidence=Evidence.DOCUMENTED,
+            coexist_policy="shadow",
+            walk_boundary="git_root",
+            unsearched_rule_id="synth_unsearched",
+            roots=(fm_root,),
+        )
+        custom_reg = {
+            "synth_fm_agent": fm_agent,
+            "synth_dir_agent": dir_agent,
+            "synth_hybrid_agent": hybrid_agent,
+        }
+    
+        idx = discover(home=sb, cwd=sb, registry=custom_reg)
+    
+        # FM override -> DISABLED
+        res_fm_dis = resolve_skill(
+            "synth_fm",
+            "synth_fm_agent",
+            cwd=sb,
+            home=sb,
+            index=idx,
+            registry=custom_reg,
+            disabled_overrides=frozenset({"synth_fm"}),
+        )
+        assert res_fm_dis.found is True
+>       assert res_fm_dis.candidates[0].state is HeadlineState.DISABLED
+E       AssertionError: assert <HeadlineState.ACTIVE: 'ACTIVE'> is <HeadlineState.DISABLED: 'DISABLED'>
+E        +  where <HeadlineState.ACTIVE: 'ACTIVE'> = CandidateResolution(state=<HeadlineState.ACTIVE: 'ACTIVE'>, visibility=<Visibility.ACTIVE_ROOT: 'active_root'>, collis...-corvette/pytest-56/test_synthetic_identity_source0/home/.agents/skills/synth_folder',), variant_label='A', errors=())).state
+E        +  and   <HeadlineState.DISABLED: 'DISABLED'> = HeadlineState.DISABLED
+
+tests/test_stage_c_repairs.py:415: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_synthetic_identity_source_disabled_overrides_matching
+============================== 1 failed in 0.09s ===============================
+
+rc=1
+
+per-hit disabled identity RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_synthetic_identity_source_disabled_overrides_matching']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.07s ===============================
+
+rc=0
+
+metadata validation CONTROL cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_metadata_enum_validation']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.07s ===============================
+
+rc=0
+
+metadata validation MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_metadata_enum_validation']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+________________________ test_metadata_enum_validation _________________________
+
+    def test_metadata_enum_validation() -> None:
+        """Invalid metadata declarations for base or entry_format fail clearly with ValueError."""
+        valid_raw = {
+            "id": "test_root",
+            "kind": "global",
+            "path": ".test/skills",
+            "scope": "user",
+            "rank": 50,
+            "rule_id": "test_rule",
+            "evidence": "documented",
+        }
+        # Valid default
+        root = _parse_root(valid_raw)
+        assert root.base is RootBase.HOME
+        assert root.entry_format is EntryFormat.DIRECTORY
+    
+        # Valid explicit
+        root_explicit = _parse_root(
+            {**valid_raw, "base": "xdg_config_home", "entry_format": "opencode_v2"}
+        )
+>       assert root_explicit.base is RootBase.XDG_CONFIG_HOME
+E       AssertionError: assert <RootBase.HOME: 'home'> is <RootBase.XDG_CONFIG_HOME: 'xdg_config_home'>
+E        +  where <RootBase.HOME: 'home'> = AgentRoot(id='test_root', kind='global', path='.test/skills', scope=<Scope.USER: 'user'>, rank=50, rule_id='test_rule'...ile_rule_id=None, recursive=False, base=<RootBase.HOME: 'home'>, entry_format=<EntryFormat.OPENCODE_V2: 'opencode_v2'>).base
+E        +  and   <RootBase.XDG_CONFIG_HOME: 'xdg_config_home'> = RootBase.XDG_CONFIG_HOME
+
+tests/test_stage_c_repairs.py:870: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_metadata_enum_validation - Asserti...
+============================== 1 failed in 0.08s ===============================
+
+rc=1
+
+metadata validation RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_metadata_enum_validation']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.07s ===============================
+
+rc=0

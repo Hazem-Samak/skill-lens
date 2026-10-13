@@ -16,6 +16,7 @@ scope = "user"
 rank = 85
 rule_id = "codex_global_skills"
 evidence = "empirical"
+entry_format = "directory"
 
 [[roots]]
 id = "codex_shared_global"
@@ -25,6 +26,7 @@ scope = "user"
 rank = 80
 rule_id = "codex_global_skills"
 evidence = "documented"
+entry_format = "directory"
 
 [[roots]]
 id = "codex_project"
@@ -34,6 +36,7 @@ scope = "project"
 rank = 90
 rule_id = "codex_project_ancestor_walk"
 evidence = "empirical"
+entry_format = "directory"
 
 [[roots]]
 id = "codex_system"
@@ -43,6 +46,7 @@ scope = "system"
 rank = 55
 rule_id = "codex_system_container"
 evidence = "empirical"
+entry_format = "directory"
 
 [[roots]]
 id = "codex_etc"
@@ -52,6 +56,7 @@ scope = "system"
 rank = 75
 rule_id = "codex_global_skills"
 evidence = "documented"
+entry_format = "directory"
 
 [[roots]]
 id = "codex_plugin"
@@ -62,3 +67,4 @@ rank = 10
 rule_id = "codex_plugin_skills"
 evidence = "empirical"
 recursive = true
+entry_format = "directory"

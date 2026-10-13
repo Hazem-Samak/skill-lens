@@ -20,7 +20,6 @@ from skill_lens import __version__
 from skill_lens.core import paths
 from skill_lens.core.compare import run_compare
 from skill_lens.core.diff import build_diff_report
-from skill_lens.core.discovery import normalize_cwd
 from skill_lens.core.doctor import run_doctor
 from skill_lens.core.exitcodes import ExitCode, FailOn, exit_code_for, fail_on_help
 from skill_lens.core.hasher import IncompleteTreeError
@@ -171,19 +170,33 @@ def _effective_home() -> Path:
 
 
 def _effective_cwd(cwd: Path | None, sandbox: Path | None) -> Path:
-    """Resolve the working directory, clamped to the sandbox when there is one.
+    """Resolve the working directory to an absolute path, clamped to the sandbox when active.
 
-    ``$HOME`` is usually not inside a repository, so defaulting there silently
-    skipped every project root -- hence the terminal folder. A *relative*
-    ``--cwd`` keeps its documented meaning under ``--sandbox``: home-relative,
-    never process-relative, so a sandboxed run can never be walked from the
-    folder the user happens to be standing in.
+    Live execution resolves relative paths against the terminal working directory.
+    Sandboxed execution resolves relative paths against the sandbox root and
+    ensures neither relative nor absolute paths escape the sandbox.
     """
+    effective_sb = sandbox if sandbox is not None else paths.get_sandbox()
+    if effective_sb is not None:
+        base = effective_sb.resolve()
+        if cwd is None:
+            cand = paths.terminal_cwd().resolve()
+            try:
+                cand.relative_to(base)
+                resolved = cand
+            except ValueError:
+                resolved = base
+        else:
+            expanded = Path(cwd).expanduser()
+            resolved = expanded.resolve() if expanded.is_absolute() else (base / expanded).resolve()
+        _assert_inside_sandbox(resolved, effective_sb)
+        return resolved
+
+    base = paths.terminal_cwd().resolve()
     if cwd is None:
-        return paths.terminal_cwd()
-    if sandbox is None:
-        return cwd
-    return normalize_cwd(cwd, sandbox)
+        return base
+    expanded = Path(cwd).expanduser()
+    return expanded.resolve() if expanded.is_absolute() else (base / expanded).resolve()
 
 
 def _assert_inside_sandbox(cwd: Path, sandbox: Path) -> None:

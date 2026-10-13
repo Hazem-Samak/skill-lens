@@ -1,0 +1,103 @@
+{
+  "copy": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7",
+  "results": [
+    {
+      "label": "alias file type",
+      "file": "skill_lens/core/resolver.py",
+      "test": "test_entrypoint_alias_and_discovery_for_dot_md_named_directory",
+      "cwd": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7",
+      "cmd": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_stage_c_repairs.py::test_entrypoint_alias_and_discovery_for_dot_md_named_directory"
+      ],
+      "old": "if is_file:\n        return p.stem",
+      "new": "if is_file or p.suffix.lower() == \".md\":\n        return p.stem",
+      "codes": [
+        0,
+        1,
+        0
+      ],
+      "before_hash": "3aa4e4b4ea38e61717b45ea21a1d5d5aab59bed12893735ed44b364835f44a83",
+      "restored_hash": "3aa4e4b4ea38e61717b45ea21a1d5d5aab59bed12893735ed44b364835f44a83",
+      "failure_tail": "= discover(home=sb, cwd=sb, registry=reg)\n    \n        # Check discovered entries\n        sc_entry = next(e for e in idx.entries if e.entrypoint_path.endswith(\"shortcut.md\"))\n        assert sc_entry.name == \"shortcut.md\"\n        assert sc_entry.is_file is False\n    \n        sym_entry = next(e for e in idx.entries if e.entrypoint_path.endswith(\"symlink_dir.md\"))\n        assert sym_entry.name == \"symlink_dir.md\"\n        assert sym_entry.is_file is False\n    \n        sa_entry = next(e for e in idx.entries if e.entrypoint_path.endswith(\"standalone.md\"))\n        assert sa_entry.name == \"standalone\"\n        assert sa_entry.is_file is True\n    \n        # Check resolver, diff, compare, and scan agreement\n        # 'shortcut.md' lookup:\n        why_sc_full = resolve_skill(\"shortcut.md\", \"pi\", cwd=sb, home=sb, index=idx, registry=reg)\n        diff_sc_full = build_diff_report(\"shortcut.md\", sb, sb, index=idx, registry=reg)\n>       assert why_sc_full.found is True\nE       AssertionError: assert False is True\nE        +  where False = ResolutionReport(skill_name='shortcut.md', agent='pi', agent_name='Pi Agent', cwd='/private/var/folders/tf/jsdyxcts6y7...ARCHED: 'UNSEARCHED'>, candidates=(), notes=('No copy of this skill name was found in any search root.',), found=False).found\n\ntests/test_stage_c_repairs.py:1470: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_stage_c_repairs.py::test_entrypoint_alias_and_discovery_for_dot_md_named_directory\n============================== 1 failed in 0.78s ===============================\n"
+    },
+    {
+      "label": "same path rank max",
+      "file": "skill_lens/core/resolver.py",
+      "test": "test_same_path_same_agent_precedence_rankmax",
+      "cwd": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7",
+      "cmd": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_stage_c_repairs.py::test_same_path_same_agent_precedence_rankmax"
+      ],
+      "old": "if current is None or hit.rank > current.rank:",
+      "new": "if current is None:",
+      "codes": [
+        0,
+        1,
+        0
+      ],
+      "before_hash": "3aa4e4b4ea38e61717b45ea21a1d5d5aab59bed12893735ed44b364835f44a83",
+      "restored_hash": "3aa4e4b4ea38e61717b45ea21a1d5d5aab59bed12893735ed44b364835f44a83",
+      "failure_tail": "d_project\") and\n        # dsh_user (rank 70, rule \"dsh_documented_user\") resolving to sb / \".dsh\" / \"skills\"\n        # when sb is a git project root.\n        collision_dir = sb / \".dsh\" / \"skills\" / \"collision\"\n        _make_skill(collision_dir, \"declared_name\", \"Same path collision skill\")\n    \n        reg = load_registry()\n        permuted_reg = {k: replace(a, roots=tuple(reversed(a.roots))) for k, a in reg.items()}\n    \n        idx1 = discover(home=sb, cwd=sb, registry=reg)\n        idx2 = discover(home=sb, cwd=sb, registry=permuted_reg)\n    \n        res1 = resolve_skill(\"collision\", \"dsh\", cwd=sb, home=sb, index=idx1, registry=reg)\n        res2 = resolve_skill(\"collision\", \"dsh\", cwd=sb, home=sb, index=idx2, registry=permuted_reg)\n    \n        assert res1.found is True\n        assert res2.found is True\n        assert len(res1.candidates) == 1\n        assert len(res2.candidates) == 1\n    \n        assert res1.candidates[0].rank == 95\n>       assert res2.candidates[0].rank == 95\nE       AssertionError: assert 70 == 95\nE        +  where 70 = CandidateResolution(state=<HeadlineState.ACTIVE: 'ACTIVE'>, visibility=<Visibility.ACTIVE_ROOT: 'active_root'>, collis...st-of-corvette/pytest-103/test_same_path_same_agent_prec0/home/.dsh/skills/collision',), variant_label='A', errors=())).rank\n\ntests/test_stage_c_repairs.py:1420: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_stage_c_repairs.py::test_same_path_same_agent_precedence_rankmax\n============================== 1 failed in 0.13s ===============================\n"
+    },
+    {
+      "label": "explicit format integrity",
+      "file": "skill_lens/registry/agents/claude.toml",
+      "test": "test_all_shipped_agent_roots_declare_explicit_entry_format",
+      "cwd": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7",
+      "cmd": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_stage_c_repairs.py::test_all_shipped_agent_roots_declare_explicit_entry_format"
+      ],
+      "old": "entry_format = \"directory\"\n",
+      "new": "",
+      "codes": [
+        0,
+        1,
+        0
+      ],
+      "before_hash": "f94131889f7f82768d40959f352fda685accd423ed75703f9fa2fba2f9405219",
+      "restored_hash": "f94131889f7f82768d40959f352fda685accd423ed75703f9fa2fba2f9405219",
+      "failure_tail": "    \"windsurf\": {\n                \"windsurf_global\": \"directory\",\n                \"windsurf_project\": \"directory\",\n                \"windsurf_project_agents\": \"standalone_md\",\n            },\n        }\n        total_roots = 0\n        for agent_name, root_map in expected_root_formats.items():\n            toml_path = agents_dir / f\"{agent_name}.toml\"\n            assert toml_path.is_file(), f\"Missing agent file: {toml_path}\"\n            data = tomllib.loads(toml_path.read_text(\"utf-8\"))\n            roots = data.get(\"roots\", [])\n            assert len(roots) == len(root_map), (\n                f\"Agent {agent_name} expected {len(root_map)} roots, got {len(roots)}\"\n            )\n            total_roots += len(roots)\n            for root in roots:\n                root_id = root.get(\"id\")\n                assert root_id in root_map, f\"Unexpected root {root_id} for agent {agent_name}\"\n>               assert \"entry_format\" in root, (\n                    f\"Agent {agent_name} root {root_id} lacks explicit entry_format declaration\"\n                )\nE               AssertionError: Agent claude root claude_personal lacks explicit entry_format declaration\nE               assert 'entry_format' in {'id': 'claude_personal', 'kind': 'global', 'path': '.claude/skills', 'scope': 'user', ...}\n\ntests/test_stage_c_repairs.py:1583: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_stage_c_repairs.py::test_all_shipped_agent_roots_declare_explicit_entry_format\n============================== 1 failed in 0.13s ===============================\n"
+    },
+    {
+      "label": "compatibility flatfile",
+      "file": "skill_lens/registry/agents/grok.toml",
+      "test": "test_compatibility_roots_behavioral_positive_controls",
+      "cwd": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-approved-proof-7embbfb7",
+      "cmd": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_stage_c_repairs.py::test_compatibility_roots_behavioral_positive_controls",
+        "-k",
+        "grok_bundled"
+      ],
+      "old": "id = \"grok_bundled\"\nkind = \"global\"\npath = \".grok/bundled/skills\"\nscope = \"system\"\nentry_format = \"standalone_md\"",
+      "new": "id = \"grok_bundled\"\nkind = \"global\"\npath = \".grok/bundled/skills\"\nscope = \"system\"\nentry_format = \"directory\"",
+      "codes": [
+        0,
+        1,
+        0
+      ],
+      "before_hash": "874100064745d8f45e083d5b3ddc65efd6318ffe9da204bfd97a3090b7fed194",
+      "restored_hash": "874100064745d8f45e083d5b3ddc65efd6318ffe9da204bfd97a3090b7fed194",
+      "failure_tail": "(\"Incidental non-markdown file\\n\", encoding=\"utf-8\")\n    \n        reg = load_registry()\n        idx = discover(home=sb, cwd=sb, registry=reg)\n    \n        # 1. Directory skill assertion\n        dir_entry = next(\n            (e for e in idx.entries if e.entrypoint_path.endswith(dir_name_alias)),\n            None,\n        )\n        assert dir_entry is not None, f\"Directory skill under {root_id} was not discovered\"\n        assert dir_entry.is_file is False\n        assert any(h.agent_id == agent_id and h.root_id == root_id for h in dir_entry.hits), (\n            f\"RootHit for ({agent_id}, {root_id}) missing on directory skill; \"\n            f\"other agent hit does not count\"\n        )\n    \n        # 2. Flatfile skill assertion (INTENDED MISSING-FLAT ASSERTION when mutated to directory)\n        flat_entry = next(\n            (e for e in idx.entries if e.entrypoint_path.endswith(f\"{flat_name_alias}.md\")),\n            None,\n        )\n>       assert flat_entry is not None, (\n            f\"Flatfile skill under {root_id} was not discovered (missing flatfile entry)\"\n        )\nE       AssertionError: Flatfile skill under grok_bundled was not discovered (missing flatfile entry)\nE       assert None is not None\n\ntests/test_stage_c_repairs.py:1854: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_stage_c_repairs.py::test_compatibility_roots_behavioral_positive_controls[grok-grok_bundled-.grok/bundled/skills-False-frontmatter_name-grok_bundled-30]\n======================= 1 failed, 5 deselected in 0.13s ========================\n"
+    }
+  ]
+}

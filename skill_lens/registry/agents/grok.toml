@@ -6,7 +6,16 @@ policy_evidence = "empirical"
 coexist_policy = "shadow"
 walk_boundary = "git_root"
 unsearched_rule_id = "grok_search_roots"
-source = "https://docs.x.ai/grok-cli/skills"
+source = "https://raw.githubusercontent.com/xai-org/grok-build/main/crates/codegen/xai-grok-pager/docs/user-guide/08-skills.md"
+
+# Format evidence (2026-10-13):
+# Authoritative primary source: https://raw.githubusercontent.com/xai-org/grok-build/main/crates/codegen/xai-grok-pager/docs/user-guide/08-skills.md
+# Section "Directory Structure" lines 47-59 describes each skill living in its own directory with SKILL.md
+# (~/.grok/skills/<skill>/SKILL.md). Existing root paths/ranks remain historical empirical.
+# grok_global format is documented native directory bundle.
+# Retained roots grok_bundled and grok_project are unverified/non-native compatibility roots:
+# entry_format = "standalone_md" preserves pre-C baseline discovery compatibility (directory bundles + flatfiles);
+# unknown root flat acceptance is Skill Lens compatibility, NOT proven vendor support/loadability (Stage D carryover).
 
 # Precedence is Project > Global (see collision_policy).
 [[roots]]
@@ -14,6 +23,7 @@ id = "grok_global"
 kind = "global"
 path = ".grok/skills"
 scope = "user"
+entry_format = "directory"
 rank = 70
 rule_id = "grok_global_symlink_farm"
 evidence = "empirical"
@@ -23,6 +33,7 @@ id = "grok_bundled"
 kind = "global"
 path = ".grok/bundled/skills"
 scope = "system"
+entry_format = "standalone_md"
 rank = 30
 rule_id = "grok_bundled"
 evidence = "empirical"
@@ -32,6 +43,7 @@ id = "grok_project"
 kind = "project"
 path = ".agents/skills"
 scope = "project"
+entry_format = "standalone_md"
 rank = 90
 rule_id = "grok_project_shadow"
 evidence = "empirical"

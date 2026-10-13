@@ -1,0 +1,30 @@
+{
+  "package": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-guard-after-zpjjwwk_",
+  "decoy": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-decoy-after-chfsdqdq",
+  "cmd": [
+    "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-guard-after-zpjjwwk_/tests/test_stage_c_repairs.py::test_all_shipped_agent_roots_declare_explicit_entry_format"
+  ],
+  "results": [
+    {
+      "case": "control",
+      "code": 0
+    },
+    {
+      "case": "actual broken",
+      "code": 1
+    },
+    {
+      "case": "decoy broken",
+      "code": 0
+    },
+    {
+      "case": "restored",
+      "code": 0
+    }
+  ]
+}

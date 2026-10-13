@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -207,10 +208,12 @@ def test_discover_cancelled_during_recursive_listing(mock_home: Path) -> None:
     rec_calls: list[object] = []
     orig_list_rec = discovery_module._list_recursive_entries
 
-    def tracking_list_rec(base: Path, *, cancelled: object = None) -> list[tuple[Path, bool]]:
+    def tracking_list_rec(
+        base: Path, *, cancelled: object = None, **kwargs: Any
+    ) -> list[tuple[Path, bool]]:
         assert cancelled is not None, "_list_recursive_entries must receive forwarded cancelled"
         rec_calls.append(cancelled)
-        return orig_list_rec(base, cancelled=cancelled)  # type: ignore[arg-type]
+        return orig_list_rec(base, cancelled=cancelled, **kwargs)  # type: ignore[arg-type]
 
     with pytest.MonkeyPatch.context() as mp:
         mp.setattr(discovery_module, "_list_recursive_entries", tracking_list_rec)
@@ -230,10 +233,12 @@ def test_discover_cancelled_during_entry_listing(mock_home: Path) -> None:
 
     orig_list_entries = discovery_module._list_entries
 
-    def tracking_list_entries(base: Path, *, cancelled: object = None) -> list[tuple[Path, bool]]:
+    def tracking_list_entries(
+        base: Path, *, cancelled: object = None, **kwargs: Any
+    ) -> list[tuple[Path, bool]]:
         assert cancelled is not None, "_list_entries must receive forwarded cancelled"
         listed_dirs.append(base)
-        return orig_list_entries(base, cancelled=cancelled)  # type: ignore[arg-type]
+        return orig_list_entries(base, cancelled=cancelled, **kwargs)  # type: ignore[arg-type]
 
     with pytest.MonkeyPatch.context() as mp:
         mp.setattr(discovery_module, "_list_entries", tracking_list_entries)

@@ -33,12 +33,19 @@ source = "https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/subsy
 #
 # The user root also skips its `.system` child upstream, which the shared
 # container-traversal rule already models project-wide.
+#
+# Format evidence (2026-10-13):
+# Primary source https://raw.githubusercontent.com/deepseek-ai/deepseek-harness/master/docs/subsystems/skills.md line 85:
+# "The local provider accepts directory bundles (<name>/SKILL.md) and flat Markdown files (<name>.md).
+# Nested recursive **/SKILL.md discovery is not supported."
+# Native roots explicitly declare entry_format = "standalone_md".
 
 [[roots]]
 id = "dsh_project"
 kind = "project"
 path = ".dsh/skills"
 scope = "project"
+entry_format = "standalone_md"
 rank = 95
 rule_id = "dsh_documented_project"
 evidence = "documented"
@@ -48,6 +55,7 @@ id = "dsh_project_agents"
 kind = "project"
 path = ".agents/skills"
 scope = "project"
+entry_format = "standalone_md"
 rank = 90
 rule_id = "dsh_documented_project_agents"
 evidence = "documented"
@@ -60,11 +68,14 @@ evidence = "documented"
 # `dsh` traversal test). It therefore stays `inferred` and stays recursive --
 # dropping that would delete reviewed coverage to satisfy a rule about a
 # different kind of root.
+# Retained inferred plugin format: pre-C baseline accepted flatfiles within skills dirs;
+# preserved explicitly as standalone_md for compatibility, vendor loadability unresolved (Stage D).
 [[roots]]
 id = "dsh_profiles"
 kind = "plugin"
 path = ".dsh/profiles"
 scope = "plugin"
+entry_format = "standalone_md"
 rank = 40
 rule_id = "dsh_inferred_profiles"
 evidence = "inferred"
@@ -79,6 +90,7 @@ id = "dsh_user"
 kind = "global"
 path = ".dsh/skills"
 scope = "user"
+entry_format = "standalone_md"
 rank = 70
 rule_id = "dsh_documented_user"
 evidence = "documented"
@@ -88,6 +100,7 @@ id = "dsh_shared_global"
 kind = "global"
 path = ".agents/skills"
 scope = "user"
+entry_format = "standalone_md"
 rank = 65
 rule_id = "dsh_documented_shared"
 evidence = "documented"

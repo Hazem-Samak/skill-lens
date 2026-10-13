@@ -16,10 +16,11 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from skill_lens.core import paths
 from skill_lens.core.cancellation import check_cancelled
 from skill_lens.core.hasher import IncompleteTreeError, hash_path
 from skill_lens.core.parser import canonicalize, find_skill_document, parse_skill
-from skill_lens.models.enums import ParseStatus, Scope
+from skill_lens.models.enums import EntryFormat, ParseStatus, RootBase, Scope
 from skill_lens.models.parsing import (
     ERR_DANGLING_SYMLINK,
     ERR_PERMISSION_DENIED,
@@ -141,12 +142,26 @@ def labels_for_entries(entries: Iterable[DiscoveredEntry]) -> dict[str, str]:
 
 
 @dataclass(frozen=True, slots=True)
-class RootHit:
-    """One ``(agent, root)`` pair that reaches an entrypoint.
+class UnreadableRoot:
+    """A search root that could not be read (e.g. TCC / PermissionError)."""
 
-    ``entrypoint_path`` is the *path this root actually sees*. A symlink farm
-    reaches one canonical library through several different paths, and
-    precedence is judged per entrypoint path (spec section 4), so the path
+    agent_id: str
+    root_id: str
+    path: str
+    detail: str
+
+
+@dataclass(frozen=True, slots=True)
+class RootHit:
+    """Evidence that a single agent root reached this entrypoint.
+
+    Carries the root's precedence rank and rule id so the resolver never has to
+    guess where a copy came from. Carries the entrypoint path *this* root saw,
+    which is what lets a symlink farm report genuine entrypoint counts while
+    retaining the one canonical library.
+
+    Note on ``is_file``: a root can discover a standalone ``.md`` file or a
+    directory skill. When a symlink points to a file, the file rule id
     belongs to the hit -- not to the merged entry.
     """
 
@@ -161,6 +176,7 @@ class RootHit:
     nested_rule_id: str | None = None
     specificity: int = 0
     entrypoint_path: str = ""
+    is_file: bool = False
 
     def rule_for(self, is_file: bool) -> str:
         if self.nested and self.nested_rule_id:
@@ -218,19 +234,9 @@ class DiscoveredEntry:
         return None
 
 
-@dataclass(frozen=True, slots=True)
-class UnreadableRoot:
-    """A root that exists but could not be listed (e.g. macOS TCC)."""
-
-    agent_id: str
-    root_id: str
-    path: str
-    detail: str
-
-
 @dataclass(slots=True)
 class DiscoveryIndex:
-    """The result of one full discovery pass over a mock or real home."""
+    """The aggregate output of a discovery run."""
 
     home: str
     cwd: str
@@ -270,7 +276,7 @@ def normalize_cwd(cwd: Path, home: Path) -> Path:
     """
     expanded = Path(cwd).expanduser()
     if expanded.is_absolute():
-        return expanded
+        return expanded.resolve()
     return (home / expanded).resolve()
 
 
@@ -295,28 +301,30 @@ def _absolute_roots_allowed(home: Path) -> bool:
     Under a sandbox (tests, ``--sandbox``) they are skipped so a scan can never
     read real system directories and contaminate deterministic results.
     """
-    from skill_lens.core import paths
-
     return paths.get_sandbox() is None and home == paths.home()
 
 
 def _directories_for_root(
-    home: Path, cwd: Path, root: AgentRoot, boundary: Path | None
+    home: Path,
+    cwd: Path,
+    root: AgentRoot,
+    boundary: Path | None,
 ) -> list[tuple[Path, bool]]:
-    """Return ``(directory, nested)`` pairs a root resolves to for this cwd.
-
-    Global/system/plugin roots are relative to the home directory. Project
-    roots are joined onto each ancestor of ``cwd`` up to the git boundary, so a
-    project skill is the *root* copy (not nested) while a skill found further up
-    the monorepo from the working directory is nested (qualifies as ``dir:skill``).
-    When there is no boundary (cwd is not in a project), no project root applies.
-    """
+    """Resolve an :class:`AgentRoot` to the concrete filesystem paths to search."""
     if root.is_absolute:
         if not _absolute_roots_allowed(home):
             return []
         return [(Path(root.path), False)]
+
     if not root.is_project:
+        if root.base == RootBase.XDG_CONFIG_HOME:
+            xdg_base = paths.xdg_config_home()
+            relative_path = (
+                root.path[len(".config/") :] if root.path.startswith(".config/") else root.path
+            )
+            return [(xdg_base / relative_path, False)]
         return [(home / root.path, False)]
+
     if boundary is None:
         return []
 
@@ -327,40 +335,62 @@ def _directories_for_root(
             if candidate.exists() or candidate.is_symlink():
                 results.append((candidate, directory != boundary))
         except OSError:
-            # An ancestor is off-limits; this project root simply does not
-            # apply. The blocked directory is reported elsewhere, so skip it.
             continue
     return results
 
 
-# --- Entry listing ---------------------------------------------------------
+# --- Entrypoint listing ----------------------------------------------------
+
+
+def _has_exact_skill_md(directory: Path) -> bool:
+    """True when ``directory`` contains a child whose literal name is ``SKILL.md``.
+
+    Comparing actual directory entry names via ``os.listdir`` prevents
+    case-insensitive filesystems (such as APFS on macOS) from falsely
+    matching lowercase ``skill.md`` or ``.skill.md``.
+    """
+    try:
+        return "SKILL.md" in os.listdir(directory)
+    except OSError:
+        return False
 
 
 def _is_skill_dir(path: Path) -> bool:
     return find_skill_document(path) is not None
 
 
-def _is_symlinked_markdown(path: Path) -> bool:
-    """True when ``path`` is a symlink whose target is a standalone ``.md`` file.
+def _is_declared_or_qualified_standalone_md(path: Path) -> bool:
+    """True when ``path`` is an explicit skill document or a qualified standalone .md.
 
-    A symlinked file skill must keep the *file* classification, otherwise the
-    root's ``file_rule_id`` is never emitted and a standalone-file agent reports
-    the directory-skill rule instead. Resolved safely: an unresolvable link
-    (cycle, dangling) simply is not a markdown file skill.
+    For Pi-style discovery: declared skill documents (``SKILL.md``) are always
+    discovered so malformed declarations can be diagnosed. Other standalone
+    markdown files (e.g. ``README.md``) are incidental unless they contain valid
+    frontmatter with a non-empty description.
     """
+    if path.name == "SKILL.md":
+        return True
     if path.suffix.lower() != ".md":
         return False
     try:
-        return path.resolve().is_file()
-    except (OSError, RuntimeError):
-        # A symlink loop makes ``resolve()`` raise ``RuntimeError`` on Python
-        # 3.11/3.12 (3.13+ stops at the loop instead); an unresolvable link
-        # raises ``OSError``. Either way, it is not a markdown file skill.
+        parse = parse_skill(path)
+        return bool(parse and parse.description and parse.description.strip())
+    except (OSError, UnicodeDecodeError, ValueError):
         return False
 
 
+def _is_standalone_md_allowed(fmt: EntryFormat | str, path: Path) -> bool:
+    if fmt in (EntryFormat.STANDALONE_MD, EntryFormat.OPENCODE_V2):
+        return True
+    if fmt == EntryFormat.QUALIFIED_STANDALONE_MD:
+        return _is_declared_or_qualified_standalone_md(path)
+    return False
+
+
 def _list_entries(
-    base: Path, *, cancelled: Callable[[], bool] | None = None
+    base: Path,
+    *,
+    cancelled: Callable[[], bool] | None = None,
+    root: AgentRoot | None = None,
 ) -> list[tuple[Path, bool]]:
     """List skill entrypoints directly under ``base`` as ``(path, is_file)``.
 
@@ -374,26 +404,120 @@ def _list_entries(
     except OSError:
         return []
 
+    fmt = root.entry_format if root is not None else EntryFormat.DIRECTORY
+
     results: list[tuple[Path, bool]] = []
     for child in children:
         check_cancelled(cancelled)
         if child.is_symlink():
-            results.append((child, _is_symlinked_markdown(child)))
-        elif child.is_dir():
-            if _is_skill_dir(child) or _unreadable(child):
+            try:
+                target = child.resolve()
+            except (OSError, RuntimeError):
                 results.append((child, False))
-        elif child.suffix.lower() == ".md":
+                continue
+
+            if not target.exists():
+                results.append((child, False))
+                continue
+
+            if target.is_dir():
+                if fmt in (EntryFormat.QUALIFIED_STANDALONE_MD, EntryFormat.OPENCODE_V2):
+                    if _has_exact_skill_md(target) or _unreadable(target):
+                        results.append((child, False))
+                else:
+                    results.append((child, False))
+            elif target.is_file():
+                if fmt == EntryFormat.DIRECTORY:
+                    # Directory-only roots must ignore file targets, regardless of metadata or name.
+                    continue
+                if fmt in (EntryFormat.STANDALONE_MD, EntryFormat.OPENCODE_V2):
+                    if child.name == "SKILL.md" or child.suffix.lower() == ".md":
+                        results.append((child, True))
+                elif fmt == EntryFormat.QUALIFIED_STANDALONE_MD:
+                    is_exact_or_qual = child.name == "SKILL.md" or (
+                        child.suffix.lower() == ".md"
+                        and _is_declared_or_qualified_standalone_md(target)
+                    )
+                    if is_exact_or_qual:
+                        results.append((child, True))
+        elif child.is_dir():
+            if fmt in (EntryFormat.QUALIFIED_STANDALONE_MD, EntryFormat.OPENCODE_V2):
+                if _has_exact_skill_md(child) or _unreadable(child):
+                    results.append((child, False))
+            else:
+                if _is_skill_dir(child) or _unreadable(child):
+                    results.append((child, False))
+        elif child.suffix.lower() == ".md" and _is_standalone_md_allowed(fmt, child):
             results.append((child, True))
     return results
 
 
 def _list_recursive_entries(
-    base: Path, *, cancelled: Callable[[], bool] | None = None
+    base: Path,
+    *,
+    cancelled: Callable[[], bool] | None = None,
+    root: AgentRoot | None = None,
 ) -> list[tuple[Path, bool]]:
-    """Find ``skills`` directories under ``base`` up to :data:`MAX_WALK_DEPTH`."""
+    """Find skill directories under ``base`` up to :data:`MAX_WALK_DEPTH`."""
     check_cancelled(cancelled)
+    fmt = root.entry_format if root is not None else EntryFormat.DIRECTORY
+
     found: list[tuple[Path, bool]] = []
     base_depth = len(base.parts)
+
+    if fmt == EntryFormat.OPENCODE_V2:
+        try:
+            root_children = sorted(base.iterdir(), key=lambda p: p.name)
+        except OSError:
+            return []
+        for child in root_children:
+            check_cancelled(cancelled)
+            if child.is_symlink():
+                try:
+                    target = child.resolve()
+                except (OSError, RuntimeError):
+                    found.append((child, False))
+                    continue
+                if not target.exists():
+                    found.append((child, False))
+                    continue
+                if target.is_file() and (child.suffix.lower() == ".md" or child.name == "SKILL.md"):
+                    found.append((child, True))
+                elif target.is_dir() and (_has_exact_skill_md(target) or _unreadable(target)):
+                    found.append((child, False))
+            elif child.is_file() and child.suffix.lower() == ".md":
+                found.append((child, True))
+
+        for dirpath, dirnames, _filenames in os.walk(base):
+            check_cancelled(cancelled)
+            current = Path(dirpath)
+            if current == base:
+                dirnames[:] = [d for d in dirnames if d != ".git"]
+                continue
+            if len(current.parts) - base_depth >= MAX_WALK_DEPTH:
+                dirnames[:] = []
+                continue
+            dirnames[:] = [d for d in dirnames if d != ".git"]
+            if _has_exact_skill_md(current) or _unreadable(current):
+                found.append((current, False))
+                dirnames[:] = []
+            else:
+                for name in list(dirnames) + list(_filenames):
+                    check_cancelled(cancelled)
+                    child = current / name
+                    if child.is_symlink():
+                        try:
+                            target = child.resolve()
+                        except (OSError, RuntimeError):
+                            found.append((child, False))
+                            continue
+                        if not target.exists():
+                            found.append((child, False))
+                            continue
+                        if target.is_dir() and (_has_exact_skill_md(target) or _unreadable(target)):
+                            found.append((child, False))
+        return found
+
     for dirpath, dirnames, _filenames in os.walk(base):
         check_cancelled(cancelled)
         current = Path(dirpath)
@@ -402,7 +526,7 @@ def _list_recursive_entries(
             continue
         dirnames[:] = [d for d in dirnames if d != ".git"]
         if current.name == "skills":
-            found.extend(_list_entries(current, cancelled=cancelled))
+            found.extend(_list_entries(current, cancelled=cancelled, root=root))
             dirnames[:] = []
     return found
 
@@ -453,9 +577,9 @@ def discover(
                     # ``exists``/``is_dir``; 3.14 swallows it).
                     continue
                 listing = (
-                    _list_recursive_entries(base, cancelled=cancelled)
-                    if root.recursive
-                    else _list_entries(base, cancelled=cancelled)
+                    _list_recursive_entries(base, cancelled=cancelled, root=root)
+                    if root.recursive or root.entry_format == EntryFormat.OPENCODE_V2
+                    else _list_entries(base, cancelled=cancelled, root=root)
                 )
                 for entrypoint, is_file in listing:
                     check_cancelled(cancelled)
@@ -475,6 +599,7 @@ def discover(
                         nested_rule_id=root.nested_rule_id,
                         specificity=len(Path(root.path).parts),
                         entrypoint_path=str(entrypoint),
+                        is_file=is_file,
                     )
                     index.entries.append(
                         _build_entry(entrypoint, is_file, hit, cancelled=cancelled)
@@ -541,10 +666,10 @@ def _build_entry(
 
 
 def _entry_name(entrypoint: Path, is_file: bool, parse: ParseResult | None) -> str:
+    if is_file:
+        return entrypoint.stem
     if parse is not None:
         return parse.directory_name
-    if is_file or entrypoint.suffix.lower() == ".md":
-        return entrypoint.stem
     return entrypoint.name
 
 
@@ -606,9 +731,9 @@ def _union_paths(current: tuple[str, ...], incoming: tuple[str, ...]) -> tuple[s
 
 def _union_hits(current: tuple[RootHit, ...], incoming: tuple[RootHit, ...]) -> tuple[RootHit, ...]:
     combined = list(current)
-    existing = {(h.agent_id, h.root_id, h.nested) for h in combined}
+    existing = {(h.entrypoint_path, h.agent_id, h.root_id, h.nested) for h in combined}
     for hit in incoming:
-        marker = (hit.agent_id, hit.root_id, hit.nested)
+        marker = (hit.entrypoint_path, hit.agent_id, hit.root_id, hit.nested)
         if marker not in existing:
             combined.append(hit)
             existing.add(marker)

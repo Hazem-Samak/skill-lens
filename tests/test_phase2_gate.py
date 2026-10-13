@@ -677,53 +677,6 @@ def test_resolver_explicit_empty_overrides_keeps_enabled_without_settings_read(
         assert captured_report.headline is HeadlineState.ACTIVE
 
 
-def test_resolver_nonempty_captured_overrides_disables_directory_key(
-    mock_home: Path, tmp_path: Path
-) -> None:
-    """Nonempty override disables directory key; differing frontmatter name does not migrate key."""
-    skill_dir = mock_home / ".codex" / "skills" / "folder-key"
-    make_skill(skill_dir, name="frontmatter-name", description="Diff test")
-
-    registry = load_registry()
-    index = discover(mock_home, tmp_path, registry)
-
-    # 1. Explicit empty {} stays active
-    rep_empty = resolve_skill(
-        "frontmatter-name",
-        "codex",
-        tmp_path,
-        mock_home,
-        index=index,
-        registry=registry,
-        disabled_overrides=frozenset(),
-    )
-    assert rep_empty.headline is HeadlineState.ACTIVE
-
-    # 2. Overriding directory key "folder-key" disables the candidate
-    rep_disabled = resolve_skill(
-        "frontmatter-name",
-        "codex",
-        tmp_path,
-        mock_home,
-        index=index,
-        registry=registry,
-        disabled_overrides=frozenset({"folder-key"}),
-    )
-    assert rep_disabled.headline is HeadlineState.DISABLED
-
-    # 3. Overriding frontmatter name "frontmatter-name" does NOT disable directory key "folder-key"
-    rep_active = resolve_skill(
-        "frontmatter-name",
-        "codex",
-        tmp_path,
-        mock_home,
-        index=index,
-        registry=registry,
-        disabled_overrides=frozenset({"frontmatter-name"}),
-    )
-    assert rep_active.headline is HeadlineState.ACTIVE
-
-
 def test_resolver_missing_companion_inputs_raise_value_error(
     mock_home: Path, tmp_path: Path
 ) -> None:

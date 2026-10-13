@@ -82,3 +82,19 @@ class CompareRelation(StrEnum):
     DIVERGED = "diverged"
     ONLY_A = "only_a"
     ONLY_B = "only_b"
+
+
+class RootBase(StrEnum):
+    """Base directory from which a search root path is resolved."""
+
+    HOME = "home"
+    XDG_CONFIG_HOME = "xdg_config_home"
+
+
+class EntryFormat(StrEnum):
+    """Format and discovery contract expected under a search root."""
+
+    DIRECTORY = "directory"
+    STANDALONE_MD = "standalone_md"
+    QUALIFIED_STANDALONE_MD = "qualified_standalone_md"
+    OPENCODE_V2 = "opencode_v2"

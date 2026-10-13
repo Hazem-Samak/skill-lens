@@ -1,0 +1,121 @@
+/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-opaque-independent-e3ehqodh/skill_lens/__init__.py
+
+CONTROL cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-opaque-independent-e3ehqodh cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_session_snapshot.py::test_opaque_standalone_capture_transient_byte_change_is_rejected']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-opaque-independent-e3ehqodh
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_session_snapshot.py .                                         [100%]
+
+============================== 1 passed in 0.10s ===============================
+
+MUTANT cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-opaque-independent-e3ehqodh cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_session_snapshot.py::test_opaque_standalone_capture_transient_byte_change_is_rejected']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-opaque-independent-e3ehqodh
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_session_snapshot.py F                                         [100%]
+
+=================================== FAILURES ===================================
+_______ test_opaque_standalone_capture_transient_byte_change_is_rejected _______
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-64/test_opaque_standalone_capture0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10bf06450>
+
+    def test_opaque_standalone_capture_transient_byte_change_is_rejected(
+        mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Standalone file byte alteration during capture specifically exercising the standalone
+        capture-hash guard (snapshot.py:262).
+    
+        Suffixless external file reached by supported .md shortcut has synthetic parse=None.
+        After first discovery, temporarily change bytes; step 3 reads those bytes.
+        Then before second discovery, restore original bytes in first Doctor call.
+        Parse is None (step 4 skipped); second discovery sees original bytes (step 6 passes).
+        Only the captured-byte fingerprint check (line 262) prevents publication!
+        """
+        home = paths.home()
+        project = home / "project"
+        project.mkdir(parents=True, exist_ok=True)
+        _setup_rich_fixture(home, project)
+    
+        exact_msg = "Files changed while scanning. Press r to retry."
+    
+        import skill_lens.core.snapshot as snapshot_module
+    
+        opaque_file = home / "vault" / "opaque_standalone"
+        orig_opaque_bytes = b"initial opaque standalone bytes\n"
+        disc_calls_a2 = 0
+        orig_disc_standalone = snapshot_module.live_discovery
+        orig_doc_standalone = snapshot_module.run_doctor
+    
+        # Positive control: non-mutating synthetic parse=None capture succeeds
+        disc_control_calls = 0
+    
+        def disc_non_mutating(*args: object, **kwargs: object) -> Any:
+            nonlocal disc_control_calls
+            disc_control_calls += 1
+            idx = orig_disc_standalone(*args, **kwargs)
+            idx.entries = [
+                replace(e, parse=None) if "opaque_link" in e.entrypoint_path else e for e in idx.entries
+            ]
+            return idx
+    
+        monkeypatch.setattr(snapshot_module, "live_discovery", disc_non_mutating)
+        snap_control = capture_session(generation=1, home=home, cwd=project)
+        assert disc_control_calls == 2
+        opaque_entry = next(e for e in snap_control.index.entries if "opaque_link" in e.entrypoint_path)
+        assert opaque_entry.parse is None
+        assert canonical_key(opaque_entry) in snap_control.files
+        monkeypatch.undo()
+    
+        # Mutating test: transient byte alteration between first discovery and file capture
+        disc_calls_a2 = 0
+        doc_calls_a2 = 0
+    
+        def mutate_standalone_after_disc(*args: object, **kwargs: object) -> Any:
+            nonlocal disc_calls_a2
+            disc_calls_a2 += 1
+            idx = orig_disc_standalone(*args, **kwargs)
+            if disc_calls_a2 == 1:
+                opaque_file.write_bytes(b"TEMPORARILY CHANGED STANDALONE BYTES\n")
+            idx.entries = [
+                replace(e, parse=None) if "opaque_link" in e.entrypoint_path else e for e in idx.entries
+            ]
+            return idx
+    
+        def restore_standalone_in_doctor(*args: object, **kwargs: object) -> Any:
+            nonlocal doc_calls_a2
+            doc_calls_a2 += 1
+            if doc_calls_a2 == 1:
+                opaque_file.write_bytes(orig_opaque_bytes)
+            return orig_doc_standalone(*args, **kwargs)
+    
+        monkeypatch.setattr(snapshot_module, "live_discovery", mutate_standalone_after_disc)
+        monkeypatch.setattr(snapshot_module, "run_doctor", restore_standalone_in_doctor)
+        try:
+>           with pytest.raises(SnapshotChanged) as exc_info:
+E           Failed: DID NOT RAISE SnapshotChanged
+
+tests/test_session_snapshot.py:1346: Failed
+=========================== short test summary info ============================
+FAILED tests/test_session_snapshot.py::test_opaque_standalone_capture_transient_byte_change_is_rejected
+============================== 1 failed in 0.77s ===============================
+
+RESTORE cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-opaque-independent-e3ehqodh cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_session_snapshot.py::test_opaque_standalone_capture_transient_byte_change_is_rejected']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-opaque-independent-e3ehqodh
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_session_snapshot.py .                                         [100%]
+
+============================== 1 passed in 0.10s ===============================

@@ -139,6 +139,7 @@ def capture_session(
     generation: int,
     home: Path,
     cwd: Path,
+    registry: dict[str, AgentDefinition] | None = None,
     cancelled: Callable[[], bool] | None = None,
 ) -> SessionSnapshot:
     """Capture a consistent photograph of the skill inventory, files, and health."""
@@ -147,7 +148,7 @@ def capture_session(
         raise ValueError(f"supplied home '{home}' does not match effective home '{paths.home()}'")
 
     check_cancelled(cancelled)
-    registry_dict = load_registry()
+    registry_dict = registry if registry is not None else load_registry()
 
     check_cancelled(cancelled)
     index_1 = live_discovery(cwd=cwd, registry=registry_dict, cancelled=cancelled)

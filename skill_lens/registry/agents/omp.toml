@@ -7,7 +7,7 @@ coexist_policy = "ambiguous"
 walk_boundary = "git_root"
 unsearched_rule_id = "omp_search_roots"
 ambiguous_rule_id = "omp_duplicate_ambiguous"
-source = "https://github.com/can1357/oh-my-pi/blob/main/docs/skills.md"
+source = "https://raw.githubusercontent.com/can1357/oh-my-pi/main/docs/skills.md"
 
 # Documented in the upstream docs/skills.md. Two facts drive this file:
 #
@@ -46,12 +46,22 @@ source = "https://github.com/can1357/oh-my-pi/blob/main/docs/skills.md"
 #
 # Discovery is non-recursive upstream (one level under `skills/`); nothing here
 # sets ``recursive``, which was verified rather than changed.
+#
+# Format evidence (2026-10-13):
+# Primary source https://raw.githubusercontent.com/can1357/oh-my-pi/main/docs/skills.md lines 23-28:
+# "For conventional provider roots (native/Claude/Codex/Agents/plugins), skills are discovered as
+# one level under skills/: <skills-root>/<skill-name>/SKILL.md"
+# Native and shared roots (omp_project, omp_project_agents, omp_shared_global) have documented directory format.
+# Retained root omp_agent (.omp/agent) models managed skills; upstream path is ~/.omp/agent/managed-skills.
+# entry_format = "standalone_md" preserves pre-C baseline discovery compatibility (directory bundles + flatfiles);
+# unknown root flat acceptance is Skill Lens compatibility, NOT proven vendor support/loadability (Stage D carryover).
 
 [[roots]]
 id = "omp_project"
 kind = "project"
 path = ".omp/skills"
 scope = "project"
+entry_format = "directory"
 rank = 95
 rule_id = "omp_documented_project"
 evidence = "documented"
@@ -61,6 +71,7 @@ id = "omp_project_agents"
 kind = "project"
 path = ".agents/skills"
 scope = "project"
+entry_format = "directory"
 rank = 90
 rule_id = "omp_documented_project_agents"
 evidence = "documented"
@@ -70,6 +81,7 @@ id = "omp_shared_global"
 kind = "global"
 path = ".agents/skills"
 scope = "user"
+entry_format = "directory"
 rank = 70
 rule_id = "omp_documented_shared"
 evidence = "documented"
@@ -79,6 +91,7 @@ id = "omp_agent"
 kind = "global"
 path = ".omp/agent"
 scope = "user"
+entry_format = "standalone_md"
 rank = 40
 rule_id = "omp_documented_managed_last"
 evidence = "documented"

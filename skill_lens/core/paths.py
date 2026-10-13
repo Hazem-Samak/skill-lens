@@ -54,11 +54,29 @@ def home() -> Path:
 
 
 def xdg_config_home() -> Path:
-    """Resolve ``$XDG_CONFIG_HOME``, defaulting to ``~/.config`` at call time."""
+    """Resolve ``$XDG_CONFIG_HOME``, defaulting to ``~/.config`` at call time.
+
+    Under a sandbox, an external ``$XDG_CONFIG_HOME`` pointing outside the
+    sandbox is ignored so a sandboxed run cannot escape isolation. If
+    ``$XDG_CONFIG_HOME`` points inside the sandbox, it is honoured.
+    """
     env = os.environ.get("XDG_CONFIG_HOME")
-    if env:
-        return Path(env).expanduser()
-    return home() / ".config"
+    if not env:
+        return home() / ".config"
+
+    cand = Path(env).expanduser()
+    if _SANDBOX is not None:
+        try:
+            cand_resolved = _resolved(cand)
+            sandbox_resolved = _resolved(_SANDBOX)
+            if cand_resolved == sandbox_resolved:
+                return cand
+            cand_resolved.relative_to(sandbox_resolved)
+            return cand
+        except ValueError:
+            return home() / ".config"
+
+    return cand
 
 
 def terminal_cwd() -> Path:

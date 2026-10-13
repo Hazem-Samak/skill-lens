@@ -1,0 +1,56 @@
+[
+  {
+    "status": "fulfilled",
+    "value": {
+      "id": "opencode",
+      "config": {
+        "threadId": "thread:delegated-task:command%3Amcp%3Ae1c02611-fc8e-4e09-82a6-d33477eb169c%3Adelegate-task%3Aassessment-20261013-stage-c-opencode-approved-targeted-review",
+        "modelSelection": {
+          "instanceId": "opencode",
+          "model": "opencode/space-bunny-free",
+          "options": [
+            {
+              "id": "variant",
+              "value": "max"
+            }
+          ]
+        },
+        "runtimeMode": "full-access",
+        "interactionMode": "plan"
+      },
+      "binding": {
+        "branch": "main",
+        "worktreePath": null
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "id": "mcode",
+      "config": {
+        "threadId": "thread:delegated-task:command%3Amcp%3Ae1c02611-fc8e-4e09-82a6-d33477eb169c%3Adelegate-task%3Aassessment-20261013-stage-c-mcode-approved-targeted-review",
+        "modelSelection": {
+          "instanceId": "mcode",
+          "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+          "options": [
+            {
+              "id": "thinkingEffort",
+              "value": "xhigh"
+            },
+            {
+              "id": "permissionMode",
+              "value": "bypassPermissions"
+            }
+          ]
+        },
+        "runtimeMode": "full-access",
+        "interactionMode": "plan"
+      },
+      "binding": {
+        "branch": "main",
+        "worktreePath": null
+      }
+    }
+  }
+]

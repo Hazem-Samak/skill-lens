@@ -115,7 +115,7 @@ def _setup_rich_fixture(home: Path, project: Path) -> dict[str, Any]:
     (project_shared / "assets" / "shared.bin").write_bytes(b"\x05\x06\x07\x08")
 
     # 5. Standalone .md skill
-    standalone_dir = home / ".codex" / "skills"
+    standalone_dir = home / ".gemini" / "config" / "skills"
     standalone_dir.mkdir(parents=True, exist_ok=True)
     standalone_file = standalone_dir / "standalone.md"
     standalone_file.write_text(
@@ -163,7 +163,7 @@ def _setup_rich_fixture(home: Path, project: Path) -> dict[str, Any]:
     vault_dir.mkdir(parents=True, exist_ok=True)
     opaque_target = vault_dir / "opaque_standalone"
     opaque_target.write_bytes(b"initial opaque standalone bytes\n")
-    opaque_link = home / ".claude" / "skills" / "opaque_link"
+    opaque_link = home / ".gemini" / "config" / "skills" / "opaque_link.md"
     opaque_link.symlink_to(opaque_target)
 
     return {
@@ -294,7 +294,7 @@ def test_snapshot_reports_match_live_reports(mock_home: Path) -> None:
     st_cfs = snapshot.files[canonical_key(standalone_entry)]
     assert len(st_cfs) == 1
     assert st_cfs[0].relative_path == "standalone.md"
-    assert st_cfs[0].data == (home / ".codex" / "skills" / "standalone.md").read_bytes()
+    assert st_cfs[0].data == (home / ".gemini" / "config" / "skills" / "standalone.md").read_bytes()
 
     # 2. Config inputs and disabled overrides assertions
     assert set(snapshot.disabled_overrides.keys()) == {a.id for a in snapshot.registry}
@@ -845,44 +845,6 @@ def test_change_during_capture_is_rejected(
     assert str(exc_info.value) == exact_msg
     monkeypatch.undo()
 
-    # Sub-case A2: Standalone file byte alteration during capture specifically exercising
-    # the standalone capture-hash guard (snapshot.py:234).
-    # Suffixless link to standalone target outside roots has parse=None.
-    # After first discovery, temporarily change bytes; step 3 reads those bytes.
-    # Then before second discovery, restore original bytes in first Doctor call.
-    # Parse is None (step 4 skipped); second discovery sees original bytes (step 6 passes).
-    # Only the first captured-byte fingerprint check (line 234) prevents publication!
-    opaque_file = home / "vault" / "opaque_standalone"
-    orig_opaque_bytes = b"initial opaque standalone bytes\n"
-    disc_calls_a2 = 0
-    orig_disc_standalone = snapshot_module.live_discovery
-    orig_doc_standalone = snapshot_module.run_doctor
-
-    def mutate_standalone_after_disc(*args: object, **kwargs: object) -> Any:
-        nonlocal disc_calls_a2
-        idx = orig_disc_standalone(*args, **kwargs)
-        disc_calls_a2 += 1
-        if disc_calls_a2 == 1:
-            opaque_file.write_bytes(b"TEMPORARILY CHANGED STANDALONE BYTES\n")
-        return idx
-
-    doc_calls_a2 = 0
-
-    def restore_standalone_in_doctor(*args: object, **kwargs: object) -> Any:
-        nonlocal doc_calls_a2
-        doc_calls_a2 += 1
-        if doc_calls_a2 == 1:
-            opaque_file.write_bytes(orig_opaque_bytes)
-        return orig_doc_standalone(*args, **kwargs)
-
-    monkeypatch.setattr(snapshot_module, "live_discovery", mutate_standalone_after_disc)
-    monkeypatch.setattr(snapshot_module, "run_doctor", restore_standalone_in_doctor)
-    with pytest.raises(SnapshotChanged) as exc_info:
-        capture_session(generation=1, home=home, cwd=project)
-    assert str(exc_info.value) == exact_msg
-    opaque_file.write_bytes(orig_opaque_bytes)
-    monkeypatch.undo()
-
     # Sub-case B1: Frontmatter metadata date-coercion drift during source reparse check
     # where to_dict() and body remain identical, but raw frontmatter differs (date vs string)
     def mutating_parse_bytes_fm(data: bytes, *, source_path: str) -> Any:
@@ -945,8 +907,9 @@ def test_change_during_capture_is_rejected(
         discovery_pass += 1
         idx = orig_live_discovery(*args, **kwargs)
         if discovery_pass == 1:
+            target_idx = next(i for i, e in enumerate(idx.entries) if e.parse is not None)
             new_entries = list(idx.entries)
-            new_entries[0] = replace(new_entries[0], parse=None)
+            new_entries[target_idx] = replace(new_entries[target_idx], parse=None)
             return replace(idx, entries=tuple(new_entries))
         return idx
 
@@ -967,8 +930,9 @@ def test_change_during_capture_is_rejected(
         discovery_pass += 1
         idx = orig_live_discovery(*args, **kwargs)
         if discovery_pass == 2:
+            target_idx = next(i for i, e in enumerate(idx.entries) if e.parse is not None)
             new_entries = list(idx.entries)
-            new_entries[0] = replace(new_entries[0], parse=None)
+            new_entries[target_idx] = replace(new_entries[target_idx], parse=None)
             return replace(idx, entries=tuple(new_entries))
         return idx
 
@@ -1124,6 +1088,11 @@ def test_change_during_capture_is_rejected(
                     if name == "parse_frontmatter":
                         for i_e, e_cand in enumerate(new_e):
                             if e_cand.parse and "released" in e_cand.parse.frontmatter:
+                                target_idx = i_e
+                                break
+                    elif name.startswith("parse_"):
+                        for i_e, e_cand in enumerate(new_e):
+                            if e_cand.parse is not None:
                                 target_idx = i_e
                                 break
                     mutated = fn(new_e[target_idx])
@@ -1300,6 +1269,92 @@ def test_change_during_capture_is_rejected(
         capture_session(generation=1, home=home, cwd=project)
     assert str(exc_info.value) == exact_msg
     monkeypatch.undo()
+
+
+def test_opaque_standalone_capture_transient_byte_change_is_rejected(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Standalone file byte alteration during capture specifically exercising the standalone
+    capture-hash guard (snapshot.py:262).
+
+    Suffixless external file reached by supported .md shortcut has synthetic parse=None.
+    After first discovery, temporarily change bytes; step 3 reads those bytes.
+    Then before second discovery, restore original bytes in first Doctor call.
+    Parse is None (step 4 skipped); second discovery sees original bytes (step 6 passes).
+    Only the captured-byte fingerprint check (line 262) prevents publication!
+    """
+    home = paths.home()
+    project = home / "project"
+    project.mkdir(parents=True, exist_ok=True)
+    _setup_rich_fixture(home, project)
+
+    exact_msg = "Files changed while scanning. Press r to retry."
+
+    import skill_lens.core.snapshot as snapshot_module
+
+    opaque_file = home / "vault" / "opaque_standalone"
+    orig_opaque_bytes = b"initial opaque standalone bytes\n"
+    disc_calls_a2 = 0
+    orig_disc_standalone = snapshot_module.live_discovery
+    orig_doc_standalone = snapshot_module.run_doctor
+
+    # Positive control: non-mutating synthetic parse=None capture succeeds
+    disc_control_calls = 0
+
+    def disc_non_mutating(*args: object, **kwargs: object) -> Any:
+        nonlocal disc_control_calls
+        disc_control_calls += 1
+        idx = orig_disc_standalone(*args, **kwargs)
+        idx.entries = [
+            replace(e, parse=None) if "opaque_link" in e.entrypoint_path else e for e in idx.entries
+        ]
+        return idx
+
+    monkeypatch.setattr(snapshot_module, "live_discovery", disc_non_mutating)
+    snap_control = capture_session(generation=1, home=home, cwd=project)
+    assert disc_control_calls == 2
+    opaque_entry = next(e for e in snap_control.index.entries if "opaque_link" in e.entrypoint_path)
+    assert opaque_entry.parse is None
+    assert canonical_key(opaque_entry) in snap_control.files
+    monkeypatch.undo()
+
+    # Mutating test: transient byte alteration between first discovery and file capture
+    disc_calls_a2 = 0
+    doc_calls_a2 = 0
+
+    def mutate_standalone_after_disc(*args: object, **kwargs: object) -> Any:
+        nonlocal disc_calls_a2
+        disc_calls_a2 += 1
+        idx = orig_disc_standalone(*args, **kwargs)
+        if disc_calls_a2 == 1:
+            opaque_file.write_bytes(b"TEMPORARILY CHANGED STANDALONE BYTES\n")
+        idx.entries = [
+            replace(e, parse=None) if "opaque_link" in e.entrypoint_path else e for e in idx.entries
+        ]
+        return idx
+
+    def restore_standalone_in_doctor(*args: object, **kwargs: object) -> Any:
+        nonlocal doc_calls_a2
+        doc_calls_a2 += 1
+        if doc_calls_a2 == 1:
+            opaque_file.write_bytes(orig_opaque_bytes)
+        return orig_doc_standalone(*args, **kwargs)
+
+    monkeypatch.setattr(snapshot_module, "live_discovery", mutate_standalone_after_disc)
+    monkeypatch.setattr(snapshot_module, "run_doctor", restore_standalone_in_doctor)
+    try:
+        with pytest.raises(SnapshotChanged) as exc_info:
+            capture_session(generation=1, home=home, cwd=project)
+        assert str(exc_info.value) == exact_msg
+
+        # Counters proving reached intended phase:
+        # Failed at Step 3 fingerprint check during file capture before Doctor (Phase 5)
+        # or second discovery (Phase 6).
+        assert disc_calls_a2 == 1
+        assert doc_calls_a2 == 0
+    finally:
+        opaque_file.write_bytes(orig_opaque_bytes)
+        monkeypatch.undo()
 
 
 # ---------------------------------------------------------------------------
@@ -1845,37 +1900,38 @@ def test_stable_unreadable_copy_retains_parse_and_empty_files(mock_home: Path) -
 
 
 def test_suffixless_symlink_to_standalone_file(mock_home: Path) -> None:
-    """Suffixless symlink to standalone file outside scanned roots captures canonical file."""
+    """Supported .md shortcut to suffixless standalone file outside roots captures
+    canonical file.
+    """
     home = paths.home()
     # Canonical file is INSIDE mock_home, but OUTSIDE all agent search roots
     target_dir = home / "outside_scanned_roots"
     target_dir.mkdir(parents=True, exist_ok=True)
-    real_file = target_dir / "standalone_target.md"
+    real_file = target_dir / "standalone_target"
     real_file.write_text(
         "---\nname: standalone_target\ndescription: Target.\n---\n# Standalone Target\n",
         encoding="utf-8",
     )
 
-    # Suffixless symlink in an agent search root
-    link_path = home / ".claude" / "skills" / "shortcut_no_ext"
+    # Supported .md shortcut in an agent search root with declared standalone_md format
+    reg = load_registry()
+    link_path = home / ".gemini" / "config" / "skills" / "shortcut.md"
     link_path.parent.mkdir(parents=True, exist_ok=True)
     os.symlink(real_file, link_path)
 
-    snapshot = capture_session(generation=1, home=home, cwd=home)
+    snapshot = capture_session(generation=1, home=home, cwd=home, registry=reg)
     target_entry = next(
-        (e for e in snapshot.index.entries if "shortcut_no_ext" in e.entrypoint_path), None
+        (e for e in snapshot.index.entries if "shortcut.md" in e.entrypoint_path), None
     )
-    assert target_entry is not None, "Expected entry for shortcut_no_ext"
-    # First live entry parse is None, is_file is False, content_hash is present
-    assert target_entry.parse is None
-    assert target_entry.is_file is False
+    assert target_entry is not None, "Expected entry for shortcut.md"
+    assert target_entry.is_file is True
     assert target_entry.content_hash is not None
 
     key = canonical_key(target_entry)
     assert key in snapshot.files
     captured = snapshot.files[key]
     assert len(captured) == 1
-    assert captured[0].relative_path == "standalone_target.md"
+    assert captured[0].relative_path == "standalone_target"
     assert captured[0].data == real_file.read_bytes()
     assert captured[0].fingerprint == hash_bytes(real_file.read_bytes())
 

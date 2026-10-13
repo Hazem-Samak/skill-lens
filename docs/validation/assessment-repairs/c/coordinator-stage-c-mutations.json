@@ -1,0 +1,77 @@
+{
+  "copy": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-stage-c-proof-07avz_lj",
+  "results": [
+    {
+      "label": "Codex directory file ignore CONTROL",
+      "test": "test_codex_directory_only_root_ignores_symlink_to_file",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "Codex directory file ignore MUTANT",
+      "test": "test_codex_directory_only_root_ignores_symlink_to_file",
+      "exit_code": 1,
+      "expected": 1
+    },
+    {
+      "label": "Codex directory file ignore RESTORE",
+      "test": "test_codex_directory_only_root_ignores_symlink_to_file",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "Pi exact declaration CONTROL",
+      "test": "test_pi_exact_skill_md_directory_discovery_and_case_sensitivity",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "Pi exact declaration MUTANT",
+      "test": "test_pi_exact_skill_md_directory_discovery_and_case_sensitivity",
+      "exit_code": 1,
+      "expected": 1
+    },
+    {
+      "label": "Pi exact declaration RESTORE",
+      "test": "test_pi_exact_skill_md_directory_discovery_and_case_sensitivity",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "per-hit disabled identity CONTROL",
+      "test": "test_synthetic_identity_source_disabled_overrides_matching",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "per-hit disabled identity MUTANT",
+      "test": "test_synthetic_identity_source_disabled_overrides_matching",
+      "exit_code": 1,
+      "expected": 1
+    },
+    {
+      "label": "per-hit disabled identity RESTORE",
+      "test": "test_synthetic_identity_source_disabled_overrides_matching",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "metadata validation CONTROL",
+      "test": "test_metadata_enum_validation",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "label": "metadata validation MUTANT",
+      "test": "test_metadata_enum_validation",
+      "exit_code": 1,
+      "expected": 1
+    },
+    {
+      "label": "metadata validation RESTORE",
+      "test": "test_metadata_enum_validation",
+      "exit_code": 0,
+      "expected": 0
+    }
+  ]
+}

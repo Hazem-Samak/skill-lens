@@ -6,7 +6,17 @@ policy_evidence = "empirical"
 coexist_policy = "shadow"
 walk_boundary = "git_root"
 unsearched_rule_id = "qoder_search_roots"
-source = "https://docs.qoder.com/skills"
+source = "https://docs.qoder.com/cli/Skills"
+
+# Format evidence (2026-10-13):
+# Primary source: https://docs.qoder.com/cli/Skills (old /skills returns 404).
+# Sections "Where Skills live" and "Organize Directory Structure" document
+# ~/.qoder/skills/{skill-name}/SKILL.md (user) and .qoder/skills/{skill-name}/SKILL.md (project).
+# Native roots (qoder_global, qoder_project) have documented directory format;
+# shared project root (qoder_project_agents) is an unverified/non-native compatibility root:
+# entry_format = "standalone_md" preserves pre-C baseline discovery compatibility (directory bundles + flatfiles);
+# unknown root flat acceptance is Skill Lens compatibility, NOT proven vendor support/loadability (Stage D carryover).
+# Existing root paths/ranks remain empirical.
 
 # Precedence is Project > Global (see collision_policy). Within a project, the
 # agent-specific root outranks the shared ``.agents`` root.
@@ -15,6 +25,7 @@ id = "qoder_global"
 kind = "global"
 path = ".qoder/skills"
 scope = "user"
+entry_format = "directory"
 rank = 70
 rule_id = "qoder_global_symlink_farm"
 evidence = "empirical"
@@ -24,6 +35,7 @@ id = "qoder_project"
 kind = "project"
 path = ".qoder/skills"
 scope = "project"
+entry_format = "directory"
 rank = 90
 rule_id = "qoder_project_shadow"
 evidence = "empirical"
@@ -33,6 +45,7 @@ id = "qoder_project_agents"
 kind = "project"
 path = ".agents/skills"
 scope = "project"
+entry_format = "standalone_md"
 rank = 85
 rule_id = "qoder_project_shadow"
 evidence = "empirical"

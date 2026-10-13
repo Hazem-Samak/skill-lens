@@ -1,0 +1,89 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/Documents/Projects Coding/Skill Lens
+configfile: pyproject.toml
+testpaths: tests
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 861 items
+
+tests/test_cli.py ..............................                         [  3%]
+tests/test_compare.py ......................                             [  6%]
+tests/test_discovery.py ....................                             [  8%]
+tests/test_doctor.py ...........................                         [ 11%]
+tests/test_fixtures.py ................................................. [ 17%]
+..................                                                       [ 19%]
+tests/test_hasher.py .......................                             [ 21%]
+tests/test_incomplete_tree.py ..................                         [ 24%]
+tests/test_live_system_root.py ...                                       [ 24%]
+tests/test_models.py .......                                             [ 25%]
+tests/test_parser.py .........................                           [ 28%]
+tests/test_paths.py .............                                        [ 29%]
+tests/test_phase0_gate.py ...                                            [ 29%]
+tests/test_phase1_gate.py .............................................. [ 35%]
+                                                                         [ 35%]
+tests/test_phase2_gate.py .............................................. [ 40%]
+.......................................                                  [ 45%]
+tests/test_phase3_gate.py ..................................             [ 49%]
+tests/test_phase4_gate.py ..........                                     [ 50%]
+tests/test_phase5_gate.py ...................                            [ 52%]
+tests/test_phase6_gate.py ...........................................    [ 57%]
+tests/test_presentation.py ...................                           [ 59%]
+tests/test_registry.py ..................................                [ 63%]
+tests/test_render_snapshots.py .................                         [ 65%]
+tests/test_session_snapshot.py ..............s.                          [ 67%]
+tests/test_snapshot_inputs.py ................                           [ 69%]
+tests/test_stage_c_repairs.py ...................................        [ 73%]
+tests/test_tui_app.py ...........................                        [ 76%]
+tests/test_tui_packaging.py ......                                       [ 77%]
+tests/test_tui_read_only.py ............................................ [ 82%]
+........................................................................ [ 90%]
+.....................                                                    [ 93%]
+tests/test_tui_routing.py ......................................         [ 97%]
+tests/test_tui_session.py .....................                          [100%]
+
+================================ tests coverage ================================
+______________ coverage: platform darwin, python 3.11.16-final-0 _______________
+
+Name                                  Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------------------------------------
+skill_lens/__init__.py                    1      0      0      0   100%
+skill_lens/cli.py                       205      4     52      2    98%   100, 187-188, 248->250, 351
+skill_lens/core/__init__.py               0      0      0      0   100%
+skill_lens/core/cancellation.py           7      0      2      0   100%
+skill_lens/core/compare.py               91      2     40      2    97%   75, 151
+skill_lens/core/diff.py                 235     13     86      6    94%   91-99, 109-115, 149-150, 154, 215, 250->252, 363->381, 425
+skill_lens/core/discovery.py            384     28    164     16    92%   61, 102, 233, 315-317, 337-338, 354-355, 373, 377-378, 404-405, 429->410, 434->410, 436->410, 441->410, 471-472, 482-483, 485, 486->473, 498-499, 525-526, 588, 644-646, 737->735
+skill_lens/core/doctor.py               155      4     62      5    96%   136, 213, 272->267, 315, 415
+skill_lens/core/exitcodes.py             36      0      4      0   100%
+skill_lens/core/hasher.py               133     10     32      2    92%   44, 77-80, 136, 138-143, 146, 178-183
+skill_lens/core/health.py                41      2     22      2    94%   55, 92
+skill_lens/core/parser.py               124      7     42      3    94%   80, 98, 304-305, 334-335, 344
+skill_lens/core/paths.py                 62      1     16      1    97%   73
+skill_lens/core/resolver.py             355     25    190     25    90%   98-100, 120, 136, 174, 272->274, 351, 371, 373, 377, 408, 410, 413, 415, 420, 422, 459, 461, 477, 479, 488, 502, 507, 543, 618, 692->688
+skill_lens/core/scanner.py               80      0      8      0   100%
+skill_lens/core/snapshot.py             288     24    118     11    91%   102, 109->111, 123->126, 129->127, 168->166, 187-188, 200, 202-207, 222, 224, 228, 239, 253-258, 280-281, 288->299, 295-296, 300, 303, 336-337
+skill_lens/core/snapshot_models.py       40      0      0      0   100%
+skill_lens/core/system.py                39      6      2      0    80%   70-77
+skill_lens/models/__init__.py            13      0      0      0   100%
+skill_lens/models/compare.py             37      0      2      0   100%
+skill_lens/models/diff.py                70      0      0      0   100%
+skill_lens/models/doctor.py              36      0      2      0   100%
+skill_lens/models/enums.py               53      0      0      0   100%
+skill_lens/models/installation.py        23      0      0      0   100%
+skill_lens/models/parsing.py             55      2      6      0    97%   56, 59
+skill_lens/models/resolution.py          37      0      0      0   100%
+skill_lens/presentation/__init__.py       4      0      0      0   100%
+skill_lens/presentation/state.py          6      0      0      0   100%
+skill_lens/presentation/text.py          55      0     16      0   100%
+skill_lens/registry/__init__.py           4      0      0      0   100%
+skill_lens/registry/loader.py            73      1      6      1    97%   68
+skill_lens/render.py                    185     21     70     10    86%   69-70, 88-90, 126->128, 134, 139->141, 153-168, 195-196, 223, 269->271, 285, 355
+skill_lens/tui/__init__.py               39      4     10      3    86%   75, 81, 83, 89
+skill_lens/tui/app.py                   192      7     48     11    92%   114->exit, 206->exit, 220->229, 261, 264, 268, 272, 275, 326->exit, 339->342, 372-373
+skill_lens/tui/session.py               183      7     70     10    93%   106->109, 245, 247, 257, 281, 283, 299, 313->exit, 321->exit, 329
+---------------------------------------------------------------------------------
+TOTAL                                  3341    168   1070    110    93%
+Required test coverage of 90.0% reached. Total coverage: 93.38%
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_session_snapshot.py:1951: Filesystem is case-insensitive; dual distinct physical files unsupported.
+======================= 860 passed, 1 skipped in 47.82s ========================

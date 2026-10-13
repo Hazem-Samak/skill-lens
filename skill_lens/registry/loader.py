@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from skill_lens.models.enums import Evidence, Scope
+from skill_lens.models.enums import EntryFormat, Evidence, RootBase, Scope
 from skill_lens.registry import REGISTRY_DIR
 
 
@@ -30,6 +30,8 @@ class AgentRoot:
     nested_rule_id: str | None = None
     file_rule_id: str | None = None
     recursive: bool = False
+    base: RootBase = RootBase.HOME
+    entry_format: EntryFormat = EntryFormat.DIRECTORY
 
     @property
     def is_project(self) -> bool:
@@ -67,6 +69,16 @@ class AgentDefinition:
 
 
 def _parse_root(raw: dict[str, Any]) -> AgentRoot:
+    base = RootBase(raw.get("base", "home"))
+    # External, legacy, or undeclared agent roots fallback to standalone_md if
+    # file_rule_id is present, otherwise directory; some native roots remain
+    # undeclared so no all-shipped assertion is made.
+    entry_format = EntryFormat(
+        raw.get(
+            "entry_format",
+            "standalone_md" if raw.get("file_rule_id") else "directory",
+        )
+    )
     return AgentRoot(
         id=raw["id"],
         kind=raw["kind"],
@@ -78,6 +90,8 @@ def _parse_root(raw: dict[str, Any]) -> AgentRoot:
         nested_rule_id=raw.get("nested_rule_id"),
         file_rule_id=raw.get("file_rule_id"),
         recursive=bool(raw.get("recursive", False)),
+        base=base,
+        entry_format=entry_format,
     )
 
 
@@ -126,3 +140,13 @@ def load_agent(agent_id: str, directory: Path | None = None) -> AgentDefinition:
     except KeyError:
         known = ", ".join(sorted(registry))
         raise KeyError(f"unknown agent '{agent_id}'. Known agents: {known}") from None
+
+
+__all__ = [
+    "AgentDefinition",
+    "AgentRoot",
+    "list_agents",
+    "load_agent",
+    "load_agent_file",
+    "load_registry",
+]

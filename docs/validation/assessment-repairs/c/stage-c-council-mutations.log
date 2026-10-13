@@ -1,0 +1,795 @@
+Disposable cwd: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c/skill_lens/__init__.py
+/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c/tests/__init__.py
+
+NEW naming guard (root SKILL.md stem vs parent name) CONTROL cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_root_level_standalone_skill_md_naming_parity']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.10s ===============================
+
+rc=0
+
+NEW naming guard (root SKILL.md stem vs parent name) MUTANT cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_root_level_standalone_skill_md_naming_parity']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+______________ test_root_level_standalone_skill_md_naming_parity _______________
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/pytest-of-corvette/pytest-28/test_root_level_standalone_ski0/home')
+
+    def test_root_level_standalone_skill_md_naming_parity(mock_home: Path) -> None:
+        """Discovery entry name and per-hit alias agree for root-level standalone SKILL.md.
+    
+        Cross-check parity across scan, why, diff, compare, snapshot_why, and snapshot_diff
+        for OpenCode V2, Pi, and Antigravity standalone roots, while preserving directory bundles.
+        """
+        sb = mock_home.resolve()
+    
+        # 1. Native OpenCode V2 root SKILL.md
+        oc_root = sb / ".config" / "opencode" / "skills"
+        oc_root.mkdir(parents=True, exist_ok=True)
+        (oc_root / "SKILL.md").write_text(
+            "---\ndescription: OpenCode root skill.\n---\n# OpenCode Body\n",
+            encoding="utf-8",
+        )
+    
+        # 2. Pi root SKILL.md
+        pi_root = sb / ".pi" / "agent" / "skills"
+        pi_root.mkdir(parents=True, exist_ok=True)
+        (pi_root / "SKILL.md").write_text(
+            "---\nname: pi_skill\ndescription: Pi root skill.\n---\n# Pi Body\n",
+            encoding="utf-8",
+        )
+    
+        # 3. Antigravity standalone root SKILL.md
+        ag_root = sb / ".gemini" / "config" / "skills"
+        ag_root.mkdir(parents=True, exist_ok=True)
+        (ag_root / "SKILL.md").write_text(
+            "---\nname: ag_skill\ndescription: Antigravity root skill.\n---\n# Antigravity Body\n",
+            encoding="utf-8",
+        )
+    
+        # 4. Directory bundle controls: parent name must be preserved
+        bundle_dir = oc_root / "bundle_tool"
+        bundle_dir.mkdir(parents=True, exist_ok=True)
+        (bundle_dir / "SKILL.md").write_text(
+            "---\nname: bundle_tool\ndescription: Directory bundle.\n---\n# Bundle Body\n",
+            encoding="utf-8",
+        )
+        skills_dir = oc_root / "skills"
+        skills_dir.mkdir(parents=True, exist_ok=True)
+        (skills_dir / "SKILL.md").write_text(
+            "---\nname: skills_bundle\ndescription: Skills named bundle.\n---\n# Skills Body\n",
+            encoding="utf-8",
+        )
+    
+        # 5. External file reached by shortcut symlink
+        outside = sb / "outside_lib"
+        outside.mkdir(parents=True, exist_ok=True)
+        ext_target = outside / "target.md"
+        ext_target.write_text(
+            "---\nname: target_skill\ndescription: External target.\n---\n# Ext Body\n",
+            encoding="utf-8",
+        )
+        shortcut = pi_root / "shortcut.md"
+        os.symlink(ext_target, shortcut)
+    
+        reg = load_registry()
+        idx = discover(home=sb, cwd=sb, registry=reg)
+    
+        # Standalone entries must have name == "SKILL"
+        root_entries = [e for e in idx.entries if e.entrypoint_path.endswith("/SKILL.md") and e.is_file]
+        assert len(root_entries) >= 1
+        for entry in root_entries:
+>           assert entry.name == "SKILL"
+E           AssertionError: assert 'skills' == 'SKILL'
+E             
+E             - SKILL
+E             + skills
+
+tests/test_stage_c_repairs.py:1120: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_root_level_standalone_skill_md_naming_parity
+============================== 1 failed in 0.13s ===============================
+
+rc=1
+
+NEW naming guard (root SKILL.md stem vs parent name) RESTORE cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_root_level_standalone_skill_md_naming_parity']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.12s ===============================
+
+rc=0
+
+NEW walker guard (V2 nested symlink directory search) CONTROL cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_opencode_v2_nested_symlink_directory_discovery']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.09s ===============================
+
+rc=0
+
+NEW walker guard (V2 nested symlink directory search) MUTANT cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_opencode_v2_nested_symlink_directory_discovery']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+_____________ test_opencode_v2_nested_symlink_directory_discovery ______________
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/pytest-of-corvette/pytest-31/test_opencode_v2_nested_symlin0/home')
+
+    def test_opencode_v2_nested_symlink_directory_discovery(mock_home: Path) -> None:
+        """OpenCode V2 discovers nested symlinked skill directories up to depth limit with
+        cycle protection.
+        """
+        sb = mock_home.resolve()
+        base = sb / ".config" / "opencode" / "skills"
+        base.mkdir(parents=True, exist_ok=True)
+        deep = base / "deep"
+        deep.mkdir(parents=True, exist_ok=True)
+    
+        # Outside external targets
+        store = sb / "store"
+        store.mkdir(parents=True, exist_ok=True)
+    
+        # Valid depth 0 target
+        (store / "top").mkdir(parents=True, exist_ok=True)
+        (store / "top" / "SKILL.md").write_text(
+            "---\nname: top_skill\ndescription: Top skill.\n---\n# Content\n", encoding="utf-8"
+        )
+        (base / "top_link").symlink_to(store / "top", target_is_directory=True)
+    
+        # Valid depth 1 target
+        (store / "deeper").mkdir(parents=True, exist_ok=True)
+        (store / "deeper" / "SKILL.md").write_text(
+            "---\nname: deeper_skill\ndescription: Deeper skill.\n---\n# Content\n", encoding="utf-8"
+        )
+        (deep / "deep_link").symlink_to(store / "deeper", target_is_directory=True)
+    
+        # Negative control: wrong casing (skill.md lowercase)
+        (store / "wrong_case").mkdir(parents=True, exist_ok=True)
+        (store / "wrong_case" / "skill.md").write_text(
+            "---\nname: wrong\ndescription: Lowercase.\n---\n# Content\n", encoding="utf-8"
+        )
+        (deep / "wrong_link").symlink_to(store / "wrong_case", target_is_directory=True)
+    
+        # Negative control: no SKILL.md declaration
+        (store / "no_decl").mkdir(parents=True, exist_ok=True)
+        (store / "no_decl" / "README.md").write_text("# Not a skill\n", encoding="utf-8")
+        (deep / "no_decl_link").symlink_to(store / "no_decl", target_is_directory=True)
+    
+        # Broken symlink remains diagnostic
+        broken_link = deep / "broken_link"
+        os.symlink(store / "nonexistent", broken_link)
+    
+        # Symlink cycle remains diagnostic
+        cycle_link = deep / "cycle_link"
+        os.symlink(cycle_link, cycle_link)
+    
+        reg = load_registry()
+        idx = discover(home=sb, cwd=sb, registry=reg)
+    
+        entry_paths = [e.entrypoint_path for e in idx.entries]
+    
+        # Positive controls
+        assert any("top_link" in p for p in entry_paths)
+>       assert any("deep_link" in p for p in entry_paths)
+E       assert False
+E        +  where False = any(<generator object test_opencode_v2_nested_symlink_directory_discovery.<locals>.<genexpr> at 0x1090341e0>)
+
+tests/test_stage_c_repairs.py:1234: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_opencode_v2_nested_symlink_directory_discovery
+============================== 1 failed in 0.11s ===============================
+
+rc=1
+
+NEW walker guard (V2 nested symlink directory search) RESTORE cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_opencode_v2_nested_symlink_directory_discovery']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.09s ===============================
+
+rc=0
+
+NEW opaque-capture guard (fingerprint != content_hash check) CONTROL cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_session_snapshot.py::test_opaque_standalone_capture_transient_byte_change_is_rejected']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_session_snapshot.py .                                         [100%]
+
+============================== 1 passed in 0.10s ===============================
+
+rc=0
+
+NEW opaque-capture guard (fingerprint != content_hash check) MUTANT cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_session_snapshot.py::test_opaque_standalone_capture_transient_byte_change_is_rejected']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_session_snapshot.py F                                         [100%]
+
+=================================== FAILURES ===================================
+_______ test_opaque_standalone_capture_transient_byte_change_is_rejected _______
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/pytest-of-corvette/pytest-34/test_opaque_standalone_capture0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b1a9310>
+
+    def test_opaque_standalone_capture_transient_byte_change_is_rejected(
+        mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Standalone file byte alteration during capture specifically exercising the standalone
+        capture-hash guard (snapshot.py:262).
+    
+        Suffixless external file reached by supported .md shortcut has synthetic parse=None.
+        After first discovery, temporarily change bytes; step 3 reads those bytes.
+        Then before second discovery, restore original bytes in first Doctor call.
+        Parse is None (step 4 skipped); second discovery sees original bytes (step 6 passes).
+        Only the captured-byte fingerprint check (line 262) prevents publication!
+        """
+        home = paths.home()
+        project = home / "project"
+        project.mkdir(parents=True, exist_ok=True)
+        _setup_rich_fixture(home, project)
+    
+        exact_msg = "Files changed while scanning. Press r to retry."
+    
+        import skill_lens.core.snapshot as snapshot_module
+    
+        opaque_file = home / "vault" / "opaque_standalone"
+        orig_opaque_bytes = b"initial opaque standalone bytes\n"
+        disc_calls_a2 = 0
+        orig_disc_standalone = snapshot_module.live_discovery
+        orig_doc_standalone = snapshot_module.run_doctor
+    
+        # Positive control: non-mutating synthetic parse=None capture succeeds
+        disc_control_calls = 0
+    
+        def disc_non_mutating(*args: object, **kwargs: object) -> Any:
+            nonlocal disc_control_calls
+            disc_control_calls += 1
+            idx = orig_disc_standalone(*args, **kwargs)
+            idx.entries = [
+                replace(e, parse=None) if "opaque_link" in e.entrypoint_path else e for e in idx.entries
+            ]
+            return idx
+    
+        monkeypatch.setattr(snapshot_module, "live_discovery", disc_non_mutating)
+        snap_control = capture_session(generation=1, home=home, cwd=project)
+        assert disc_control_calls == 2
+        opaque_entry = next(e for e in snap_control.index.entries if "opaque_link" in e.entrypoint_path)
+        assert opaque_entry.parse is None
+        assert canonical_key(opaque_entry) in snap_control.files
+        monkeypatch.undo()
+    
+        # Mutating test: transient byte alteration between first discovery and file capture
+        disc_calls_a2 = 0
+        doc_calls_a2 = 0
+    
+        def mutate_standalone_after_disc(*args: object, **kwargs: object) -> Any:
+            nonlocal disc_calls_a2
+            disc_calls_a2 += 1
+            idx = orig_disc_standalone(*args, **kwargs)
+            if disc_calls_a2 == 1:
+                opaque_file.write_bytes(b"TEMPORARILY CHANGED STANDALONE BYTES\n")
+            idx.entries = [
+                replace(e, parse=None) if "opaque_link" in e.entrypoint_path else e for e in idx.entries
+            ]
+            return idx
+    
+        def restore_standalone_in_doctor(*args: object, **kwargs: object) -> Any:
+            nonlocal doc_calls_a2
+            doc_calls_a2 += 1
+            if doc_calls_a2 == 1:
+                opaque_file.write_bytes(orig_opaque_bytes)
+            return orig_doc_standalone(*args, **kwargs)
+    
+        monkeypatch.setattr(snapshot_module, "live_discovery", mutate_standalone_after_disc)
+        monkeypatch.setattr(snapshot_module, "run_doctor", restore_standalone_in_doctor)
+        try:
+>           with pytest.raises(SnapshotChanged) as exc_info:
+E           Failed: DID NOT RAISE SnapshotChanged
+
+tests/test_session_snapshot.py:1346: Failed
+=========================== short test summary info ============================
+FAILED tests/test_session_snapshot.py::test_opaque_standalone_capture_transient_byte_change_is_rejected
+============================== 1 failed in 0.13s ===============================
+
+rc=1
+
+NEW opaque-capture guard (fingerprint != content_hash check) RESTORE cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_session_snapshot.py::test_opaque_standalone_capture_transient_byte_change_is_rejected']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_session_snapshot.py .                                         [100%]
+
+============================== 1 passed in 0.11s ===============================
+
+rc=0
+
+Codex directory file ignore CONTROL cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_codex_directory_only_root_ignores_symlink_to_file']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.09s ===============================
+
+rc=0
+
+Codex directory file ignore MUTANT cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_codex_directory_only_root_ignores_symlink_to_file']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+____________ test_codex_directory_only_root_ignores_symlink_to_file ____________
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/pytest-of-corvette/pytest-37/test_codex_directory_only_root0/home')
+
+    def test_codex_directory_only_root_ignores_symlink_to_file(mock_home: Path) -> None:
+        """Directory-only roots ignore file targets, regardless of frontmatter metadata/name.
+    
+        Coordinator reproduction: .codex/skills/document-link -> outside/document.md with valid
+        frontmatter must NOT be discovered as Codex skill. Broken shortcuts remain diagnostic.
+        """
+        sb = mock_home.resolve()
+        outside = sb / "outside"
+        outside.mkdir(parents=True, exist_ok=True)
+        doc_file = outside / "document.md"
+        doc_file.write_text(
+            """---
+    name: document_skill
+    description: Document skill.
+    ---
+    # Content
+    """,
+            encoding="utf-8",
+        )
+    
+        codex_skills = sb / ".codex" / "skills"
+        codex_skills.mkdir(parents=True, exist_ok=True)
+        symlink_file = codex_skills / "document-link"
+        os.symlink(doc_file, symlink_file)
+    
+        # Broken directory shortcut
+        broken_shortcut = codex_skills / "broken-dir-link"
+        os.symlink(outside / "nonexistent_dir", broken_shortcut)
+    
+        reg = load_registry()
+        idx = discover(home=sb, cwd=sb, registry=reg)
+    
+        codex_entries = [e for e in idx.entries if any(h.agent_id == "codex" for h in e.hits)]
+        codex_paths = [e.entrypoint_path for e in codex_entries]
+    
+        # File symlink MUST be ignored
+>       assert not any("document-link" in p for p in codex_paths)
+E       assert not True
+E        +  where True = any(<generator object test_codex_directory_only_root_ignores_symlink_to_file.<locals>.<genexpr> at 0x109a88110>)
+
+tests/test_stage_c_repairs.py:898: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_codex_directory_only_root_ignores_symlink_to_file
+============================== 1 failed in 0.11s ===============================
+
+rc=1
+
+Codex directory file ignore RESTORE cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_codex_directory_only_root_ignores_symlink_to_file']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.09s ===============================
+
+rc=0
+
+Pi exact declaration CONTROL cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_pi_exact_skill_md_directory_discovery_and_case_sensitivity']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.09s ===============================
+
+rc=0
+
+Pi exact declaration MUTANT cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_pi_exact_skill_md_directory_discovery_and_case_sensitivity']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+_______ test_pi_exact_skill_md_directory_discovery_and_case_sensitivity ________
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/pytest-of-corvette/pytest-40/test_pi_exact_skill_md_directo0/home')
+
+    def test_pi_exact_skill_md_directory_discovery_and_case_sensitivity(mock_home: Path) -> None:
+        """Pi requires exact SKILL.md for directories and symlink targets across filesystems.
+    
+        - Positive exact directory: .pi/agent/skills/exact/SKILL.md -> discovered.
+        - Negative lowercase directory: .pi/agent/skills/lower/skill.md -> NOT discovered.
+        - Negative dot directory: .pi/agent/skills/dot/.skill.md -> NOT discovered.
+        - Positive exact symlink: .pi/agent/skills/sym_exact -> target with SKILL.md -> discovered.
+        - Negative lowercase symlink: target with skill.md -> NOT discovered.
+        - Root-level standalone: skill.md with description -> discovered (is_file=True).
+        - Incidental root markdown: .pi/agent/skills/notes.md without description -> ignored.
+        - Declared malformed SKILL: .pi/agent/skills/bad_decl/SKILL.md -> discovered with error.
+        """
+        sb = mock_home.resolve()
+        pi_root = sb / ".pi" / "agent" / "skills"
+        pi_root.mkdir(parents=True, exist_ok=True)
+    
+        # 1. Positive exact directory
+        exact_dir = pi_root / "exact_dir"
+        _make_skill(exact_dir, "exact_tool", "Exact tool")
+    
+        # 2. Negative lowercase directory
+        lower_dir = pi_root / "lower_dir"
+        lower_dir.mkdir(parents=True, exist_ok=True)
+        (lower_dir / "skill.md").write_text(
+            """---
+    name: lower_tool
+    description: Lower tool
+    ---
+    """,
+            encoding="utf-8",
+        )
+    
+        # 3. Negative dot directory
+        dot_dir = pi_root / "dot_dir"
+        dot_dir.mkdir(parents=True, exist_ok=True)
+        (dot_dir / ".skill.md").write_text(
+            """---
+    name: dot_tool
+    description: Dot tool
+    ---
+    """,
+            encoding="utf-8",
+        )
+    
+        # 4. Outside targets for symlinks
+        outside = sb / "outside_pi"
+        outside.mkdir(parents=True, exist_ok=True)
+        out_exact = outside / "out_exact"
+        _make_skill(out_exact, "sym_exact", "Sym exact")
+        out_lower = outside / "out_lower"
+        out_lower.mkdir(parents=True, exist_ok=True)
+        (out_lower / "skill.md").write_text(
+            """---
+    name: sym_lower
+    description: Sym lower
+    ---
+    """,
+            encoding="utf-8",
+        )
+    
+        os.symlink(out_exact, pi_root / "link_exact")
+        os.symlink(out_lower, pi_root / "link_lower")
+    
+        # 5. Root-level standalone skill.md with valid description
+        (pi_root / "skill.md").write_text(
+            """---
+    name: root_standalone
+    description: Root standalone Pi skill
+    ---
+    """,
+            encoding="utf-8",
+        )
+    
+        # 6. Root-level incidental notes.md without description
+        (pi_root / "notes.md").write_text("# Incidental notes\n", encoding="utf-8")
+    
+        # 7. Declared malformed SKILL.md inside directory
+        bad_dir = pi_root / "bad_dir"
+        bad_dir.mkdir(parents=True, exist_ok=True)
+        (bad_dir / "SKILL.md").write_text("---\nname: [unclosed yaml\n---\n", encoding="utf-8")
+    
+        reg = load_registry()
+        idx = discover(home=sb, cwd=sb, registry=reg)
+    
+        pi_entries = [e for e in idx.entries if any(h.agent_id == "pi" for h in e.hits)]
+        pi_paths = [e.entrypoint_path for e in pi_entries]
+    
+        # Positives
+        assert any("exact_dir" in p for p in pi_paths)
+        assert any("link_exact" in p for p in pi_paths)
+        assert any("bad_dir" in p for p in pi_paths)
+    
+        # Negatives
+>       assert not any("lower_dir" in p for p in pi_paths)
+E       assert not True
+E        +  where True = any(<generator object test_pi_exact_skill_md_directory_discovery_and_case_sensitivity.<locals>.<genexpr> at 0x10752cd40>)
+
+tests/test_stage_c_repairs.py:1007: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_pi_exact_skill_md_directory_discovery_and_case_sensitivity
+============================== 1 failed in 0.11s ===============================
+
+rc=1
+
+Pi exact declaration RESTORE cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_pi_exact_skill_md_directory_discovery_and_case_sensitivity']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.09s ===============================
+
+rc=0
+
+per-hit disabled identity CONTROL cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_synthetic_identity_source_disabled_overrides_matching']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.09s ===============================
+
+rc=0
+
+per-hit disabled identity MUTANT cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_synthetic_identity_source_disabled_overrides_matching']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+__________ test_synthetic_identity_source_disabled_overrides_matching __________
+
+mock_home = PosixPath('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/pytest-of-corvette/pytest-43/test_synthetic_identity_source0/home')
+
+    def test_synthetic_identity_source_disabled_overrides_matching(mock_home: Path) -> None:
+        """Disabled overrides match actual per-hit supported identity names:
+        - frontmatter_name identity: matches declared frontmatter name (synth_fm), not folder alias.
+        - directory_name identity: matches relevant hit alias (synth_folder), not frontmatter name.
+        - hybrid/either identity: matches either synonym.
+        """
+        sb = mock_home.resolve()
+        skill_dir = sb / ".agents" / "skills" / "synth_folder"
+        _make_skill(skill_dir, "synth_fm", "Synthetic frontmatter skill")
+    
+        # 1. Frontmatter identity agent:
+        fm_root = AgentRoot(
+            id="fm_root",
+            kind="global",
+            path=".agents/skills",
+            scope=Scope.USER,
+            rank=80,
+            rule_id="fm_root_rule",
+            evidence=Evidence.DOCUMENTED,
+        )
+        fm_agent = AgentDefinition(
+            id="synth_fm_agent",
+            name="Synth FM Agent",
+            identity_source="frontmatter_name",
+            collision_policy="Shadow",
+            policy_evidence=Evidence.DOCUMENTED,
+            coexist_policy="shadow",
+            walk_boundary="git_root",
+            unsearched_rule_id="synth_unsearched",
+            roots=(fm_root,),
+        )
+        dir_agent = AgentDefinition(
+            id="synth_dir_agent",
+            name="Synth Dir Agent",
+            identity_source="directory_name",
+            collision_policy="Shadow",
+            policy_evidence=Evidence.DOCUMENTED,
+            coexist_policy="shadow",
+            walk_boundary="git_root",
+            unsearched_rule_id="synth_unsearched",
+            roots=(fm_root,),
+        )
+        hybrid_agent = AgentDefinition(
+            id="synth_hybrid_agent",
+            name="Synth Hybrid Agent",
+            identity_source="hybrid",
+            collision_policy="Shadow",
+            policy_evidence=Evidence.DOCUMENTED,
+            coexist_policy="shadow",
+            walk_boundary="git_root",
+            unsearched_rule_id="synth_unsearched",
+            roots=(fm_root,),
+        )
+        custom_reg = {
+            "synth_fm_agent": fm_agent,
+            "synth_dir_agent": dir_agent,
+            "synth_hybrid_agent": hybrid_agent,
+        }
+    
+        idx = discover(home=sb, cwd=sb, registry=custom_reg)
+    
+        # FM override -> DISABLED
+        res_fm_dis = resolve_skill(
+            "synth_fm",
+            "synth_fm_agent",
+            cwd=sb,
+            home=sb,
+            index=idx,
+            registry=custom_reg,
+            disabled_overrides=frozenset({"synth_fm"}),
+        )
+        assert res_fm_dis.found is True
+>       assert res_fm_dis.candidates[0].state is HeadlineState.DISABLED
+E       AssertionError: assert <HeadlineState.ACTIVE: 'ACTIVE'> is <HeadlineState.DISABLED: 'DISABLED'>
+E        +  where <HeadlineState.ACTIVE: 'ACTIVE'> = CandidateResolution(state=<HeadlineState.ACTIVE: 'ACTIVE'>, visibility=<Visibility.ACTIVE_ROOT: 'active_root'>, collis...-corvette/pytest-43/test_synthetic_identity_source0/home/.agents/skills/synth_folder',), variant_label='A', errors=())).state
+E        +  and   <HeadlineState.DISABLED: 'DISABLED'> = HeadlineState.DISABLED
+
+tests/test_stage_c_repairs.py:570: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_synthetic_identity_source_disabled_overrides_matching
+============================== 1 failed in 0.11s ===============================
+
+rc=1
+
+per-hit disabled identity RESTORE cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_synthetic_identity_source_disabled_overrides_matching']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.09s ===============================
+
+rc=0
+
+metadata validation CONTROL cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_metadata_enum_validation']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.09s ===============================
+
+rc=0
+
+metadata validation MUTANT cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_metadata_enum_validation']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py F                                          [100%]
+
+=================================== FAILURES ===================================
+________________________ test_metadata_enum_validation _________________________
+
+    def test_metadata_enum_validation() -> None:
+        """Invalid metadata declarations for base or entry_format fail clearly with ValueError."""
+        valid_raw = {
+            "id": "test_root",
+            "kind": "global",
+            "path": ".test/skills",
+            "scope": "user",
+            "rank": 50,
+            "rule_id": "test_rule",
+            "evidence": "documented",
+        }
+        # Valid default
+        root = _parse_root(valid_raw)
+        assert root.base is RootBase.HOME
+        assert root.entry_format is EntryFormat.DIRECTORY
+    
+        # Valid explicit
+        root_explicit = _parse_root(
+            {**valid_raw, "base": "xdg_config_home", "entry_format": "opencode_v2"}
+        )
+>       assert root_explicit.base is RootBase.XDG_CONFIG_HOME
+E       AssertionError: assert <RootBase.HOME: 'home'> is <RootBase.XDG_CONFIG_HOME: 'xdg_config_home'>
+E        +  where <RootBase.HOME: 'home'> = AgentRoot(id='test_root', kind='global', path='.test/skills', scope=<Scope.USER: 'user'>, rank=50, rule_id='test_rule'...ile_rule_id=None, recursive=False, base=<RootBase.HOME: 'home'>, entry_format=<EntryFormat.OPENCODE_V2: 'opencode_v2'>).base
+E        +  and   <RootBase.XDG_CONFIG_HOME: 'xdg_config_home'> = RootBase.XDG_CONFIG_HOME
+
+tests/test_stage_c_repairs.py:1044: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_stage_c_repairs.py::test_metadata_enum_validation - Asserti...
+============================== 1 failed in 0.10s ===============================
+
+rc=1
+
+metadata validation RESTORE cwd=/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c cmd=['/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python', '-m', 'pytest', '-p', 'no:cacheprovider', 'tests/test_stage_c_repairs.py::test_metadata_enum_validation']
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-6t8S10/sl-stage-c-council-proof-wizjbk2c
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+tests/test_stage_c_repairs.py .                                          [100%]
+
+============================== 1 passed in 0.09s ===============================
+
+rc=0

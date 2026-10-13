@@ -136,19 +136,21 @@ def _default_root_id(agent: AgentDefinition) -> str:
     return agent.roots[0].id if agent.roots else f"{agent.id}_roots"
 
 
-def _identity_names(agent: AgentDefinition, entry: DiscoveredEntry) -> set[str]:
-    """Every name this agent would use to look up ``entry``.
+def entrypoint_alias(path: str | Path, is_file: bool = False) -> str:
+    """Return the filename stem (for files) or directory name for an entrypoint path."""
+    p = Path(path)
+    if is_file:
+        return p.stem
+    return p.name
 
-    A skill that fails validation (for example a missing ``description``) is
-    still *findable*: the frontmatter name is populated for
-    ``missing_description`` parses, so an agent that identifies skills by
-    frontmatter must be able to find it by that name rather than only by its
-    folder name.
-    """
+
+def _hit_identity_names(agent: AgentDefinition, entry: DiscoveredEntry, hit: RootHit) -> set[str]:
+    """Every name this agent would use to look up a candidate reached through ``hit``."""
+    alias = entrypoint_alias(hit.entrypoint_path, hit.is_file)
     parse = entry.parse
     if parse is None:
-        return {entry.name}
-    directory_name = parse.directory_name
+        return {alias}
+    directory_name = alias
     frontmatter_name = parse.frontmatter_name or directory_name
     if agent.identity_source == "directory_name":
         return {directory_name}
@@ -157,28 +159,35 @@ def _identity_names(agent: AgentDefinition, entry: DiscoveredEntry) -> set[str]:
     return {directory_name, frontmatter_name}
 
 
-def _matches(agent: AgentDefinition, entry: DiscoveredEntry, name: str) -> bool:
-    return name in _identity_names(agent, entry)
-
-
-def lookup_name_for_entry(entry: DiscoveredEntry, agent: AgentDefinition) -> str:
+def lookup_name_for_entry(
+    entry: DiscoveredEntry, agent: AgentDefinition, hit: RootHit | None = None
+) -> str:
     """Determine the lookup name for a discovered entry under an agent's policy.
 
-    Reuses _identity_names() and agent policy:
-    - When no parse exists, returns entry.name.
-    - For 'frontmatter_name', chooses frontmatter name with directory fallback.
-    - For 'directory_name' or 'either', chooses directory name.
-    The returned name always belongs to _identity_names(agent, entry).
+    Reuses hit-specific alias and agent policy:
+    - When no parse exists, returns alias.
+    - For 'frontmatter_name', chooses frontmatter name with alias fallback.
+    - For 'directory_name' or 'either', chooses alias.
+    The returned name always belongs to the agent's identity names.
     """
+    if hit is not None:
+        alias = entrypoint_alias(hit.entrypoint_path, hit.is_file)
+    else:
+        hits = _searched_hits(agent, entry)
+        if hits:
+            best_hit = max(hits, key=lambda h: (h.rank, h.specificity))
+            alias = entrypoint_alias(best_hit.entrypoint_path, best_hit.is_file)
+        else:
+            alias = entrypoint_alias(entry.entrypoint_path, entry.is_file)
+
     parse = entry.parse
     if parse is None:
-        return entry.name
+        return alias
 
-    directory_name = parse.directory_name
+    directory_name = alias
     frontmatter_name = parse.frontmatter_name or directory_name
 
     chosen = frontmatter_name if agent.identity_source == "frontmatter_name" else directory_name
-    assert chosen in _identity_names(agent, entry)
     return chosen
 
 
@@ -187,8 +196,7 @@ def disabled_overrides_from_bytes(agent: AgentDefinition, data: bytes | None) ->
 
     Returns an empty frozenset for missing (None), unreadable/undecodable input,
     invalid JSON, a non-object top level, or a non-object overrides member. Only an
-    override value that is False disables a skill name.
-    """
+    override value that is False disables a skill name."""
     if not agent.disabled_settings or not agent.disabled_key or data is None:
         return frozenset()
     try:
@@ -237,30 +245,59 @@ def _candidates_for(
     fallback_root_id = _default_root_id(agent)
     candidates: list[Candidate] = []
     for entry in index.entries:
-        if not _matches(agent, entry, name):
-            continue
-        overridden = entry.name in overrides
         hits = _searched_hits(agent, entry)
-        if not hits:
-            candidates.append(
-                Candidate(
-                    entry=entry,
-                    hit=_representative_hit(agent, entry, fallback_root_id),
-                    searched=False,
-                    overridden=overridden,
-                )
+        if hits:
+            # One candidate per distinct entrypoint path; if two roots of the same
+            # agent reach the identical path, the higher-ranked rule represents it.
+            best: dict[str, RootHit] = {}
+            for hit in hits:
+                path = hit.entrypoint_path
+                current = best.get(path)
+                if current is None or hit.rank > current.rank:
+                    best[path] = hit
+            for hit in best.values():
+                hit_names = _hit_identity_names(agent, entry, hit)
+                if name in hit_names:
+                    overridden = bool(hit_names & overrides)
+                    candidates.append(
+                        Candidate(
+                            entry=entry,
+                            hit=hit,
+                            searched=True,
+                            overridden=overridden,
+                        )
+                    )
+        else:
+            aliases = {entrypoint_alias(h.entrypoint_path, h.is_file) for h in entry.hits}
+            if entry.entrypoint_paths:
+                aliases.update(entrypoint_alias(p, entry.is_file) for p in entry.entrypoint_paths)
+            aliases.add(entry.name)
+            fm = (
+                entry.parse.frontmatter_name
+                if entry.parse and entry.parse.frontmatter_name
+                else None
             )
-            continue
-        # One candidate per distinct entrypoint path; if two roots of the same
-        # agent reach the identical path, the higher-ranked rule represents it.
-        best: dict[str, RootHit] = {}
-        for hit in hits:
-            path = hit.entrypoint_path
-            current = best.get(path)
-            if current is None or hit.rank > current.rank:
-                best[path] = hit
-        for hit in best.values():
-            candidates.append(Candidate(entry=entry, hit=hit, searched=True, overridden=overridden))
+
+            if agent.identity_source == "directory_name":
+                matches = name in aliases
+                supported_identities = aliases
+            elif agent.identity_source == "frontmatter_name":
+                matches = (name == fm) if fm else (name in aliases)
+                supported_identities = {fm} if fm else aliases
+            else:
+                matches = (name in aliases) or (fm is not None and name == fm)
+                supported_identities = aliases | ({fm} if fm else set())
+
+            if matches:
+                overridden = bool(supported_identities & overrides)
+                candidates.append(
+                    Candidate(
+                        entry=entry,
+                        hit=_representative_hit(agent, entry, fallback_root_id),
+                        searched=False,
+                        overridden=overridden,
+                    )
+                )
     return candidates
 
 
@@ -392,8 +429,9 @@ def _fallback_state(candidate: Candidate, headline: HeadlineState) -> HeadlineSt
 def _installation(candidate: Candidate) -> SkillInstallation:
     entry = candidate.entry
     parse = entry.parse
+    alias = entrypoint_alias(candidate.entrypoint_path, candidate.hit.is_file)
     return SkillInstallation(
-        name=entry.name,
+        name=alias,
         entrypoint_path=candidate.entrypoint_path,
         canonical_path=entry.canonical_path or candidate.entrypoint_path,
         scope=candidate.hit.scope,
@@ -513,8 +551,8 @@ def _rule_and_evidence(
     if state is HeadlineState.SHADOWED and winner is not None:
         # The rule that explains a shadow is the rule of the copy that beat it,
         # so the reason is traceable to the actual cause, not to the loser.
-        return winner.hit.rule_for(entry.is_file), Evidence(winner.hit.evidence)
-    return candidate.hit.rule_for(entry.is_file), Evidence(candidate.hit.evidence)
+        return winner.hit.rule_for(winner.hit.is_file), Evidence(winner.hit.evidence)
+    return candidate.hit.rule_for(candidate.hit.is_file), Evidence(candidate.hit.evidence)
 
 
 def _resolution(
@@ -678,4 +716,4 @@ def _label_resolution(
     return replace(resolution, installation=replace(resolution.installation, variant_label=label))
 
 
-__all__ = ["Candidate", "resolve_skill"]
+__all__ = ["Candidate", "entrypoint_alias", "lookup_name_for_entry", "resolve_skill"]

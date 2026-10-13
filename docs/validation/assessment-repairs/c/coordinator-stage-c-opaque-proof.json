@@ -1,0 +1,22 @@
+{
+  "copy": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-opaque-independent-e3ehqodh",
+  "file": "skill_lens/core/snapshot.py",
+  "test": "tests/test_session_snapshot.py::test_opaque_standalone_capture_transient_byte_change_is_rejected",
+  "old": "            fingerprint = hash_bytes(data)\n            if fingerprint != entry.content_hash:",
+  "new": "            fingerprint = hash_bytes(data)\n            if False and fingerprint != entry.content_hash:",
+  "results": [
+    {
+      "phase": "CONTROL",
+      "exit_code": 0
+    },
+    {
+      "phase": "MUTANT",
+      "exit_code": 1
+    },
+    {
+      "phase": "RESTORE",
+      "exit_code": 0
+    }
+  ],
+  "restored_hash": "0997980753b365f9fda8c4c528d4ceddc2f988bbc20e34ec3832863d916bf7af"
+}

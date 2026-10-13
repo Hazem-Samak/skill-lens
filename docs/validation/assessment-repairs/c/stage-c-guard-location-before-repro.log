@@ -1,0 +1,95 @@
+cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-decoy-cwd-ai14upbx
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-decoy-before-7n0jq6bm
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+../../../../../../../var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-decoy-before-7n0jq6bm/tests/test_stage_c_repairs.py . [100%]
+
+============================== 1 passed in 0.13s ===============================
+
+cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-decoy-before-7n0jq6bm
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-decoy-before-7n0jq6bm
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, cov-7.1.0
+collected 1 item
+
+../../../../../../../var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-decoy-before-7n0jq6bm/tests/test_stage_c_repairs.py F [100%]
+
+=================================== FAILURES ===================================
+__________ test_all_shipped_agent_roots_declare_explicit_entry_format __________
+
+    def test_all_shipped_agent_roots_declare_explicit_entry_format() -> None:
+        """Every root of the six affected agents explicitly declares entry_format in raw TOML.
+    
+        Total of 20 retained roots across claude (2), dsh (5), grok (3), qoder (3), omp (4),
+        windsurf (3).
+        Evaluated by root ID:
+        - Documented native directory roots declare entry_format = "directory"
+        - DSH native roots and the six unverified/non-native compatibility roots
+          declare entry_format = "standalone_md"
+        """
+        import tomllib
+    
+        agents_dir = Path("skill_lens/registry/agents")
+        expected_root_formats = {
+            "claude": {
+                "claude_personal": "directory",
+                "claude_project": "directory",
+            },
+            "dsh": {
+                "dsh_project": "standalone_md",
+                "dsh_project_agents": "standalone_md",
+                "dsh_profiles": "standalone_md",
+                "dsh_user": "standalone_md",
+                "dsh_shared_global": "standalone_md",
+            },
+            "grok": {
+                "grok_global": "directory",
+                "grok_bundled": "standalone_md",
+                "grok_project": "standalone_md",
+            },
+            "qoder": {
+                "qoder_global": "directory",
+                "qoder_project": "directory",
+                "qoder_project_agents": "standalone_md",
+            },
+            "omp": {
+                "omp_project": "directory",
+                "omp_project_agents": "directory",
+                "omp_shared_global": "directory",
+                "omp_agent": "standalone_md",
+            },
+            "windsurf": {
+                "windsurf_global": "directory",
+                "windsurf_project": "directory",
+                "windsurf_project_agents": "standalone_md",
+            },
+        }
+        total_roots = 0
+        for agent_name, root_map in expected_root_formats.items():
+            toml_path = agents_dir / f"{agent_name}.toml"
+            assert toml_path.is_file(), f"Missing agent file: {toml_path}"
+            data = tomllib.loads(toml_path.read_text("utf-8"))
+            roots = data.get("roots", [])
+            assert len(roots) == len(root_map), (
+                f"Agent {agent_name} expected {len(root_map)} roots, got {len(roots)}"
+            )
+            total_roots += len(roots)
+            for root in roots:
+                root_id = root.get("id")
+                assert root_id in root_map, f"Unexpected root {root_id} for agent {agent_name}"
+>               assert "entry_format" in root, (
+                    f"Agent {agent_name} root {root_id} lacks explicit entry_format declaration"
+                )
+E               AssertionError: Agent grok root grok_bundled lacks explicit entry_format declaration
+E               assert 'entry_format' in {'id': 'grok_bundled', 'kind': 'global', 'path': '.grok/bundled/skills', 'scope': 'system', ...}
+
+/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-decoy-before-7n0jq6bm/tests/test_stage_c_repairs.py:1583: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../../../../../var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/sl-c-decoy-before-7n0jq6bm/tests/test_stage_c_repairs.py::test_all_shipped_agent_roots_declare_explicit_entry_format
+============================== 1 failed in 0.12s ===============================

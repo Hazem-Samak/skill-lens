@@ -639,3 +639,15 @@ This append-only record does not alter the supplied operative plan or its frozen
 - Non-blocking duplicate test calls, fixture-directory overhead, redundant defenses, and pre-existing cleanup ordering are retained suggestions. Current-version registry/configuration, paths/entry identities, packaging, reporting, and resource risks remain assigned to C–H. U3–U9, publishing, dependency policy, and old artifact replacement remain outside this batch.
 
 Durable evidence: [Stage A/B validation files](../validation/assessment-repairs/ab/). This includes coordinator gate logs, actual disposable control/mutant/restore receipts, terminal task receipts, and final reviewer reports. Tests used synthetic HOME/targets only. Raw reviewer assertions about enforced read-only modes are not coordinator claims; T3 caller configuration and fingerprint evidence determine the recorded protection above.
+
+
+## Execution record — Stage C accepted, 13 October 2026
+
+This append-only execution record does not alter the supplied plan or frozen reference.
+
+- F05 working-directory/XDG behavior and F06 hit/alias retention are repaired and tested through real consumers and frozen services. Root order is checked for both different entrypoint aliases and the same physical path with distinct ranks.
+- F07 discovery formats are explicit and source-linked. Native directory-only forms no longer treat flat documentation as skills; DSH supports documented flat files; unverified retained roots preserve historical inventory compatibility. Full per-agent validity/loadability and selected version/surface alignment remain Stage D. OpenCode V2 is the chosen profile, V1 unsupported; the currently absent `.claude` roots are not claimed implemented.
+- The coordinator independently verified **860 passed, 1 skipped, 93.38% combined coverage**, strict mypy on 35 package files, Ruff lint/format clean. The final raw declaration guard is package-bound and has actual-package versus decoy positive/negative proof.
+- MiniMax xHigh accepted the product correction; Space Bunny Max accepted the final test-only guard correction and retained its prior product concessions. Fingerprints show unchanged MiniMax scope. All 17 Stage C child tasks are terminal with no pending runs. The owner explicitly approved focused corrections after two non-converged council rounds.
+- Unreported loader drift and inaccurate source/combined-mutation claims were detected and corrected before acceptance. Final loader differs from the reviewed pre-correction version only by its fallback comment. No snapshot/golden changes were required. Actual token/compute use unavailable; no savings claim.
+- Durable evidence and remaining boundaries: [Stage C acceptance](../validation/assessment-repairs/c/acceptance.md). Stage D–H, U3–U9 and release/push work remain outside this acceptance.

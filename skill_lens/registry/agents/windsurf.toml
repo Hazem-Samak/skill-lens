@@ -6,7 +6,17 @@ policy_evidence = "empirical"
 coexist_policy = "shadow"
 walk_boundary = "git_root"
 unsearched_rule_id = "windsurf_search_roots"
-source = "https://docs.codeium.com/windsurf/skills"
+source = "https://docs.windsurf.com/windsurf/cascade/skills"
+
+# Format evidence (2026-10-13):
+# Primary source https://docs.windsurf.com/windsurf/cascade/skills (redirects to https://docs.devin.ai/desktop/cascade/skills;
+# old docs.codeium.com URL returns 404). Current official doc covers Global (~/.codeium/windsurf/skills/<skill>/SKILL.md)
+# and Workspace (.windsurf/skills/<skill>/SKILL.md legacy path) creation directories as directory bundles with SKILL.md.
+# Retained legacy paths scoped as documented directory format; shared project root (.agents/skills)
+# is an unverified/non-native compatibility root:
+# entry_format = "standalone_md" preserves pre-C baseline discovery compatibility (directory bundles + flatfiles);
+# unknown root flat acceptance is Skill Lens compatibility, NOT proven vendor support/loadability (Stage D carryover).
+# Existing root paths/ranks remain empirical.
 
 # Precedence is Project > Global (see collision_policy). Within a project, the
 # agent-specific root outranks the shared ``.agents`` root.
@@ -15,6 +25,7 @@ id = "windsurf_global"
 kind = "global"
 path = ".codeium/windsurf/skills"
 scope = "user"
+entry_format = "directory"
 rank = 70
 rule_id = "windsurf_global_symlink_farm"
 evidence = "empirical"
@@ -24,6 +35,7 @@ id = "windsurf_project"
 kind = "project"
 path = ".windsurf/skills"
 scope = "project"
+entry_format = "directory"
 rank = 90
 rule_id = "windsurf_project_shadow"
 evidence = "empirical"
@@ -33,6 +45,7 @@ id = "windsurf_project_agents"
 kind = "project"
 path = ".agents/skills"
 scope = "project"
+entry_format = "standalone_md"
 rank = 85
 rule_id = "windsurf_project_shadow"
 evidence = "empirical"

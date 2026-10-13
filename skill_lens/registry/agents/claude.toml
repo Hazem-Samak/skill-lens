@@ -9,7 +9,14 @@ unsearched_rule_id = "claude_search_roots"
 disabled_rule_id = "claude_skill_override_disabled"
 disabled_settings = ".claude/settings.json"
 disabled_key = "skillOverrides"
-source = "https://code.claude.com/docs/en/skills.md"
+source = "https://code.claude.com/docs/en/skills"
+
+# Format evidence (2026-10-13):
+# Primary documentation https://code.claude.com/docs/en/skills:
+# Skills live in directories containing SKILL.md (~/.claude/skills/<skill>/SKILL.md
+# and .claude/skills/<skill>/SKILL.md). Legacy .claude/commands/*.md are commands
+# at a different root, not standalone skills under .claude/skills.
+# Both retained roots explicitly declare entry_format = "directory".
 
 # Personal user skills outrank project skills (documented).
 [[roots]]
@@ -17,6 +24,7 @@ id = "claude_personal"
 kind = "global"
 path = ".claude/skills"
 scope = "user"
+entry_format = "directory"
 rank = 100
 rule_id = "claude_personal_beats_project"
 evidence = "documented"
@@ -28,6 +36,7 @@ id = "claude_project"
 kind = "project"
 path = ".claude/skills"
 scope = "project"
+entry_format = "directory"
 rank = 50
 rule_id = "claude_personal_beats_project"
 nested_rule_id = "claude_nested_qualification"
