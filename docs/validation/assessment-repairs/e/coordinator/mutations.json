@@ -1,0 +1,941 @@
+{
+  "origin": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+  "copy": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-source",
+  "import_provenance": {
+    "311": {
+      "python": "3.11.16 (main, Aug 25 2026, 13:50:51) [Clang 22.1.3 ]",
+      "cli": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-source/skill_lens/cli.py",
+      "compare": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-source/skill_lens/core/compare.py",
+      "tui": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-source/skill_lens/tui/__init__.py"
+    },
+    "314": {
+      "python": "3.14.7 (main, Aug 25 2026, 13:50:14) [Clang 22.1.3 ]",
+      "cli": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-source/skill_lens/cli.py",
+      "compare": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-source/skill_lens/core/compare.py",
+      "tui": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-source/skill_lens/tui/__init__.py"
+    }
+  },
+  "results": [
+    {
+      "name": "f08_remove_stream_guard",
+      "file": "skill_lens/cli.py",
+      "python": "311",
+      "source_hash": "57e3e59bca5f274616f382307c0d93308d2daa2393382df5b9f352e90c5ec487",
+      "mutant_hash": "74c89b64b2ebf1583d44e92b7451d24ff3c4b7f1d0b2e7ad95041b57e7e6491f",
+      "diff": "--- skill_lens/cli.py\n+++ skill_lens/cli.py mutant\n@@ -256,7 +256,7 @@\n             highlight=False,\n         )\n         raise typer.Exit(code=int(ExitCode.USAGE))\n-    if not (_stream_isatty(sys.stdin) and _stream_isatty(sys.stdout)):\n+    if False:\n         error_console.print(\n             \"Error: The terminal UI requires an interactive terminal.\",\n             soft_wrap=True,\n",
+      "test": "tests/test_stage_e_repairs.py::test_f08_explicit_tui_noninteractive_streams_exits_2_no_runner",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f08_explicit_tui_noninteractive_streams_exits_2_no_runner",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f08_remove_stream_guard-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f08_explicit_tui_noninteractive_streams_exits_2_no_runner",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f08_remove_stream_guard-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f08_explicit_tui_noninteractive_streams_exits_2_no_runner",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f08_remove_stream_guard-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "f08_accept_one_stream",
+      "file": "skill_lens/cli.py",
+      "python": "311",
+      "source_hash": "57e3e59bca5f274616f382307c0d93308d2daa2393382df5b9f352e90c5ec487",
+      "mutant_hash": "ebd86a4eb63dddc738d05575cf89af9eabc3e8ecdb87fccfc2b0bf776febe1f6",
+      "diff": "--- skill_lens/cli.py\n+++ skill_lens/cli.py mutant\n@@ -256,7 +256,7 @@\n             highlight=False,\n         )\n         raise typer.Exit(code=int(ExitCode.USAGE))\n-    if not (_stream_isatty(sys.stdin) and _stream_isatty(sys.stdout)):\n+    if not (_stream_isatty(sys.stdin) or _stream_isatty(sys.stdout)):\n         error_console.print(\n             \"Error: The terminal UI requires an interactive terminal.\",\n             soft_wrap=True,\n",
+      "test": "tests/test_stage_e_repairs.py::test_f08_explicit_tui_noninteractive_streams_exits_2_no_runner",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f08_explicit_tui_noninteractive_streams_exits_2_no_runner",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f08_accept_one_stream-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f08_explicit_tui_noninteractive_streams_exits_2_no_runner",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f08_accept_one_stream-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f08_explicit_tui_noninteractive_streams_exits_2_no_runner",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f08_accept_one_stream-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "f09_allow_duplicates",
+      "file": "skill_lens/core/compare.py",
+      "python": "311",
+      "source_hash": "bdaf0d90e10eb96dc128d37f0bc27c084d39f032be4b7ecd82b285a13a920943",
+      "mutant_hash": "3bce94ef24df9ac77b9c369e915a5066617a7bcb9871f18d71756dbb81b353c8",
+      "diff": "--- skill_lens/core/compare.py\n+++ skill_lens/core/compare.py mutant\n@@ -34,7 +34,7 @@\n     \"\"\"\n     definition_a = _require(agent_a, agents)\n     definition_b = _require(agent_b, agents)\n-    if agent_a == agent_b:\n+    if False:\n         raise ValueError(f\"cannot compare agent '{agent_a}' with itself\")\n     return definition_a, definition_b\n \n",
+      "test": "tests/test_stage_e_repairs.py::test_f09_build_compare_report_same_agent_raises",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_build_compare_report_same_agent_raises",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_allow_duplicates-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_build_compare_report_same_agent_raises",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_allow_duplicates-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_build_compare_report_same_agent_raises",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_allow_duplicates-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "f09_skip_build_validation",
+      "file": "skill_lens/core/compare.py",
+      "python": "311",
+      "source_hash": "bdaf0d90e10eb96dc128d37f0bc27c084d39f032be4b7ecd82b285a13a920943",
+      "mutant_hash": "fb2ae1223bc344b42ee9db57932074b1d2289d8d8c88cbc133a2ff3ee3a2b142",
+      "diff": "--- skill_lens/core/compare.py\n+++ skill_lens/core/compare.py mutant\n@@ -58,7 +58,7 @@\n         raise ValueError(\"registry must be supplied when index is a FrozenDiscoveryIndex\")\n \n     agents = registry if registry is not None else load_registry()\n-    definition_a, definition_b = validate_compare_agents(agent_a, agent_b, agents)\n+    definition_a, definition_b = _require(agent_a, agents), _require(agent_b, agents)\n \n     discovery = index if index is not None else discover(home, cwd, agents)\n \n",
+      "test": "tests/test_stage_e_repairs.py::test_f09_build_compare_report_same_agent_raises",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_build_compare_report_same_agent_raises",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_skip_build_validation-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_build_compare_report_same_agent_raises",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_skip_build_validation-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_build_compare_report_same_agent_raises",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_skip_build_validation-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "f09_skip_pre_walk_validation",
+      "file": "skill_lens/core/compare.py",
+      "python": "311",
+      "source_hash": "bdaf0d90e10eb96dc128d37f0bc27c084d39f032be4b7ecd82b285a13a920943",
+      "mutant_hash": "040600f155b4acbc6b0c244402996c0ff3bf0f704a5c46315c76ee76f5340542",
+      "diff": "--- skill_lens/core/compare.py\n+++ skill_lens/core/compare.py mutant\n@@ -267,7 +267,6 @@\n         raise ValueError(\"registry must be supplied when index is a FrozenDiscoveryIndex\")\n \n     agents = registry if registry is not None else load_registry()\n-    validate_compare_agents(agent_a, agent_b, agents)\n     chosen_index = index if index is not None else live_discovery(cwd, agents)\n     return build_compare_report(\n         agent_a,\n",
+      "test": "tests/test_stage_e_repairs.py::test_f09_validation_happens_before_discovery_and_io",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_validation_happens_before_discovery_and_io",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_skip_pre_walk_validation-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_validation_happens_before_discovery_and_io",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_skip_pre_walk_validation-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_validation_happens_before_discovery_and_io",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_skip_pre_walk_validation-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "f09_uncaught_cli_duplicate",
+      "file": "skill_lens/cli.py",
+      "python": "311",
+      "source_hash": "57e3e59bca5f274616f382307c0d93308d2daa2393382df5b9f352e90c5ec487",
+      "mutant_hash": "f62902bf7bc8afe9a05fbd80e6113ed7e95cf04aeca4e11652ec76fb7acc7198",
+      "diff": "--- skill_lens/cli.py\n+++ skill_lens/cli.py mutant\n@@ -468,7 +468,7 @@\n         _assert_inside_sandbox(working_dir, home)\n     try:\n         report = run_compare(agents[0], agents[1], cwd=working_dir)\n-    except (KeyError, ValueError) as exc:\n+    except KeyError as exc:\n         error_console.print(\n             f\"Error: {exc.args[0]}\",\n             soft_wrap=True,\n",
+      "test": "tests/test_stage_e_repairs.py::test_f09_cli_compare_same_agent_json_mode_exits_2_empty_stdout",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_cli_compare_same_agent_json_mode_exits_2_empty_stdout",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_uncaught_cli_duplicate-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_cli_compare_same_agent_json_mode_exits_2_empty_stdout",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_uncaught_cli_duplicate-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f09_cli_compare_same_agent_json_mode_exits_2_empty_stdout",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f09_uncaught_cli_duplicate-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "f14_why_markup",
+      "file": "skill_lens/cli.py",
+      "python": "311",
+      "source_hash": "57e3e59bca5f274616f382307c0d93308d2daa2393382df5b9f352e90c5ec487",
+      "mutant_hash": "7dba21902943ba42f2ff666d83b67343b613fa766f17cd416aa5b9e9de1b8d6a",
+      "diff": "--- skill_lens/cli.py\n+++ skill_lens/cli.py mutant\n@@ -329,7 +329,7 @@\n         error_console.print(\n             f\"Error: {exc.args[0]}\",\n             soft_wrap=True,\n-            markup=False,\n+            markup=True,\n             highlight=False,\n         )\n         raise typer.Exit(code=2) from None\n",
+      "test": "tests/test_stage_e_repairs.py::test_f14_why_unknown_agent_markup_tokens_rendered_literally",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f14_why_unknown_agent_markup_tokens_rendered_literally",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f14_why_markup-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f14_why_unknown_agent_markup_tokens_rendered_literally",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f14_why_markup-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f14_why_unknown_agent_markup_tokens_rendered_literally",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f14_why_markup-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "f14_compare_markup",
+      "file": "skill_lens/cli.py",
+      "python": "311",
+      "source_hash": "57e3e59bca5f274616f382307c0d93308d2daa2393382df5b9f352e90c5ec487",
+      "mutant_hash": "f8bed32a833313c196515cbbc39cd280eb38ac6dc55ef714356adc160aabd8c8",
+      "diff": "--- skill_lens/cli.py\n+++ skill_lens/cli.py mutant\n@@ -472,7 +472,7 @@\n         error_console.print(\n             f\"Error: {exc.args[0]}\",\n             soft_wrap=True,\n-            markup=False,\n+            markup=True,\n             highlight=False,\n         )\n         raise typer.Exit(code=2) from None\n",
+      "test": "tests/test_stage_e_repairs.py::test_f14_compare_unknown_agent_first_position_markup_tokens_literal",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f14_compare_unknown_agent_first_position_markup_tokens_literal",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f14_compare_markup-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f14_compare_unknown_agent_first_position_markup_tokens_literal",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f14_compare_markup-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_f14_compare_unknown_agent_first_position_markup_tokens_literal",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/f14_compare_markup-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "r03_deprecated_lookup",
+      "file": "skill_lens/tui/__init__.py",
+      "python": "314",
+      "source_hash": "dcc24b53a7f287f6114e20db273c7e71580667f0982c88de9a69678896ea9e17",
+      "mutant_hash": "633235ce2a0fe9844f7ac8da116e9ae7dfbc8d8d8a531164d48e642d3ed5825a",
+      "diff": "--- skill_lens/tui/__init__.py\n+++ skill_lens/tui/__init__.py mutant\n@@ -54,7 +54,7 @@\n     prev_loop: asyncio.AbstractEventLoop | None = None\n     try:\n         try:\n-            prev_loop = asyncio.get_event_loop()\n+            prev_loop = asyncio.get_event_loop_policy().get_event_loop()\n         except Exception:\n             prev_loop = None\n \n",
+      "test": "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/py314-disposable-venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_deprecated_lookup-314-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/py314-disposable-venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_deprecated_lookup-314-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/py314-disposable-venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_deprecated_lookup-314-restored.log"
+        }
+      }
+    },
+    {
+      "name": "r03_only_running_lookup",
+      "file": "skill_lens/tui/__init__.py",
+      "python": "311",
+      "source_hash": "dcc24b53a7f287f6114e20db273c7e71580667f0982c88de9a69678896ea9e17",
+      "mutant_hash": "6c0994c879e94ebe96e5b2ad614697f7af7704ff22e7a4999b0665e1d12018c6",
+      "diff": "--- skill_lens/tui/__init__.py\n+++ skill_lens/tui/__init__.py mutant\n@@ -54,7 +54,7 @@\n     prev_loop: asyncio.AbstractEventLoop | None = None\n     try:\n         try:\n-            prev_loop = asyncio.get_event_loop()\n+            prev_loop = asyncio.get_running_loop()\n         except Exception:\n             prev_loop = None\n \n",
+      "test": "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_only_running_lookup-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_only_running_lookup-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_only_running_lookup-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "r03_drop_borrowed_loop",
+      "file": "skill_lens/tui/__init__.py",
+      "python": "311",
+      "source_hash": "dcc24b53a7f287f6114e20db273c7e71580667f0982c88de9a69678896ea9e17",
+      "mutant_hash": "535bd1e63cabdd215b7e3dadc2da75a0e6788fb1bec3ff7f257d2a2142df548a",
+      "diff": "--- skill_lens/tui/__init__.py\n+++ skill_lens/tui/__init__.py mutant\n@@ -86,7 +86,7 @@\n             loop.close()\n         finally:\n             if prev_loop is not None and not prev_loop.is_closed():\n-                asyncio.set_event_loop(prev_loop)\n+                asyncio.set_event_loop(None)\n             else:\n                 asyncio.set_event_loop(None)\n \n",
+      "test": "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_drop_borrowed_loop-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_drop_borrowed_loop-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_drop_borrowed_loop-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "r03_restore_closed_prior",
+      "file": "skill_lens/tui/__init__.py",
+      "python": "311",
+      "source_hash": "dcc24b53a7f287f6114e20db273c7e71580667f0982c88de9a69678896ea9e17",
+      "mutant_hash": "96e2246849dda42d3f645fd242245985226db3a8be18ba655b341da6f9681d56",
+      "diff": "--- skill_lens/tui/__init__.py\n+++ skill_lens/tui/__init__.py mutant\n@@ -88,7 +88,7 @@\n             if prev_loop is not None and not prev_loop.is_closed():\n                 asyncio.set_event_loop(prev_loop)\n             else:\n-                asyncio.set_event_loop(None)\n+                asyncio.set_event_loop(prev_loop)\n \n \n __all__ = [\n",
+      "test": "tests/test_stage_e_repairs.py::test_r03_tui_run_handles_closed_prior_loop",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_handles_closed_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_restore_closed_prior-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_handles_closed_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_restore_closed_prior-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_handles_closed_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_restore_closed_prior-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "r03_restore_closed_prior",
+      "file": "skill_lens/tui/__init__.py",
+      "python": "314",
+      "source_hash": "dcc24b53a7f287f6114e20db273c7e71580667f0982c88de9a69678896ea9e17",
+      "mutant_hash": "96e2246849dda42d3f645fd242245985226db3a8be18ba655b341da6f9681d56",
+      "diff": "--- skill_lens/tui/__init__.py\n+++ skill_lens/tui/__init__.py mutant\n@@ -88,7 +88,7 @@\n             if prev_loop is not None and not prev_loop.is_closed():\n                 asyncio.set_event_loop(prev_loop)\n             else:\n-                asyncio.set_event_loop(None)\n+                asyncio.set_event_loop(prev_loop)\n \n \n __all__ = [\n",
+      "test": "tests/test_stage_e_repairs.py::test_r03_tui_run_handles_closed_prior_loop",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/py314-disposable-venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_handles_closed_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_restore_closed_prior-314-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/py314-disposable-venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_handles_closed_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_restore_closed_prior-314-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/py314-disposable-venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_handles_closed_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_restore_closed_prior-314-restored.log"
+        }
+      }
+    },
+    {
+      "name": "r03_retain_owned_loop",
+      "file": "skill_lens/tui/__init__.py",
+      "python": "311",
+      "source_hash": "dcc24b53a7f287f6114e20db273c7e71580667f0982c88de9a69678896ea9e17",
+      "mutant_hash": "d2c84649f9ea0ed8c3fd0f8ca93a382c7a04b92217827a5ad9321b1d250527a0",
+      "diff": "--- skill_lens/tui/__init__.py\n+++ skill_lens/tui/__init__.py mutant\n@@ -88,7 +88,7 @@\n             if prev_loop is not None and not prev_loop.is_closed():\n                 asyncio.set_event_loop(prev_loop)\n             else:\n-                asyncio.set_event_loop(None)\n+                asyncio.set_event_loop(loop)\n \n \n __all__ = [\n",
+      "test": "tests/test_stage_e_repairs.py::test_r03_tui_run_no_prior_loop",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_no_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_retain_owned_loop-311-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_no_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_retain_owned_loop-311-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_no_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short",
+            "--no-cov"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_retain_owned_loop-311-restored.log"
+        }
+      }
+    },
+    {
+      "name": "r03_retain_owned_loop",
+      "file": "skill_lens/tui/__init__.py",
+      "python": "314",
+      "source_hash": "dcc24b53a7f287f6114e20db273c7e71580667f0982c88de9a69678896ea9e17",
+      "mutant_hash": "d2c84649f9ea0ed8c3fd0f8ca93a382c7a04b92217827a5ad9321b1d250527a0",
+      "diff": "--- skill_lens/tui/__init__.py\n+++ skill_lens/tui/__init__.py mutant\n@@ -88,7 +88,7 @@\n             if prev_loop is not None and not prev_loop.is_closed():\n                 asyncio.set_event_loop(prev_loop)\n             else:\n-                asyncio.set_event_loop(None)\n+                asyncio.set_event_loop(loop)\n \n \n __all__ = [\n",
+      "test": "tests/test_stage_e_repairs.py::test_r03_tui_run_no_prior_loop",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/py314-disposable-venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_no_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_retain_owned_loop-314-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "command": [
+            "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/py314-disposable-venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_no_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_retain_owned_loop-314-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "command": [
+            "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/py314-disposable-venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_stage_e_repairs.py::test_r03_tui_run_no_prior_loop",
+            "-o",
+            "addopts=",
+            "-o",
+            "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mutation-pytest-cache",
+            "-q",
+            "--tb=short"
+          ],
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/r03_retain_owned_loop-314-restored.log"
+        }
+      }
+    }
+  ]
+}

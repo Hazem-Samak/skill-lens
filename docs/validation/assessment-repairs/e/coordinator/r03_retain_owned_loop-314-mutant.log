@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________________________ test_r03_tui_run_no_prior_loop ________________________
+tests/test_stage_e_repairs.py:444: in test_r03_tui_run_no_prior_loop
+    with pytest.raises(RuntimeError, match="no current event loop"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_stage_e_repairs.py::test_r03_tui_run_no_prior_loop - Failed...
+1 failed in 0.28s

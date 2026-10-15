@@ -1,0 +1,9 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_f09_build_compare_report_same_agent_raises ________________
+tests/test_stage_e_repairs.py:195: in test_f09_build_compare_report_same_agent_raises
+    with pytest.raises(ValueError, match="cannot compare agent 'claude' with itself"):
+E   Failed: DID NOT RAISE ValueError
+=========================== short test summary info ============================
+FAILED tests/test_stage_e_repairs.py::test_f09_build_compare_report_same_agent_raises
+1 failed in 0.14s

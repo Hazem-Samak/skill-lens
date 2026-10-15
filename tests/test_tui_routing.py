@@ -161,6 +161,7 @@ def test_plain_tui_explicitly_launches(mock_home: Path, monkeypatch: pytest.Monk
     _install_fake_tui(monkeypatch, fake_runner)
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
 
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["--plain", "tui", "--sandbox", str(mock_home)])
     assert result.exit_code == 0
     assert len(called_with) == 1
@@ -221,25 +222,99 @@ def test_bypass_no_optional_probe_or_import_for_line_and_fallback(
 # --- Explicit tui Command Routing & Validation ----------------------------
 
 
-def test_explicit_tui_launches_without_terminal_checks(
+@pytest.mark.parametrize(
+    "stdin_tty,stdout_tty",
+    [
+        (False, True),
+        (True, False),
+        (False, False),
+    ],
+)
+def test_explicit_tui_rejects_noninteractive_streams(
     mock_home: Path,
     monkeypatch: pytest.MonkeyPatch,
+    stdin_tty: bool,
+    stdout_tty: bool,
 ) -> None:
-    """Explicit `skill-lens tui` bypasses terminal isatty checks."""
+    """Explicit `skill-lens tui` requires BOTH stdin and stdout to be interactive."""
     called: list[bool] = []
 
     def fake_runner(home: Path, cwd: Path) -> int:
         called.append(True)
         return 0
 
-    # Ensure streams report false to prove explicit command bypasses them
-    monkeypatch.setattr(cli, "_stream_isatty", lambda s: False)
+    def fake_isatty(stream: object) -> bool:
+        if stream is sys.stdin:
+            return stdin_tty
+        if stream is sys.stdout:
+            return stdout_tty
+        return False
+
+    monkeypatch.setattr(cli, "_stream_isatty", fake_isatty)
+    monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
+    _install_fake_tui(monkeypatch, fake_runner)
+
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
+    assert result.exit_code == int(ExitCode.USAGE)
+    assert "Error: The terminal UI requires an interactive terminal." in result.stderr
+    assert not called
+
+
+def test_explicit_tui_interactive_streams_launches(
+    mock_home: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Explicit `skill-lens tui` launches when both streams are interactive."""
+    called: list[bool] = []
+
+    def fake_runner(home: Path, cwd: Path) -> int:
+        called.append(True)
+        return 0
+
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, fake_runner)
 
     result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == 0
     assert called == [True]
+
+
+def test_explicit_tui_missing_textual_precedes_stream_check(
+    mock_home: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """When Textual is absent, explicit `tui` shows install hint even on non-tty."""
+    called: list[bool] = []
+
+    def fake_runner(home: Path, cwd: Path) -> int:
+        called.append(True)
+        return 0
+
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: False)
+    monkeypatch.setattr(cli, "_is_textual_available", lambda: False)
+    _install_fake_tui(monkeypatch, fake_runner)
+
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
+    assert result.exit_code == int(ExitCode.USAGE)
+    assert "Error: The terminal UI requires 'skill-lens-cli[tui]'." in result.stderr
+    assert "pip install 'skill-lens-cli[tui]'" in result.stderr
+    assert not called
+
+
+def test_explicit_tui_piped_subprocess_exits_promptly(tmp_path: Path) -> None:
+    """Actual subprocess invocation of `skill-lens tui` into pipes exits promptly with 2."""
+    import subprocess
+
+    proc = subprocess.run(
+        [sys.executable, "-m", "skill_lens.cli", "tui", "--sandbox", str(tmp_path)],
+        capture_output=True,
+        text=True,
+        timeout=5.0,
+    )
+    assert proc.returncode == 2
+    assert "Error: The terminal UI requires an interactive terminal." in proc.stderr
+    assert "Traceback" not in proc.stderr
 
 
 def test_explicit_tui_missing_textual_exits_2(
@@ -274,6 +349,7 @@ def test_explicit_tui_forwards_sandbox_and_cwd(
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, fake_runner)
 
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(sandbox), "--cwd", str(working_dir)])
     assert result.exit_code == 0
     assert len(received) == 1
@@ -314,6 +390,7 @@ def test_tui_runner_exit_code_0_propagates(
     """Runner returning 0 exits process with 0."""
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, lambda h, c: 0)
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == 0
 
@@ -324,6 +401,7 @@ def test_tui_runner_exit_code_3_propagates(
     """Runner returning 3 exits process with 3."""
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, lambda h, c: 3)
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
 
@@ -340,6 +418,7 @@ def test_tui_runner_unexpected_exception_exits_3_no_traceback(
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, exploding_runner)
 
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     clean_err = " ".join(result.stderr.split())
@@ -368,6 +447,7 @@ def test_tui_missing_u2_module_with_textual_present_exits_3_no_traceback(
 
     monkeypatch.setattr(importlib, "import_module", failing_import)
 
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     assert "Error: Failed to start the terminal UI:" in result.stderr
@@ -387,6 +467,7 @@ def test_tui_bad_or_missing_callable_exits_3_no_traceback(
     fake_mod.run = "not_a_callable"
     monkeypatch.setitem(sys.modules, "skill_lens.tui", fake_mod)
 
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     assert "Error: Failed to start the terminal UI:" in result.stderr
@@ -413,6 +494,7 @@ def test_tui_unrelated_dependency_import_error_exits_3_no_traceback(
 
     monkeypatch.setattr(importlib, "import_module", failing_import)
 
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     assert (
@@ -471,6 +553,7 @@ def test_literal_bracket_details_rendered_safely(
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
     _install_fake_tui(monkeypatch, bracket_exploding_runner)
 
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     clean_err = " ".join(result.stderr.split())
@@ -518,6 +601,7 @@ def test_cli_tui_sandbox_real_runner_e2e_normal_quit(
 
     monkeypatch.setattr(real_tui, "run", headless_autopilot_run)
 
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(tmp_path)])
     assert result.exit_code == 0
     assert "Traceback" not in result.stderr
@@ -548,6 +632,7 @@ def test_cli_tui_sandbox_real_runner_e2e_internal_fault_exits_3(
 
     monkeypatch.setattr(real_tui, "run", headless_autopilot_run)
 
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(tmp_path)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     assert "Traceback" not in result.stderr

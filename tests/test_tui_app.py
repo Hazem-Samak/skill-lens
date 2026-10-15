@@ -882,6 +882,7 @@ def test_actual_textual_event_handler_fault_via_cli(
 
     monkeypatch.setattr(tui, "run", test_run)
     monkeypatch.setattr("skill_lens.cli._is_textual_available", lambda: True)
+    monkeypatch.setattr("skill_lens.cli._stream_isatty", lambda s: True)
 
     runner = CliRunner()
     result = runner.invoke(cli_app, ["tui", "--sandbox", str(tmp_path)])
@@ -909,6 +910,7 @@ def test_startup_handler_fault_via_cli(tmp_path: Path, monkeypatch: pytest.Monke
 
     monkeypatch.setattr(tui, "run", test_run)
     monkeypatch.setattr("skill_lens.cli._is_textual_available", lambda: True)
+    monkeypatch.setattr("skill_lens.cli._stream_isatty", lambda s: True)
 
     runner = CliRunner()
     result = runner.invoke(cli_app, ["tui", "--sandbox", str(tmp_path)])

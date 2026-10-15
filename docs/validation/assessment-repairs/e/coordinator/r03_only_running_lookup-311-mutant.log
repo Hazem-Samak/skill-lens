@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop _______
+tests/test_stage_e_repairs.py:472: in test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop
+    current = asyncio.get_event_loop()
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.
+=========================== short test summary info ============================
+FAILED tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop
+1 failed in 0.27s

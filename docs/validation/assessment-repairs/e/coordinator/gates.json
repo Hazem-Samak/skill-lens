@@ -1,0 +1,66 @@
+[
+  {
+    "gate": "pytest",
+    "command": [
+      ".venv/bin/pytest",
+      "--cov=skill_lens",
+      "-o",
+      "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/pytest-cache"
+    ],
+    "exit": 0,
+    "seconds": 53.16884179199769,
+    "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/pytest.log"
+  },
+  {
+    "gate": "mypy",
+    "command": [
+      ".venv/bin/mypy",
+      "--cache-dir",
+      "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mypy-cache"
+    ],
+    "exit": 0,
+    "seconds": 1.6665787499987346,
+    "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/mypy.log"
+  },
+  {
+    "gate": "ruff",
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "exit": 0,
+    "seconds": 0.09172795799895539,
+    "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/ruff.log"
+  },
+  {
+    "gate": "format",
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "exit": 0,
+    "seconds": 0.08933787500063772,
+    "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/format.log"
+  },
+  {
+    "gate": "python314",
+    "command": [
+      "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/py314-disposable-venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_stage_e_repairs.py",
+      "-o",
+      "addopts=",
+      "-o",
+      "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/py314-cache",
+      "-W",
+      "error::DeprecationWarning:skill_lens.tui"
+    ],
+    "exit": 0,
+    "seconds": 1.1569058330023836,
+    "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/python314.log"
+  }
+]

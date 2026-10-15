@@ -381,6 +381,18 @@ def test_compare_empty_registry_and_unknown_ids_rejected_before_scanning(
     ):
         run_compare("nope", "codex", cwd=home)
 
+    # Same agent id rejected before scanning
+    with (
+        patch(
+            "skill_lens.core.compare.live_discovery",
+            side_effect=AssertionError("live_discovery must not be called for same agent"),
+        ),
+        pytest.raises(ValueError, match="cannot compare agent 'claude' with itself"),
+    ):
+        run_compare("claude", "claude", cwd=home)
+    with pytest.raises(ValueError, match="cannot compare agent 'claude' with itself"):
+        build_compare_report("claude", "claude", home, home)
+
 
 def test_compare_wrapper_uses_index_home_cwd_and_bans_ambient_lookups(
     mock_home: Path, tmp_path: Path

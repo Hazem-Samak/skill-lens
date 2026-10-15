@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop _______
+tests/test_stage_e_repairs.py:469: in test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop
+    assert policy_warnings == []
+E   assert [<WarningMess...line : None}>] == []
+E     
+E     Left contains one more item: <WarningMessage {message : DeprecationWarning("'asyncio.get_event_loop_policy' is deprecated and slated for removal in...oints/2026-10-15-stage-e-work/coordinator-final/mutation-source/skill_lens/tui/__init__.py', lineno : 57, line : None}>
+E     Use -v to get more diff
+=========================== short test summary info ============================
+FAILED tests/test_stage_e_repairs.py::test_r03_tui_run_preserves_and_restores_borrowed_non_running_loop
+1 failed in 0.27s

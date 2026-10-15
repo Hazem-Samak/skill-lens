@@ -1,0 +1,40 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+_______ test_f14_why_unknown_agent_markup_tokens_rendered_literally[[/]] _______
+tests/test_stage_e_repairs.py:327: in test_f14_why_unknown_agent_markup_tokens_rendered_literally
+    assert result.exit_code == 2
+E   assert 1 == 2
+E    +  where 1 = <Result MarkupError("closing tag '[/]' at position 22 has nothing to close")>.exit_code
+_____ test_f14_why_unknown_agent_markup_tokens_rendered_literally[[/red]] ______
+tests/test_stage_e_repairs.py:327: in test_f14_why_unknown_agent_markup_tokens_rendered_literally
+    assert result.exit_code == 2
+E   assert 1 == 2
+E    +  where 1 = <Result MarkupError("closing tag '[/red]' at position 22 doesn't match any open tag")>.exit_code
+___ test_f14_why_unknown_agent_markup_tokens_rendered_literally[[bold red]] ____
+tests/test_stage_e_repairs.py:330: in test_f14_why_unknown_agent_markup_tokens_rendered_literally
+    assert f"Error: unknown agent '{token}'. Known agents:" in result.stderr
+E   assert "Error: unknown agent '[bold red]'. Known agents:" in "Error: unknown agent ''. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n"
+E    +  where "Error: unknown agent ''. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n" = <Result SystemExit(2)>.stderr
+_ test_f14_why_unknown_agent_markup_tokens_rendered_literally[[link=http://evil.com]pwn[/link]] _
+tests/test_stage_e_repairs.py:330: in test_f14_why_unknown_agent_markup_tokens_rendered_literally
+    assert f"Error: unknown agent '{token}'. Known agents:" in result.stderr
+E   assert "Error: unknown agent '[link=http://evil.com]pwn[/link]'. Known agents:" in "Error: unknown agent 'pwn'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n"
+E    +  where "Error: unknown agent 'pwn'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n" = <Result SystemExit(2)>.stderr
+_ test_f14_why_unknown_agent_markup_tokens_rendered_literally[brackets[inside]here] _
+tests/test_stage_e_repairs.py:330: in test_f14_why_unknown_agent_markup_tokens_rendered_literally
+    assert f"Error: unknown agent '{token}'. Known agents:" in result.stderr
+E   assert "Error: unknown agent 'brackets[inside]here'. Known agents:" in "Error: unknown agent 'bracketshere'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n"
+E    +  where "Error: unknown agent 'bracketshere'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n" = <Result SystemExit(2)>.stderr
+___ test_f14_why_unknown_agent_markup_tokens_rendered_literally[[[double]]] ____
+tests/test_stage_e_repairs.py:330: in test_f14_why_unknown_agent_markup_tokens_rendered_literally
+    assert f"Error: unknown agent '{token}'. Known agents:" in result.stderr
+E   assert "Error: unknown agent '[[double]]'. Known agents:" in "Error: unknown agent '[]'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n"
+E    +  where "Error: unknown agent '[]'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n" = <Result SystemExit(2)>.stderr
+=========================== short test summary info ============================
+FAILED tests/test_stage_e_repairs.py::test_f14_why_unknown_agent_markup_tokens_rendered_literally[[/]]
+FAILED tests/test_stage_e_repairs.py::test_f14_why_unknown_agent_markup_tokens_rendered_literally[[/red]]
+FAILED tests/test_stage_e_repairs.py::test_f14_why_unknown_agent_markup_tokens_rendered_literally[[bold red]]
+FAILED tests/test_stage_e_repairs.py::test_f14_why_unknown_agent_markup_tokens_rendered_literally[[link=http://evil.com]pwn[/link]]
+FAILED tests/test_stage_e_repairs.py::test_f14_why_unknown_agent_markup_tokens_rendered_literally[brackets[inside]here]
+FAILED tests/test_stage_e_repairs.py::test_f14_why_unknown_agent_markup_tokens_rendered_literally[[[double]]]
+6 failed in 0.19s

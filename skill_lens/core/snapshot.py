@@ -14,7 +14,7 @@ from types import MappingProxyType
 
 from skill_lens.core import paths
 from skill_lens.core.cancellation import check_cancelled
-from skill_lens.core.compare import run_compare
+from skill_lens.core.compare import run_compare, validate_compare_agents
 from skill_lens.core.config import (
     ResolvedAgentControls,
     collect_all_config_paths,
@@ -531,14 +531,7 @@ def snapshot_diff(snapshot: SessionSnapshot, key: str) -> DiffReport:
 def snapshot_compare(snapshot: SessionSnapshot, agent_a: str, agent_b: str) -> CompareReport:
     """Compare two agents using captured index and registry."""
     registry_dict = {a.id: a for a in snapshot.registry}
-    if agent_a not in registry_dict:
-        known = ", ".join(sorted(registry_dict))
-        raise KeyError(f"unknown agent '{agent_a}'. Known agents: {known}")
-    if agent_b not in registry_dict:
-        known = ", ".join(sorted(registry_dict))
-        raise KeyError(f"unknown agent '{agent_b}'. Known agents: {known}")
-    if agent_a == agent_b:
-        raise ValueError(f"cannot compare agent '{agent_a}' with itself")
+    validate_compare_agents(agent_a, agent_b, registry_dict)
     return run_compare(
         agent_a,
         agent_b,

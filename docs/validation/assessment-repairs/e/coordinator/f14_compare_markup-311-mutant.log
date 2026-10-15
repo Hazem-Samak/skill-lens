@@ -1,0 +1,34 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+___ test_f14_compare_unknown_agent_first_position_markup_tokens_literal[[/]] ___
+tests/test_stage_e_repairs.py:374: in test_f14_compare_unknown_agent_first_position_markup_tokens_literal
+    assert result.exit_code == 2
+E   assert 1 == 2
+E    +  where 1 = <Result MarkupError("closing tag '[/]' at position 22 has nothing to close")>.exit_code
+_ test_f14_compare_unknown_agent_first_position_markup_tokens_literal[[/red]] __
+tests/test_stage_e_repairs.py:374: in test_f14_compare_unknown_agent_first_position_markup_tokens_literal
+    assert result.exit_code == 2
+E   assert 1 == 2
+E    +  where 1 = <Result MarkupError("closing tag '[/red]' at position 22 doesn't match any open tag")>.exit_code
+_ test_f14_compare_unknown_agent_first_position_markup_tokens_literal[[bold red]] _
+tests/test_stage_e_repairs.py:377: in test_f14_compare_unknown_agent_first_position_markup_tokens_literal
+    assert f"Error: unknown agent '{token}'. Known agents:" in result.stderr
+E   assert "Error: unknown agent '[bold red]'. Known agents:" in "Error: unknown agent ''. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n"
+E    +  where "Error: unknown agent ''. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n" = <Result SystemExit(2)>.stderr
+_ test_f14_compare_unknown_agent_first_position_markup_tokens_literal[[link=http://evil.com]pwn[/link]] _
+tests/test_stage_e_repairs.py:377: in test_f14_compare_unknown_agent_first_position_markup_tokens_literal
+    assert f"Error: unknown agent '{token}'. Known agents:" in result.stderr
+E   assert "Error: unknown agent '[link=http://evil.com]pwn[/link]'. Known agents:" in "Error: unknown agent 'pwn'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n"
+E    +  where "Error: unknown agent 'pwn'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n" = <Result SystemExit(2)>.stderr
+_ test_f14_compare_unknown_agent_first_position_markup_tokens_literal[brackets[inside]here] _
+tests/test_stage_e_repairs.py:377: in test_f14_compare_unknown_agent_first_position_markup_tokens_literal
+    assert f"Error: unknown agent '{token}'. Known agents:" in result.stderr
+E   assert "Error: unknown agent 'brackets[inside]here'. Known agents:" in "Error: unknown agent 'bracketshere'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n"
+E    +  where "Error: unknown agent 'bracketshere'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n" = <Result SystemExit(2)>.stderr
+=========================== short test summary info ============================
+FAILED tests/test_stage_e_repairs.py::test_f14_compare_unknown_agent_first_position_markup_tokens_literal[[/]]
+FAILED tests/test_stage_e_repairs.py::test_f14_compare_unknown_agent_first_position_markup_tokens_literal[[/red]]
+FAILED tests/test_stage_e_repairs.py::test_f14_compare_unknown_agent_first_position_markup_tokens_literal[[bold red]]
+FAILED tests/test_stage_e_repairs.py::test_f14_compare_unknown_agent_first_position_markup_tokens_literal[[link=http://evil.com]pwn[/link]]
+FAILED tests/test_stage_e_repairs.py::test_f14_compare_unknown_agent_first_position_markup_tokens_literal[brackets[inside]here]
+5 failed in 0.18s

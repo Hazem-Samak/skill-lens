@@ -1,0 +1,20 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________ test_f09_validation_happens_before_discovery_and_io ______________
+tests/test_stage_e_repairs.py:223: in test_f09_validation_happens_before_discovery_and_io
+    run_compare("claude", "claude", cwd=tmp_path)
+skill_lens/core/compare.py:270: in run_compare
+    chosen_index = index if index is not None else live_discovery(cwd, agents)
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/unittest/mock.py:1124: in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/unittest/mock.py:1128: in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/unittest/mock.py:1183: in _execute_mock_call
+    raise effect
+E   AssertionError: live_discovery must not be called
+=========================== short test summary info ============================
+FAILED tests/test_stage_e_repairs.py::test_f09_validation_happens_before_discovery_and_io
+1 failed in 0.16s

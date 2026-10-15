@@ -427,6 +427,50 @@ def test_compare_unknown_agent_exits_2(mock_home: Path) -> None:
     assert "Known agents:" in (result.stdout + result.stderr)
 
 
+def test_compare_same_agent_exits_2(mock_home: Path) -> None:
+    result = runner.invoke(
+        app, ["compare", "--agent", "claude", "--agent", "claude", "--sandbox", str(mock_home)]
+    )
+    assert result.exit_code == 2
+    assert "cannot compare agent 'claude' with itself" in (result.stdout + result.stderr)
+
+    json_res = runner.invoke(
+        app,
+        [
+            "compare",
+            "--agent",
+            "claude",
+            "--agent",
+            "claude",
+            "--sandbox",
+            str(mock_home),
+            "--json",
+        ],
+    )
+    assert json_res.exit_code == 2
+    assert json_res.stdout == ""
+    assert "cannot compare agent 'claude' with itself" in json_res.stderr
+
+
+def test_why_unknown_agent_with_markup_tokens_exits_2_no_crash(mock_home: Path) -> None:
+    build_scenario("claude_personal_beats_project", mock_home)
+    result = runner.invoke(app, ["why", "deploy", "--agent", "[/]", "--sandbox", str(mock_home)])
+    assert result.exit_code == 2
+    assert "Traceback" not in result.stderr
+    assert "MarkupError" not in result.stderr
+    assert "unknown agent '[/]'" in (result.stdout + result.stderr)
+
+
+def test_compare_unknown_agent_with_markup_tokens_exits_2_no_crash(mock_home: Path) -> None:
+    result = runner.invoke(
+        app, ["compare", "--agent", "[/]", "--agent", "claude", "--sandbox", str(mock_home)]
+    )
+    assert result.exit_code == 2
+    assert "Traceback" not in result.stderr
+    assert "MarkupError" not in result.stderr
+    assert "unknown agent '[/]'" in (result.stdout + result.stderr)
+
+
 def test_compare_human_output_names_the_agents(mock_home: Path) -> None:
     library = mock_home / ".agents" / "skills" / "shared"
     _make_skill(library, "shared", "Shared library.")

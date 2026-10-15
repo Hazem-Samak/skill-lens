@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_f09_cli_compare_same_agent_json_mode_exits_2_empty_stdout ________
+tests/test_stage_e_repairs.py:243: in test_f09_cli_compare_same_agent_json_mode_exits_2_empty_stdout
+    assert result.exit_code == 2
+E   assert 1 == 2
+E    +  where 1 = <Result ValueError("cannot compare agent 'claude' with itself")>.exit_code
+=========================== short test summary info ============================
+FAILED tests/test_stage_e_repairs.py::test_f09_cli_compare_same_agent_json_mode_exits_2_empty_stdout
+1 failed in 0.14s

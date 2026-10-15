@@ -1,0 +1,93 @@
+[
+  {
+    "case": "F08",
+    "command": [
+      ".venv/bin/python",
+      "-c",
+      "from skill_lens.cli import app; app()",
+      "tui",
+      "--sandbox",
+      "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/cli-fixture"
+    ],
+    "exit": 2,
+    "seconds": 0.06844345799981966,
+    "stdout_empty": true,
+    "stderr": "Error: The terminal UI requires an interactive terminal.\n"
+  },
+  {
+    "case": "F09",
+    "command": [
+      ".venv/bin/python",
+      "-c",
+      "from skill_lens.cli import app; app()",
+      "compare",
+      "--agent",
+      "claude",
+      "--agent",
+      "claude",
+      "--json",
+      "--sandbox",
+      "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/cli-fixture"
+    ],
+    "exit": 2,
+    "seconds": 0.06610229199941386,
+    "stdout_empty": true,
+    "stderr": "Error: cannot compare agent 'claude' with itself\n"
+  },
+  {
+    "case": "F14_why",
+    "command": [
+      ".venv/bin/python",
+      "-c",
+      "from skill_lens.cli import app; app()",
+      "why",
+      "x",
+      "--agent",
+      "[/]",
+      "--json",
+      "--sandbox",
+      "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/cli-fixture"
+    ],
+    "exit": 2,
+    "seconds": 0.06658337500266498,
+    "stdout_empty": true,
+    "stderr": "Error: unknown agent '[/]'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n"
+  },
+  {
+    "case": "F14_compare",
+    "command": [
+      ".venv/bin/python",
+      "-c",
+      "from skill_lens.cli import app; app()",
+      "compare",
+      "--agent",
+      "claude",
+      "--agent",
+      "[/]",
+      "--json",
+      "--sandbox",
+      "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/cli-fixture"
+    ],
+    "exit": 2,
+    "seconds": 0.06721012499838253,
+    "stdout_empty": true,
+    "stderr": "Error: unknown agent '[/]'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf\n"
+  },
+  {
+    "case": "isolated_mirror_test",
+    "command": [
+      ".venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_stage_e_repairs.py::test_f09_reversed_comparisons_retain_shapes_and_mirrors",
+      "--no-cov",
+      "-o",
+      "addopts=",
+      "-o",
+      "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-e-work/coordinator-final/isolation-cache",
+      "-q"
+    ],
+    "exit": 0,
+    "uses_mock_home_fixture": true
+  }
+]

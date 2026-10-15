@@ -256,6 +256,14 @@ def tui(
             highlight=False,
         )
         raise typer.Exit(code=int(ExitCode.USAGE))
+    if not (_stream_isatty(sys.stdin) and _stream_isatty(sys.stdout)):
+        error_console.print(
+            "Error: The terminal UI requires an interactive terminal.",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
+        raise typer.Exit(code=int(ExitCode.USAGE))
     _launch_tui(home, working_dir)
 
 
@@ -318,7 +326,12 @@ def why(
     try:
         report = resolve_skill(skill_name, agent, working_dir, home)
     except KeyError as exc:
-        error_console.print(f"[red]Error:[/red] {exc.args[0]}")
+        error_console.print(
+            f"Error: {exc.args[0]}",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
         raise typer.Exit(code=2) from None
     if as_json:
         _emit_json(report.to_dict())
@@ -455,8 +468,13 @@ def compare(
         _assert_inside_sandbox(working_dir, home)
     try:
         report = run_compare(agents[0], agents[1], cwd=working_dir)
-    except KeyError as exc:
-        error_console.print(f"[red]Error:[/red] {exc.args[0]}")
+    except (KeyError, ValueError) as exc:
+        error_console.print(
+            f"Error: {exc.args[0]}",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
         raise typer.Exit(code=2) from None
     if as_json:
         _emit_json(report.to_dict())

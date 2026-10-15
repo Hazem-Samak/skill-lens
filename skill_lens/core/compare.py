@@ -21,6 +21,24 @@ from skill_lens.models.enums import CompareRelation
 from skill_lens.registry.loader import AgentDefinition, load_registry
 
 
+def validate_compare_agents(
+    agent_a: str,
+    agent_b: str,
+    agents: dict[str, AgentDefinition],
+) -> tuple[AgentDefinition, AgentDefinition]:
+    """Validate that two distinct known agents are requested.
+
+    Validates both agent ids against the registry before any filesystem walk or
+    computation. Raises KeyError with known agents for unknown ids, or ValueError
+    when comparing a known agent with itself.
+    """
+    definition_a = _require(agent_a, agents)
+    definition_b = _require(agent_b, agents)
+    if agent_a == agent_b:
+        raise ValueError(f"cannot compare agent '{agent_a}' with itself")
+    return definition_a, definition_b
+
+
 def build_compare_report(
     agent_a: str,
     agent_b: str,
@@ -40,8 +58,7 @@ def build_compare_report(
         raise ValueError("registry must be supplied when index is a FrozenDiscoveryIndex")
 
     agents = registry if registry is not None else load_registry()
-    definition_a = _require(agent_a, agents)
-    definition_b = _require(agent_b, agents)
+    definition_a, definition_b = validate_compare_agents(agent_a, agent_b, agents)
 
     discovery = index if index is not None else discover(home, cwd, agents)
 
@@ -250,8 +267,7 @@ def run_compare(
         raise ValueError("registry must be supplied when index is a FrozenDiscoveryIndex")
 
     agents = registry if registry is not None else load_registry()
-    _require(agent_a, agents)
-    _require(agent_b, agents)
+    validate_compare_agents(agent_a, agent_b, agents)
     chosen_index = index if index is not None else live_discovery(cwd, agents)
     return build_compare_report(
         agent_a,

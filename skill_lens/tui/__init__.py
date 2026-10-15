@@ -54,7 +54,7 @@ def run(
     prev_loop: asyncio.AbstractEventLoop | None = None
     try:
         try:
-            prev_loop = asyncio.get_event_loop_policy().get_event_loop()
+            prev_loop = asyncio.get_event_loop()
         except Exception:
             prev_loop = None
 

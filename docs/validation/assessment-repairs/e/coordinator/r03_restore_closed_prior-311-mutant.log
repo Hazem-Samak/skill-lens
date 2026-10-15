@@ -1,0 +1,9 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________________ test_r03_tui_run_handles_closed_prior_loop __________________
+tests/test_stage_e_repairs.py:516: in test_r03_tui_run_handles_closed_prior_loop
+    with pytest.raises(RuntimeError, match="no current event loop"):
+E   Failed: DID NOT RAISE RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_stage_e_repairs.py::test_r03_tui_run_handles_closed_prior_loop
+1 failed in 0.27s
