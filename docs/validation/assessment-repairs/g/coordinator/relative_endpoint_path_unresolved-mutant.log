@@ -1,0 +1,15 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_relative_wheel_and_harness_paths_normalized_before_cwd_switch ______
+/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-source/tests/test_tui_packaging.py:537: in test_relative_wheel_and_harness_paths_normalized_before_cwd_switch
+    tui_res = verify_tui_endpoint_install(
+/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-source/scripts/smoke_wheel.py:392: in verify_tui_endpoint_install
+    subprocess.run(
+/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-source/tests/test_tui_packaging.py:385: in mock_subprocess_run
+    raise subprocess.CalledProcessError(
+E   subprocess.CalledProcessError: Command '['uv', 'pip', 'install', '--python', '/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-254/test_relative_wheel_and_harnes0/invoking_cwd/rel_work_direct/min_lane/venv', 'artifacts/skill_lens_cli-0.1.1-py3-none-any.whl[tui]', 'textual==8.2.8', 'pytest', 'pytest-cov', 'pyyaml']' returned non-zero exit status 1.
+----------------------------- Captured stdout call -----------------------------
+Base installation lane passed successfully.
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_relative_wheel_and_harness_paths_normalized_before_cwd_switch
+1 failed in 0.10s

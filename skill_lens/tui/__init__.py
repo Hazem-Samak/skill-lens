@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from skill_lens.core.exitcodes import ExitCode
+from skill_lens.tui._textual_compat import get_unhandled_fault
 from skill_lens.tui.app import (
     CaptureComplete,
     CaptureFailed,
@@ -67,7 +68,7 @@ def run(
                 headless=headless,
                 auto_pilot=auto_pilot,
             )
-            unhandled_exc = getattr(app, "_exception", None)
+            unhandled_exc = get_unhandled_fault(app)
             if unhandled_exc is not None:
                 raise unhandled_exc
             if code is not None:

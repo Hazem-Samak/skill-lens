@@ -1,0 +1,24 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+__ test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/__init__.py] ___
+tests/test_tui_packaging.py:254: in test_synthetic_wheel_missing_tui_module_fails
+    with pytest.raises(ValueError, match=f"missing required TUI module.*{omitted_module}"):
+E   Failed: DID NOT RAISE ValueError
+_____ test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/app.py] _____
+tests/test_tui_packaging.py:254: in test_synthetic_wheel_missing_tui_module_fails
+    with pytest.raises(ValueError, match=f"missing required TUI module.*{omitted_module}"):
+E   Failed: DID NOT RAISE ValueError
+___ test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/session.py] ___
+tests/test_tui_packaging.py:254: in test_synthetic_wheel_missing_tui_module_fails
+    with pytest.raises(ValueError, match=f"missing required TUI module.*{omitted_module}"):
+E   Failed: DID NOT RAISE ValueError
+_ test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/_textual_compat.py] _
+tests/test_tui_packaging.py:254: in test_synthetic_wheel_missing_tui_module_fails
+    with pytest.raises(ValueError, match=f"missing required TUI module.*{omitted_module}"):
+E   Failed: DID NOT RAISE ValueError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/__init__.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/app.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/session.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/_textual_compat.py]
+4 failed in 0.10s

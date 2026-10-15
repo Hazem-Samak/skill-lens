@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________________ test_record_and_get_unhandled_fault ______________________
+tests/test_stage_g_repairs.py:166: in test_record_and_get_unhandled_fault
+    assert app._return_code == 3
+E   AssertionError: assert 0 == 3
+E    +  where 0 = App(title='App', classes={'-dark-mode'}, pseudo_classes={'dark', 'focus', 'nocolor'})._return_code
+=========================== short test summary info ============================
+FAILED tests/test_stage_g_repairs.py::test_record_and_get_unhandled_fault - A...
+1 failed in 0.14s

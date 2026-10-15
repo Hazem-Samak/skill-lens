@@ -1,0 +1,2042 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index d26bed1..f789ec6 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -55,50 +55,23 @@ jobs:
+       - name: Build wheel and sdist
+         run: uv build --out-dir dist
+ 
+-      - name: The wheel must carry the agent registry
++      - name: Verify package archives (wheel and sdist)
+         run: |
+           wheel=$(ls dist/*.whl)
+-          count=$(unzip -l "$wheel" | grep -c 'registry/agents/.*\.toml')
+-          echo "registry TOMLs in wheel: $count"
+-          test "$count" -eq 10
++          sdist=$(ls dist/*.tar.gz)
++          uv run python scripts/smoke_wheel.py --verify-archive-only --wheel "$wheel" --sdist "$sdist"
+ 
+-      - name: Verify console script installs and runs
++      - name: Verify console script installs and runs (base lane)
+         run: |
+           wheel=$(ls dist/*.whl)
+-          uv venv /tmp/smoke --python 3.13
+-          uv pip install --python /tmp/smoke "$wheel"
+-          mkdir -p /tmp/smoke-base-lane /tmp/smoke-base-home
+-          cd /tmp/smoke-base-lane
+-          HOME=/tmp/smoke-base-home /tmp/smoke/bin/skill-lens --version
+-          HOME=/tmp/smoke-base-home /tmp/smoke/bin/skill-lens --help
+-          HOME=/tmp/smoke-base-home /tmp/smoke/bin/python -c "import skill_lens; assert '/tmp/smoke' in skill_lens.__file__, f'Expected installed wheel; got {skill_lens.__file__}'"
+-          # Textual must be truly absent in base install
+-          HOME=/tmp/smoke-base-home /tmp/smoke/bin/python -c "import importlib.util; assert importlib.util.find_spec('textual') is None, 'textual must be absent in base install'"
+-          # Noninteractive bare invocation prints help, exits 0, and has no install tip
+-          bare_output=$(HOME=/tmp/smoke-base-home /tmp/smoke/bin/skill-lens)
+-          echo "$bare_output" | grep -q "Usage: skill-lens"
+-          if echo "$bare_output" | grep -q "Tip:"; then
+-            echo "Base noninteractive bare invocation must not include install tip"
+-            exit 1
+-          fi
+-          # Explicit tui invocation exits 2 with install hint naming extra
+-          tui_stderr=$(HOME=/tmp/smoke-base-home /tmp/smoke/bin/skill-lens tui 2>&1 >/dev/null || true)
+-          echo "$tui_stderr" | grep -q "skill-lens-cli\[tui\]"
+-          code=0
+-          HOME=/tmp/smoke-base-home /tmp/smoke/bin/skill-lens tui >/dev/null 2>&1 || code=$?
+-          test "$code" -eq 2
+-
+-      - name: Verify installed extra output parity ([tui] lane)
++          uv run python scripts/smoke_wheel.py --verify-base-only --wheel "$wheel"
++
++      - name: Verify minimum endpoint (textual==8.2.8) installed lifecycle and parity
++        run: |
++          wheel=$(ls dist/*.whl)
++          uv run python scripts/smoke_wheel.py --verify-min-only --wheel "$wheel"
++
++      - name: Verify latest endpoint (unconstrained) installed lifecycle and parity
+         run: |
+           wheel=$(ls dist/*.whl)
+-          uv venv /tmp/smoke-tui --python 3.13
+-          uv pip install --python /tmp/smoke-tui "${wheel}[tui]" pytest pytest-cov pyyaml
+-          # Execute provenance and pinned-output suites from outside source checkout
+-          mkdir -p /tmp/smoke-test-lane /tmp/smoke-tui-home
+-          cp -R tests /tmp/smoke-test-lane/
+-          cp pyproject.toml /tmp/smoke-test-lane/
+-          cd /tmp/smoke-test-lane
+-          # Verify Textual is present and skill_lens is imported from the installed wheel, not source
+-          HOME=/tmp/smoke-tui-home /tmp/smoke-tui/bin/python -c "import skill_lens; assert '/tmp/smoke-tui' in skill_lens.__file__, f'Expected installed wheel; got {skill_lens.__file__}'"
+-          HOME=/tmp/smoke-tui-home /tmp/smoke-tui/bin/python -c "import textual; print('textual version:', textual.__version__)"
+-          HOME=/tmp/smoke-tui-home /tmp/smoke-tui/bin/pytest tests/test_render_snapshots.py tests/test_fixtures.py tests/test_phase3_gate.py tests/test_phase4_gate.py -ra
++          uv run python scripts/smoke_wheel.py --verify-latest-only --wheel "$wheel"
+diff --git a/skill_lens/tui/__init__.py b/skill_lens/tui/__init__.py
+index 96e2fb1..00a20dd 100644
+--- a/skill_lens/tui/__init__.py
++++ b/skill_lens/tui/__init__.py
+@@ -13,6 +13,7 @@ from pathlib import Path
+ from typing import Any
+ 
+ from skill_lens.core.exitcodes import ExitCode
++from skill_lens.tui._textual_compat import get_unhandled_fault
+ from skill_lens.tui.app import (
+     CaptureComplete,
+     CaptureFailed,
+@@ -67,7 +68,7 @@ def run(
+                 headless=headless,
+                 auto_pilot=auto_pilot,
+             )
+-            unhandled_exc = getattr(app, "_exception", None)
++            unhandled_exc = get_unhandled_fault(app)
+             if unhandled_exc is not None:
+                 raise unhandled_exc
+             if code is not None:
+diff --git a/skill_lens/tui/app.py b/skill_lens/tui/app.py
+index c18efc1..a4edbb0 100644
+--- a/skill_lens/tui/app.py
++++ b/skill_lens/tui/app.py
+@@ -36,6 +36,7 @@ from skill_lens.core.snapshot import (
+     snapshot_why,
+ )
+ from skill_lens.core.snapshot_models import SessionSnapshot
++from skill_lens.tui._textual_compat import record_unhandled_fault
+ from skill_lens.tui.session import (
+     ReportValue,
+     SessionController,
+@@ -335,10 +336,7 @@ class SkillLensApp(App[int]):
+         """
+         self.controller.failed = True
+         self.controller.close()
+-        self._return_code = int(ExitCode.INTERNAL)
+-        if self._exception is None:
+-            self._exception = error
+-            self._exception_event.set()
++        record_unhandled_fault(self, error, int(ExitCode.INTERNAL))
+         self.exit(int(ExitCode.INTERNAL), return_code=int(ExitCode.INTERNAL))
+ 
+     def _update_ui(self) -> None:
+diff --git a/tests/test_tui_packaging.py b/tests/test_tui_packaging.py
+index 32ac4fc..626ff05 100644
+--- a/tests/test_tui_packaging.py
++++ b/tests/test_tui_packaging.py
+@@ -1,20 +1,50 @@
+-"""Packaging and dependency declaration tests for Skill Lens 0.2 (Assignment U1).
+-
+-Guards the optional [tui] extra, base runtime dependency isolation,
+-Textual and Rich lockfile metadata, CI packaging lane definitions, and
+-output parity under the installed extra.
++"""Packaging and installed-wheel verification tests (Assignment U1 and Stage G).
++
++Specification reference: FULL_SCREEN_TUI.md §21.7, Stage G brief, F10/R02.
++Covers:
++1. Base runtime dependencies exclude Textual
++2. Optional dependencies declare textual>=8.2.8 floor for [tui] and [dev]
++3. uv.lock pins textual 8.2.8 and rich 15.0.0
++4. CI workflow contains strengthened packaging jobs (archive content gate,
++   base fallback lane, min endpoint textual==8.2.8, latest endpoint unconstrained)
++5. Packaging validator (verify_wheel_contents and verify_sdist_contents
++   from canonical scripts.smoke_wheel):
++   - Synthetic clean wheel and sdist pass archive verification
++   - Synthetic stale wheel (0 TUI modules) fails due to missing TUI modules
++   - Synthetic wheels missing each individual TUI module fail with exact diagnostics
++   - Synthetic wheels missing agent registry TOMLs or py.typed fail
++   - Synthetic sdist missing required modules or files fails
++6. Installed extra output parity across command surfaces
++7. Installed lane assurance guards:
++   - Module provenance failure rejection (base and both endpoint branches)
++   - Textual presence failure rejection in base environment
++   - Nonzero test suite returncode failure rejection
++   - Source directory leak in test lane rejection
++8. Relative wheel and harness paths normalized before lane cwd switch
+ """
+ 
+ from __future__ import annotations
+ 
+ import importlib.util
++import io
++import json
++import shutil
++import subprocess
++import sys
++import tarfile
+ import tomllib
++import zipfile
++from collections.abc import Callable
+ from pathlib import Path
+ from typing import Any, cast
+ 
++import pytest
+ import yaml
+ 
+-import skill_lens.cli as cli
++from skill_lens import cli
++from skill_lens.core import paths
++
++_REAL_SUBPROCESS_RUN = subprocess.run
+ 
+ REPO_ROOT = Path(__file__).resolve().parent.parent
+ PYPROJECT_PATH = REPO_ROOT / "pyproject.toml"
+@@ -23,16 +53,48 @@ CI_WORKFLOW_PATH = REPO_ROOT / ".github" / "workflows" / "ci.yml"
+ SNAPSHOT_DIR = Path(__file__).parent / "fixtures" / "snapshots"
+ GOLDEN_DIR = Path(__file__).parent / "fixtures" / "golden"
+ 
++# Single canonical packaging validator imported directly from scripts/smoke_wheel.py
++try:
++    import scripts.smoke_wheel as smoke_wheel
++    from scripts.smoke_wheel import (
++        REQUIRED_REGISTRY_COUNT,
++        REQUIRED_TUI_MODULES,
++        REQUIRED_TYPED_MARKER,
++        verify_base_install,
++        verify_sdist_contents,
++        verify_tui_endpoint_install,
++        verify_wheel_contents,
++    )
++except ImportError:
++    import importlib.util
++
++    script_path = REPO_ROOT / "scripts" / "smoke_wheel.py"
++    spec = importlib.util.spec_from_file_location("smoke_wheel", script_path)
++    assert spec is not None and spec.loader is not None
++    mod = importlib.util.module_from_spec(spec)
++    sys.modules["scripts.smoke_wheel"] = mod
++    spec.loader.exec_module(mod)
++    smoke_wheel = mod
++    verify_wheel_contents = mod.verify_wheel_contents
++    verify_sdist_contents = mod.verify_sdist_contents
++    verify_base_install = mod.verify_base_install
++    verify_tui_endpoint_install = mod.verify_tui_endpoint_install
++    REQUIRED_TUI_MODULES = mod.REQUIRED_TUI_MODULES
++    REQUIRED_REGISTRY_COUNT = mod.REQUIRED_REGISTRY_COUNT
++    REQUIRED_TYPED_MARKER = mod.REQUIRED_TYPED_MARKER
++
+ 
+ def _read_pyproject() -> dict[str, Any]:
+     return tomllib.loads(PYPROJECT_PATH.read_text(encoding="utf-8"))
+ 
+ 
+ def _read_uv_lock() -> dict[str, Any]:
++    assert UV_LOCK_PATH.exists(), f"uv.lock must exist at {UV_LOCK_PATH}"
+     return tomllib.loads(UV_LOCK_PATH.read_text(encoding="utf-8"))
+ 
+ 
+ def _read_ci_workflow() -> dict[str, Any]:
++    assert CI_WORKFLOW_PATH.exists(), f"ci.yml must exist at {CI_WORKFLOW_PATH}"
+     return cast(dict[str, Any], yaml.safe_load(CI_WORKFLOW_PATH.read_text(encoding="utf-8")))
+ 
+ 
+@@ -81,7 +143,6 @@ def test_uv_lock_pins_textual_and_rich() -> None:
+         f"rich must be pinned to 15.0.0; found {packages['rich']['version']!r}"
+     )
+ 
+-    # Verify skill-lens-cli package in uv.lock provides the tui extra
+     root_pkg = next(p for p in lock.get("package", []) if p["name"] == "skill-lens-cli")
+     provides_extras = root_pkg.get("metadata", {}).get("provides-extras", [])
+     assert "tui" in provides_extras, (
+@@ -90,55 +151,31 @@ def test_uv_lock_pins_textual_and_rich() -> None:
+ 
+ 
+ def test_ci_packaging_job_has_base_and_tui_lanes() -> None:
+-    """The CI packaging job must test both base fallback and [tui] extra parity."""
++    """The CI packaging job must test base fallback and both min and latest [tui] endpoints."""
+     ci = _read_ci_workflow()
+     packaging_job = ci["jobs"]["packaging"]
+     steps = packaging_job["steps"]
+ 
+     step_runs = "\n".join(str(s.get("run", "")) for s in steps)
+ 
+-    # 1. Base install assertions
+-    assert "importlib.util.find_spec('textual') is None" in step_runs, (
+-        "CI packaging job must assert Textual is absent in base install"
+-    )
+-    assert "bare_output=" in step_runs and "Usage: skill-lens" in step_runs, (
+-        "CI packaging job must assert noninteractive bare invocation prints help"
+-    )
+-    assert "Tip:" in step_runs, (
+-        "CI packaging job must assert tip absence in noninteractive bare invocation"
+-    )
+-    assert "skill-lens-cli\\[tui\\]" in step_runs, (
+-        "CI packaging job must assert explicit tui hint mentions skill-lens-cli[tui]"
+-    )
+-    assert 'test "$code" -eq 2' in step_runs, (
+-        "CI packaging job must assert explicit tui exit code 2"
++    # 1. Archive content gate
++    assert "scripts/smoke_wheel.py --verify-archive-only" in step_runs, (
++        "CI packaging job must invoke smoke_wheel.py archive verification"
+     )
+ 
+-    # 2. [tui] extra lane assertions
+-    assert "[tui]" in step_runs, "CI packaging job must install built wheel with [tui] extra"
+-    assert "import textual" in step_runs, (
+-        "CI packaging job must verify textual is present in [tui] lane"
+-    )
+-    assert "assert '/tmp/smoke-tui' in skill_lens.__file__" in step_runs, (
+-        "CI packaging job must assert skill_lens.__file__ is inside installed lane"
+-    )
+-    assert "/tmp/smoke-tui/bin/pytest" in step_runs, (
+-        "CI packaging job must run pytest from installed lane virtualenv"
++    # 2. Base lane verification
++    assert "scripts/smoke_wheel.py --verify-base-only" in step_runs, (
++        "CI packaging job must invoke smoke_wheel.py base lane verification"
+     )
+-    assert "/tmp/smoke-test-lane" in step_runs, (
+-        "CI packaging job must run tests outside source checkout"
+-    )
+-    assert "test_render_snapshots.py" in step_runs, (
+-        "CI packaging job must run snapshot suite under installed extra"
+-    )
+-    assert "test_fixtures.py" in step_runs, (
+-        "CI packaging job must run fixtures golden suite under installed extra"
+-    )
+-    assert "test_phase3_gate.py" in step_runs, (
+-        "CI packaging job must run diff golden suite under installed extra"
++
++    # 3. Min endpoint lane (textual==8.2.8)
++    assert "scripts/smoke_wheel.py --verify-min-only" in step_runs, (
++        "CI packaging job must invoke smoke_wheel.py min endpoint verification"
+     )
+-    assert "test_phase4_gate.py" in step_runs, (
+-        "CI packaging job must run doctor/compare golden suite under installed extra"
++
++    # 4. Latest endpoint lane (unconstrained)
++    assert "scripts/smoke_wheel.py --verify-latest-only" in step_runs, (
++        "CI packaging job must invoke smoke_wheel.py latest endpoint verification"
+     )
+ 
+ 
+@@ -148,30 +185,139 @@ def test_tui_command_is_registered() -> None:
+     assert "tui" in registered, f"`tui` must be a registered CLI command; found {registered!r}"
+ 
+ 
+-def test_installed_extra_output_parity(tmp_path: Path) -> None:
++def test_synthetic_clean_wheel_passes_verification(tmp_path: Path) -> None:
++    """A valid synthetic wheel passes the canonical packaging validator."""
++    wheel_path = tmp_path / "synthetic_clean.whl"
++    with zipfile.ZipFile(wheel_path, "w") as zf:
++        for mod in REQUIRED_TUI_MODULES:
++            zf.writestr(mod, "# valid\n")
++        for i in range(10):
++            zf.writestr(f"skill_lens/registry/agents/agent_{i}.toml", "name = 'test'\n")
++        zf.writestr(REQUIRED_TYPED_MARKER, "")
++
++    meta = verify_wheel_contents(wheel_path)
++    assert meta["typed_marker"] is True
++    assert meta["registry_count"] == 10
++    assert len(meta["tui_modules"]) == len(REQUIRED_TUI_MODULES)
++
++
++def test_synthetic_clean_sdist_passes_verification(tmp_path: Path) -> None:
++    """A valid synthetic sdist passes the canonical packaging validator."""
++    sdist_path = tmp_path / "synthetic_clean_sdist.tar.gz"
++    prefix = "skill_lens_cli-0.1.1/"
++    with tarfile.open(sdist_path, "w:gz") as tf:
++        for fname in ("pyproject.toml", "README.md", "LICENSE", REQUIRED_TYPED_MARKER):
++            data = b"# mock\n"
++            ti = tarfile.TarInfo(name=f"{prefix}{fname}")
++            ti.size = len(data)
++            tf.addfile(ti, io.BytesIO(data))
++        for mod in REQUIRED_TUI_MODULES:
++            data = b"# mock\n"
++            ti = tarfile.TarInfo(name=f"{prefix}{mod}")
++            ti.size = len(data)
++            tf.addfile(ti, io.BytesIO(data))
++        for i in range(10):
++            data = b"name = 'test'\n"
++            ti = tarfile.TarInfo(name=f"{prefix}skill_lens/registry/agents/agent_{i}.toml")
++            ti.size = len(data)
++            tf.addfile(ti, io.BytesIO(data))
++
++    meta = verify_sdist_contents(sdist_path)
++    assert meta["registry_count"] == 10
++    assert len(meta["tui_modules"]) == len(REQUIRED_TUI_MODULES)
++
++
++def test_synthetic_stale_wheel_zero_tui_modules_fails(tmp_path: Path) -> None:
++    """A synthetic stale wheel with 0 TUI modules is rejected by canonical validator."""
++    wheel_path = tmp_path / "synthetic_stale_zero_tui.whl"
++    with zipfile.ZipFile(wheel_path, "w") as zf:
++        for i in range(10):
++            zf.writestr(f"skill_lens/registry/agents/agent_{i}.toml", "name = 'test'\n")
++        zf.writestr(REQUIRED_TYPED_MARKER, "")
++
++    with pytest.raises(ValueError, match="missing required TUI module"):
++        verify_wheel_contents(wheel_path)
++
++
++@pytest.mark.parametrize("omitted_module", REQUIRED_TUI_MODULES)
++def test_synthetic_wheel_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
++    """A disposable wheel missing any single required TUI module fails canonical verification."""
++    wheel_path = tmp_path / f"synthetic_missing_{Path(omitted_module).stem}.whl"
++    with zipfile.ZipFile(wheel_path, "w") as zf:
++        for mod in REQUIRED_TUI_MODULES:
++            if mod != omitted_module:
++                zf.writestr(mod, "# mock\n")
++        for i in range(10):
++            zf.writestr(f"skill_lens/registry/agents/agent_{i}.toml", "name = 'test'\n")
++        zf.writestr(REQUIRED_TYPED_MARKER, "")
++
++    with pytest.raises(ValueError, match=f"missing required TUI module.*{omitted_module}"):
++        verify_wheel_contents(wheel_path)
++
++
++def test_synthetic_wheel_missing_registry_files_fails(tmp_path: Path) -> None:
++    """A disposable wheel with fewer than 10 registry agent TOMLs fails canonical verification."""
++    wheel_path = tmp_path / "synthetic_missing_registry.whl"
++    with zipfile.ZipFile(wheel_path, "w") as zf:
++        for mod in REQUIRED_TUI_MODULES:
++            zf.writestr(mod, "# mock\n")
++        for i in range(5):
++            zf.writestr(f"skill_lens/registry/agents/agent_{i}.toml", "name = 'test'\n")
++        zf.writestr(REQUIRED_TYPED_MARKER, "")
++
++    with pytest.raises(ValueError, match="contains 5 agent registry TOMLs; expected exactly 10"):
++        verify_wheel_contents(wheel_path)
++
++
++def test_synthetic_wheel_missing_typed_marker_fails(tmp_path: Path) -> None:
++    """A disposable wheel missing skill_lens/py.typed fails canonical verification."""
++    wheel_path = tmp_path / "synthetic_missing_pytyped.whl"
++    with zipfile.ZipFile(wheel_path, "w") as zf:
++        for mod in REQUIRED_TUI_MODULES:
++            zf.writestr(mod, "# mock\n")
++        for i in range(10):
++            zf.writestr(f"skill_lens/registry/agents/agent_{i}.toml", "name = 'test'\n")
++
++    with pytest.raises(ValueError, match="missing typing marker: skill_lens/py.typed"):
++        verify_wheel_contents(wheel_path)
++
++
++def test_synthetic_sdist_missing_file_fails(tmp_path: Path) -> None:
++    """A disposable sdist missing required files fails canonical verification."""
++    sdist_path = tmp_path / "synthetic_bad_sdist.tar.gz"
++    prefix = "skill_lens_cli-0.1.1/"
++
++    with tarfile.open(sdist_path, "w:gz") as tf:
++        data = b"[project]\nname='test'\n"
++        ti = tarfile.TarInfo(name=f"{prefix}pyproject.toml")
++        ti.size = len(data)
++        tf.addfile(ti, io.BytesIO(data))
++
++    with pytest.raises(ValueError, match="missing required file"):
++        verify_sdist_contents(sdist_path)
++
++
++def test_installed_extra_output_parity(mock_home: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+     """Focused in-process output parity check: verifying core command renders
+     and goldens remain unchanged with Textual installed.
+ 
+     Full comprehensive parity across all 17 snapshots and 16 goldens is executed
+     by the installed wheel packaging lanes in CI and smoke_wheel.py.
+     """
+-    # 1. Verify Textual is actually present in the running test environment
+     assert importlib.util.find_spec("textual") is not None, (
+         "This parity gate requires Textual to be installed in the environment"
+     )
+ 
+-    from skill_lens.core import paths
+     from tests import test_fixtures, test_phase3_gate, test_phase4_gate, test_render_snapshots
+ 
+-    try:
+-
+-        def _make_home(label: str) -> Path:
+-            h = (tmp_path / label).resolve()
+-            h.mkdir(parents=True, exist_ok=True)
+-            paths.set_sandbox(h)
+-            return h
++    def _make_home(label: str) -> Path:
++        h = (mock_home / label).resolve()
++        h.mkdir(parents=True, exist_ok=True)
++        monkeypatch.setenv("HOME", str(h))
++        paths.set_sandbox(h)
++        return h
+ 
+-        # Focused verification across command render surfaces
++    try:
+         test_render_snapshots.test_scan_snapshot(_make_home("snap_scan"), update_snapshots=False)
+         test_render_snapshots.test_why_snapshot(_make_home("snap_why"), update_snapshots=False)
+         test_render_snapshots.test_diff_snapshot(_make_home("snap_diff"), update_snapshots=False)
+@@ -182,7 +328,6 @@ def test_installed_extra_output_parity(tmp_path: Path) -> None:
+             _make_home("snap_compare"), update_snapshots=False
+         )
+ 
+-        # Focused golden JSON checks
+         test_fixtures.test_golden_installations_match_the_scan(
+             "variant_hash_detection", _make_home("golden_scan_1")
+         )
+@@ -197,7 +342,6 @@ def test_installed_extra_output_parity(tmp_path: Path) -> None:
+             _make_home("golden_compare"), update_goldens=False
+         )
+ 
+-        # Verify fixture counts are intact (17 snapshots, 16 goldens)
+         snapshots = list(SNAPSHOT_DIR.glob("*.txt"))
+         assert len(snapshots) == 17, f"Expected 17 snapshots; found {len(snapshots)}"
+ 
+@@ -205,3 +349,359 @@ def test_installed_extra_output_parity(tmp_path: Path) -> None:
+         assert len(goldens) == 16, f"Expected 16 golden JSON files; found {len(goldens)}"
+     finally:
+         paths.set_sandbox(None)
++
++
++def _make_packaging_subprocess_runner(
++    *,
++    base_provenance: str | None = None,
++    endpoint_pkg_provenance: str | None = None,
++    endpoint_tui_provenance: str | None = None,
++    simulate_textual_in_base: bool = False,
++    pytest_returncode: int = 0,
++    pytest_stdout: str = "================ 10 passed in 0.1s ================\n",
++    pytest_stderr: str = "",
++    captured_calls: list[dict[str, Any]] | None = None,
++) -> Callable[..., subprocess.CompletedProcess[str]]:
++    """Create a deterministic subprocess runner double for installed lane packaging tests."""
++
++    def mock_subprocess_run(
++        cmd: list[str], *args: Any, **kwargs: Any
++    ) -> subprocess.CompletedProcess[str]:
++        cwd = kwargs.get("cwd")
++        if captured_calls is not None:
++            captured_calls.append({"cmd": list(cmd), "cwd": cwd, "env": kwargs.get("env")})
++
++        # Check for wheel references in the command
++        for arg in cmd:
++            if "skill_lens_cli" in arg:
++                # Strip extras if present (e.g. "...whl[tui]")
++                wheel_part = arg.split("[")[0] if "[" in arg else arg
++                target = Path(wheel_part)
++                # If target is relative, the subprocess resolves it relative to cwd
++                lookup_path = (
++                    target if target.is_absolute() else (Path(cwd) / target if cwd else target)
++                )
++                if not lookup_path.exists():
++                    raise subprocess.CalledProcessError(
++                        1,
++                        cmd,
++                        output="",
++                        stderr=f"File not found from subprocess cwd {cwd}: {lookup_path}",
++                    )
++
++        # Mock standard subprocess responses expected by smoke_wheel
++        cmd_exe = Path(cmd[0]).name if cmd else ""
++
++        if cmd_exe == "uv":
++            if "list" in cmd:
++                list_json = json.dumps(
++                    [
++                        {"name": "skill-lens-cli", "version": "0.1.1"},
++                        {"name": "textual", "version": "8.2.8"},
++                    ]
++                )
++                return subprocess.CompletedProcess(cmd, 0, stdout=list_json, stderr="")
++            return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
++
++        if cmd_exe.startswith("python"):
++            if "-c" in cmd:
++                code_arg = cmd[cmd.index("-c") + 1]
++                if "skill_lens.__file__" in code_arg:
++                    default_venv = Path(cwd) / "venv" if cwd else Path("/dummy/venv")
++                    default_site = (
++                        default_venv / "lib" / "python3.11" / "site-packages" / "skill_lens"
++                    )
++                    if "skill_lens.tui" in code_arg:
++                        pkg_p = (
++                            endpoint_pkg_provenance
++                            if endpoint_pkg_provenance is not None
++                            else str(default_site / "__init__.py")
++                        )
++                        tui_p = (
++                            endpoint_tui_provenance
++                            if endpoint_tui_provenance is not None
++                            else str(default_site / "tui" / "__init__.py")
++                        )
++                        out = f"{pkg_p}\n{tui_p}\n"
++                        return subprocess.CompletedProcess(cmd, 0, stdout=out, stderr="")
++                    pkg_p = (
++                        base_provenance
++                        if base_provenance is not None
++                        else str(default_site / "__init__.py")
++                    )
++                    return subprocess.CompletedProcess(cmd, 0, stdout=f"{pkg_p}\n", stderr="")
++                if "find_spec('textual')" in code_arg:
++                    if simulate_textual_in_base:
++                        res = _REAL_SUBPROCESS_RUN(
++                            [sys.executable, "-c", code_arg],
++                            capture_output=True,
++                            text=True,
++                        )
++                        if res.returncode != 0:
++                            raise subprocess.CalledProcessError(
++                                res.returncode, cmd, output=res.stdout, stderr=res.stderr
++                            )
++                        return subprocess.CompletedProcess(
++                            cmd, 0, stdout=res.stdout, stderr=res.stderr
++                        )
++                    return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
++                if "textual.__version__" in code_arg:
++                    return subprocess.CompletedProcess(cmd, 0, stdout="8.2.8\n", stderr="")
++            return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
++
++        if cmd_exe == "skill-lens":
++            if len(cmd) == 1:
++                return subprocess.CompletedProcess(
++                    cmd, 0, stdout="Usage: skill-lens [OPTIONS] COMMAND [ARGS]...\n", stderr=""
++                )
++            if "--version" in cmd:
++                return subprocess.CompletedProcess(cmd, 0, stdout="skill-lens 0.1.1\n", stderr="")
++            if "--help" in cmd:
++                return subprocess.CompletedProcess(
++                    cmd, 0, stdout="Usage: skill-lens [OPTIONS]\n", stderr=""
++                )
++            if cmd[1:] == ["tui"]:
++                if cwd and "base_lane" in str(cwd):
++                    msg = (
++                        "Error: The 'tui' command requires the optional [tui] extra. "
++                        "Install with: pip install 'skill-lens-cli[tui]'\n"
++                    )
++                else:
++                    msg = "Error: The terminal UI requires an interactive terminal.\n"
++                return subprocess.CompletedProcess(cmd, 2, stdout="", stderr=msg)
++
++        if cmd_exe == "pytest":
++            if pytest_returncode != 0:
++                return subprocess.CompletedProcess(
++                    cmd, pytest_returncode, stdout=pytest_stdout, stderr=pytest_stderr
++                )
++            return subprocess.CompletedProcess(cmd, 0, stdout=pytest_stdout, stderr=pytest_stderr)
++
++        return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
++
++    return mock_subprocess_run
++
++
++def test_relative_wheel_and_harness_paths_normalized_before_cwd_switch(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Relative wheel, work-dir, and receipt paths must be resolved to absolute paths
++    before changing subprocess cwd to lane_dir.
++
++    A failure to normalize causes subprocess tools (like uv pip install) running inside
++    isolated lane_dir to look up relative paths relative to lane_dir rather than
++    the invoking cwd, reproducing the CI failure.
++    """
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    artifacts_dir = invoking_cwd / "artifacts"
++    artifacts_dir.mkdir()
++    wheel_file = artifacts_dir / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))  # minimal zip empty payload
++    receipts_dir = invoking_cwd / "receipts"
++    receipts_dir.mkdir()
++
++    monkeypatch.chdir(invoking_cwd)
++
++    captured_calls: list[dict[str, Any]] = []
++    mock_run = _make_packaging_subprocess_runner(captured_calls=captured_calls)
++    monkeypatch.setattr(subprocess, "run", mock_run)
++
++    # 1. Test CLI main with relative wheel, work-dir, and receipt-out
++    rel_wheel_arg = "artifacts/skill_lens_cli-0.1.1-py3-none-any.whl"
++    rel_work_arg = "rel_work"
++    rel_receipt_arg = "receipts/base_receipt.json"
++
++    ret = smoke_wheel.main(
++        [
++            "--verify-base-only",
++            "--wheel",
++            rel_wheel_arg,
++            "--work-dir",
++            rel_work_arg,
++            "--receipt-out",
++            rel_receipt_arg,
++        ]
++    )
++    assert ret == 0
++    assert (invoking_cwd / rel_receipt_arg).exists()
++
++    # 2. Test direct verify_base_install with relative paths
++    base_res = verify_base_install(
++        Path(rel_wheel_arg),
++        Path("rel_work_direct"),
++    )
++    assert base_res["bare_exit_code"] == 0
++
++    # 3. Test direct verify_tui_endpoint_install with relative paths
++    tui_res = verify_tui_endpoint_install(
++        Path(rel_wheel_arg),
++        Path("rel_work_direct"),
++        endpoint_name="min",
++        textual_spec="textual==8.2.8",
++        repo_root=REPO_ROOT,
++    )
++    assert tui_res["endpoint"] == "min"
++
++    # Assert all install calls received absolute wheel paths and executed in isolated lane cwd
++    install_calls = [c for c in captured_calls if any("pip" in arg for arg in c["cmd"])]
++    assert len(install_calls) >= 3
++    for call in install_calls:
++        cwd_p = Path(call["cwd"])
++        assert cwd_p.is_absolute()
++        for arg in call["cmd"]:
++            if "skill_lens_cli" in arg:
++                wheel_p = Path(arg.split("[")[0])
++                assert wheel_p.is_absolute(), (
++                    f"Wheel path in subprocess call must be absolute, got: {arg}"
++                )
++                assert wheel_p == wheel_file.resolve()
++
++
++def test_verify_base_install_invalid_provenance_fails(
++    tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """verify_base_install must raise AssertionError when skill_lens provenance is outside venv."""
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
++    monkeypatch.chdir(invoking_cwd)
++
++    runner = _make_packaging_subprocess_runner(
++        base_provenance="/system/site-packages/skill_lens/__init__.py"
++    )
++    monkeypatch.setattr(subprocess, "run", runner)
++
++    with pytest.raises(AssertionError, match="Expected skill_lens inside venv"):
++        verify_base_install(wheel_file, tmp_path / "work_dir")
++
++
++@pytest.mark.parametrize(
++    "pkg_outside,tui_outside",
++    [
++        (True, False),
++        (False, True),
++        (True, True),
++    ],
++)
++def test_verify_tui_endpoint_install_invalid_provenance_fails(
++    tmp_path: Path,
++    mock_home: Path,
++    monkeypatch: pytest.MonkeyPatch,
++    pkg_outside: bool,
++    tui_outside: bool,
++) -> None:
++    """verify_tui_endpoint_install must fail when package or tui module provenance is outside venv.
++
++    Covers BOTH origin branches of:
++        if str(venv_dir) not in pkg_prov or str(venv_dir) not in tui_prov:
++    """
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
++    monkeypatch.chdir(invoking_cwd)
++
++    pkg_prov = "/system/site-packages/skill_lens/__init__.py" if pkg_outside else None
++    tui_prov = "/system/site-packages/skill_lens/tui/__init__.py" if tui_outside else None
++
++    runner = _make_packaging_subprocess_runner(
++        endpoint_pkg_provenance=pkg_prov,
++        endpoint_tui_provenance=tui_prov,
++    )
++    monkeypatch.setattr(subprocess, "run", runner)
++
++    with pytest.raises(AssertionError, match="Expected installed wheel provenance inside"):
++        verify_tui_endpoint_install(
++            wheel_file,
++            tmp_path / "work_dir",
++            endpoint_name="min",
++            textual_spec="textual==8.2.8",
++            repo_root=REPO_ROOT,
++        )
++
++
++def test_verify_base_install_fails_when_textual_is_present(
++    tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """verify_base_install must fail when Textual is present in base environment.
++
++    Executes the actual check_textual_cmd generated by smoke_wheel against the active
++    Python environment (where Textual is installed) to prove that the subprocess check
++    fails and is load-bearing. Removing the find_spec assertion turns this test red.
++    """
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
++    monkeypatch.chdir(invoking_cwd)
++
++    runner = _make_packaging_subprocess_runner(simulate_textual_in_base=True)
++    monkeypatch.setattr(subprocess, "run", runner)
++
++    with pytest.raises(subprocess.CalledProcessError) as exc_info:
++        verify_base_install(wheel_file, tmp_path / "work_dir")
++    assert "Textual must be absent" in exc_info.value.stderr
++
++
++def test_verify_tui_endpoint_install_fails_on_nonzero_test_suite_exit(
++    tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """verify_tui_endpoint_install must raise AssertionError on nonzero test suite returncode."""
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
++    monkeypatch.chdir(invoking_cwd)
++
++    runner = _make_packaging_subprocess_runner(
++        pytest_returncode=1,
++        pytest_stdout="================ 1 failed, 9 passed in 0.1s ================\n",
++        pytest_stderr="FAILED tests/test_demo.py::test_fail - AssertionError\n",
++    )
++    monkeypatch.setattr(subprocess, "run", runner)
++
++    with pytest.raises(AssertionError, match="Installed test suites failed with code 1"):
++        verify_tui_endpoint_install(
++            wheel_file,
++            tmp_path / "work_dir",
++            endpoint_name="min",
++            textual_spec="textual==8.2.8",
++            repo_root=REPO_ROOT,
++        )
++
++
++def test_verify_tui_endpoint_install_fails_when_source_copied_into_test_lane(
++    tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """verify_tui_endpoint_install must fail when skill_lens source is present in test_lane."""
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
++    monkeypatch.chdir(invoking_cwd)
++
++    runner = _make_packaging_subprocess_runner()
++    monkeypatch.setattr(subprocess, "run", runner)
++
++    orig_copytree = shutil.copytree
++
++    def hostile_copytree(src: Any, dst: Any, *args: Any, **kwargs: Any) -> Any:
++        res = orig_copytree(src, dst, *args, **kwargs)
++        # Simulate hostile leak of skill_lens source directory into test_lane
++        (Path(dst).parent / "skill_lens").mkdir(exist_ok=True)
++        return res
++
++    monkeypatch.setattr(shutil, "copytree", hostile_copytree)
++
++    with pytest.raises(
++        AssertionError, match="skill_lens source package must not be copied into test lane"
++    ):
++        verify_tui_endpoint_install(
++            wheel_file,
++            tmp_path / "work_dir",
++            endpoint_name="min",
++            textual_spec="textual==8.2.8",
++            repo_root=REPO_ROOT,
++        )
+diff --git a/tests/test_tui_read_only.py b/tests/test_tui_read_only.py
+index 4e45428..f00effd 100644
+--- a/tests/test_tui_read_only.py
++++ b/tests/test_tui_read_only.py
+@@ -30,8 +30,11 @@ import skill_lens.tui as tui
+ from skill_lens.core.exitcodes import ExitCode
+ from tests.fixtures.scenarios import build_scenario
+ 
+-REPO_ROOT = Path(__file__).resolve().parent.parent
+-TUI_DIR = REPO_ROOT / "skill_lens" / "tui"
++# TUI_DIR resolves dynamically from the imported skill_lens.tui package.
++# This ensures AST source inspection and mutation controls function seamlessly
++# both in the development checkout and in clean installed packaging lanes.
++assert tui.__file__ is not None, "skill_lens.tui must be an imported package with __file__"
++TUI_DIR = Path(tui.__file__).resolve().parent
+ 
+ BANNED_IMPORT_ROOTS = frozenset(
+     {
+diff --git a/scripts/smoke_wheel.py b/scripts/smoke_wheel.py
+new file mode 100755
+index 0000000..52ff9f3
+--- /dev/null
++++ b/scripts/smoke_wheel.py
+@@ -0,0 +1,805 @@
++#!/usr/bin/env python3
++"""Reusable stdlib packaging and installed-wheel smoke test runner (Stage G).
++
++Verifies:
++1. Wheel and sdist archive integrity:
++   - All required TUI modules: __init__.py, app.py, session.py, _textual_compat.py
++   - All 10 agent registry TOML files
++   - py.typed typing marker
++2. Base installation lane (lean fallback without [tui] extra):
++   - Provenance strictly inside clean virtualenv
++   - Textual confirmed absent (find_spec is None)
++   - Bare non-interactive invocation: exit 0, help text, install tip omitted
++   - Explicit 'tui' invocation: exit 2, hint mentions skill-lens-cli[tui], no traceback
++3. Optional [tui] extra installation lanes:
++   - Minimum endpoint: textual==8.2.8
++   - Latest endpoint: unconstrained textual resolution (resolves current latest on PyPI)
++   - Both lanes execute full pinned-output parity and installed TUI lifecycle/read-only suites
++     outside the repository checkout without copying skill_lens source packages.
++   - Exact installed package origins, versions, commands, test/skip counts, and endpoint overlap
++     are recorded in machine-readable receipts.
++"""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import os
++import pathlib
++import platform
++import re
++import shutil
++import subprocess
++import sys
++import tarfile
++import tempfile
++import zipfile
++from typing import Any
++
++REQUIRED_TUI_MODULES: tuple[str, ...] = (
++    "skill_lens/tui/__init__.py",
++    "skill_lens/tui/app.py",
++    "skill_lens/tui/session.py",
++    "skill_lens/tui/_textual_compat.py",
++)
++
++REQUIRED_REGISTRY_COUNT: int = 10
++REQUIRED_TYPED_MARKER: str = "skill_lens/py.typed"
++
++INSTALLED_TUI_TEST_SUITES: tuple[str, ...] = (
++    "tests/test_render_snapshots.py",
++    "tests/test_fixtures.py",
++    "tests/test_phase3_gate.py",
++    "tests/test_phase4_gate.py",
++    "tests/test_tui_app.py",
++    "tests/test_tui_session.py",
++    "tests/test_tui_read_only.py",
++    "tests/test_stage_g_repairs.py",
++    "tests/test_tui_packaging.py",
++)
++
++
++def compute_sha256(path: pathlib.Path) -> str:
++    """Compute sha256 hex digest of a file."""
++    h = hashlib.sha256()
++    with path.open("rb") as f:
++        while chunk := f.read(65536):
++            h.update(chunk)
++    return h.hexdigest()
++
++
++def verify_wheel_contents(wheel_path: pathlib.Path) -> dict[str, Any]:
++    """Verify archive contents of a built wheel.
++
++    Raises ValueError if any required module, registry file, or marker is missing.
++    """
++    wheel_path = pathlib.Path(wheel_path).resolve()
++    if not wheel_path.exists():
++        raise FileNotFoundError(f"Wheel does not exist: {wheel_path}")
++
++    with zipfile.ZipFile(wheel_path, "r") as zf:
++        namelist = set(zf.namelist())
++
++    missing_tui = [m for m in REQUIRED_TUI_MODULES if m not in namelist]
++    if missing_tui:
++        raise ValueError(
++            f"Wheel archive {wheel_path.name} is missing required TUI module(s): {missing_tui!r}"
++        )
++
++    registry_files = [
++        n for n in namelist if n.startswith("skill_lens/registry/agents/") and n.endswith(".toml")
++    ]
++    if len(registry_files) != REQUIRED_REGISTRY_COUNT:
++        raise ValueError(
++            f"Wheel archive {wheel_path.name} contains {len(registry_files)} agent registry TOMLs; "
++            f"expected exactly {REQUIRED_REGISTRY_COUNT}."
++        )
++
++    if REQUIRED_TYPED_MARKER not in namelist:
++        raise ValueError(
++            f"Wheel archive {wheel_path.name} is missing typing marker: {REQUIRED_TYPED_MARKER}"
++        )
++
++    return {
++        "wheel": str(wheel_path.resolve()),
++        "sha256": compute_sha256(wheel_path),
++        "tui_modules": list(REQUIRED_TUI_MODULES),
++        "registry_count": len(registry_files),
++        "registry_files": sorted(registry_files),
++        "typed_marker": True,
++        "total_files": len(namelist),
++    }
++
++
++def verify_sdist_contents(sdist_path: pathlib.Path) -> dict[str, Any]:
++    """Verify archive contents of a built sdist tarball.
++
++    Raises ValueError if required root or package files are missing.
++    """
++    sdist_path = pathlib.Path(sdist_path).resolve()
++    if not sdist_path.exists():
++        raise FileNotFoundError(f"Sdist does not exist: {sdist_path}")
++
++    with tarfile.open(sdist_path, "r:*") as tf:
++        names = tf.getnames()
++
++    # Sdist archives prefix entries with '<pkg>-<version>/'
++    prefix = ""
++    for name in names:
++        if name.endswith("pyproject.toml"):
++            prefix = name[: -len("pyproject.toml")]
++            break
++
++    missing: list[str] = []
++    for required in ("pyproject.toml", "README.md", "LICENSE", REQUIRED_TYPED_MARKER):
++        target = f"{prefix}{required}"
++        if target not in names:
++            missing.append(required)
++
++    for mod in REQUIRED_TUI_MODULES:
++        target = f"{prefix}{mod}"
++        if target not in names:
++            missing.append(mod)
++
++    if missing:
++        raise ValueError(
++            f"Sdist archive {sdist_path.name} is missing required file(s): {missing!r}"
++        )
++
++    registry_files = [
++        n for n in names if f"{prefix}skill_lens/registry/agents/" in n and n.endswith(".toml")
++    ]
++    if len(registry_files) != REQUIRED_REGISTRY_COUNT:
++        raise ValueError(
++            f"Sdist archive {sdist_path.name} contains {len(registry_files)} agent registry TOMLs; "
++            f"expected exactly {REQUIRED_REGISTRY_COUNT}."
++        )
++
++    return {
++        "sdist": str(sdist_path.resolve()),
++        "sha256": compute_sha256(sdist_path),
++        "prefix": prefix,
++        "tui_modules": list(REQUIRED_TUI_MODULES),
++        "registry_count": len(registry_files),
++        "total_files": len(names),
++    }
++
++
++def _clean_env(home_dir: pathlib.Path) -> dict[str, str]:
++    """Create a pristine environment dictionary outside user home and repo."""
++    env = {
++        "PATH": os.environ.get("PATH", ""),
++        "HOME": str(home_dir),
++        "XDG_CONFIG_HOME": str(home_dir / ".config"),
++        "XDG_DATA_HOME": str(home_dir / ".local" / "share"),
++        "PYTHONUNBUFFERED": "1",
++        "PYTHONNOUSERSITE": "1",
++    }
++    # Explicitly clear any PYTHONPATH or source-shadowing variables
++    for key in ("PYTHONPATH", "VIRTUAL_ENV", "PIP_REQUIRE_VIRTUALENV"):
++        env.pop(key, None)
++    return env
++
++
++def verify_base_install(
++    wheel_path: pathlib.Path,
++    work_dir: pathlib.Path,
++    python_bin: str = sys.executable,
++    timeout_seconds: int = 60,
++) -> dict[str, Any]:
++    """Verify lean base installation behavior in an isolated virtualenv."""
++    wheel_path = pathlib.Path(wheel_path).resolve()
++    work_dir = pathlib.Path(work_dir).resolve()
++    if not wheel_path.exists():
++        raise FileNotFoundError(f"Wheel does not exist: {wheel_path}")
++
++    lane_dir = work_dir / "base_lane"
++    lane_dir.mkdir(parents=True, exist_ok=True)
++    home_dir = lane_dir / "home"
++    home_dir.mkdir(parents=True, exist_ok=True)
++    env = _clean_env(home_dir)
++
++    venv_dir = lane_dir / "venv"
++    if venv_dir.exists():
++        shutil.rmtree(venv_dir)
++    if shutil.which("uv"):
++        subprocess.run(
++            ["uv", "venv", str(venv_dir), "--python", python_bin],
++            cwd=str(lane_dir),
++            env=env,
++            check=True,
++            timeout=timeout_seconds,
++            capture_output=True,
++            text=True,
++        )
++        subprocess.run(
++            ["uv", "pip", "install", "--python", str(venv_dir), str(wheel_path)],
++            cwd=str(lane_dir),
++            env=env,
++            check=True,
++            timeout=timeout_seconds,
++            capture_output=True,
++            text=True,
++        )
++    else:
++        subprocess.run(
++            [python_bin, "-m", "venv", str(venv_dir)],
++            cwd=str(lane_dir),
++            env=env,
++            check=True,
++            timeout=timeout_seconds,
++            capture_output=True,
++            text=True,
++        )
++        pip_bin = venv_dir / "bin" / "pip"
++        subprocess.run(
++            [str(pip_bin), "install", str(wheel_path)],
++            cwd=str(lane_dir),
++            env=env,
++            check=True,
++            timeout=timeout_seconds,
++            capture_output=True,
++            text=True,
++        )
++
++    py_exe = venv_dir / "bin" / "python"
++    cli_exe = venv_dir / "bin" / "skill-lens"
++
++    # 1. Assert provenance is inside the virtualenv
++    prov_res = subprocess.run(
++        [str(py_exe), "-c", "import skill_lens; print(skill_lens.__file__)"],
++        cwd=str(lane_dir),
++        env=env,
++        check=True,
++        capture_output=True,
++        text=True,
++        timeout=timeout_seconds,
++    )
++    provenance = prov_res.stdout.strip()
++    if str(venv_dir) not in provenance:
++        raise AssertionError(f"Expected skill_lens inside venv {venv_dir}; got: {provenance}")
++
++    # 2. Assert Textual is truly absent
++    check_textual_cmd = (
++        "import importlib.util; "
++        "assert importlib.util.find_spec('textual') is None, 'Textual must be absent'"
++    )
++    subprocess.run(
++        [str(py_exe), "-c", check_textual_cmd],
++        cwd=str(lane_dir),
++        env=env,
++        check=True,
++        capture_output=True,
++        text=True,
++        timeout=timeout_seconds,
++    )
++
++    # 3. Assert --version and --help succeed
++    v_res = subprocess.run(
++        [str(cli_exe), "--version"],
++        cwd=str(lane_dir),
++        env=env,
++        check=True,
++        capture_output=True,
++        text=True,
++        timeout=timeout_seconds,
++    )
++    subprocess.run(
++        [str(cli_exe), "--help"],
++        cwd=str(lane_dir),
++        env=env,
++        check=True,
++        capture_output=True,
++        text=True,
++        timeout=timeout_seconds,
++    )
++
++    # 4. Bare non-interactive invocation: exit 0, help text, tip omitted
++    bare_res = subprocess.run(
++        [str(cli_exe)],
++        cwd=str(lane_dir),
++        env=env,
++        capture_output=True,
++        text=True,
++        timeout=timeout_seconds,
++    )
++    if bare_res.returncode != 0:
++        raise AssertionError(
++            f"Bare invocation returned exit code {bare_res.returncode}; expected 0"
++        )
++    if "Usage: skill-lens" not in bare_res.stdout:
++        raise AssertionError(f"Bare invocation missing usage:\n{bare_res.stdout}")
++    if "Tip:" in bare_res.stdout:
++        raise AssertionError(
++            f"Bare non-interactive invocation included unexpected tip:\n{bare_res.stdout}"
++        )
++
++    # 5. Explicit tui invocation: exit 2, hint mentions skill-lens-cli[tui], no traceback
++    tui_res = subprocess.run(
++        [str(cli_exe), "tui"],
++        cwd=str(lane_dir),
++        env=env,
++        capture_output=True,
++        text=True,
++        timeout=timeout_seconds,
++    )
++    if tui_res.returncode != 2:
++        raise AssertionError(f"Explicit tui returned exit code {tui_res.returncode}; expected 2")
++    if "skill-lens-cli[tui]" not in tui_res.stderr:
++        raise AssertionError(f"Explicit tui missing extra hint:\n{tui_res.stderr}")
++    if "Traceback" in tui_res.stderr:
++        raise AssertionError(f"Explicit tui printed unexpected traceback:\n{tui_res.stderr}")
++
++    return {
++        "status": "passed",
++        "provenance": provenance,
++        "textual_absent": True,
++        "version_output": v_res.stdout.strip(),
++        "bare_exit_code": bare_res.returncode,
++        "bare_tip_omitted": True,
++        "explicit_tui_exit_code": tui_res.returncode,
++        "explicit_tui_hint_present": True,
++        "explicit_tui_no_traceback": True,
++    }
++
++
++def verify_tui_endpoint_install(
++    wheel_path: pathlib.Path,
++    work_dir: pathlib.Path,
++    endpoint_name: str,
++    textual_spec: str | None = None,
++    python_bin: str = sys.executable,
++    repo_root: pathlib.Path | None = None,
++    timeout_seconds: int = 180,
++) -> dict[str, Any]:
++    """Verify [tui] installation, lifecycle, and parity in an isolated virtualenv."""
++    wheel_path = pathlib.Path(wheel_path).resolve()
++    work_dir = pathlib.Path(work_dir).resolve()
++    if not wheel_path.exists():
++        raise FileNotFoundError(f"Wheel does not exist: {wheel_path}")
++    if repo_root is None:
++        repo_root = pathlib.Path(__file__).resolve().parent.parent
++    repo_root = pathlib.Path(repo_root).resolve()
++
++    lane_dir = work_dir / f"{endpoint_name}_lane"
++    lane_dir.mkdir(parents=True, exist_ok=True)
++    home_dir = lane_dir / "home"
++    home_dir.mkdir(parents=True, exist_ok=True)
++    env = _clean_env(home_dir)
++
++    venv_dir = lane_dir / "venv"
++    if venv_dir.exists():
++        shutil.rmtree(venv_dir)
++    test_lane = lane_dir / "test_lane"
++    if test_lane.exists():
++        shutil.rmtree(test_lane)
++    install_packages = [f"{wheel_path}[tui]"]
++    if textual_spec:
++        install_packages.append(textual_spec)
++    install_packages.extend(["pytest", "pytest-cov", "pyyaml"])
++
++    if shutil.which("uv"):
++        subprocess.run(
++            ["uv", "venv", str(venv_dir), "--python", python_bin],
++            cwd=str(lane_dir),
++            env=env,
++            check=True,
++            timeout=timeout_seconds,
++            capture_output=True,
++            text=True,
++        )
++        subprocess.run(
++            ["uv", "pip", "install", "--python", str(venv_dir), *install_packages],
++            cwd=str(lane_dir),
++            env=env,
++            check=True,
++            timeout=timeout_seconds,
++            capture_output=True,
++            text=True,
++        )
++        pkg_list_res = subprocess.run(
++            ["uv", "pip", "list", "--python", str(venv_dir), "--format=json"],
++            cwd=str(lane_dir),
++            env=env,
++            check=True,
++            timeout=timeout_seconds,
++            capture_output=True,
++            text=True,
++        )
++        installed_packages = json.loads(pkg_list_res.stdout)
++    else:
++        subprocess.run(
++            [python_bin, "-m", "venv", str(venv_dir)],
++            cwd=str(lane_dir),
++            env=env,
++            check=True,
++            timeout=timeout_seconds,
++            capture_output=True,
++            text=True,
++        )
++        pip_bin = venv_dir / "bin" / "pip"
++        subprocess.run(
++            [str(pip_bin), "install", *install_packages],
++            cwd=str(lane_dir),
++            env=env,
++            check=True,
++            timeout=timeout_seconds,
++            capture_output=True,
++            text=True,
++        )
++        pkg_list_res = subprocess.run(
++            [str(pip_bin), "list", "--format=json"],
++            cwd=str(lane_dir),
++            env=env,
++            check=True,
++            timeout=timeout_seconds,
++            capture_output=True,
++            text=True,
++        )
++        installed_packages = json.loads(pkg_list_res.stdout)
++
++    py_exe = venv_dir / "bin" / "python"
++    cli_exe = venv_dir / "bin" / "skill-lens"
++    pytest_exe = venv_dir / "bin" / "pytest"
++
++    # 1. Assert provenance is inside virtualenv
++    prov_res = subprocess.run(
++        [
++            str(py_exe),
++            "-c",
++            (
++                "import skill_lens, skill_lens.tui; "
++                "print(skill_lens.__file__); print(skill_lens.tui.__file__)"
++            ),
++        ],
++        cwd=str(lane_dir),
++        env=env,
++        check=True,
++        capture_output=True,
++        text=True,
++        timeout=timeout_seconds,
++    )
++    lines = prov_res.stdout.strip().splitlines()
++    pkg_prov, tui_prov = lines[0], lines[1]
++    if str(venv_dir) not in pkg_prov or str(venv_dir) not in tui_prov:
++        raise AssertionError(f"Expected installed wheel provenance inside {venv_dir}; got: {lines}")
++
++    # 2. Assert Textual is present and retrieve version
++    txt_res = subprocess.run(
++        [str(py_exe), "-c", "import textual; print(textual.__version__)"],
++        cwd=str(lane_dir),
++        env=env,
++        check=True,
++        capture_output=True,
++        text=True,
++        timeout=timeout_seconds,
++    )
++    textual_ver = txt_res.stdout.strip()
++    if textual_spec and "==" in textual_spec:
++        expected_spec_ver = textual_spec.split("==")[1]
++        if textual_ver != expected_spec_ver:
++            raise AssertionError(
++                f"Expected textual {expected_spec_ver} for endpoint {endpoint_name}; "
++                f"got: {textual_ver}"
++            )
++
++    # 3. Non-interactive explicit tui invocation: must exit 2 (requires interactive terminal)
++    tui_cli_res = subprocess.run(
++        [str(cli_exe), "tui"],
++        cwd=str(lane_dir),
++        env=env,
++        capture_output=True,
++        text=True,
++        timeout=timeout_seconds,
++    )
++    if tui_cli_res.returncode != 2:
++        raise AssertionError(
++            f"Explicit non-interactive tui returned exit code {tui_cli_res.returncode}; expected 2"
++        )
++    if "requires an interactive terminal" not in tui_cli_res.stderr:
++        raise AssertionError(
++            f"Missing interactive terminal requirement message:\n{tui_cli_res.stderr}"
++        )
++    if "Traceback" in tui_cli_res.stderr:
++        raise AssertionError(
++            f"Explicit non-interactive tui emitted traceback:\n{tui_cli_res.stderr}"
++        )
++
++    # 4. Prepare isolated test execution directory WITHOUT copying skill_lens source
++    test_lane = lane_dir / "test_lane"
++    test_lane.mkdir(parents=True, exist_ok=True)
++    shutil.copytree(repo_root / "tests", test_lane / "tests")
++    shutil.copytree(repo_root / "scripts", test_lane / "scripts")
++    shutil.copy(repo_root / "pyproject.toml", test_lane / "pyproject.toml")
++    shutil.copy(repo_root / "uv.lock", test_lane / "uv.lock")
++    (test_lane / ".github" / "workflows").mkdir(parents=True, exist_ok=True)
++    shutil.copy(
++        repo_root / ".github" / "workflows" / "ci.yml",
++        test_lane / ".github" / "workflows" / "ci.yml",
++    )
++
++    # Strictly assert no skill_lens source package exists in test_lane
++    assert not (test_lane / "skill_lens").exists(), (
++        "skill_lens source package must not be copied into test lane"
++    )
++
++    # 5. Run test suites with bounded timeout
++    test_cmd = [str(pytest_exe), *INSTALLED_TUI_TEST_SUITES, "-ra"]
++    test_res = subprocess.run(
++        test_cmd,
++        cwd=str(test_lane),
++        env=env,
++        capture_output=True,
++        text=True,
++        timeout=timeout_seconds,
++    )
++    if test_res.returncode != 0:
++        raise AssertionError(
++            f"Installed test suites failed with code {test_res.returncode}:\n"
++            f"STDOUT:\n{test_res.stdout}\n"
++            f"STDERR:\n{test_res.stderr}"
++        )
++
++    # Parse test and skip counts from summary
++    summary_match = re.search(r"=+\s*(.*?)\s+in\s+[\d\.]+s\s*=+", test_res.stdout)
++    summary_text = summary_match.group(1) if summary_match else ""
++    passed_match = re.search(r"(\d+)\s+passed", summary_text)
++    skipped_match = re.search(r"(\d+)\s+skipped", summary_text)
++    test_count = int(passed_match.group(1)) if passed_match else 0
++    skip_count = int(skipped_match.group(1)) if skipped_match else 0
++
++    return {
++        "status": "passed",
++        "endpoint": endpoint_name,
++        "textual_constraint": textual_spec,
++        "textual_version": textual_ver,
++        "provenance_pkg": pkg_prov,
++        "provenance_tui": tui_prov,
++        "installed_packages": installed_packages,
++        "explicit_non_tty_tui_exit_code": tui_cli_res.returncode,
++        "suites_executed": list(INSTALLED_TUI_TEST_SUITES),
++        "suites_exit_code": test_res.returncode,
++        "test_count": test_count,
++        "skip_count": skip_count,
++        "command": test_cmd,
++        "stdout": test_res.stdout,
++        "stderr": test_res.stderr,
++        "tests_run_outside_checkout": True,
++        "source_unshadowed": True,
++    }
++
++
++def run_all(
++    wheel_path: pathlib.Path,
++    sdist_path: pathlib.Path | None = None,
++    work_dir: pathlib.Path | None = None,
++    receipt_out: pathlib.Path | None = None,
++    python_bin: str = sys.executable,
++    repo_root: pathlib.Path | None = None,
++) -> dict[str, Any]:
++    """Execute complete packaging verification across base, min endpoint, and latest endpoint."""
++    wheel_path = pathlib.Path(wheel_path).resolve()
++    if not wheel_path.exists():
++        raise FileNotFoundError(f"Wheel does not exist: {wheel_path}")
++    if sdist_path is not None:
++        sdist_path = pathlib.Path(sdist_path).resolve()
++        if not sdist_path.exists():
++            raise FileNotFoundError(f"Sdist does not exist: {sdist_path}")
++    if work_dir is not None:
++        work_dir = pathlib.Path(work_dir).resolve()
++    if receipt_out is not None:
++        receipt_out = pathlib.Path(receipt_out).resolve()
++    if repo_root is None:
++        repo_root = pathlib.Path(__file__).resolve().parent.parent
++    repo_root = pathlib.Path(repo_root).resolve()
++
++    temp_ctx = None
++    if work_dir is None:
++        temp_ctx = tempfile.TemporaryDirectory(prefix="skill-lens-smoke-")
++        effective_work_dir = pathlib.Path(temp_ctx.name)
++    else:
++        work_dir.mkdir(parents=True, exist_ok=True)
++        effective_work_dir = work_dir
++
++    try:
++        wheel_meta = verify_wheel_contents(wheel_path)
++        sdist_meta = verify_sdist_contents(sdist_path) if sdist_path is not None else None
++
++        base_results = verify_base_install(wheel_path, effective_work_dir, python_bin=python_bin)
++        min_results = verify_tui_endpoint_install(
++            wheel_path,
++            effective_work_dir,
++            endpoint_name="min",
++            textual_spec="textual==8.2.8",
++            python_bin=python_bin,
++            repo_root=repo_root,
++        )
++        latest_results = verify_tui_endpoint_install(
++            wheel_path,
++            effective_work_dir,
++            endpoint_name="latest",
++            textual_spec=None,
++            python_bin=python_bin,
++            repo_root=repo_root,
++        )
++
++        min_ver = min_results.get("textual_version")
++        latest_ver = latest_results.get("textual_version")
++        overlap = min_ver == latest_ver
++
++        receipt: dict[str, Any] = {
++            "platform": platform.platform(),
++            "python": sys.version,
++            "wheel": wheel_meta,
++            "sdist": sdist_meta,
++            "base_lane": base_results,
++            "min_endpoint_lane": min_results,
++            "latest_endpoint_lane": latest_results,
++            "endpoint_overlap": {
++                "min_version": min_ver,
++                "latest_version": latest_ver,
++                "overlap": overlap,
++                "note": (
++                    "PyPI latest stable equals declared floor (8.2.8) at current index resolution"
++                    if overlap
++                    else "PyPI latest stable differs from declared floor"
++                ),
++            },
++            "all_passed": True,
++        }
++
++        if receipt_out is not None:
++            receipt_out.parent.mkdir(parents=True, exist_ok=True)
++            receipt_out.write_text(json.dumps(receipt, indent=2), encoding="utf-8")
++
++        return receipt
++    finally:
++        if temp_ctx is not None:
++            temp_ctx.cleanup()
++
++
++def main(argv: list[str] | None = None) -> int:
++    """CLI entry point for smoke_wheel."""
++    parser = argparse.ArgumentParser(
++        description="Verify skill-lens built packaging archives and clean virtualenv execution."
++    )
++    parser.add_argument(
++        "--wheel", type=pathlib.Path, required=True, help="Path to the .whl artifact."
++    )
++    parser.add_argument(
++        "--sdist", type=pathlib.Path, default=None, help="Path to the .tar.gz sdist artifact."
++    )
++    parser.add_argument(
++        "--work-dir", type=pathlib.Path, default=None, help="Isolated working directory."
++    )
++    parser.add_argument(
++        "--receipt-out", type=pathlib.Path, default=None, help="Path to write JSON receipt."
++    )
++    parser.add_argument(
++        "--python-bin", type=str, default=sys.executable, help="Python binary to use."
++    )
++    parser.add_argument(
++        "--verify-archive-only",
++        action="store_true",
++        help="Only verify wheel and sdist archive contents.",
++    )
++    parser.add_argument(
++        "--verify-base-only",
++        action="store_true",
++        help="Only verify base installation lane.",
++    )
++    parser.add_argument(
++        "--verify-min-only",
++        action="store_true",
++        help="Only verify minimum endpoint (textual==8.2.8) installation lane.",
++    )
++    parser.add_argument(
++        "--verify-latest-only",
++        action="store_true",
++        help="Only verify latest endpoint (unconstrained textual) installation lane.",
++    )
++    parser.add_argument(
++        "--verify-tui-only",
++        action="store_true",
++        help="Only verify both [tui] endpoint installation lanes (min and latest).",
++    )
++
++    args = parser.parse_args(argv)
++
++    wheel_path = args.wheel.resolve()
++    sdist_path = args.sdist.resolve() if args.sdist else None
++    work_dir = args.work_dir.resolve() if args.work_dir else None
++    receipt_out = args.receipt_out.resolve() if args.receipt_out else None
++
++    if args.verify_archive_only:
++        wheel_meta = verify_wheel_contents(wheel_path)
++        print(f"Verified wheel {wheel_path.name}: {wheel_meta['sha256']}")
++        sdist_meta = None
++        if sdist_path:
++            sdist_meta = verify_sdist_contents(sdist_path)
++            print(f"Verified sdist {sdist_path.name}: {sdist_meta['sha256']}")
++        if receipt_out:
++            receipt_out.parent.mkdir(parents=True, exist_ok=True)
++            receipt_out.write_text(
++                json.dumps({"wheel": wheel_meta, "sdist": sdist_meta}, indent=2),
++                encoding="utf-8",
++            )
++        return 0
++
++    if args.verify_base_only:
++        effective_work_dir = work_dir or pathlib.Path(tempfile.mkdtemp(prefix="smoke-base-"))
++        results = verify_base_install(wheel_path, effective_work_dir, python_bin=args.python_bin)
++        print("Base installation lane passed successfully.")
++        if receipt_out:
++            receipt_out.parent.mkdir(parents=True, exist_ok=True)
++            receipt_out.write_text(json.dumps(results, indent=2), encoding="utf-8")
++        return 0
++
++    if args.verify_min_only:
++        effective_work_dir = work_dir or pathlib.Path(tempfile.mkdtemp(prefix="smoke-min-"))
++        results = verify_tui_endpoint_install(
++            wheel_path,
++            effective_work_dir,
++            endpoint_name="min",
++            textual_spec="textual==8.2.8",
++            python_bin=args.python_bin,
++        )
++        print("Minimum endpoint installation lane passed successfully.")
++        if receipt_out:
++            receipt_out.parent.mkdir(parents=True, exist_ok=True)
++            receipt_out.write_text(json.dumps(results, indent=2), encoding="utf-8")
++        return 0
++
++    if args.verify_latest_only:
++        effective_work_dir = work_dir or pathlib.Path(tempfile.mkdtemp(prefix="smoke-latest-"))
++        results = verify_tui_endpoint_install(
++            wheel_path,
++            effective_work_dir,
++            endpoint_name="latest",
++            textual_spec=None,
++            python_bin=args.python_bin,
++        )
++        print("Latest endpoint installation lane passed successfully.")
++        if receipt_out:
++            receipt_out.parent.mkdir(parents=True, exist_ok=True)
++            receipt_out.write_text(json.dumps(results, indent=2), encoding="utf-8")
++        return 0
++
++    if args.verify_tui_only:
++        effective_work_dir = work_dir or pathlib.Path(tempfile.mkdtemp(prefix="smoke-tui-"))
++        min_res = verify_tui_endpoint_install(
++            wheel_path,
++            effective_work_dir,
++            endpoint_name="min",
++            textual_spec="textual==8.2.8",
++            python_bin=args.python_bin,
++        )
++        latest_res = verify_tui_endpoint_install(
++            wheel_path,
++            effective_work_dir,
++            endpoint_name="latest",
++            textual_spec=None,
++            python_bin=args.python_bin,
++        )
++        print("TUI extra installation lanes (min and latest) passed successfully.")
++        if receipt_out:
++            receipt_out.parent.mkdir(parents=True, exist_ok=True)
++            receipt_out.write_text(
++                json.dumps({"min": min_res, "latest": latest_res}, indent=2), encoding="utf-8"
++            )
++        return 0
++
++    run_all(
++        wheel_path=wheel_path,
++        sdist_path=sdist_path,
++        work_dir=work_dir,
++        receipt_out=receipt_out,
++        python_bin=args.python_bin,
++    )
++    print(f"All packaging and installed smoke checks passed! Receipt: {receipt_out}")
++    return 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/skill_lens/tui/_textual_compat.py b/skill_lens/tui/_textual_compat.py
+new file mode 100644
+index 0000000..5663863
+--- /dev/null
++++ b/skill_lens/tui/_textual_compat.py
+@@ -0,0 +1,97 @@
++"""Textual private fault API adapter and shape auditor.
++
++Centralizes access to Textual's internal exception state:
++- App._handle_exception
++- App._exception
++- App._exception_event
++- App._return_code
++
++Prevents scattered private attribute access, audits that the underlying Textual
++App contract remains compatible, and surfaces shape drift loudly rather than
++falsely claiming success (R02).
++"""
++
++from __future__ import annotations
++
++from typing import TYPE_CHECKING, Any
++
++if TYPE_CHECKING:
++    from textual.app import App
++
++REQUIRED_APP_ATTRIBUTES: tuple[str, ...] = ("_return_code", "_exception", "_exception_event")
++REQUIRED_CLASS_METHODS: tuple[str, ...] = ("_handle_exception",)
++
++
++def audit_textual_app_contract(app: App[Any] | type[App[Any]] | Any) -> None:
++    """Verify that a Textual App class or instance satisfies the required fault contract.
++
++    Raises RuntimeError if Textual has altered or dropped its internal fault
++    containment hooks or attributes, or if attributes/hooks are non-callable or unusable.
++    """
++    app_cls = app if isinstance(app, type) else type(app)
++
++    # Class-level: verify required hooks exist and are callable
++    for m in REQUIRED_CLASS_METHODS:
++        attr = getattr(app_cls, m, None)
++        if attr is None or not callable(attr):
++            raise RuntimeError(
++                f"Incompatible Textual App class {app_cls.__name__}: "
++                f"missing or non-callable method {m!r}. "
++                "Textual version may have altered its exception-handling hook structure."
++            )
++
++    # Instance-level contract audit
++    if not isinstance(app, type):
++        for m in REQUIRED_CLASS_METHODS:
++            method = getattr(app, m, None)
++            if method is None or not callable(method):
++                raise RuntimeError(
++                    f"Incompatible Textual App instance: missing or non-callable hook {m!r}."
++                )
++
++        for attr in REQUIRED_APP_ATTRIBUTES:
++            if not hasattr(app, attr):
++                raise RuntimeError(
++                    f"Incompatible Textual App instance: missing attribute {attr!r}. "
++                    "Textual version may have altered its exception-handling state structure."
++                )
++
++        # _exception_event must support set() notification (Textual uses asyncio.Event)
++        event = getattr(app, "_exception_event", None)
++        if event is None or not hasattr(event, "set") or not callable(event.set):
++            raise RuntimeError(
++                "Incompatible Textual App instance: "
++                "_exception_event does not support callable set() notification."
++            )
++
++
++def record_unhandled_fault(app: App[Any] | Any, error: Exception, return_code: int = 3) -> None:
++    """Record an unhandled exception onto the Textual App instance.
++
++    Sets app._return_code and arms app._exception and app._exception_event if not yet set.
++    Audits attribute presence so unsupported shapes fail explicitly rather than silently.
++    Preserves Textual's first-fault semantics.
++    """
++    audit_textual_app_contract(app)
++    app._return_code = return_code
++    if app._exception is None:
++        app._exception = error
++        app._exception_event.set()
++
++
++def get_unhandled_fault(app: App[Any] | Any) -> Exception | None:
++    """Retrieve any unhandled exception recorded on the Textual App instance.
++
++    Audits attribute presence so unexpected shape changes are not hidden.
++    """
++    audit_textual_app_contract(app)
++    return getattr(app, "_exception", None)
++
++
++__all__ = [
++    "REQUIRED_APP_ATTRIBUTES",
++    "REQUIRED_CLASS_METHODS",
++    "audit_textual_app_contract",
++    "get_unhandled_fault",
++    "record_unhandled_fault",
++]
+diff --git a/tests/test_stage_g_repairs.py b/tests/test_stage_g_repairs.py
+new file mode 100644
+index 0000000..56c2989
+--- /dev/null
++++ b/tests/test_stage_g_repairs.py
+@@ -0,0 +1,275 @@
++"""Targeted regression and contract tests for Stage G repairs.
++
++Covers:
++1. Audited Textual private fault adapter in skill_lens.tui._textual_compat:
++   - App class and instance shape audits
++   - Loud failure on missing or non-callable private hooks / attributes (no false success)
++   - Rejection of unusable _exception_event (missing or non-callable set() notification)
++   - Proper fault recording, return code setting, and exception extraction
++   - First-fault preservation
++2. Preserved fault containment without terminal tracebacks:
++   - SkillLensApp._handle_exception routes through centralized adapter
++   - Sticky exit 3 on unexpected faults
++   - CLI prints plain-English message and exits 3
++3. Fast exit 2 on explicit non-interactive TUI launch
++4. Textual version compatibility and contract assertions (floor 8.2.8 / latest 8.2.8)
++5. Headless runner prompt shutdown while background worker is blocked:
++   - Bounded active watchdog timer
++   - Exact started and unfinished assertions
++   - Proves synchronous teardown never joins or waits for ThreadPoolExecutor workers
++"""
++
++from __future__ import annotations
++
++import threading
++from pathlib import Path
++from typing import Any
++
++import pytest
++import textual
++from textual.app import App
++from textual.pilot import Pilot
++from typer.testing import CliRunner
++
++import skill_lens
++import skill_lens.tui as tui
++from skill_lens.cli import app as cli_app
++from skill_lens.core.cancellation import CaptureCancelled
++from skill_lens.core.exitcodes import ExitCode
++from skill_lens.tui._textual_compat import (
++    REQUIRED_APP_ATTRIBUTES,
++    audit_textual_app_contract,
++    get_unhandled_fault,
++    record_unhandled_fault,
++)
++from skill_lens.tui.app import SkillLensApp
++from tests.fixtures.scenarios import build_scenario
++
++
++def test_textual_version_meets_declared_floor() -> None:
++    """Installed Textual version must satisfy the declared >=8.2.8 floor."""
++    version_tuple = tuple(int(x) for x in textual.__version__.split(".")[:3])
++    assert version_tuple >= (8, 2, 8), (
++        f"Textual must be >= 8.2.8; installed is {textual.__version__}"
++    )
++
++
++def test_textual_installed_contract_audits_cleanly(mock_home: Path) -> None:
++    """The installed Textual App class and instance must audit cleanly."""
++    # Class audit
++    audit_textual_app_contract(App)
++    # Instance audit
++    dummy = App()
++    audit_textual_app_contract(dummy)
++    # SkillLensApp audit under isolated synthetic home and project cwd
++    cwd = mock_home / "project"
++    cwd.mkdir(parents=True, exist_ok=True)
++    dummy_skill = SkillLensApp(home=mock_home, cwd=cwd)
++    audit_textual_app_contract(dummy_skill)
++
++
++def test_adapter_detects_missing_class_method() -> None:
++    """If a future Textual version removes _handle_exception, the audit must raise RuntimeError."""
++
++    class IncompatibleApp:
++        pass
++
++    with pytest.raises(RuntimeError, match="Incompatible Textual App class"):
++        audit_textual_app_contract(IncompatibleApp)  # type: ignore[arg-type]
++
++
++def test_adapter_detects_non_callable_class_method() -> None:
++    """If _handle_exception exists on class but is not callable, audit must raise RuntimeError."""
++
++    class NonCallableHookApp:
++        _handle_exception = None
++
++    with pytest.raises(RuntimeError, match="missing or non-callable method '_handle_exception'"):
++        audit_textual_app_contract(NonCallableHookApp)  # type: ignore[arg-type]
++
++
++@pytest.mark.parametrize("missing_attr", REQUIRED_APP_ATTRIBUTES)
++def test_adapter_detects_missing_instance_attribute(missing_attr: str) -> None:
++    """If an App instance is missing any required fault attribute, audit raises RuntimeError."""
++
++    class MockAppWithMissingAttr:
++        def _handle_exception(self, error: Exception) -> None:
++            pass
++
++    app = MockAppWithMissingAttr()
++    for attr in REQUIRED_APP_ATTRIBUTES:
++        if attr != missing_attr:
++            if attr == "_exception_event":
++                setattr(app, attr, threading.Event())
++            else:
++                setattr(app, attr, None)
++
++    with pytest.raises(RuntimeError, match="Incompatible Textual App instance"):
++        audit_textual_app_contract(app)
++
++    with pytest.raises(RuntimeError, match="Incompatible Textual App instance"):
++        record_unhandled_fault(app, RuntimeError("fault"))
++
++    with pytest.raises(RuntimeError, match="Incompatible Textual App instance"):
++        get_unhandled_fault(app)
++
++
++def test_adapter_detects_unusable_event_notification() -> None:
++    """If _exception_event lacks callable set(), audit and record_unhandled_fault must reject it."""
++
++    class BadEventApp:
++        def _handle_exception(self, error: Exception) -> None:
++            pass
++
++        _return_code = 0
++        _exception = None
++        _exception_event = object()
++
++    app = BadEventApp()
++    with pytest.raises(
++        RuntimeError, match="_exception_event does not support callable set\\(\\) notification"
++    ):
++        audit_textual_app_contract(app)
++
++    with pytest.raises(
++        RuntimeError, match="_exception_event does not support callable set\\(\\) notification"
++    ):
++        record_unhandled_fault(app, RuntimeError("probe fault"))
++
++
++def test_coordinator_shape_probe_is_rejected() -> None:
++    """The coordinator's shape probe object with None hook and object event must be rejected."""
++
++    class CoordinatorProbe:
++        _handle_exception = None
++        _return_code = 0
++        _exception = None
++        _exception_event = object()
++
++    probe = CoordinatorProbe()
++    with pytest.raises(RuntimeError, match="Incompatible Textual App class"):
++        audit_textual_app_contract(probe)
++
++    with pytest.raises(RuntimeError, match="Incompatible Textual App class"):
++        record_unhandled_fault(probe, RuntimeError("probe"))
++
++
++def test_record_and_get_unhandled_fault() -> None:
++    """record_unhandled_fault and get_unhandled_fault store, notify,
++    and extract exception correctly."""
++    app = App()
++    assert get_unhandled_fault(app) is None
++
++    err = ValueError("test unhandled fault")
++    record_unhandled_fault(app, err, return_code=3)
++
++    assert app._return_code == 3
++    assert app._exception is err
++    assert app._exception_event.is_set()
++    assert get_unhandled_fault(app) is err
++
++    # First-fault semantics: second call does not overwrite first exception
++    second_err = RuntimeError("second fault")
++    record_unhandled_fault(app, second_err, return_code=3)
++    assert app._exception is err
++
++
++def test_skill_lens_app_handle_exception_containment(mock_home: Path) -> None:
++    """SkillLensApp._handle_exception contains UI faults, sets sticky exit 3,
++    and suppresses rich tracebacks."""
++    cwd = mock_home / "project"
++    cwd.mkdir(parents=True, exist_ok=True)
++    app = SkillLensApp(home=mock_home, cwd=cwd)
++    err = RuntimeError("injected direct fault")
++
++    app._handle_exception(err)
++
++    assert app.controller.is_failed
++    assert app._return_code == int(ExitCode.INTERNAL)
++    assert get_unhandled_fault(app) is err
++    # Rich traceback suppressed
++    assert len(app._exit_renderables) == 0
++
++
++def test_explicit_non_interactive_tui_exits_2(mock_home: Path) -> None:
++    """Explicit 'tui' invocation in a non-interactive terminal exits 2 without traceback."""
++    cwd = mock_home / "project"
++    cwd.mkdir(parents=True, exist_ok=True)
++    runner = CliRunner()
++    result = runner.invoke(cli_app, ["tui", "--sandbox", str(mock_home), "--cwd", str(cwd)])
++    assert result.exit_code == int(ExitCode.USAGE)
++    assert "Error: The terminal UI requires an interactive terminal." in result.stderr
++    assert "Traceback" not in result.stderr
++
++
++def test_prompt_quit_does_not_block_on_worker(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Quitting the TUI via tui.run() returns cleanly BEFORE a blocked background
++    worker is released, guarded by an active watchdog timer."""
++    cwd = mock_home / "project"
++    cwd.mkdir(parents=True, exist_ok=True)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    capture_started = threading.Event()
++    release_capture = threading.Event()
++    worker_finished = threading.Event()
++    watchdog_fired = threading.Event()
++
++    def blocked_capture(*, generation: int, home: Path, cwd: Path, cancelled: Any = None) -> Any:
++        capture_started.set()
++        # Block indefinitely until release_capture is explicitly set
++        release_capture.wait()
++        worker_finished.set()
++        raise CaptureCancelled()
++
++    monkeypatch.setattr("skill_lens.tui.app.capture_session", blocked_capture)
++
++    # Active watchdog: fires after 1.5s if runner is stuck waiting for worker join
++    def on_watchdog() -> None:
++        watchdog_fired.set()
++        release_capture.set()
++
++    watchdog = threading.Timer(1.5, on_watchdog)
++    watchdog.daemon = True
++    watchdog.start()
++
++    run_completed = False
++    try:
++
++        async def auto_quit(pilot: Pilot) -> None:
++            for _ in range(50):
++                if capture_started.is_set():
++                    break
++                await pilot.pause(0.02)
++            assert capture_started.is_set(), "capture worker must have started"
++            assert not release_capture.is_set(), "capture worker must still be blocked"
++            await pilot.press("q")
++
++        code = tui.run(mock_home, cwd, headless=True, auto_pilot=auto_quit)
++        run_completed = True
++
++        # Assert watchdog never fired and worker never finished before runner returned
++        assert not watchdog_fired.is_set(), (
++            "Watchdog fired! Runner blocked waiting for background worker completion."
++        )
++        assert not release_capture.is_set(), "tui.run() returned after worker was released!"
++        assert not worker_finished.is_set(), "worker finished before tui.run() returned!"
++        assert code == int(ExitCode.OK)
++    finally:
++        watchdog.cancel()
++        release_capture.set()
++        worker_finished.wait(timeout=5.0)
++
++    assert run_completed is True
++
++
++def test_installed_module_provenance() -> None:
++    """skill_lens and skill_lens.tui must resolve to the same package root."""
++    assert skill_lens.__file__ is not None
++    assert tui.__file__ is not None
++    root_parent = Path(skill_lens.__file__).resolve().parent
++    tui_parent = Path(tui.__file__).resolve().parent.parent
++    assert root_parent == tui_parent, (
++        f"Package mismatch: skill_lens at {root_parent}, tui at {tui_parent}"
++    )

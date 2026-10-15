@@ -1,0 +1,98 @@
+[
+  {
+    "name": "implementation-r1",
+    "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A0a1e48b5-a5b7-431f-b02e-3a8eda060fc5%253Adelegate-task%253Askill-lens-stage-g-20261015-implementation-r1:ordinal:1",
+    "ordinal": 1,
+    "status": "completed",
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "requestedAt": "2026-10-15T19:04:24.791Z",
+    "startedAt": "2026-10-15T19:04:28.963Z",
+    "completedAt": "2026-10-15T19:26:55.364Z",
+    "wall_seconds": 1346.401
+  },
+  {
+    "name": "correction-r1",
+    "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A0a1e48b5-a5b7-431f-b02e-3a8eda060fc5%253Adelegate-task%253Askill-lens-stage-g-20261015-correction-r1:ordinal:1",
+    "ordinal": 1,
+    "status": "completed",
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "requestedAt": "2026-10-15T19:29:16.938Z",
+    "startedAt": "2026-10-15T19:29:19.763Z",
+    "completedAt": "2026-10-15T19:46:36.258Z",
+    "wall_seconds": 1036.495
+  },
+  {
+    "name": "correction-r2",
+    "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A0a1e48b5-a5b7-431f-b02e-3a8eda060fc5%253Adelegate-task%253Askill-lens-stage-g-20261015-correction-r2:ordinal:1",
+    "ordinal": 1,
+    "status": "completed",
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "requestedAt": "2026-10-15T19:47:54.471Z",
+    "startedAt": "2026-10-15T19:47:57.768Z",
+    "completedAt": "2026-10-15T20:10:16.593Z",
+    "wall_seconds": 1338.825
+  },
+  {
+    "name": "review-r1-minimax",
+    "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A0a1e48b5-a5b7-431f-b02e-3a8eda060fc5%253Adelegate-task%253Askill-lens-stage-g-20261015-review-r1-minimax:ordinal:1",
+    "ordinal": 1,
+    "status": "completed",
+    "providerInstanceId": "mcode",
+    "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+    "requestedAt": "2026-10-15T20:14:06.672Z",
+    "startedAt": "2026-10-15T20:14:08.675Z",
+    "completedAt": "2026-10-15T20:19:35.635Z",
+    "wall_seconds": 326.96
+  },
+  {
+    "name": "review-r1-muse",
+    "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A0a1e48b5-a5b7-431f-b02e-3a8eda060fc5%253Adelegate-task%253Askill-lens-stage-g-20261015-review-r1-muse:ordinal:1",
+    "ordinal": 1,
+    "status": "completed",
+    "providerInstanceId": "opencode",
+    "model": "opencode/muse-spark-1.3-contributor-free",
+    "requestedAt": "2026-10-15T20:14:06.704Z",
+    "startedAt": "2026-10-15T20:14:07.142Z",
+    "completedAt": "2026-10-15T20:17:07.382Z",
+    "wall_seconds": 180.24
+  },
+  {
+    "name": "council-r1-correction",
+    "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A0a1e48b5-a5b7-431f-b02e-3a8eda060fc5%253Adelegate-task%253Askill-lens-stage-g-20261015-council-r1-correction:ordinal:1",
+    "ordinal": 1,
+    "status": "completed",
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "requestedAt": "2026-10-15T20:21:26.711Z",
+    "startedAt": "2026-10-15T20:21:29.607Z",
+    "completedAt": "2026-10-15T20:37:54.116Z",
+    "wall_seconds": 984.509
+  },
+  {
+    "name": "review-r2-minimax",
+    "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A0a1e48b5-a5b7-431f-b02e-3a8eda060fc5%253Adelegate-task%253Askill-lens-stage-g-20261015-review-r2-minimax:ordinal:1",
+    "ordinal": 1,
+    "status": "completed",
+    "providerInstanceId": "mcode",
+    "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+    "requestedAt": "2026-10-15T20:42:56.628Z",
+    "startedAt": "2026-10-15T20:42:58.725Z",
+    "completedAt": "2026-10-15T20:45:56.493Z",
+    "wall_seconds": 177.768
+  },
+  {
+    "name": "review-r2-muse",
+    "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A0a1e48b5-a5b7-431f-b02e-3a8eda060fc5%253Adelegate-task%253Askill-lens-stage-g-20261015-review-r2-muse:ordinal:1",
+    "ordinal": 1,
+    "status": "completed",
+    "providerInstanceId": "opencode",
+    "model": "opencode/muse-spark-1.3-contributor-free",
+    "requestedAt": "2026-10-15T20:42:56.667Z",
+    "startedAt": "2026-10-15T20:42:56.708Z",
+    "completedAt": "2026-10-15T20:44:29.280Z",
+    "wall_seconds": 92.572
+  }
+]

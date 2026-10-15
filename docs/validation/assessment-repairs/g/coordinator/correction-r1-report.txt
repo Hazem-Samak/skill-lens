@@ -1,0 +1,63 @@
+EFFECTIVE_MODEL: [antigravity/gemini-3.8-flash-high, temperature/defaults, runtimeMode: full-access, interactionMode: default | requested: default sub-agent model (inherit) vs configured: gemini-3.8-flash-high vs confirmed: gemini-3.8-flash-high via runtime_info]
+OUTCOME: succeeded
+FILES_CHANGED:
+- [.github/workflows/ci.yml](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/.github/workflows/ci.yml)
+- [scripts/smoke_wheel.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/scripts/smoke_wheel.py)
+- [skill_lens/tui/__init__.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/tui/__init__.py)
+- [skill_lens/tui/app.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/tui/app.py)
+- [skill_lens/tui/_textual_compat.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/tui/_textual_compat.py)
+- [tests/test_stage_g_repairs.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_stage_g_repairs.py)
+- [tests/test_tui_packaging.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_packaging.py)
+- [tests/test_tui_read_only.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_read_only.py)
+
+CHECKS:
+- pytest: `1013 passed, 1 skipped` (macOS case-insensitive fs), coverage `91.16%` (`.venv/bin/pytest --cov=skill_lens`)
+- mypy: `Success: no issues found in 37 source files` (`.venv/bin/mypy`)
+- ruff-check: `All checks passed!` across 148 files (`.venv/bin/ruff check .`)
+- ruff-format: `148 files already formatted` (`.venv/bin/ruff format --check .`)
+
+### Installed Packaging Lane Matrix (smoke-receipt.json)
+| Lane / Endpoint | Textual Constraint | Textual Resolved | Package Provenance | Test Suites Executed | Passed / Skipped | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `base_lane` | None (lean base) | None (`find_spec is None`) | `.venv` isolated | Bare CLI + Explicit `tui` exit 2 | N/A | **passed** |
+| `min_endpoint` | `textual==8.2.8` | `8.2.8` | `.venv` isolated | 9 installed suites outside repo | `345 passed, 0 skipped` | **passed** |
+| `latest_endpoint` | None (unconstrained) | `8.2.8` | `.venv` isolated | 9 installed suites outside repo | `345 passed, 0 skipped` | **passed** |
+
+- **Endpoint Overlap**: `min_version: 8.2.8`, `latest_version: 8.2.8`, `overlap: True` (PyPI latest stable equals declared floor `8.2.8` at current index resolution).
+- **Exact Installed Package Origins**: Full JSON package inventory recorded from `uv pip list` inside receipt.
+
+TESTS_ADDED:
+- `tests/test_tui_packaging.py::test_synthetic_clean_wheel_passes_verification`
+- `tests/test_tui_packaging.py::test_synthetic_clean_sdist_passes_verification`
+- `tests/test_tui_packaging.py::test_synthetic_stale_wheel_zero_tui_modules_fails`
+- `tests/test_stage_g_repairs.py::test_adapter_detects_non_callable_class_method`
+- `tests/test_stage_g_repairs.py::test_adapter_detects_unusable_event_notification`
+- `tests/test_stage_g_repairs.py::test_coordinator_shape_probe_is_rejected`
+- Strengthened `tests/test_stage_g_repairs.py::test_prompt_quit_does_not_block_on_worker` (active 1.5s bounded watchdog, indefinite worker wait, started/unfinished assertions).
+
+DEVIATIONS_FROM_PLAN:
+None. Followed all frozen boundaries, allowed files, and instructions from `correction-brief-r1.md` and `implementation-brief.md`.
+
+BLOCKED_ON:
+None.
+
+---
+
+### Key Gap Resolutions Summary
+
+1. **G1 — Canonical Validator**: Eliminated duplicated `verify_wheel_contents` and `verify_sdist_contents` in `test_tui_packaging.py`. The suite now imports and exercises the canonical validator in [scripts/smoke_wheel.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/scripts/smoke_wheel.py).
+   - **Disposable Mutation Proof (smoke_wheel.py missing_tui check)**: `if missing_tui:` -> `if False and missing_tui:`.
+   - Result: Clean `0` -> Mutant `1` (all 4 missing-module tests failed with `DID NOT RAISE ValueError`) -> Restored `0`. Clean `0 / 1 / 0` verified.
+2. **G2 — Endpoint Coverage**: Built explicit `min` (`textual==8.2.8`) and `latest` (unconstrained) installation lanes in isolated virtual environments outside the checkout. Both lanes ran full parity, AST read-only, lifecycle, and Stage G repair test suites (345 passed, 0 skipped in each lane). CI workflow [ci.yml](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/.github/workflows/ci.yml) was unified to invoke `scripts/smoke_wheel.py` directly for archive, base, min, and latest verification without script duplication.
+3. **G3 — Machine-Specific Expectations Removed**: Removed `test_preserved_dist_hashes_remain_unchanged` and `test_stale_local_wheel_fails_tui_package_verification` that depended on developer-machine `dist/` and deleted the untracked `.path` file. Removed `pytest.skip` from `_read_uv_lock` and `_read_ci_workflow`; required metadata (`pyproject.toml`, `uv.lock`, `ci.yml`, `scripts/`) is copied into test lanes without copying `skill_lens` source. Parity fixture tests now consistently use `mock_home` and patched `HOME`/sandbox.
+4. **G4 — Strict Adapter Audit**: Updated [skill_lens/tui/_textual_compat.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/tui/_textual_compat.py) to audit that `_handle_exception` is callable and `_exception_event` has a callable `.set()` method. The coordinator probe object (`_handle_exception=None, _exception_event=object()`) is rejected with `RuntimeError`. First-fault semantics are strictly preserved. Internal adapter helpers were removed from `skill_lens.tui.__all__`.
+5. **G5 — Strengthened Prompt-Quit Guard**: Prompt-quit test in `test_stage_g_repairs.py` was strengthened with an active bounded watchdog (1.5s), indefinite worker wait, and strict unfinished assertions.
+   - **Disposable Mutation Proof (executor join in tui.run)**: inserted `loop.run_until_complete(loop.shutdown_default_executor())` before `loop.close()`.
+   - Result: Clean `0` -> Mutant `1` (failed promptly within 1.64s and 2.14s on assertion `Watchdog fired! Runner blocked waiting for background worker completion`) -> Restored `0`. Clean `0 / 1 / 0` verified.
+6. **G6 — Final Source-Matched Artifacts & Provenance**: Rebuilt fresh isolated sdist and wheel from sdist under `worker-correction-r1/dist`:
+   - Wheel: `skill_lens_cli-0.1.1-py3-none-any.whl` (120,619 bytes)
+     SHA256: `59707ca7bc191c051ad98556bc6246b81e0199333a600902e1f4dd4ea170ef32`
+   - Sdist: `skill_lens_cli-0.1.1.tar.gz` (1,046,490 bytes)
+     SHA256: `3faa2b5aba44f0fe4d14534acbe4685c67f51896e43b6f3a7915c6e90193c82f`
+   - Canonical receipt saved at `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-correction-r1/smoke-receipt.json`.
+   - Clarified that the 137 AST cases in `test_tui_read_only.py` are existing parametrized regression assertions, distinct from the substantive 0/1/0 production mutations executed.

@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________________ test_record_and_get_unhandled_fault ______________________
+tests/test_stage_g_repairs.py:168: in test_record_and_get_unhandled_fault
+    assert app._exception_event.is_set()
+E   AssertionError: assert False
+E    +  where False = is_set()
+E    +    where is_set = <asyncio.locks.Event object at 0x1095f4390 [unset]>.is_set
+E    +      where <asyncio.locks.Event object at 0x1095f4390 [unset]> = App(title='App', classes={'-dark-mode'}, pseudo_classes={'dark', 'nocolor', 'focus'})._exception_event
+=========================== short test summary info ============================
+FAILED tests/test_stage_g_repairs.py::test_record_and_get_unhandled_fault - A...
+1 failed in 0.14s

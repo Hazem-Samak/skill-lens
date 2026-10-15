@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________________ test_record_and_get_unhandled_fault ______________________
+tests/test_stage_g_repairs.py:174: in test_record_and_get_unhandled_fault
+    assert app._exception is err
+E   AssertionError: assert RuntimeError('second fault') is ValueError('test unhandled fault')
+E    +  where RuntimeError('second fault') = App(title='App', classes={'-dark-mode'}, pseudo_classes={'dark', 'focus', 'nocolor'})._exception
+=========================== short test summary info ============================
+FAILED tests/test_stage_g_repairs.py::test_record_and_get_unhandled_fault - A...
+1 failed in 0.15s

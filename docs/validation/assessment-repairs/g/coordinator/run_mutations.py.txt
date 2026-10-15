@@ -1,0 +1,51 @@
+from pathlib import Path
+import shutil,subprocess,os,json,difflib,hashlib,time
+repo=Path('/Users/corvette/Documents/Projects Coding/Skill Lens')
+work=Path(__file__).parent;copy=work/'mutation-source'
+for name in ('skill_lens','tests','scripts','.github'):
+ shutil.copytree(repo/name,copy/name,ignore=shutil.ignore_patterns('__pycache__','*.pyc'),dirs_exist_ok=True)
+for name in ('pyproject.toml','uv.lock'):shutil.copy2(repo/name,copy/name)
+env=os.environ.copy();env['PYTHONPATH']=str(copy);env['PYTHONDONTWRITEBYTECODE']='1';py=str(repo/'.venv/bin/python')
+g='tests/test_stage_g_repairs.py::';p='tests/test_tui_packaging.py::'
+cases=[
+ ('wheel_tui_check_disabled','scripts/smoke_wheel.py','if missing_tui:','if False and missing_tui:',p+'test_synthetic_wheel_missing_tui_module_fails',None),
+ ('wheel_registry_check_disabled','scripts/smoke_wheel.py','if len(registry_files) != REQUIRED_REGISTRY_COUNT:','if False:',p+'test_synthetic_wheel_missing_registry_files_fails',None),
+ ('wheel_typed_check_disabled','scripts/smoke_wheel.py','if REQUIRED_TYPED_MARKER not in namelist:','if False:',p+'test_synthetic_wheel_missing_typed_marker_fails',None),
+ ('sdist_missing_check_disabled','scripts/smoke_wheel.py','if missing:','if False:',p+'test_synthetic_sdist_missing_file_fails',None),
+ ('class_hook_audit_disabled','skill_lens/tui/_textual_compat.py','if attr is None or not callable(attr):','if False:',g+'test_adapter_detects_non_callable_class_method',None),
+ ('event_audit_disabled','skill_lens/tui/_textual_compat.py','if event is None or not hasattr(event, "set") or not callable(event.set):','if False:',g+'test_adapter_detects_unusable_event_notification',None),
+ ('event_notification_disabled','skill_lens/tui/_textual_compat.py','        app._exception_event.set()','        pass',g+'test_record_and_get_unhandled_fault',None),
+ ('first_fault_overwritten','skill_lens/tui/_textual_compat.py','if app._exception is None:','if True:',g+'test_record_and_get_unhandled_fault',None),
+ ('fault_code_success','skill_lens/tui/_textual_compat.py','app._return_code = return_code','app._return_code = 0',g+'test_record_and_get_unhandled_fault',None),
+ ('relative_base_path_unresolved','scripts/smoke_wheel.py','wheel_path = pathlib.Path(wheel_path).resolve()','wheel_path = pathlib.Path(wheel_path)',p+'test_relative_wheel_and_harness_paths_normalized_before_cwd_switch','def verify_base_install('),
+ ('relative_endpoint_path_unresolved','scripts/smoke_wheel.py','wheel_path = pathlib.Path(wheel_path).resolve()','wheel_path = pathlib.Path(wheel_path)',p+'test_relative_wheel_and_harness_paths_normalized_before_cwd_switch','def verify_tui_endpoint_install('),
+ ('runner_joins_blocked_executor','skill_lens/tui/__init__.py','            loop.close()','            loop.run_until_complete(loop.shutdown_default_executor())\n            loop.close()',g+'test_prompt_quit_does_not_block_on_worker',None),
+ ('runner_drops_fault','skill_lens/tui/__init__.py','unhandled_exc = get_unhandled_fault(app)','unhandled_exc = None','tests/test_tui_app.py::test_actual_textual_event_handler_fault_via_cli',None),
+ ('ci_minimum_lane_removed','.github/workflows/ci.yml','--verify-min-only','--verify-latest-only',p+'test_ci_packaging_job_has_base_and_tui_lanes',None),
+]
+cases += [
+ ('base_origin_guard_removed','scripts/smoke_wheel.py','if str(venv_dir) not in provenance:','if False:',p+'test_verify_base_install_invalid_provenance_fails',None),
+ ('endpoint_pkg_origin_ignored','scripts/smoke_wheel.py','if str(venv_dir) not in pkg_prov or str(venv_dir) not in tui_prov:','if str(venv_dir) not in tui_prov:',p+'test_verify_tui_endpoint_install_invalid_provenance_fails',None),
+ ('endpoint_tui_origin_ignored','scripts/smoke_wheel.py','if str(venv_dir) not in pkg_prov or str(venv_dir) not in tui_prov:','if str(venv_dir) not in pkg_prov:',p+'test_verify_tui_endpoint_install_invalid_provenance_fails',None),
+ ('base_textual_presence_ignored','scripts/smoke_wheel.py',"assert importlib.util.find_spec('textual') is None, 'Textual must be absent'","assert True, 'Textual must be absent'",p+'test_verify_base_install_fails_when_textual_is_present',None),
+ ('installed_test_failure_ignored','scripts/smoke_wheel.py','if test_res.returncode != 0:','if False:',p+'test_verify_tui_endpoint_install_fails_on_nonzero_test_suite_exit',None),
+ ('source_copy_guard_removed','scripts/smoke_wheel.py','assert not (test_lane / "skill_lens").exists(), (','assert True, (',p+'test_verify_tui_endpoint_install_fails_when_source_copied_into_test_lane',None),
+]
+prov=json.loads(subprocess.check_output([py,'-c','import json,skill_lens.tui as t,skill_lens.tui._textual_compat as c,scripts.smoke_wheel as s; print(json.dumps([t.__file__,c.__file__,s.__file__]))'],cwd=copy,env=env,text=True))
+assert all(str(copy) in path for path in prov)
+records=[]
+for name,path,old,new,test,start_marker in cases:
+ target=copy/path;original=target.read_text()
+ pos=original.index(start_marker) if start_marker else 0
+ before=original[:pos];tail=original[pos:];assert old in tail,(name,old)
+ mutant=before+tail.replace(old,new,1);phases={}
+ cmd=[py,'-m','pytest',test,'-q','--tb=short','-o','addopts=','-o',f'cache_dir={work}/mutation-cache','--no-cov']
+ for phase,source in [('clean',original),('mutant',mutant),('restored',original)]:
+  target.write_text(source);shutil.rmtree(target.parent/'__pycache__',ignore_errors=True)
+  result=subprocess.run(cmd,cwd=copy,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=30)
+  log=work/f'{name}-{phase}.log';log.write_text(result.stdout);phases[phase]={'exit':result.returncode,'log':str(log)}
+ records.append({'name':name,'path':path,'test':test,'command':cmd,'source_hash':hashlib.sha256(original.encode()).hexdigest(),'mutant_hash':hashlib.sha256(mutant.encode()).hexdigest(),'phases':phases,'diff':''.join(difflib.unified_diff(original.splitlines(True),mutant.splitlines(True),fromfile=path,tofile=path+' mutant'))})
+ (work/'mutations.json').write_text(json.dumps({'import_provenance':prov,'results':records},indent=2)+'\n')
+ print(name,{k:v['exit'] for k,v in phases.items()},flush=True)
+ assert [phases[x]['exit'] for x in ('clean','mutant','restored')]==[0,1,0],name
+

@@ -1,0 +1,93 @@
+{
+  "provenance": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-council-r1/source/scripts/smoke_wheel.py\n/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-council-r1/source/skill_lens/__init__.py\n",
+  "results": [
+    {
+      "name": "origin_guards_removed",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_relative_wheel_and_harness_paths_normalized_before_cwd_switch",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-council-r1/cache",
+        "--no-cov"
+      ],
+      "phases": {
+        "clean": 0,
+        "mutant": 0,
+        "restored": 0
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ origin_guards_removed\n@@ -257,7 +257,7 @@\n         timeout=timeout_seconds,\n     )\n     provenance = prov_res.stdout.strip()\n-    if str(venv_dir) not in provenance:\n+    if False:\n         raise AssertionError(f\"Expected skill_lens inside venv {venv_dir}; got: {provenance}\")\n \n     # 2. Assert Textual is truly absent\n@@ -462,7 +462,7 @@\n     )\n     lines = prov_res.stdout.strip().splitlines()\n     pkg_prov, tui_prov = lines[0], lines[1]\n-    if str(venv_dir) not in pkg_prov or str(venv_dir) not in tui_prov:\n+    if False:\n         raise AssertionError(f\"Expected installed wheel provenance inside {venv_dir}; got: {lines}\")\n \n     # 2. Assert Textual is present and retrieve version\n"
+    },
+    {
+      "name": "textual_absence_removed",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_relative_wheel_and_harness_paths_normalized_before_cwd_switch",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-council-r1/cache",
+        "--no-cov"
+      ],
+      "phases": {
+        "clean": 0,
+        "mutant": 0,
+        "restored": 0
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ textual_absence_removed\n@@ -263,7 +263,7 @@\n     # 2. Assert Textual is truly absent\n     check_textual_cmd = (\n         \"import importlib.util; \"\n-        \"assert importlib.util.find_spec('textual') is None, 'Textual must be absent'\"\n+        \"assert True, 'Textual must be absent'\"\n     )\n     subprocess.run(\n         [str(py_exe), \"-c\", check_textual_cmd],\n"
+    },
+    {
+      "name": "suite_failure_ignored",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_relative_wheel_and_harness_paths_normalized_before_cwd_switch",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-council-r1/cache",
+        "--no-cov"
+      ],
+      "phases": {
+        "clean": 0,
+        "mutant": 0,
+        "restored": 0
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ suite_failure_ignored\n@@ -534,7 +534,7 @@\n         text=True,\n         timeout=timeout_seconds,\n     )\n-    if test_res.returncode != 0:\n+    if False:\n         raise AssertionError(\n             f\"Installed test suites failed with code {test_res.returncode}:\\n\"\n             f\"STDOUT:\\n{test_res.stdout}\\n\"\n"
+    },
+    {
+      "name": "source_copy_guard_removed",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_relative_wheel_and_harness_paths_normalized_before_cwd_switch",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-council-r1/cache",
+        "--no-cov"
+      ],
+      "phases": {
+        "clean": 0,
+        "mutant": 0,
+        "restored": 0
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ source_copy_guard_removed\n@@ -520,7 +520,7 @@\n     )\n \n     # Strictly assert no skill_lens source package exists in test_lane\n-    assert not (test_lane / \"skill_lens\").exists(), (\n+    assert True, (\n         \"skill_lens source package must not be copied into test lane\"\n     )\n \n"
+    }
+  ]
+}

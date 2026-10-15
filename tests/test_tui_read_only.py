@@ -30,8 +30,11 @@ import skill_lens.tui as tui
 from skill_lens.core.exitcodes import ExitCode
 from tests.fixtures.scenarios import build_scenario
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-TUI_DIR = REPO_ROOT / "skill_lens" / "tui"
+# TUI_DIR resolves dynamically from the imported skill_lens.tui package.
+# This ensures AST source inspection and mutation controls function seamlessly
+# both in the development checkout and in clean installed packaging lanes.
+assert tui.__file__ is not None, "skill_lens.tui must be an imported package with __file__"
+TUI_DIR = Path(tui.__file__).resolve().parent
 
 BANNED_IMPORT_ROOTS = frozenset(
     {

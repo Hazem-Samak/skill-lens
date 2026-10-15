@@ -1,0 +1,8 @@
+{
+  "command": [
+    ".venv/bin/python",
+    "-c",
+    "from skill_lens.tui._textual_compat import audit_textual_app_contract,record_unhandled_fault\nclass Bad:\n _handle_exception=None\n _return_code=0\n _exception=None\n _exception_event=object()\na=Bad()\naudit_textual_app_contract(a)\nrecord_unhandled_fault(a,RuntimeError(\"probe\"))\nprint(\"Unsupported noncallable hook and event without set were accepted; fault notification silently omitted\")\n"
+  ],
+  "exit": 0
+}

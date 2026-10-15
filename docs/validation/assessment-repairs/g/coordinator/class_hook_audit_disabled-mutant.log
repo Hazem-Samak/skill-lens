@@ -1,0 +1,9 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________________ test_adapter_detects_non_callable_class_method ________________
+tests/test_stage_g_repairs.py:87: in test_adapter_detects_non_callable_class_method
+    with pytest.raises(RuntimeError, match="missing or non-callable method '_handle_exception'"):
+E   Failed: DID NOT RAISE RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_stage_g_repairs.py::test_adapter_detects_non_callable_class_method
+1 failed in 0.14s

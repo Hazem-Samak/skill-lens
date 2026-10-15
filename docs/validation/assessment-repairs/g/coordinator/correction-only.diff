@@ -1,0 +1,339 @@
+--- /Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator/mutation-source/tests/test_tui_packaging.py	2026-10-15 23:06:21
++++ tests/test_tui_packaging.py	2026-10-15 23:31:46
+@@ -15,6 +15,12 @@
+    - Synthetic wheels missing agent registry TOMLs or py.typed fail
+    - Synthetic sdist missing required modules or files fails
+ 6. Installed extra output parity across command surfaces
++7. Installed lane assurance guards:
++   - Module provenance failure rejection (base and both endpoint branches)
++   - Textual presence failure rejection in base environment
++   - Nonzero test suite returncode failure rejection
++   - Source directory leak in test lane rejection
++8. Relative wheel and harness paths normalized before lane cwd switch
+ """
+ 
+ from __future__ import annotations
+@@ -22,10 +28,13 @@
+ import importlib.util
+ import io
+ import json
++import shutil
++import subprocess
+ import sys
+ import tarfile
+ import tomllib
+ import zipfile
++from collections.abc import Callable
+ from pathlib import Path
+ from typing import Any, cast
+ 
+@@ -35,6 +44,8 @@
+ from skill_lens import cli
+ from skill_lens.core import paths
+ 
++_REAL_SUBPROCESS_RUN = subprocess.run
++
+ REPO_ROOT = Path(__file__).resolve().parent.parent
+ PYPROJECT_PATH = REPO_ROOT / "pyproject.toml"
+ UV_LOCK_PATH = REPO_ROOT / "uv.lock"
+@@ -339,37 +350,26 @@
+     finally:
+         paths.set_sandbox(None)
+ 
+-
+-def test_relative_wheel_and_harness_paths_normalized_before_cwd_switch(
+-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+-) -> None:
+-    """Relative wheel, work-dir, and receipt paths must be resolved to absolute paths
+-    before changing subprocess cwd to lane_dir.
+ 
+-    A failure to normalize causes subprocess tools (like uv pip install) running inside
+-    isolated lane_dir to look up relative paths relative to lane_dir rather than
+-    the invoking cwd, reproducing the CI failure.
+-    """
+-    import subprocess
+-
+-    invoking_cwd = tmp_path / "invoking_cwd"
+-    invoking_cwd.mkdir()
+-    artifacts_dir = invoking_cwd / "artifacts"
+-    artifacts_dir.mkdir()
+-    wheel_file = artifacts_dir / "skill_lens_cli-0.1.1-py3-none-any.whl"
+-    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))  # minimal zip empty payload
+-    receipts_dir = invoking_cwd / "receipts"
+-    receipts_dir.mkdir()
+-
+-    monkeypatch.chdir(invoking_cwd)
+-
+-    captured_calls: list[dict[str, Any]] = []
++def _make_packaging_subprocess_runner(
++    *,
++    base_provenance: str | None = None,
++    endpoint_pkg_provenance: str | None = None,
++    endpoint_tui_provenance: str | None = None,
++    simulate_textual_in_base: bool = False,
++    pytest_returncode: int = 0,
++    pytest_stdout: str = "================ 10 passed in 0.1s ================\n",
++    pytest_stderr: str = "",
++    captured_calls: list[dict[str, Any]] | None = None,
++) -> Callable[..., subprocess.CompletedProcess[str]]:
++    """Create a deterministic subprocess runner double for installed lane packaging tests."""
+ 
+     def mock_subprocess_run(
+         cmd: list[str], *args: Any, **kwargs: Any
+     ) -> subprocess.CompletedProcess[str]:
+         cwd = kwargs.get("cwd")
+-        captured_calls.append({"cmd": list(cmd), "cwd": cwd, "env": kwargs.get("env")})
++        if captured_calls is not None:
++            captured_calls.append({"cmd": list(cmd), "cwd": cwd, "env": kwargs.get("env")})
+ 
+         # Check for wheel references in the command
+         for arg in cmd:
+@@ -407,13 +407,43 @@
+             if "-c" in cmd:
+                 code_arg = cmd[cmd.index("-c") + 1]
+                 if "skill_lens.__file__" in code_arg:
+-                    venv_path = Path(cwd) / "venv" if cwd else Path("/dummy/venv")
+-                    out = (
+-                        f"{venv_path}/lib/python3.11/site-packages/skill_lens/__init__.py\n"
+-                        f"{venv_path}/lib/python3.11/site-packages/skill_lens/tui/__init__.py\n"
++                    default_venv = Path(cwd) / "venv" if cwd else Path("/dummy/venv")
++                    default_site = (
++                        default_venv / "lib" / "python3.11" / "site-packages" / "skill_lens"
+                     )
+-                    return subprocess.CompletedProcess(cmd, 0, stdout=out, stderr="")
++                    if "skill_lens.tui" in code_arg:
++                        pkg_p = (
++                            endpoint_pkg_provenance
++                            if endpoint_pkg_provenance is not None
++                            else str(default_site / "__init__.py")
++                        )
++                        tui_p = (
++                            endpoint_tui_provenance
++                            if endpoint_tui_provenance is not None
++                            else str(default_site / "tui" / "__init__.py")
++                        )
++                        out = f"{pkg_p}\n{tui_p}\n"
++                        return subprocess.CompletedProcess(cmd, 0, stdout=out, stderr="")
++                    pkg_p = (
++                        base_provenance
++                        if base_provenance is not None
++                        else str(default_site / "__init__.py")
++                    )
++                    return subprocess.CompletedProcess(cmd, 0, stdout=f"{pkg_p}\n", stderr="")
+                 if "find_spec('textual')" in code_arg:
++                    if simulate_textual_in_base:
++                        res = _REAL_SUBPROCESS_RUN(
++                            [sys.executable, "-c", code_arg],
++                            capture_output=True,
++                            text=True,
++                        )
++                        if res.returncode != 0:
++                            raise subprocess.CalledProcessError(
++                                res.returncode, cmd, output=res.stdout, stderr=res.stderr
++                            )
++                        return subprocess.CompletedProcess(
++                            cmd, 0, stdout=res.stdout, stderr=res.stderr
++                        )
+                     return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+                 if "textual.__version__" in code_arg:
+                     return subprocess.CompletedProcess(cmd, 0, stdout="8.2.8\n", stderr="")
+@@ -441,14 +471,42 @@
+                 return subprocess.CompletedProcess(cmd, 2, stdout="", stderr=msg)
+ 
+         if cmd_exe == "pytest":
+-            return subprocess.CompletedProcess(
+-                cmd, 0, stdout="================ 10 passed in 0.1s ================\n", stderr=""
+-            )
++            if pytest_returncode != 0:
++                return subprocess.CompletedProcess(
++                    cmd, pytest_returncode, stdout=pytest_stdout, stderr=pytest_stderr
++                )
++            return subprocess.CompletedProcess(cmd, 0, stdout=pytest_stdout, stderr=pytest_stderr)
+ 
+         return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+ 
+-    monkeypatch.setattr(subprocess, "run", mock_subprocess_run)
++    return mock_subprocess_run
+ 
++
++def test_relative_wheel_and_harness_paths_normalized_before_cwd_switch(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Relative wheel, work-dir, and receipt paths must be resolved to absolute paths
++    before changing subprocess cwd to lane_dir.
++
++    A failure to normalize causes subprocess tools (like uv pip install) running inside
++    isolated lane_dir to look up relative paths relative to lane_dir rather than
++    the invoking cwd, reproducing the CI failure.
++    """
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    artifacts_dir = invoking_cwd / "artifacts"
++    artifacts_dir.mkdir()
++    wheel_file = artifacts_dir / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))  # minimal zip empty payload
++    receipts_dir = invoking_cwd / "receipts"
++    receipts_dir.mkdir()
++
++    monkeypatch.chdir(invoking_cwd)
++
++    captured_calls: list[dict[str, Any]] = []
++    mock_run = _make_packaging_subprocess_runner(captured_calls=captured_calls)
++    monkeypatch.setattr(subprocess, "run", mock_run)
++
+     # 1. Test CLI main with relative wheel, work-dir, and receipt-out
+     rel_wheel_arg = "artifacts/skill_lens_cli-0.1.1-py3-none-any.whl"
+     rel_work_arg = "rel_work"
+@@ -498,3 +556,152 @@
+                     f"Wheel path in subprocess call must be absolute, got: {arg}"
+                 )
+                 assert wheel_p == wheel_file.resolve()
++
++
++def test_verify_base_install_invalid_provenance_fails(
++    tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """verify_base_install must raise AssertionError when skill_lens provenance is outside venv."""
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
++    monkeypatch.chdir(invoking_cwd)
++
++    runner = _make_packaging_subprocess_runner(
++        base_provenance="/system/site-packages/skill_lens/__init__.py"
++    )
++    monkeypatch.setattr(subprocess, "run", runner)
++
++    with pytest.raises(AssertionError, match="Expected skill_lens inside venv"):
++        verify_base_install(wheel_file, tmp_path / "work_dir")
++
++
++@pytest.mark.parametrize(
++    "pkg_outside,tui_outside",
++    [
++        (True, False),
++        (False, True),
++        (True, True),
++    ],
++)
++def test_verify_tui_endpoint_install_invalid_provenance_fails(
++    tmp_path: Path,
++    mock_home: Path,
++    monkeypatch: pytest.MonkeyPatch,
++    pkg_outside: bool,
++    tui_outside: bool,
++) -> None:
++    """verify_tui_endpoint_install must fail when package or tui module provenance is outside venv.
++
++    Covers BOTH origin branches of:
++        if str(venv_dir) not in pkg_prov or str(venv_dir) not in tui_prov:
++    """
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
++    monkeypatch.chdir(invoking_cwd)
++
++    pkg_prov = "/system/site-packages/skill_lens/__init__.py" if pkg_outside else None
++    tui_prov = "/system/site-packages/skill_lens/tui/__init__.py" if tui_outside else None
++
++    runner = _make_packaging_subprocess_runner(
++        endpoint_pkg_provenance=pkg_prov,
++        endpoint_tui_provenance=tui_prov,
++    )
++    monkeypatch.setattr(subprocess, "run", runner)
++
++    with pytest.raises(AssertionError, match="Expected installed wheel provenance inside"):
++        verify_tui_endpoint_install(
++            wheel_file,
++            tmp_path / "work_dir",
++            endpoint_name="min",
++            textual_spec="textual==8.2.8",
++            repo_root=REPO_ROOT,
++        )
++
++
++def test_verify_base_install_fails_when_textual_is_present(
++    tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """verify_base_install must fail when Textual is present in base environment.
++
++    Executes the actual check_textual_cmd generated by smoke_wheel against the active
++    Python environment (where Textual is installed) to prove that the subprocess check
++    fails and is load-bearing. Removing the find_spec assertion turns this test red.
++    """
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
++    monkeypatch.chdir(invoking_cwd)
++
++    runner = _make_packaging_subprocess_runner(simulate_textual_in_base=True)
++    monkeypatch.setattr(subprocess, "run", runner)
++
++    with pytest.raises(subprocess.CalledProcessError) as exc_info:
++        verify_base_install(wheel_file, tmp_path / "work_dir")
++    assert "Textual must be absent" in exc_info.value.stderr
++
++
++def test_verify_tui_endpoint_install_fails_on_nonzero_test_suite_exit(
++    tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """verify_tui_endpoint_install must raise AssertionError on nonzero test suite returncode."""
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
++    monkeypatch.chdir(invoking_cwd)
++
++    runner = _make_packaging_subprocess_runner(
++        pytest_returncode=1,
++        pytest_stdout="================ 1 failed, 9 passed in 0.1s ================\n",
++        pytest_stderr="FAILED tests/test_demo.py::test_fail - AssertionError\n",
++    )
++    monkeypatch.setattr(subprocess, "run", runner)
++
++    with pytest.raises(AssertionError, match="Installed test suites failed with code 1"):
++        verify_tui_endpoint_install(
++            wheel_file,
++            tmp_path / "work_dir",
++            endpoint_name="min",
++            textual_spec="textual==8.2.8",
++            repo_root=REPO_ROOT,
++        )
++
++
++def test_verify_tui_endpoint_install_fails_when_source_copied_into_test_lane(
++    tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """verify_tui_endpoint_install must fail when skill_lens source is present in test_lane."""
++    invoking_cwd = tmp_path / "invoking_cwd"
++    invoking_cwd.mkdir()
++    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
++    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
++    monkeypatch.chdir(invoking_cwd)
++
++    runner = _make_packaging_subprocess_runner()
++    monkeypatch.setattr(subprocess, "run", runner)
++
++    orig_copytree = shutil.copytree
++
++    def hostile_copytree(src: Any, dst: Any, *args: Any, **kwargs: Any) -> Any:
++        res = orig_copytree(src, dst, *args, **kwargs)
++        # Simulate hostile leak of skill_lens source directory into test_lane
++        (Path(dst).parent / "skill_lens").mkdir(exist_ok=True)
++        return res
++
++    monkeypatch.setattr(shutil, "copytree", hostile_copytree)
++
++    with pytest.raises(
++        AssertionError, match="skill_lens source package must not be copied into test lane"
++    ):
++        verify_tui_endpoint_install(
++            wheel_file,
++            tmp_path / "work_dir",
++            endpoint_name="min",
++            textual_spec="textual==8.2.8",
++            repo_root=REPO_ROOT,
++        )

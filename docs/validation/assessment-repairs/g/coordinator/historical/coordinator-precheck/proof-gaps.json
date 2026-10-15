@@ -1,0 +1,51 @@
+{
+  "provenance": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-precheck/source/skill_lens/tui/__init__.py\n",
+  "results": [
+    {
+      "name": "duplicate_archive_validator",
+      "path": "scripts/smoke_wheel.py",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-precheck/pytest-cache",
+        "--no-cov"
+      ],
+      "phases": {
+        "clean": 0,
+        "mutant": 0,
+        "restored": 0
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -79,7 +79,7 @@\n         namelist = set(zf.namelist())\n \n     missing_tui = [m for m in REQUIRED_TUI_MODULES if m not in namelist]\n-    if missing_tui:\n+    if False and missing_tui:\n         raise ValueError(\n             f\"Wheel archive {wheel_path.name} is missing required TUI module(s): {missing_tui!r}\"\n         )\n"
+    },
+    {
+      "name": "prompt_quit_guard_survives_join",
+      "path": "skill_lens/tui/__init__.py",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_g_repairs.py::test_prompt_quit_does_not_block_on_worker",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-precheck/pytest-cache",
+        "--no-cov"
+      ],
+      "phases": {
+        "clean": 0,
+        "mutant": 0,
+        "restored": 0
+      },
+      "diff": "--- skill_lens/tui/__init__.py\n+++ skill_lens/tui/__init__.py mutant\n@@ -88,6 +88,7 @@\n                 loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))\n     finally:\n         try:\n+            loop.run_until_complete(loop.shutdown_default_executor())\n             loop.close()\n         finally:\n             if prev_loop is not None and not prev_loop.is_closed():\n"
+    }
+  ]
+}

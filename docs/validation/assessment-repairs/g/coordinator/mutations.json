@@ -1,0 +1,709 @@
+{
+  "import_provenance": [
+    "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-source/skill_lens/tui/__init__.py",
+    "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-source/skill_lens/tui/_textual_compat.py",
+    "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-source/scripts/smoke_wheel.py"
+  ],
+  "results": [
+    {
+      "name": "wheel_tui_check_disabled",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "0f1230530dd6980978122e8b06afa524f2cfdc2214ea06779e6af3560b5a7848",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/wheel_tui_check_disabled-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/wheel_tui_check_disabled-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/wheel_tui_check_disabled-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -82,7 +82,7 @@\n         namelist = set(zf.namelist())\n \n     missing_tui = [m for m in REQUIRED_TUI_MODULES if m not in namelist]\n-    if missing_tui:\n+    if False and missing_tui:\n         raise ValueError(\n             f\"Wheel archive {wheel_path.name} is missing required TUI module(s): {missing_tui!r}\"\n         )\n"
+    },
+    {
+      "name": "wheel_registry_check_disabled",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_synthetic_wheel_missing_registry_files_fails",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_synthetic_wheel_missing_registry_files_fails",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "32981bfcceae01d42c6f0a94988cd77cea88be1f063ec9a071c40b1c5cd29b53",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/wheel_registry_check_disabled-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/wheel_registry_check_disabled-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/wheel_registry_check_disabled-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -90,7 +90,7 @@\n     registry_files = [\n         n for n in namelist if n.startswith(\"skill_lens/registry/agents/\") and n.endswith(\".toml\")\n     ]\n-    if len(registry_files) != REQUIRED_REGISTRY_COUNT:\n+    if False:\n         raise ValueError(\n             f\"Wheel archive {wheel_path.name} contains {len(registry_files)} agent registry TOMLs; \"\n             f\"expected exactly {REQUIRED_REGISTRY_COUNT}.\"\n"
+    },
+    {
+      "name": "wheel_typed_check_disabled",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_synthetic_wheel_missing_typed_marker_fails",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_synthetic_wheel_missing_typed_marker_fails",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "e39314cdc8faa7e5beec5ed6a539e9a131a9ffbcfe4f62722182c92806ca29fe",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/wheel_typed_check_disabled-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/wheel_typed_check_disabled-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/wheel_typed_check_disabled-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -96,7 +96,7 @@\n             f\"expected exactly {REQUIRED_REGISTRY_COUNT}.\"\n         )\n \n-    if REQUIRED_TYPED_MARKER not in namelist:\n+    if False:\n         raise ValueError(\n             f\"Wheel archive {wheel_path.name} is missing typing marker: {REQUIRED_TYPED_MARKER}\"\n         )\n"
+    },
+    {
+      "name": "sdist_missing_check_disabled",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_synthetic_sdist_missing_file_fails",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_synthetic_sdist_missing_file_fails",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "bbdacdd6bd3781a9279e795512375d7f975a4aa74043f764ecedcc3acd0a8774",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/sdist_missing_check_disabled-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/sdist_missing_check_disabled-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/sdist_missing_check_disabled-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -142,7 +142,7 @@\n         if target not in names:\n             missing.append(mod)\n \n-    if missing:\n+    if False:\n         raise ValueError(\n             f\"Sdist archive {sdist_path.name} is missing required file(s): {missing!r}\"\n         )\n"
+    },
+    {
+      "name": "class_hook_audit_disabled",
+      "path": "skill_lens/tui/_textual_compat.py",
+      "test": "tests/test_stage_g_repairs.py::test_adapter_detects_non_callable_class_method",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_g_repairs.py::test_adapter_detects_non_callable_class_method",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "cae83f7dd4e1271a80624845f5537dd318842939a1fc0cf94b3feebc60c81d95",
+      "mutant_hash": "debd120ace32deeb91a520e0d0357de7642b783c64521529688d9ca9f0b4af6d",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/class_hook_audit_disabled-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/class_hook_audit_disabled-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/class_hook_audit_disabled-restored.log"
+        }
+      },
+      "diff": "--- skill_lens/tui/_textual_compat.py\n+++ skill_lens/tui/_textual_compat.py mutant\n@@ -33,7 +33,7 @@\n     # Class-level: verify required hooks exist and are callable\n     for m in REQUIRED_CLASS_METHODS:\n         attr = getattr(app_cls, m, None)\n-        if attr is None or not callable(attr):\n+        if False:\n             raise RuntimeError(\n                 f\"Incompatible Textual App class {app_cls.__name__}: \"\n                 f\"missing or non-callable method {m!r}. \"\n"
+    },
+    {
+      "name": "event_audit_disabled",
+      "path": "skill_lens/tui/_textual_compat.py",
+      "test": "tests/test_stage_g_repairs.py::test_adapter_detects_unusable_event_notification",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_g_repairs.py::test_adapter_detects_unusable_event_notification",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "cae83f7dd4e1271a80624845f5537dd318842939a1fc0cf94b3feebc60c81d95",
+      "mutant_hash": "61542e5c6254485d7d1ad2d0c779757dc8d8a58839b66214b73d7949364ad456",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/event_audit_disabled-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/event_audit_disabled-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/event_audit_disabled-restored.log"
+        }
+      },
+      "diff": "--- skill_lens/tui/_textual_compat.py\n+++ skill_lens/tui/_textual_compat.py mutant\n@@ -58,7 +58,7 @@\n \n         # _exception_event must support set() notification (Textual uses asyncio.Event)\n         event = getattr(app, \"_exception_event\", None)\n-        if event is None or not hasattr(event, \"set\") or not callable(event.set):\n+        if False:\n             raise RuntimeError(\n                 \"Incompatible Textual App instance: \"\n                 \"_exception_event does not support callable set() notification.\"\n"
+    },
+    {
+      "name": "event_notification_disabled",
+      "path": "skill_lens/tui/_textual_compat.py",
+      "test": "tests/test_stage_g_repairs.py::test_record_and_get_unhandled_fault",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_g_repairs.py::test_record_and_get_unhandled_fault",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "cae83f7dd4e1271a80624845f5537dd318842939a1fc0cf94b3feebc60c81d95",
+      "mutant_hash": "35bfcdecb3f70cc5b6f4b65c7fa5667c12e9d93107a3d91d0cebfc7c7716a8e6",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/event_notification_disabled-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/event_notification_disabled-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/event_notification_disabled-restored.log"
+        }
+      },
+      "diff": "--- skill_lens/tui/_textual_compat.py\n+++ skill_lens/tui/_textual_compat.py mutant\n@@ -76,7 +76,7 @@\n     app._return_code = return_code\n     if app._exception is None:\n         app._exception = error\n-        app._exception_event.set()\n+        pass\n \n \n def get_unhandled_fault(app: App[Any] | Any) -> Exception | None:\n"
+    },
+    {
+      "name": "first_fault_overwritten",
+      "path": "skill_lens/tui/_textual_compat.py",
+      "test": "tests/test_stage_g_repairs.py::test_record_and_get_unhandled_fault",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_g_repairs.py::test_record_and_get_unhandled_fault",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "cae83f7dd4e1271a80624845f5537dd318842939a1fc0cf94b3feebc60c81d95",
+      "mutant_hash": "328ce5f952631dd4ca6519e79b6daa30170411c3ac71f715037187a102a21300",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/first_fault_overwritten-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/first_fault_overwritten-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/first_fault_overwritten-restored.log"
+        }
+      },
+      "diff": "--- skill_lens/tui/_textual_compat.py\n+++ skill_lens/tui/_textual_compat.py mutant\n@@ -74,7 +74,7 @@\n     \"\"\"\n     audit_textual_app_contract(app)\n     app._return_code = return_code\n-    if app._exception is None:\n+    if True:\n         app._exception = error\n         app._exception_event.set()\n \n"
+    },
+    {
+      "name": "fault_code_success",
+      "path": "skill_lens/tui/_textual_compat.py",
+      "test": "tests/test_stage_g_repairs.py::test_record_and_get_unhandled_fault",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_g_repairs.py::test_record_and_get_unhandled_fault",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "cae83f7dd4e1271a80624845f5537dd318842939a1fc0cf94b3feebc60c81d95",
+      "mutant_hash": "8aeaac8da2bd379c37e0b79f548e8f3e162c74b1c82c0a1ef0203755c6ce7053",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/fault_code_success-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/fault_code_success-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/fault_code_success-restored.log"
+        }
+      },
+      "diff": "--- skill_lens/tui/_textual_compat.py\n+++ skill_lens/tui/_textual_compat.py mutant\n@@ -73,7 +73,7 @@\n     Preserves Textual's first-fault semantics.\n     \"\"\"\n     audit_textual_app_contract(app)\n-    app._return_code = return_code\n+    app._return_code = 0\n     if app._exception is None:\n         app._exception = error\n         app._exception_event.set()\n"
+    },
+    {
+      "name": "relative_base_path_unresolved",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_relative_wheel_and_harness_paths_normalized_before_cwd_switch",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_relative_wheel_and_harness_paths_normalized_before_cwd_switch",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "021817473489c7d529d728bf76b54df3640fa4d01692cea59a793fcb20a05886",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/relative_base_path_unresolved-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/relative_base_path_unresolved-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/relative_base_path_unresolved-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -189,7 +189,7 @@\n     timeout_seconds: int = 60,\n ) -> dict[str, Any]:\n     \"\"\"Verify lean base installation behavior in an isolated virtualenv.\"\"\"\n-    wheel_path = pathlib.Path(wheel_path).resolve()\n+    wheel_path = pathlib.Path(wheel_path)\n     work_dir = pathlib.Path(work_dir).resolve()\n     if not wheel_path.exists():\n         raise FileNotFoundError(f\"Wheel does not exist: {wheel_path}\")\n"
+    },
+    {
+      "name": "relative_endpoint_path_unresolved",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_relative_wheel_and_harness_paths_normalized_before_cwd_switch",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_relative_wheel_and_harness_paths_normalized_before_cwd_switch",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "bd5eb45eb1418e97df22f853beb3495d82c5d22be51f4fe4dc81f5e1fc79af47",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/relative_endpoint_path_unresolved-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/relative_endpoint_path_unresolved-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/relative_endpoint_path_unresolved-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -354,7 +354,7 @@\n     timeout_seconds: int = 180,\n ) -> dict[str, Any]:\n     \"\"\"Verify [tui] installation, lifecycle, and parity in an isolated virtualenv.\"\"\"\n-    wheel_path = pathlib.Path(wheel_path).resolve()\n+    wheel_path = pathlib.Path(wheel_path)\n     work_dir = pathlib.Path(work_dir).resolve()\n     if not wheel_path.exists():\n         raise FileNotFoundError(f\"Wheel does not exist: {wheel_path}\")\n"
+    },
+    {
+      "name": "runner_joins_blocked_executor",
+      "path": "skill_lens/tui/__init__.py",
+      "test": "tests/test_stage_g_repairs.py::test_prompt_quit_does_not_block_on_worker",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_g_repairs.py::test_prompt_quit_does_not_block_on_worker",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "551e3dc863b16ffc71e554668a5ba59384f2cd762b96b4728a70fc024086c7e4",
+      "mutant_hash": "ff63fd26bb020ac28b37ec3dd7c136ac57480f696ff98278e1e0b8764fc0db48",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/runner_joins_blocked_executor-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/runner_joins_blocked_executor-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/runner_joins_blocked_executor-restored.log"
+        }
+      },
+      "diff": "--- skill_lens/tui/__init__.py\n+++ skill_lens/tui/__init__.py mutant\n@@ -84,6 +84,7 @@\n                 loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))\n     finally:\n         try:\n+            loop.run_until_complete(loop.shutdown_default_executor())\n             loop.close()\n         finally:\n             if prev_loop is not None and not prev_loop.is_closed():\n"
+    },
+    {
+      "name": "runner_drops_fault",
+      "path": "skill_lens/tui/__init__.py",
+      "test": "tests/test_tui_app.py::test_actual_textual_event_handler_fault_via_cli",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_app.py::test_actual_textual_event_handler_fault_via_cli",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "551e3dc863b16ffc71e554668a5ba59384f2cd762b96b4728a70fc024086c7e4",
+      "mutant_hash": "624b2f9b8399dd8dad7eafaffd008508fd8bca57d383bfbab87a24f8a91e4307",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/runner_drops_fault-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/runner_drops_fault-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/runner_drops_fault-restored.log"
+        }
+      },
+      "diff": "--- skill_lens/tui/__init__.py\n+++ skill_lens/tui/__init__.py mutant\n@@ -68,7 +68,7 @@\n                 headless=headless,\n                 auto_pilot=auto_pilot,\n             )\n-            unhandled_exc = get_unhandled_fault(app)\n+            unhandled_exc = None\n             if unhandled_exc is not None:\n                 raise unhandled_exc\n             if code is not None:\n"
+    },
+    {
+      "name": "ci_minimum_lane_removed",
+      "path": ".github/workflows/ci.yml",
+      "test": "tests/test_tui_packaging.py::test_ci_packaging_job_has_base_and_tui_lanes",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_ci_packaging_job_has_base_and_tui_lanes",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "cedf178b6d05308f1ada1f0f2066762d5060af754b018ba72e9f4e9cb944a158",
+      "mutant_hash": "c2b509137e9beb87ca387b6743927959e652ac4d19a1f588b6bcbb7089781a2e",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/ci_minimum_lane_removed-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/ci_minimum_lane_removed-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/ci_minimum_lane_removed-restored.log"
+        }
+      },
+      "diff": "--- .github/workflows/ci.yml\n+++ .github/workflows/ci.yml mutant\n@@ -69,7 +69,7 @@\n       - name: Verify minimum endpoint (textual==8.2.8) installed lifecycle and parity\n         run: |\n           wheel=$(ls dist/*.whl)\n-          uv run python scripts/smoke_wheel.py --verify-min-only --wheel \"$wheel\"\n+          uv run python scripts/smoke_wheel.py --verify-latest-only --wheel \"$wheel\"\n \n       - name: Verify latest endpoint (unconstrained) installed lifecycle and parity\n         run: |\n"
+    },
+    {
+      "name": "base_origin_guard_removed",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_verify_base_install_invalid_provenance_fails",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_verify_base_install_invalid_provenance_fails",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "63ce70d02560dc31a558f7bdee69a8ebe94d3548037f238a62c2226e9c7857dd",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/base_origin_guard_removed-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/base_origin_guard_removed-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/base_origin_guard_removed-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -257,7 +257,7 @@\n         timeout=timeout_seconds,\n     )\n     provenance = prov_res.stdout.strip()\n-    if str(venv_dir) not in provenance:\n+    if False:\n         raise AssertionError(f\"Expected skill_lens inside venv {venv_dir}; got: {provenance}\")\n \n     # 2. Assert Textual is truly absent\n"
+    },
+    {
+      "name": "endpoint_pkg_origin_ignored",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_verify_tui_endpoint_install_invalid_provenance_fails",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_verify_tui_endpoint_install_invalid_provenance_fails",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "acd1d0ef9de358a7374888f4374327d3b9e344e4bbd773af5ac5c8b0582e0970",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/endpoint_pkg_origin_ignored-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/endpoint_pkg_origin_ignored-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/endpoint_pkg_origin_ignored-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -462,7 +462,7 @@\n     )\n     lines = prov_res.stdout.strip().splitlines()\n     pkg_prov, tui_prov = lines[0], lines[1]\n-    if str(venv_dir) not in pkg_prov or str(venv_dir) not in tui_prov:\n+    if str(venv_dir) not in tui_prov:\n         raise AssertionError(f\"Expected installed wheel provenance inside {venv_dir}; got: {lines}\")\n \n     # 2. Assert Textual is present and retrieve version\n"
+    },
+    {
+      "name": "endpoint_tui_origin_ignored",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_verify_tui_endpoint_install_invalid_provenance_fails",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_verify_tui_endpoint_install_invalid_provenance_fails",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "9f7514401553e8914b243cf65ad6e57fd8b70968f16c6fefac2376ac6c0c4c67",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/endpoint_tui_origin_ignored-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/endpoint_tui_origin_ignored-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/endpoint_tui_origin_ignored-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -462,7 +462,7 @@\n     )\n     lines = prov_res.stdout.strip().splitlines()\n     pkg_prov, tui_prov = lines[0], lines[1]\n-    if str(venv_dir) not in pkg_prov or str(venv_dir) not in tui_prov:\n+    if str(venv_dir) not in pkg_prov:\n         raise AssertionError(f\"Expected installed wheel provenance inside {venv_dir}; got: {lines}\")\n \n     # 2. Assert Textual is present and retrieve version\n"
+    },
+    {
+      "name": "base_textual_presence_ignored",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_verify_base_install_fails_when_textual_is_present",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_verify_base_install_fails_when_textual_is_present",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "b697f03d16dfdc43a9a5abca34c04bc9796d05c0abcf55eeaf57841b7efc232f",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/base_textual_presence_ignored-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/base_textual_presence_ignored-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/base_textual_presence_ignored-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -263,7 +263,7 @@\n     # 2. Assert Textual is truly absent\n     check_textual_cmd = (\n         \"import importlib.util; \"\n-        \"assert importlib.util.find_spec('textual') is None, 'Textual must be absent'\"\n+        \"assert True, 'Textual must be absent'\"\n     )\n     subprocess.run(\n         [str(py_exe), \"-c\", check_textual_cmd],\n"
+    },
+    {
+      "name": "installed_test_failure_ignored",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_verify_tui_endpoint_install_fails_on_nonzero_test_suite_exit",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_verify_tui_endpoint_install_fails_on_nonzero_test_suite_exit",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "176cb452a517eb363bee75d17238f2fbc9b702b36a2b41568f8cda5e76c99335",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed_test_failure_ignored-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed_test_failure_ignored-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed_test_failure_ignored-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -534,7 +534,7 @@\n         text=True,\n         timeout=timeout_seconds,\n     )\n-    if test_res.returncode != 0:\n+    if False:\n         raise AssertionError(\n             f\"Installed test suites failed with code {test_res.returncode}:\\n\"\n             f\"STDOUT:\\n{test_res.stdout}\\n\"\n"
+    },
+    {
+      "name": "source_copy_guard_removed",
+      "path": "scripts/smoke_wheel.py",
+      "test": "tests/test_tui_packaging.py::test_verify_tui_endpoint_install_fails_when_source_copied_into_test_lane",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_tui_packaging.py::test_verify_tui_endpoint_install_fails_when_source_copied_into_test_lane",
+        "-q",
+        "--tb=short",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-cache",
+        "--no-cov"
+      ],
+      "source_hash": "a28bc7f8dade832168a773c190c5f8abc21d75c36b14881460c45d146b8fa331",
+      "mutant_hash": "c50ea56695ee3e846b0697eaf3f4a6f5a89c21c591b5b7f662d619f2cc992106",
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/source_copy_guard_removed-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/source_copy_guard_removed-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/source_copy_guard_removed-restored.log"
+        }
+      },
+      "diff": "--- scripts/smoke_wheel.py\n+++ scripts/smoke_wheel.py mutant\n@@ -520,7 +520,7 @@\n     )\n \n     # Strictly assert no skill_lens source package exists in test_lane\n-    assert not (test_lane / \"skill_lens\").exists(), (\n+    assert True, (\n         \"skill_lens source package must not be copied into test lane\"\n     )\n \n"
+    }
+  ]
+}

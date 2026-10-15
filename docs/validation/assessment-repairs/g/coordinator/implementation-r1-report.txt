@@ -1,0 +1,114 @@
+EFFECTIVE_MODEL: [google/gemini-3.8-flash-high,settings:default,runtimeMode:standalone/acp,interactionMode:default | requested: Antigravity Gemini 3.8 Flash High, configured: gemini-3.8-flash-high, confirmed: active harness as gemini-3.8-flash-high]
+OUTCOME: succeeded
+FILES_CHANGED: [
+  ".github/workflows/ci.yml",
+  "skill_lens/tui/__init__.py",
+  "skill_lens/tui/app.py",
+  "skill_lens/tui/_textual_compat.py",
+  "scripts/smoke_wheel.py",
+  "tests/test_tui_packaging.py",
+  "tests/test_tui_read_only.py",
+  "tests/test_stage_g_repairs.py"
+]
+CHECKS: pytest=1009 passed, 1 skipped (case-insensitive filesystem in [test_session_snapshot.py:1951](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_session_snapshot.py#L1951)), 91.14% coverage (target >=90.0%); mypy=Success (37 source files clean); ruff-check=All checks passed; ruff-format=148 files already formatted; installed-lane matrix=both lean base lane and optional [tui] extra lane verified in clean virtualenvs outside repository checkout (receipt at [/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker/smoke-receipt.json](file:///Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker/smoke-receipt.json))
+TESTS_ADDED: [
+  "tests/test_stage_g_repairs.py::test_textual_version_meets_declared_floor",
+  "tests/test_stage_g_repairs.py::test_textual_installed_contract_audits_cleanly",
+  "tests/test_stage_g_repairs.py::test_adapter_detects_missing_class_method",
+  "tests/test_stage_g_repairs.py::test_adapter_detects_missing_instance_attribute",
+  "tests/test_stage_g_repairs.py::test_record_and_get_unhandled_fault",
+  "tests/test_stage_g_repairs.py::test_skill_lens_app_handle_exception_containment",
+  "tests/test_stage_g_repairs.py::test_explicit_non_interactive_tui_exits_2",
+  "tests/test_stage_g_repairs.py::test_prompt_quit_does_not_block_on_worker",
+  "tests/test_stage_g_repairs.py::test_installed_module_provenance",
+  "tests/test_tui_packaging.py::test_preserved_dist_hashes_remain_unchanged",
+  "tests/test_tui_packaging.py::test_stale_local_wheel_fails_tui_package_verification",
+  "tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails",
+  "tests/test_tui_packaging.py::test_synthetic_wheel_missing_registry_files_fails",
+  "tests/test_tui_packaging.py::test_synthetic_wheel_missing_typed_marker_fails",
+  "tests/test_tui_packaging.py::test_synthetic_sdist_missing_file_fails"
+]
+DEVIATIONS_FROM_PLAN: []
+BLOCKED_ON: []
+
+---
+
+### Artifact and Lane Receipts
+
+- **Fresh wheel built in isolated worker directory:**
+  - Path: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker/dist/skill_lens_cli-0.1.1-py3-none-any.whl`
+  - SHA-256: `a9333237b6ef31ecf7c7ccfd465264112203d6f294dd81768b493209bcef64ec`
+  - Content: 53 files, all 4 required TUI modules (`skill_lens/tui/__init__.py`, `skill_lens/tui/app.py`, `skill_lens/tui/session.py`, `skill_lens/tui/_textual_compat.py`), 10 agent registry TOMLs, and `skill_lens/py.typed`.
+- **Fresh sdist built in isolated worker directory:**
+  - Path: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker/dist/skill_lens_cli-0.1.1.tar.gz`
+  - SHA-256: `32b97091b0f27915a90e764268dbc6545b4de6ea936dde1eb4d1d8869cfad4ab`
+  - Content: 603 files, including all required root files (`pyproject.toml`, `README.md`, `LICENSE`, `skill_lens/py.typed`), all 4 TUI modules, and 10 agent registry TOMLs.
+- **Machine-readable smoke receipt:**
+  - Stored at `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker/smoke-receipt.json`
+- **Preserved historical `dist/` and `.path` artifacts (byte-identical verification):**
+  - `dist/skill_lens_cli-0.1.1-py3-none-any.whl`: `1bcc4b2b46feac61dfbda10f6d333b8f81971d2aa42be886892c6d9a256805b7`
+  - `dist/skill_lens_cli-0.1.1.tar.gz`: `c2550a2b992cd6fceca4fb22a2875ca1de93e5ad7d11ed979ad262109e49abe7`
+  - `dist/.gitignore`: `684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1`
+  - `.path`: 0 bytes, empty, untouched.
+
+### Clean Virtualenv Lane Provenance & Behavior
+
+- **Lean Base Lane (clean venv outside checkout, fake HOME/XDG, clean PYTHONPATH):**
+  - `skill_lens.__file__`: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker/smoke_work/base_lane/venv/lib/python3.11/site-packages/skill_lens/__init__.py`
+  - Textual absence: confirmed (`importlib.util.find_spec('textual') is None`)
+  - `skill-lens --version`: exit 0, output `skill-lens 0.1.1`
+  - `skill-lens --help`: exit 0
+  - Bare non-interactive invocation: exit 0, usage printed, install tip omitted
+  - Explicit `skill-lens tui`: exit 2, hint mentions `skill-lens-cli[tui]`, no traceback
+- **Optional `[tui]` Lane (clean venv outside checkout, fake HOME/XDG, clean PYTHONPATH):**
+  - `skill_lens.__file__`: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker/smoke_work/tui_lane/venv/lib/python3.11/site-packages/skill_lens/__init__.py`
+  - `skill_lens.tui.__file__`: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker/smoke_work/tui_lane/venv/lib/python3.11/site-packages/skill_lens/tui/__init__.py`
+  - Textual version: `8.2.8`
+  - Explicit non-interactive `skill-lens tui`: exit 2, requires interactive terminal, no traceback
+  - Test suites executed in outside `test_lane` without copying `skill_lens` source:
+    - [tests/test_render_snapshots.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_render_snapshots.py)
+    - [tests/test_fixtures.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_fixtures.py)
+    - [tests/test_phase3_gate.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_phase3_gate.py)
+    - [tests/test_phase4_gate.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_phase4_gate.py)
+    - [tests/test_tui_app.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_app.py)
+    - [tests/test_tui_session.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_session.py)
+    - [tests/test_tui_read_only.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_read_only.py)
+    - [tests/test_stage_g_repairs.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_stage_g_repairs.py)
+    - [tests/test_tui_packaging.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_packaging.py)
+    - Exit code: 0 across all 337 installed tests, bounded by watchdog timeout.
+
+### Textual Version Compatibility & Policy
+
+- **Declared Range:** `textual>=8.2.8`
+- **Live PyPI Latest:** `8.2.8` (queried via PyPI JSON API)
+- **Declared Minimum Floor:** `8.2.8`
+- **Endpoint Overlap:** `True` (minimum floor and latest-allowed resolution legitimately coincide at `8.2.8`).
+- **Policy:** The declared range `textual>=8.2.8` is retained as all tested endpoints pass. Future releases remain unverified and CI will continue testing against current latest resolution.
+
+### Private-API Disposition & Evidence (R02)
+
+- Inspection of Textual 8.2.8 public APIs confirms that Textual's `App` exposes no public unhandled exception hooks, message classes, or error events. Unhandled exceptions occurring in UI callbacks or background tasks route exclusively through `_handle_exception(self, error: Exception)`. Textual's default implementation invokes `_fatal_error()`, dumping rich tracebacks to stderr and exiting with code 1.
+- In `skill_lens/tui/_textual_compat.py`, access to Textual's fault state (`App._handle_exception`, `app._return_code`, `app._exception`, `app._exception_event`) is centralized behind an audited seam (`audit_textual_app_contract`, `record_unhandled_fault`, `get_unhandled_fault`).
+- The adapter audits both the class methods and instance attributes. If an incompatible Textual version alters this hook shape, it raises a descriptive `RuntimeError` rather than silently suppressing errors or returning false success.
+- `SkillLensApp._handle_exception` calls `record_unhandled_fault` and `self.exit(int(ExitCode.INTERNAL))`, preserving sticky exit code 3, unhandled-fault containment, suppression of terminal tracebacks, runner re-throw to CLI, exact borrowed-loop restoration, and prompt quit without waiting for blocked executor threads.
+
+### Mutation Evidence (Clean 0 / Mutant 1 / Restored 0)
+
+1. **Wheel Packaging Validator (`verify_wheel_contents`):**
+   - Clean control (fresh wheel): code 0 (PASS, sha256 `a9333237b6ef...`)
+   - Mutant (synthetic wheel omitting `skill_lens/tui/_textual_compat.py`): code 1 (`ValueError: Wheel archive mutant.whl is missing required TUI module(s): ['skill_lens/tui/_textual_compat.py']`)
+   - Mutant (stale local wheel in `dist/`): code 1 (`ValueError: Wheel archive skill_lens_cli-0.1.1-py3-none-any.whl is missing required TUI module(s): ...`)
+   - Restored control: code 0 (PASS)
+2. **Sdist Packaging Validator (`verify_sdist_contents`):**
+   - Clean control (fresh sdist): code 0 (PASS, sha256 `32b97091b0f2...`)
+   - Mutant (synthetic sdist omitting required files): code 1 (`ValueError: Sdist archive mutant.tar.gz is missing required file(s): ...`)
+   - Restored control: code 0 (PASS)
+3. **Textual App Shape Audit (`audit_textual_app_contract`):**
+   - Clean control (Textual `App` and `SkillLensApp`): code 0 (PASS)
+   - Mutant (class missing `_handle_exception`): code 1 (`RuntimeError: Incompatible Textual App class: missing expected methods ['_handle_exception']`)
+   - Mutant (instance missing `_return_code`, `_exception`, or `_exception_event`): code 1 (`RuntimeError: Incompatible Textual App instance: missing attributes [...]`)
+   - Restored control: code 0 (PASS)
+4. **Read-Only AST & Target Preservation Guards (`test_tui_read_only.py`):**
+   - All 137 mutation cases across every guard category executed with clean control 0, mutant detected 1, restored control 0.
+
+- Active compute / billed tokens: unavailable through environment metadata.

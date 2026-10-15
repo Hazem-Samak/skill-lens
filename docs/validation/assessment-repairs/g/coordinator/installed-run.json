@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+    "/Users/corvette/Documents/Projects Coding/Skill Lens/scripts/smoke_wheel.py",
+    "--wheel",
+    "artifacts/skill_lens_cli-0.1.1-py3-none-any.whl",
+    "--sdist",
+    "artifacts/skill_lens_cli-0.1.1.tar.gz",
+    "--work-dir",
+    "installed-work",
+    "--receipt-out",
+    "installed-receipt.json"
+  ],
+  "cwd": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2",
+  "exit": 0,
+  "seconds": 110.24644949999856,
+  "wheel_sha256": "59707ca7bc191c051ad98556bc6246b81e0199333a600902e1f4dd4ea170ef32",
+  "sdist_sha256": "273ef448502ffcd3a0f08f1e4fcdc5ed52bf9920d7ccde3b80e0ce3194ee9dc1",
+  "all_packaged_source_bytes_match": true,
+  "sdist_current_test_harness_bytes_match": true
+}

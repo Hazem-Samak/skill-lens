@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/corvette/Documents/Projects Coding/Skill Lens/scripts/smoke_wheel.py", line 770, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/Users/corvette/Documents/Projects Coding/Skill Lens/scripts/smoke_wheel.py", line 697, in main
+    results = verify_base_install(args.wheel, work_dir, python_bin=args.python_bin)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/corvette/Documents/Projects Coding/Skill Lens/scripts/smoke_wheel.py", line 207, in verify_base_install
+    subprocess.run(
+  File "/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['uv', 'pip', 'install', '--python', '/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-precheck-r2/relative-wheel-lane/base_lane/venv', 'artifacts/skill_lens_cli-0.1.1-py3-none-any.whl']' returned non-zero exit status 1.

@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_ci_packaging_job_has_base_and_tui_lanes _________________
+tests/test_tui_packaging.py:172: in test_ci_packaging_job_has_base_and_tui_lanes
+    assert "scripts/smoke_wheel.py --verify-min-only" in step_runs, (
+E   AssertionError: CI packaging job must invoke smoke_wheel.py min endpoint verification
+E   assert 'scripts/smoke_wheel.py --verify-min-only' in '\n\nuv build --out-dir dist\nwheel=$(ls dist/*.whl)\nsdist=$(ls dist/*.tar.gz)\nuv run python scripts/smoke_wheel.py ...wheel "$wheel"\n\nwheel=$(ls dist/*.whl)\nuv run python scripts/smoke_wheel.py --verify-latest-only --wheel "$wheel"\n'
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_ci_packaging_job_has_base_and_tui_lanes
+1 failed in 0.09s

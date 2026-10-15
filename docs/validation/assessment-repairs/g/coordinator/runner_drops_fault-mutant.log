@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_actual_textual_event_handler_fault_via_cli ________________
+tests/test_tui_app.py:890: in test_actual_textual_event_handler_fault_via_cli
+    assert "Error: Failed to start the terminal UI: Unhandled action fault" in result.stderr
+E   AssertionError: assert 'Error: Failed to start the terminal UI: Unhandled action fault' in ''
+E    +  where '' = <Result SystemExit(3)>.stderr
+=========================== short test summary info ============================
+FAILED tests/test_tui_app.py::test_actual_textual_event_handler_fault_via_cli
+1 failed in 0.26s

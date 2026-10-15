@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+    "/Users/corvette/Documents/Projects Coding/Skill Lens/scripts/smoke_wheel.py",
+    "--verify-base-only",
+    "--wheel",
+    "artifacts/skill_lens_cli-0.1.1-py3-none-any.whl",
+    "--work-dir",
+    "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-precheck-r2/relative-wheel-lane"
+  ],
+  "cwd": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-precheck-r2",
+  "exit": 1
+}

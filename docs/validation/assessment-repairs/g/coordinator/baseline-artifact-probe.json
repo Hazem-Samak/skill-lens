@@ -1,0 +1,12 @@
+{
+  "fresh_wheel": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/baseline-artifacts/skill_lens_cli-0.1.1-py3-none-any.whl",
+  "sha256": "947633d723e37c017278b67456670eb8dbd552dafb448677021cbc9a0f9946b8",
+  "tui_files": [
+    "skill_lens/tui/__init__.py",
+    "skill_lens/tui/app.py",
+    "skill_lens/tui/session.py"
+  ],
+  "registry_count": 10,
+  "existing_ci_guard_after_removing_tui_app": true,
+  "note": "Existing registry-only archive guard cannot detect a missing app module. Current fresh build does contain TUI; stale local wheel is distinct."
+}

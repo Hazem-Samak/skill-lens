@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________________ test_prompt_quit_does_not_block_on_worker ___________________
+tests/test_stage_g_repairs.py:253: in test_prompt_quit_does_not_block_on_worker
+    assert not watchdog_fired.is_set(), (
+E   AssertionError: Watchdog fired! Runner blocked waiting for background worker completion.
+E   assert not True
+E    +  where True = is_set()
+E    +    where is_set = <threading.Event at 0x10996d210: set>.is_set
+=========================== short test summary info ============================
+FAILED tests/test_stage_g_repairs.py::test_prompt_quit_does_not_block_on_worker
+1 failed in 1.65s

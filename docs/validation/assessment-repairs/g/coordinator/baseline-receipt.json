@@ -1,0 +1,15 @@
+{
+  "base": "491f9ce5902f98a7dd687c03418c308dcb88bcfd",
+  "recorded": "2026-10-15T19:02:18.249566+00:00",
+  "baseline_gates_reused_from": "docs/validation/assessment-repairs/f/coordinator/gates.json",
+  "reason": "Same-session exact source/test/config bytes and unchanged existing virtual environment; all four direct Stage F gates passed on these bytes.",
+  "source_files_rechecked": 122,
+  "python": "3.11.16 (main, Aug 25 2026, 13:50:51) [Clang 22.1.3 ]",
+  "textual": "8.2.8",
+  "pytest": "9.1.1",
+  "mypy": "2.3.1",
+  "ruff": "0.16.9",
+  "stale_local_wheel": "dist/skill_lens_cli-0.1.1-py3-none-any.whl",
+  "stale_local_wheel_tui_modules": [],
+  "stale_local_wheel_registry_count": 10
+}

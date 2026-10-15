@@ -1,0 +1,57 @@
+EFFECTIVE_MODEL: [Antigravity / gemini-3.8-flash-high, temperature: default, runtimeMode: full-access, interactionMode: default | requested: gemini-3.8-flash-high, configured: gemini-3.8-flash-high, confirmed via T3 harness; active compute/billed tokens unavailable]
+OUTCOME: succeeded
+FILES_CHANGED:
+- [scripts/smoke_wheel.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/scripts/smoke_wheel.py)
+- [tests/test_tui_packaging.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_packaging.py)
+- [tests/test_stage_g_repairs.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_stage_g_repairs.py)
+- [.github/workflows/ci.yml](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/.github/workflows/ci.yml)
+- [skill_lens/tui/__init__.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/tui/__init__.py)
+- [skill_lens/tui/app.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/tui/app.py)
+- [skill_lens/tui/_textual_compat.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/tui/_textual_compat.py)
+- [tests/test_tui_read_only.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_read_only.py)
+- [docs/plans/2026-10-12-assessment-repairs.md](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/docs/plans/2026-10-12-assessment-repairs.md)
+
+CHECKS:
+- pytest: 1014 passed, 1 skipped in 53.56s (`uv run pytest --cov=skill_lens`, total coverage: 91.16%, meeting the 90.0% threshold)
+- mypy: `uv run mypy` clean (Success: no issues found in 37 source files)
+- ruff check: `uv run ruff check .` clean (All checks passed!)
+- ruff format: `uv run ruff format --check .` clean (148 files already formatted)
+- Installed-lane matrix:
+  - Base lane: Verified lean installation; Textual confirmed absent (`find_spec('textual') is None`); bare invocation exits 0 with usage and no tip; explicit `tui` exits 2 with hint to install `skill-lens-cli[tui]`; provenance verified inside virtualenv.
+  - Minimum endpoint lane: Installed `textual==8.2.8`; 346 tests passed, 0 skipped; non-interactive explicit `tui` exits 2; package and TUI provenance verified inside virtualenv.
+  - Latest endpoint lane: Installed unconstrained `textual` (resolving to 8.2.8); 346 tests passed, 0 skipped; non-interactive explicit `tui` exits 2; package and TUI provenance verified inside virtualenv.
+  - Endpoint overlap: `min_version: 8.2.8`, `latest_version: 8.2.8`, `overlap: True` (PyPI latest stable equals declared floor at current index resolution).
+  - Relative-wheel CI reproduction: Re-executed coordinator's failing CLI command from `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-precheck-r2` (`--wheel artifacts/skill_lens_cli-0.1.1-py3-none-any.whl`); exited with code 0 (`Base installation lane passed successfully.`).
+
+TESTS_ADDED:
+- [`tests/test_tui_packaging.py::test_relative_wheel_and_harness_paths_normalized_before_cwd_switch`](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_packaging.py#L350-L498): Meaningful deterministic `tmp_path` regression capturing subprocess CWD and relative-path normalization across CLI `main`, `verify_base_install`, and `verify_tui_endpoint_install`. Proves that any relative wheel or work path is resolved to an absolute path prior to subprocess cwd switching to `lane_dir`.
+- [`tests/test_stage_g_repairs.py`](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_stage_g_repairs.py):
+  - `test_textual_installed_contract_audits_cleanly`: Uses `mock_home` and project `cwd`.
+  - `test_skill_lens_app_handle_exception_containment`: Uses `mock_home` and project `cwd`.
+  - `test_explicit_non_interactive_tui_exits_2`: Uses `mock_home` and project `cwd`.
+  - `test_prompt_quit_does_not_block_on_worker`: Uses `mock_home` and project `cwd` under synthetic home; preserves active 1.5s watchdog, bounded execution, and worker unjoined assertion.
+
+MUTATION_PROOF:
+- Target: `scripts/smoke_wheel.py` `verify_base_install` relative-path normalization.
+- Mutation: Disabling `.resolve()` on `wheel_path` in `verify_base_install`, leaving it relative.
+- Evidence:
+  - Clean: `uv run pytest tests/test_tui_packaging.py -k test_relative_wheel` -> PASS (0)
+  - Mutant: `CalledProcessError: Command '['uv', 'pip', 'install', ... 'artifacts/skill_lens_cli-0.1.1-py3-none-any.whl']' returned non-zero exit status 1. File not found from subprocess cwd .../base_lane: .../base_lane/artifacts/...` -> FAIL (1)
+  - Restored: Re-enabling `wheel_path = pathlib.Path(wheel_path).resolve()` -> PASS (0)
+  - Score: 0/1/0 clean/mutant/restored.
+
+PRESERVATION_CONFIRMATION:
+- Untracked `.path`: Preserved, untouched, 0 bytes, SHA-256: `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+- Baseline `dist/skill_lens_cli-0.1.1-py3-none-any.whl`: Preserved, untouched, SHA-256: `1bcc4b2b46feac61dfbda10f6d333b8f81971d2aa42be886892c6d9a256805b7`.
+- Baseline `dist/skill_lens_cli-0.1.1.tar.gz`: Preserved, untouched, SHA-256: `c2550a2b992cd6fceca4fb22a2875ca1de93e5ad7d11ed979ad262109e49abe7`.
+- Source-matched fresh artifacts built into `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-correction-r2/dist/`:
+  - Wheel: `59707ca7bc191c051ad98556bc6246b81e0199333a600902e1f4dd4ea170ef32`
+  - Sdist: `01b0e623eaba9587dc26fb14cb495388e33b86fd84ca4b54c77f082da4a9e5b9`
+
+EVIDENCE_PATHS:
+- Build log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-correction-r2/build.log`
+- Run log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-correction-r2/relative-run.log`
+- Full smoke receipt: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-correction-r2/smoke-receipt.json`
+
+DEVIATIONS_FROM_PLAN: None.
+BLOCKED_ON: None. No commits made, no push attempted, no policy changes or scope expansion. Ready for coordinator verification and council review.

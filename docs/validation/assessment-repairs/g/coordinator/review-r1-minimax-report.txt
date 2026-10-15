@@ -1,0 +1,42 @@
+EFFECTIVE_MODEL: [ requested: independent MiniMax M3.1 Flash (thinking / mcode), xHigh, runtimeMode full-access, interactionMode plan | configured: `m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking` per runtime context | confirmed: model identity + `thinking` effort variant + Plan interaction mode (active plan-mode directive and T3 interaction-mode instruction) | unverified: server-side runtimeMode could not be independently confirmed from inside the session — "full access permits writes" is taken from the brief, not observed; upstream served identity/family diversity remains unverified under the owner-selected named pair, as disclosed ]
+
+VERDICT: pass
+
+BLOCKERS: [ none ]
+
+No current artifact, source, or provenance failure was found, so nothing rises to blocker severity. The one serious concern is in SUGGESTIONS, marked top priority. Specifically cleared, with evidence:
+
+- **No forbidden-scope drift.** `pyproject.toml`, `registry/`, `core/`, `models/` and all JSON models are untouched. No snapshot or golden file is modified, so the four source gates and installed output parity genuinely pass unchanged.
+- **No release / no old-dist replacement.** Live `dist/` hashes are byte-identical to `preserved-dist-fingerprints.json` (`1bcc4b2b…` wheel, `c2550a2b…` sdist); the fresh build went to the evidence directory.
+- **The frozen contract was not edited.** `fe6f89bc` is a real ancestor of HEAD; the plan-file delta is an appended Stage F/G *execution record*, not a change to Section 6.
+- **Review was non-mutating.** All 9 in-scope files re-hashed after review and matched `before-review-fingerprints.json` exactly; `git status` and HEAD unchanged.
+
+SUGGESTIONS: [ non-blocking ]
+
+1. **[TOP PRIORITY] Four installed-lane guards have zero mutation coverage — reproduced false pass.** `verify_base_install` and `verify_tui_endpoint_install` are exercised by exactly one test, `test_relative_wheel_and_harness_paths_normalized_before_cwd_switch`, which mocks `subprocess.run`. Every assertion inside both lane functions is short-circuited. I copied the repo to a disposable `/tmp` tree (proved via `skill_lens.__file__ = /private/tmp/…`), mutated `scripts/smoke_wheel.py` there, and re-ran the **full** suite each time:
+
+   | Mutation | Expected | Actual |
+   |---|---|---|
+   | Control (unmutated copy) | 1014 passed | 1014 passed, 1 skipped — matches coordinator exactly |
+   | M1: `if str(venv_dir) not in provenance` → `if False` (base) **and** `… not in pkg_prov or … not in tui_prov` → `if False` (endpoint) | installed-origin guard load-bearing | **1014 passed, 1 skipped** |
+   | M2: delete `find_spec('textual') is None` subprocess check (base lane) | base-isolation guard load-bearing | **1014 passed, 1 skipped** |
+   | M3: `if test_res.returncode != 0:` → `if False:` (endpoint lane) | suite failure must fail CI | **1014 passed, 1 skipped** |
+   | M4: delete `assert not (test_lane / "skill_lens").exists()` | source-unshadowing assert load-bearing | **1014 passed, 1 skipped** |
+
+   `test_ci_packaging_job_has_base_and_tui_lanes` only greps CI for flag strings, so it cannot compensate. M3 is sharpest: with it gone, an installed-package lifecycle or parity regression would be reported as `"status": "passed"`. This is exactly the pattern in `proof-gaps.json` (`duplicate_archive_validator`, 0/0/0) that was correctly blocked once — the archive validators were fixed and are now genuinely mutation-killed, but the lane functions were left unguarded. `AGENTS.md` §2 requires mutation-testing any new gate.
+
+2. **`all_packaged_source_bytes_match` is not produced by the harness.** The string appears nowhere in the repo; it is a coordinator-side field. Archive *completeness* is genuinely proved, and `build.log` confirms the wheel is built **from** the sdist, so installs transitively cover sdist content — but the byte-equality claim is a one-off, not re-runnable.
+
+3. **CI cold cache and timeout headroom.** `_clean_env` sets no `XDG_CACHE_HOME`/`UV_CACHE_DIR`, so uv uses a lane-local cache under the throwaway `HOME`; the `packaging` job also omits `enable-cache: true`. Measured lane pytest 36.6 s / 36.8 s against a 180 s cap, but the base lane runs install under a 60 s cap — the tightest bound in the harness.
+
+4. **`_clean_env` inherits the parent `PATH`.** Under `uv run` the checkout `.venv/bin` stays in front. Benign today (all lane binaries are absolute), but a latent masking channel.
+
+5. **Docstring drift in `tests/test_stage_g_repairs.py`** — claims "floor 8.2.8 / latest 8.2.8"; the only assertion is `>= 8.2.8`.
+
+6. **Hygiene:** `REQUIRED_REGISTRY_COUNT` is exact-equality (an 11th agent breaks the build); `--verify-tui-only` is implemented but unused by CI; `copytree` carries `tests/__pycache__` into the lane.
+
+FILES_AT_RISK: [ scripts/smoke_wheel.py (the four undefended lane guards; cache/timeout handling), tests/test_tui_packaging.py (its single lane-function test mocks `subprocess.run` — the direct cause, and where the missing guard tests should land), .github/workflows/ci.yml (cold-cache packaging job, with no macOS-local evidence), skill_lens/tui/_textual_compat.py (new; read-only audit coverage confirmed via `rglob`, but see suggestion 5) ]
+
+CONCEDED: [ Withdrawn after verification. (a) The 13 ms `ruff check` / 12 ms `format --check` timings looked like no-op passes; `ruff.log` reads "All checks passed!" and `format.log` reads "148 files already formatted", so both genuinely scanned. (b) The untracked `.path` looked tampered-with or wheel-leaking; its hash is the sha256 of empty content matching the documented restoration, and `packages = ["skill_lens"]` keeps it out of the wheel. (c) Installed lanes looked able to pass vacuously by rewriting snapshots; `update_snapshots` reads the `--update-snapshots` CLI flag, which the lanes never pass. (d) The `TUI_DIR` change looked like it might exclude the new module; `check_source_tree` uses `rglob("*.py")`, so `_textual_compat.py` is audited, against installed site-packages in a lane. (e) The min/latest lanes looked like an undisclosed duplicate; the receipt records `overlap: true` with an explicit honest note. (f) Coordinator build/install/network work was not re-run per critic guard — those claims were assessed from existing evidence and cross-checked against the live tree. (g) Not withdrawn but scoped: no Linux/CI/full-Python-matrix claim is made anywhere, and I found nothing implying one. ]
+
+Full report also written to `/Users/corvette/.minimax/v2/sessions/2026/10/15/20-14-08-648-session_bXZzXzE4MGFmNjkzZWI5NjQ5Yjc5MDJjYmI0MDc4M2FlMTQ4/artifacts/plan.md` for recovery.

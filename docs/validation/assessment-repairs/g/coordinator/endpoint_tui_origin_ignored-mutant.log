@@ -1,0 +1,9 @@
+.F.                                                                      [100%]
+=================================== FAILURES ===================================
+____ test_verify_tui_endpoint_install_invalid_provenance_fails[False-True] _____
+/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-source/tests/test_tui_packaging.py:615: in test_verify_tui_endpoint_install_invalid_provenance_fails
+    with pytest.raises(AssertionError, match="Expected installed wheel provenance inside"):
+E   Failed: DID NOT RAISE AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_verify_tui_endpoint_install_invalid_provenance_fails[False-True]
+1 failed, 2 passed in 0.11s

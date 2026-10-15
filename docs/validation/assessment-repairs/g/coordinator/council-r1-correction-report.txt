@@ -1,0 +1,64 @@
+EFFECTIVE_MODEL: [Antigravity / gemini-3.8-flash-high, temperature: default, runtimeMode: full-access, interactionMode: default | requested: gemini-3.8-flash-high, configured: gemini-3.8-flash-high, confirmed via T3 harness; active compute/billed tokens unavailable]
+OUTCOME: succeeded
+FILES_CHANGED:
+- [tests/test_tui_packaging.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_packaging.py)
+
+CHECKS:
+- pytest: 1021 passed, 1 skipped in 53.25s (`uv run pytest --cov=skill_lens`, total coverage: 91.16%, meeting the 90.0% threshold)
+- mypy: `uv run mypy` clean (Success: no issues found in 37 source files)
+- ruff check: `uv run ruff check .` clean (All checks passed!)
+- ruff format: `uv run ruff format --check .` clean (148 files already formatted)
+- Installed-lane matrix:
+  - Base lane: Verified lean installation; Textual confirmed absent (`find_spec('textual') is None`); bare invocation exits 0 with usage and no tip; explicit `tui` exits 2 with hint to install `skill-lens-cli[tui]`; provenance verified inside virtualenv.
+  - Minimum endpoint lane: Installed `textual==8.2.8`; 353 tests passed, 0 skipped; non-interactive explicit `tui` exits 2; package and TUI provenance verified inside virtualenv.
+  - Latest endpoint lane: Installed unconstrained `textual` (resolving to 8.2.8); 353 tests passed, 0 skipped; non-interactive explicit `tui` exits 2; package and TUI provenance verified inside virtualenv.
+  - Endpoint overlap: `min_version: 8.2.8`, `latest_version: 8.2.8`, `overlap: True` (PyPI latest stable equals declared floor at current index resolution).
+
+TESTS_ADDED:
+- [`tests/test_tui_packaging.py::test_verify_base_install_invalid_provenance_fails`](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_packaging.py#L510-L529): Verifies that base lane installation verification fails with `AssertionError("Expected skill_lens inside venv")` when package provenance is outside the virtual environment. Removing provenance checking in base install turns this test red.
+- [`tests/test_tui_packaging.py::test_verify_tui_endpoint_install_invalid_provenance_fails`](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_packaging.py#L532-L574): Parameterized across both origin branches (`pkg_outside`, `tui_outside`, and both). Verifies that endpoint installation verification fails with `AssertionError("Expected installed wheel provenance inside")` when either `skill_lens` or `skill_lens.tui` origin is outside the virtual environment.
+- [`tests/test_tui_packaging.py::test_verify_base_install_fails_when_textual_is_present`](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_packaging.py#L577-L596): Executes the canonical `check_textual_cmd` against the active Python environment (where Textual is present) to confirm that the child check raises `AssertionError: Textual must be absent` and `verify_base_install` raises `subprocess.CalledProcessError`. Replacing the assertion with `assert True` turns this test red.
+- [`tests/test_tui_packaging.py::test_verify_tui_endpoint_install_fails_on_nonzero_test_suite_exit`](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_packaging.py#L599-L623): Verifies that endpoint verification fails with `AssertionError("Installed test suites failed with code 1")` when the child pytest suite exits nonzero, rather than yielding `status="passed"`. Disabling returncode checking turns this test red.
+- [`tests/test_tui_packaging.py::test_verify_tui_endpoint_install_fails_when_source_copied_into_test_lane`](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_tui_packaging.py#L626-L661): Simulates a contaminated preparation step where `skill_lens` source is copied into `test_lane` and verifies that `verify_tui_endpoint_install` fails with `AssertionError("skill_lens source package must not be copied into test lane")`. Disabling this unshadowing assertion turns this test red.
+
+MUTATION_PROOF:
+- Target: `scripts/smoke_wheel.py` packaging and installed-lane assurance guards.
+- Evidence recorded at: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-council-r1/mutation-proof.json`.
+- Results across all 4 mutations:
+  1. `origin_guards_removed` (`if False:` replacing provenance checks in base and endpoint):
+     - Phases: clean=0, mutant=1, restored=0 (0/1/0)
+     - Clean SHA-256: `a28bc7f8a7fe5dd5a4f7e27301d0a5146c0ca321034f19b25ee4a275298a0f0d`
+     - Mutant SHA-256: `855512e078efb266bb6e4f3583a1523ec395376fa1c5a92d80d19f6a6234b679`
+     - Meaningful failure: `FAILED tests/test_tui_packaging.py::test_verify_base_install_invalid_provenance_fails`, `FAILED tests/test_tui_packaging.py::test_verify_tui_endpoint_install_invalid_provenance_fails[...]` with `Failed: DID NOT RAISE <class 'AssertionError'>`.
+  2. `textual_absence_removed` (`assert True, 'Textual must be absent'` in base check):
+     - Phases: clean=0, mutant=1, restored=0 (0/1/0)
+     - Clean SHA-256: `a28bc7f8a7fe5dd5a4f7e27301d0a5146c0ca321034f19b25ee4a275298a0f0d`
+     - Mutant SHA-256: `b697f03dc40439ef04fba7083083818e69cf2451be6cb50e82c16c02607ea76f`
+     - Meaningful failure: `FAILED tests/test_tui_packaging.py::test_verify_base_install_fails_when_textual_is_present` with `Failed: DID NOT RAISE <class 'subprocess.CalledProcessError'>`.
+  3. `suite_failure_ignored` (`if False:` replacing `if test_res.returncode != 0:`):
+     - Phases: clean=0, mutant=1, restored=0 (0/1/0)
+     - Clean SHA-256: `a28bc7f8a7fe5dd5a4f7e27301d0a5146c0ca321034f19b25ee4a275298a0f0d`
+     - Mutant SHA-256: `176cb4529329bc0b6ae20839a83ebfc486754e3d37a77e2ff42c55b1784ca3b0`
+     - Meaningful failure: `FAILED tests/test_tui_packaging.py::test_verify_tui_endpoint_install_fails_on_nonzero_test_suite_exit` with `Failed: DID NOT RAISE <class 'AssertionError'>`.
+  4. `source_copy_guard_removed` (`assert True, ("skill_lens source package must not be copied into test lane")`):
+     - Phases: clean=0, mutant=1, restored=0 (0/1/0)
+     - Clean SHA-256: `a28bc7f8a7fe5dd5a4f7e27301d0a5146c0ca321034f19b25ee4a275298a0f0d`
+     - Mutant SHA-256: `c50ea5669ba877ec103a8f5b822e844ba7758362ea4b47eb02e1b1d1bc6aeefd`
+     - Meaningful failure: `FAILED tests/test_tui_packaging.py::test_verify_tui_endpoint_install_fails_when_source_copied_into_test_lane` with `Failed: DID NOT RAISE <class 'AssertionError'>`.
+
+PRESERVATION_CONFIRMATION:
+- Untracked `.path`: Preserved, untouched, 0 bytes, SHA-256: `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+- Baseline `dist/skill_lens_cli-0.1.1-py3-none-any.whl`: Preserved, untouched, SHA-256: `1bcc4b2b46feac61dfbda10f6d333b8f81971d2aa42be886892c6d9a256805b7`.
+- Baseline `dist/skill_lens_cli-0.1.1.tar.gz`: Preserved, untouched, SHA-256: `c2550a2b992cd6fceca4fb22a2875ca1de93e5ad7d11ed979ad262109e49abe7`.
+- Source-matched fresh artifacts built into `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-council-r1/dist/`:
+  - Wheel: `59707ca7bc191c051ad98556bc6246b81e0199333a600902e1f4dd4ea170ef32`
+  - Sdist: `273ef448502ffcd3a0f08f1e4fcdc5ed52bf9920d7ccde3b80e0ce3194ee9dc1`
+
+EVIDENCE_PATHS:
+- Mutation proof JSON: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-council-r1/mutation-proof.json`
+- Build log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-council-r1/build.log`
+- Run log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-council-r1/relative-run.log`
+- Full smoke receipt: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/worker-council-r1/smoke-receipt.json`
+
+DEVIATIONS_FROM_PLAN: None.
+BLOCKED_ON: None. No commits made, no push attempted, no policy changes or scope expansion. Ready for coordinator verification and council review round two.

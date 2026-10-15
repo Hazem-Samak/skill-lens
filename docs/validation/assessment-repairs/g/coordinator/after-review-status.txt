@@ -1,0 +1,10 @@
+ M .github/workflows/ci.yml
+ M docs/plans/2026-10-12-assessment-repairs.md
+ M skill_lens/tui/__init__.py
+ M skill_lens/tui/app.py
+ M tests/test_tui_packaging.py
+ M tests/test_tui_read_only.py
+?? .path
+?? scripts/
+?? skill_lens/tui/_textual_compat.py
+?? tests/test_stage_g_repairs.py

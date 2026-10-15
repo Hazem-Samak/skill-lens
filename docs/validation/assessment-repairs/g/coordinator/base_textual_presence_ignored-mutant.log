@@ -1,0 +1,9 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_verify_base_install_fails_when_textual_is_present ____________
+/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/mutation-source/tests/test_tui_packaging.py:643: in test_verify_base_install_fails_when_textual_is_present
+    with pytest.raises(subprocess.CalledProcessError) as exc_info:
+E   Failed: DID NOT RAISE CalledProcessError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_verify_base_install_fails_when_textual_is_present
+1 failed in 0.09s

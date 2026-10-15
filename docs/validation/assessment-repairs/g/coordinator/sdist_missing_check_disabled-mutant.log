@@ -1,0 +1,11 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________________ test_synthetic_sdist_missing_file_fails ____________________
+tests/test_tui_packaging.py:296: in test_synthetic_sdist_missing_file_fails
+    with pytest.raises(ValueError, match="missing required file"):
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'missing required file'
+E     Actual message: 'Sdist archive synthetic_bad_sdist.tar.gz contains 0 agent registry TOMLs; expected exactly 10.'
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_file_fails
+1 failed in 0.09s

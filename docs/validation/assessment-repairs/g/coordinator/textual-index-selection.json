@@ -1,0 +1,8 @@
+{
+  "queried": "2026-10-15T19:03:10.724882+00:00",
+  "source": "https://pypi.org/pypi/textual/json",
+  "latest_stable_reported": "8.2.8",
+  "declared_floor": "8.2.8",
+  "declared_range": "textual>=8.2.8",
+  "minimum_and_latest_overlap": true
+}

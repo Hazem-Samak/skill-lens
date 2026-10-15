@@ -1,0 +1,9 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_synthetic_wheel_missing_typed_marker_fails ________________
+tests/test_tui_packaging.py:281: in test_synthetic_wheel_missing_typed_marker_fails
+    with pytest.raises(ValueError, match="missing typing marker: skill_lens/py.typed"):
+E   Failed: DID NOT RAISE ValueError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_typed_marker_fails
+1 failed in 0.08s

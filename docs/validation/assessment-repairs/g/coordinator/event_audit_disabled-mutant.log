@@ -1,0 +1,9 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_adapter_detects_unusable_event_notification _______________
+tests/test_stage_g_repairs.py:129: in test_adapter_detects_unusable_event_notification
+    with pytest.raises(
+E   Failed: DID NOT RAISE RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_stage_g_repairs.py::test_adapter_detects_unusable_event_notification
+1 failed in 0.15s

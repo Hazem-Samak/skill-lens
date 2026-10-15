@@ -1,0 +1,29 @@
+{
+  "expected_initial_launches": 3,
+  "actual_launches": 8,
+  "failed_provider_launches": 0,
+  "correction_tasks": 3,
+  "review_rounds": 2,
+  "reason_for_extras": "Two pre-council corrections for reproduced implementation/proof defects; one test-only correction for four first-round assurance gaps; two focused second-round reviews.",
+  "all_tasks_terminal": true,
+  "hasPendingChildRuns": false,
+  "pending_question_count": 0,
+  "active_compute_seconds": null,
+  "billed_tokens": null,
+  "known_wall_seconds": 5483.7699999999995,
+  "owned_extra_worktrees": 0,
+  "base_commit": "491f9ce5902f98a7dd687c03418c308dcb88bcfd",
+  "evidence_origin": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work",
+  "product_test_files": [
+    ".github/workflows/ci.yml",
+    "scripts/smoke_wheel.py",
+    "skill_lens/tui/_textual_compat.py",
+    "skill_lens/tui/__init__.py",
+    "skill_lens/tui/app.py",
+    "tests/test_tui_packaging.py",
+    "tests/test_tui_read_only.py",
+    "tests/test_stage_g_repairs.py"
+  ],
+  "coordinator_authored": "Administrative execution and acceptance evidence only.",
+  "review_identity_limit": "Requested targets/options/full-access/plan read back through T3; upstream served identities, actual effort and family diversity remain unverified under user-selected named pair."
+}

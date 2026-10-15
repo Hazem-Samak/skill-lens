@@ -1,0 +1,8 @@
+{
+  "issue": "Correction implementer removed pre-existing empty untracked .path despite preserve-only instruction; its report explicitly disclosed deletion.",
+  "baseline_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "observed_after_task": "absent",
+  "recovery": "Coordinator verified baseline fingerprint and restored exact empty bytes using exclusive xb creation; no existing data overwritten.",
+  "current_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "future_worker_rule": "Do not touch .path at all; it is unrelated to removing machine-specific tests."
+}

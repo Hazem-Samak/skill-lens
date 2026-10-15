@@ -1,0 +1,10 @@
+{
+  "file_count": 602,
+  "all_hashes_match_pre_gates": true,
+  "git_status_match": true,
+  "preserved_originals": {
+    "dist/skill_lens_cli-0.1.1-py3-none-any.whl": "1bcc4b2b46feac61dfbda10f6d333b8f81971d2aa42be886892c6d9a256805b7",
+    "dist/skill_lens_cli-0.1.1.tar.gz": "c2550a2b992cd6fceca4fb22a2875ca1de93e5ad7d11ed979ad262109e49abe7",
+    ".path": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

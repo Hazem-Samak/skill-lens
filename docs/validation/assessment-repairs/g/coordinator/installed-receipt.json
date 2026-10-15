@@ -1,0 +1,304 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.11.16 (main, Aug 25 2026, 13:50:51) [Clang 22.1.3 ]",
+  "wheel": {
+    "wheel": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/artifacts/skill_lens_cli-0.1.1-py3-none-any.whl",
+    "sha256": "59707ca7bc191c051ad98556bc6246b81e0199333a600902e1f4dd4ea170ef32",
+    "tui_modules": [
+      "skill_lens/tui/__init__.py",
+      "skill_lens/tui/app.py",
+      "skill_lens/tui/session.py",
+      "skill_lens/tui/_textual_compat.py"
+    ],
+    "registry_count": 10,
+    "registry_files": [
+      "skill_lens/registry/agents/antigravity.toml",
+      "skill_lens/registry/agents/claude.toml",
+      "skill_lens/registry/agents/codex.toml",
+      "skill_lens/registry/agents/dsh.toml",
+      "skill_lens/registry/agents/grok.toml",
+      "skill_lens/registry/agents/omp.toml",
+      "skill_lens/registry/agents/opencode.toml",
+      "skill_lens/registry/agents/pi.toml",
+      "skill_lens/registry/agents/qoder.toml",
+      "skill_lens/registry/agents/windsurf.toml"
+    ],
+    "typed_marker": true,
+    "total_files": 53
+  },
+  "sdist": {
+    "sdist": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/artifacts/skill_lens_cli-0.1.1.tar.gz",
+    "sha256": "273ef448502ffcd3a0f08f1e4fcdc5ed52bf9920d7ccde3b80e0ce3194ee9dc1",
+    "prefix": "skill_lens_cli-0.1.1/",
+    "tui_modules": [
+      "skill_lens/tui/__init__.py",
+      "skill_lens/tui/app.py",
+      "skill_lens/tui/session.py",
+      "skill_lens/tui/_textual_compat.py"
+    ],
+    "registry_count": 10,
+    "total_files": 603
+  },
+  "base_lane": {
+    "status": "passed",
+    "provenance": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed-work/base_lane/venv/lib/python3.11/site-packages/skill_lens/__init__.py",
+    "textual_absent": true,
+    "version_output": "skill-lens 0.1.1",
+    "bare_exit_code": 0,
+    "bare_tip_omitted": true,
+    "explicit_tui_exit_code": 2,
+    "explicit_tui_hint_present": true,
+    "explicit_tui_no_traceback": true
+  },
+  "min_endpoint_lane": {
+    "status": "passed",
+    "endpoint": "min",
+    "textual_constraint": "textual==8.2.8",
+    "textual_version": "8.2.8",
+    "provenance_pkg": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed-work/min_lane/venv/lib/python3.11/site-packages/skill_lens/__init__.py",
+    "provenance_tui": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed-work/min_lane/venv/lib/python3.11/site-packages/skill_lens/tui/__init__.py",
+    "installed_packages": [
+      {
+        "name": "annotated-doc",
+        "version": "0.0.5"
+      },
+      {
+        "name": "coverage",
+        "version": "7.16.2"
+      },
+      {
+        "name": "iniconfig",
+        "version": "2.3.1"
+      },
+      {
+        "name": "linkify-it-py",
+        "version": "2.2.0"
+      },
+      {
+        "name": "markdown-it-py",
+        "version": "4.2.0"
+      },
+      {
+        "name": "mdit-py-plugins",
+        "version": "0.6.1"
+      },
+      {
+        "name": "mdurl",
+        "version": "0.1.2"
+      },
+      {
+        "name": "packaging",
+        "version": "26.3"
+      },
+      {
+        "name": "platformdirs",
+        "version": "4.13.0"
+      },
+      {
+        "name": "pluggy",
+        "version": "1.7.0"
+      },
+      {
+        "name": "pygments",
+        "version": "2.21.0"
+      },
+      {
+        "name": "pytest",
+        "version": "9.1.1"
+      },
+      {
+        "name": "pytest-cov",
+        "version": "7.1.0"
+      },
+      {
+        "name": "pyyaml",
+        "version": "6.0.3"
+      },
+      {
+        "name": "rich",
+        "version": "15.0.0"
+      },
+      {
+        "name": "shellingham",
+        "version": "1.5.4"
+      },
+      {
+        "name": "skill-lens-cli",
+        "version": "0.1.1"
+      },
+      {
+        "name": "textual",
+        "version": "8.2.8"
+      },
+      {
+        "name": "typer",
+        "version": "0.27.3"
+      },
+      {
+        "name": "typing-extensions",
+        "version": "4.16.0"
+      }
+    ],
+    "explicit_non_tty_tui_exit_code": 2,
+    "suites_executed": [
+      "tests/test_render_snapshots.py",
+      "tests/test_fixtures.py",
+      "tests/test_phase3_gate.py",
+      "tests/test_phase4_gate.py",
+      "tests/test_tui_app.py",
+      "tests/test_tui_session.py",
+      "tests/test_tui_read_only.py",
+      "tests/test_stage_g_repairs.py",
+      "tests/test_tui_packaging.py"
+    ],
+    "suites_exit_code": 0,
+    "test_count": 353,
+    "skip_count": 0,
+    "command": [
+      "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed-work/min_lane/venv/bin/pytest",
+      "tests/test_render_snapshots.py",
+      "tests/test_fixtures.py",
+      "tests/test_phase3_gate.py",
+      "tests/test_phase4_gate.py",
+      "tests/test_tui_app.py",
+      "tests/test_tui_session.py",
+      "tests/test_tui_read_only.py",
+      "tests/test_stage_g_repairs.py",
+      "tests/test_tui_packaging.py",
+      "-ra"
+    ],
+    "stdout": "============================= test session starts ==============================\nplatform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.7.0\nrootdir: /Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed-work/min_lane/test_lane\nconfigfile: pyproject.toml\nplugins: platformdirs-4.13.0, cov-7.1.0\ncollected 353 items\n\ntests/test_render_snapshots.py ...................                       [  5%]\ntests/test_fixtures.py ................................................. [ 19%]\n..................                                                       [ 24%]\ntests/test_phase3_gate.py ..................................             [ 33%]\ntests/test_phase4_gate.py ..........                                     [ 36%]\ntests/test_tui_app.py ...........................                        [ 44%]\ntests/test_tui_session.py .....................                          [ 50%]\ntests/test_tui_read_only.py ............................................ [ 62%]\n........................................................................ [ 83%]\n.....................                                                    [ 89%]\ntests/test_stage_g_repairs.py ..............                             [ 93%]\ntests/test_tui_packaging.py ........................                     [100%]\n\n============================= 353 passed in 37.95s =============================\n",
+    "stderr": "",
+    "tests_run_outside_checkout": true,
+    "source_unshadowed": true
+  },
+  "latest_endpoint_lane": {
+    "status": "passed",
+    "endpoint": "latest",
+    "textual_constraint": null,
+    "textual_version": "8.2.8",
+    "provenance_pkg": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed-work/latest_lane/venv/lib/python3.11/site-packages/skill_lens/__init__.py",
+    "provenance_tui": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed-work/latest_lane/venv/lib/python3.11/site-packages/skill_lens/tui/__init__.py",
+    "installed_packages": [
+      {
+        "name": "annotated-doc",
+        "version": "0.0.5"
+      },
+      {
+        "name": "coverage",
+        "version": "7.16.2"
+      },
+      {
+        "name": "iniconfig",
+        "version": "2.3.1"
+      },
+      {
+        "name": "linkify-it-py",
+        "version": "2.2.0"
+      },
+      {
+        "name": "markdown-it-py",
+        "version": "4.2.0"
+      },
+      {
+        "name": "mdit-py-plugins",
+        "version": "0.6.1"
+      },
+      {
+        "name": "mdurl",
+        "version": "0.1.2"
+      },
+      {
+        "name": "packaging",
+        "version": "26.3"
+      },
+      {
+        "name": "platformdirs",
+        "version": "4.13.0"
+      },
+      {
+        "name": "pluggy",
+        "version": "1.7.0"
+      },
+      {
+        "name": "pygments",
+        "version": "2.21.0"
+      },
+      {
+        "name": "pytest",
+        "version": "9.1.1"
+      },
+      {
+        "name": "pytest-cov",
+        "version": "7.1.0"
+      },
+      {
+        "name": "pyyaml",
+        "version": "6.0.3"
+      },
+      {
+        "name": "rich",
+        "version": "15.0.0"
+      },
+      {
+        "name": "shellingham",
+        "version": "1.5.4"
+      },
+      {
+        "name": "skill-lens-cli",
+        "version": "0.1.1"
+      },
+      {
+        "name": "textual",
+        "version": "8.2.8"
+      },
+      {
+        "name": "typer",
+        "version": "0.27.3"
+      },
+      {
+        "name": "typing-extensions",
+        "version": "4.16.0"
+      }
+    ],
+    "explicit_non_tty_tui_exit_code": 2,
+    "suites_executed": [
+      "tests/test_render_snapshots.py",
+      "tests/test_fixtures.py",
+      "tests/test_phase3_gate.py",
+      "tests/test_phase4_gate.py",
+      "tests/test_tui_app.py",
+      "tests/test_tui_session.py",
+      "tests/test_tui_read_only.py",
+      "tests/test_stage_g_repairs.py",
+      "tests/test_tui_packaging.py"
+    ],
+    "suites_exit_code": 0,
+    "test_count": 353,
+    "skip_count": 0,
+    "command": [
+      "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed-work/latest_lane/venv/bin/pytest",
+      "tests/test_render_snapshots.py",
+      "tests/test_fixtures.py",
+      "tests/test_phase3_gate.py",
+      "tests/test_phase4_gate.py",
+      "tests/test_tui_app.py",
+      "tests/test_tui_session.py",
+      "tests/test_tui_read_only.py",
+      "tests/test_stage_g_repairs.py",
+      "tests/test_tui_packaging.py",
+      "-ra"
+    ],
+    "stdout": "============================= test session starts ==============================\nplatform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.7.0\nrootdir: /Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-g-work/coordinator-r2/installed-work/latest_lane/test_lane\nconfigfile: pyproject.toml\nplugins: platformdirs-4.13.0, cov-7.1.0\ncollected 353 items\n\ntests/test_render_snapshots.py ...................                       [  5%]\ntests/test_fixtures.py ................................................. [ 19%]\n..................                                                       [ 24%]\ntests/test_phase3_gate.py ..................................             [ 33%]\ntests/test_phase4_gate.py ..........                                     [ 36%]\ntests/test_tui_app.py ...........................                        [ 44%]\ntests/test_tui_session.py .....................                          [ 50%]\ntests/test_tui_read_only.py ............................................ [ 62%]\n........................................................................ [ 83%]\n.....................                                                    [ 89%]\ntests/test_stage_g_repairs.py ..............                             [ 93%]\ntests/test_tui_packaging.py ........................                     [100%]\n\n============================= 353 passed in 36.96s =============================\n",
+    "stderr": "",
+    "tests_run_outside_checkout": true,
+    "source_unshadowed": true
+  },
+  "endpoint_overlap": {
+    "min_version": "8.2.8",
+    "latest_version": "8.2.8",
+    "overlap": true,
+    "note": "PyPI latest stable equals declared floor (8.2.8) at current index resolution"
+  },
+  "all_passed": true
+}

@@ -36,6 +36,7 @@ from skill_lens.core.snapshot import (
     snapshot_why,
 )
 from skill_lens.core.snapshot_models import SessionSnapshot
+from skill_lens.tui._textual_compat import record_unhandled_fault
 from skill_lens.tui.session import (
     ReportValue,
     SessionController,
@@ -335,10 +336,7 @@ class SkillLensApp(App[int]):
         """
         self.controller.failed = True
         self.controller.close()
-        self._return_code = int(ExitCode.INTERNAL)
-        if self._exception is None:
-            self._exception = error
-            self._exception_event.set()
+        record_unhandled_fault(self, error, int(ExitCode.INTERNAL))
         self.exit(int(ExitCode.INTERNAL), return_code=int(ExitCode.INTERNAL))
 
     def _update_ui(self) -> None:

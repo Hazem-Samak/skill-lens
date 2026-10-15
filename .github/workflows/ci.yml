@@ -55,50 +55,23 @@ jobs:
       - name: Build wheel and sdist
         run: uv build --out-dir dist
 
-      - name: The wheel must carry the agent registry
+      - name: Verify package archives (wheel and sdist)
         run: |
           wheel=$(ls dist/*.whl)
-          count=$(unzip -l "$wheel" | grep -c 'registry/agents/.*\.toml')
-          echo "registry TOMLs in wheel: $count"
-          test "$count" -eq 10
+          sdist=$(ls dist/*.tar.gz)
+          uv run python scripts/smoke_wheel.py --verify-archive-only --wheel "$wheel" --sdist "$sdist"
 
-      - name: Verify console script installs and runs
+      - name: Verify console script installs and runs (base lane)
         run: |
           wheel=$(ls dist/*.whl)
-          uv venv /tmp/smoke --python 3.13
-          uv pip install --python /tmp/smoke "$wheel"
-          mkdir -p /tmp/smoke-base-lane /tmp/smoke-base-home
-          cd /tmp/smoke-base-lane
-          HOME=/tmp/smoke-base-home /tmp/smoke/bin/skill-lens --version
-          HOME=/tmp/smoke-base-home /tmp/smoke/bin/skill-lens --help
-          HOME=/tmp/smoke-base-home /tmp/smoke/bin/python -c "import skill_lens; assert '/tmp/smoke' in skill_lens.__file__, f'Expected installed wheel; got {skill_lens.__file__}'"
-          # Textual must be truly absent in base install
-          HOME=/tmp/smoke-base-home /tmp/smoke/bin/python -c "import importlib.util; assert importlib.util.find_spec('textual') is None, 'textual must be absent in base install'"
-          # Noninteractive bare invocation prints help, exits 0, and has no install tip
-          bare_output=$(HOME=/tmp/smoke-base-home /tmp/smoke/bin/skill-lens)
-          echo "$bare_output" | grep -q "Usage: skill-lens"
-          if echo "$bare_output" | grep -q "Tip:"; then
-            echo "Base noninteractive bare invocation must not include install tip"
-            exit 1
-          fi
-          # Explicit tui invocation exits 2 with install hint naming extra
-          tui_stderr=$(HOME=/tmp/smoke-base-home /tmp/smoke/bin/skill-lens tui 2>&1 >/dev/null || true)
-          echo "$tui_stderr" | grep -q "skill-lens-cli\[tui\]"
-          code=0
-          HOME=/tmp/smoke-base-home /tmp/smoke/bin/skill-lens tui >/dev/null 2>&1 || code=$?
-          test "$code" -eq 2
+          uv run python scripts/smoke_wheel.py --verify-base-only --wheel "$wheel"
 
-      - name: Verify installed extra output parity ([tui] lane)
+      - name: Verify minimum endpoint (textual==8.2.8) installed lifecycle and parity
         run: |
           wheel=$(ls dist/*.whl)
-          uv venv /tmp/smoke-tui --python 3.13
-          uv pip install --python /tmp/smoke-tui "${wheel}[tui]" pytest pytest-cov pyyaml
-          # Execute provenance and pinned-output suites from outside source checkout
-          mkdir -p /tmp/smoke-test-lane /tmp/smoke-tui-home
-          cp -R tests /tmp/smoke-test-lane/
-          cp pyproject.toml /tmp/smoke-test-lane/
-          cd /tmp/smoke-test-lane
-          # Verify Textual is present and skill_lens is imported from the installed wheel, not source
-          HOME=/tmp/smoke-tui-home /tmp/smoke-tui/bin/python -c "import skill_lens; assert '/tmp/smoke-tui' in skill_lens.__file__, f'Expected installed wheel; got {skill_lens.__file__}'"
-          HOME=/tmp/smoke-tui-home /tmp/smoke-tui/bin/python -c "import textual; print('textual version:', textual.__version__)"
-          HOME=/tmp/smoke-tui-home /tmp/smoke-tui/bin/pytest tests/test_render_snapshots.py tests/test_fixtures.py tests/test_phase3_gate.py tests/test_phase4_gate.py -ra
+          uv run python scripts/smoke_wheel.py --verify-min-only --wheel "$wheel"
+
+      - name: Verify latest endpoint (unconstrained) installed lifecycle and parity
+        run: |
+          wheel=$(ls dist/*.whl)
+          uv run python scripts/smoke_wheel.py --verify-latest-only --wheel "$wheel"

@@ -1,0 +1,9 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________ test_synthetic_wheel_missing_registry_files_fails _______________
+tests/test_tui_packaging.py:268: in test_synthetic_wheel_missing_registry_files_fails
+    with pytest.raises(ValueError, match="contains 5 agent registry TOMLs; expected exactly 10"):
+E   Failed: DID NOT RAISE ValueError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_registry_files_fails
+1 failed in 0.09s
