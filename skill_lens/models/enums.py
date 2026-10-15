@@ -98,3 +98,31 @@ class EntryFormat(StrEnum):
     STANDALONE_MD = "standalone_md"
     QUALIFIED_STANDALONE_MD = "qualified_standalone_md"
     OPENCODE_V2 = "opencode_v2"
+
+
+class InvocationPolicy(StrEnum):
+    """How a skill may be invoked under an agent's policy."""
+
+    ALL = "all"
+    USER_ONLY = "user_only"
+    MODEL_ONLY = "model_only"
+    NAME_ONLY = "name_only"
+    NONE = "none"
+    UNKNOWN = "unknown"
+
+
+class PermissionEffect(StrEnum):
+    """Authorization or consent required to run a skill."""
+
+    ALLOW = "allow"
+    DENY = "deny"
+    ASK = "ask"
+    UNKNOWN = "unknown"
+
+
+class LoadabilityStatus(StrEnum):
+    """Whether a specific agent will actually load this candidate entrypoint."""
+
+    LOADABLE = "loadable"
+    INVALID = "invalid"
+    UNKNOWN = "unknown"

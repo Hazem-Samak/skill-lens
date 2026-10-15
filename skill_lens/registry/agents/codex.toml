@@ -6,6 +6,8 @@ policy_evidence = "empirical"
 coexist_policy = "merge"
 walk_boundary = "project_root_markers"
 unsearched_rule_id = "codex_search_roots"
+disabled_rule_id = "codex_skills_config_disabled"
+disabled_settings = ".codex/config.toml"
 source = "https://developers.openai.com/codex/skills"
 
 [[roots]]

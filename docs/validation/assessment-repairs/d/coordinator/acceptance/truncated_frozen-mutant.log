@@ -1,0 +1,17 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_truncated_snapshot_navigation_without_filesystem_probes _________
+tests/test_stage_d_repairs.py:1826: in test_truncated_snapshot_navigation_without_filesystem_probes
+    frozen_oc = snapshot_why(snap, key_oc, "opencode")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+skill_lens/core/snapshot.py:504: in snapshot_why
+    return resolve_skill(
+skill_lens/core/resolver.py:824: in resolve_skill
+    disp = paths.display(Path(ur.path))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_stage_d_repairs.py:1801: in forbid
+    raise AssertionError("report-time filesystem probe forbidden during navigation")
+E   AssertionError: report-time filesystem probe forbidden during navigation
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_truncated_snapshot_navigation_without_filesystem_probes
+1 failed in 0.18s

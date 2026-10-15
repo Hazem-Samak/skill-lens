@@ -12,6 +12,18 @@ source = "https://antigravity.google/docs/skills"
 # project root outranks every global root. Higher rank == wins.
 #
 # Global user skills may be a directory or a standalone ``.md`` file.
+# Documented CLI global root: ~/.gemini/antigravity-cli/skills.
+[[roots]]
+id = "antigravity_cli_global"
+kind = "global"
+path = ".gemini/antigravity-cli/skills"
+scope = "user"
+rank = 75
+rule_id = "antigravity_cli_skills"
+file_rule_id = "antigravity_standalone_md"
+evidence = "documented"
+entry_format = "standalone_md"
+
 [[roots]]
 id = "antigravity_global"
 kind = "global"
@@ -22,6 +34,7 @@ rule_id = "antigravity_global_skills"
 file_rule_id = "antigravity_standalone_md"
 evidence = "empirical"
 entry_format = "standalone_md"
+loadability = "unknown"
 
 [[roots]]
 id = "antigravity_builtin"
@@ -41,6 +54,7 @@ scope = "project"
 rank = 90
 rule_id = "antigravity_project_shadow"
 evidence = "empirical"
+loadability = "unknown"
 
 [[roots]]
 id = "antigravity_project_agent"

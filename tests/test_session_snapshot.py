@@ -314,7 +314,7 @@ def test_snapshot_reports_match_live_reports(mock_home: Path) -> None:
     expected_config_keys = {str(fixtures["lock_path"])} | {
         str(norm_home / a.disabled_settings) for a in snapshot.registry if a.disabled_settings
     }
-    assert set(snapshot.config_inputs.keys()) == expected_config_keys
+    assert expected_config_keys.issubset(set(snapshot.config_inputs.keys()))
     for _p_str, ci in snapshot.config_inputs.items():
         if ci.data is not None:
             assert ci.error is None

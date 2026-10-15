@@ -1,0 +1,11 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_coordinator_r1_repro_4_claude_settings_declared_command_identity _____
+tests/test_stage_d_repairs.py:1005: in test_coordinator_r1_repro_4_claude_settings_declared_command_identity
+    assert r.headline is HeadlineState.ACTIVE
+E   AssertionError: assert <HeadlineState.DISABLED: 'DISABLED'> is <HeadlineState.ACTIVE: 'ACTIVE'>
+E    +  where <HeadlineState.DISABLED: 'DISABLED'> = ResolutionReport(skill_name='declared', agent='claude', agent_name='Claude Code', cwd='/private/var/folders/tf/jsdyxct...ble'>, invocation=<InvocationPolicy.NONE: 'none'>, permission=<PermissionEffect.DENY: 'deny'>),), notes=(), found=True).headline
+E    +  and   <HeadlineState.ACTIVE: 'ACTIVE'> = HeadlineState.ACTIVE
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_coordinator_r1_repro_4_claude_settings_declared_command_identity
+1 failed in 0.08s

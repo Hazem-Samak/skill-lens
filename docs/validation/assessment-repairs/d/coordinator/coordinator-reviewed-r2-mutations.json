@@ -1,0 +1,163 @@
+{
+  "origin": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+  "copy": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/coordinator-mutations-trzznlbg",
+  "results": [
+    {
+      "mutation": "codex_frozen",
+      "file": "skill_lens/core/config.py",
+      "copy": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/coordinator-mutations-trzznlbg",
+      "original_hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_d_repairs.py::test_coordinator_r1_repro_1_codex_frozen_is_dir_pure_lexical",
+        "--no-cov",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/coordinator-mutations-trzznlbg/cache",
+        "--tb=short",
+        "-q"
+      ],
+      "phases": {
+        "clean": {
+          "exit_code": 0,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/codex_frozen-clean.log",
+          "hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/codex_frozen-mutant.log",
+          "hash": "4734273247ee6aeaa15d2a7d917a6103976593401b9994748801ddd98fb8e091"
+        },
+        "restored": {
+          "exit_code": 0,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/codex_frozen-restored.log",
+          "hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565"
+        }
+      },
+      "mutant_hash": "4734273247ee6aeaa15d2a7d917a6103976593401b9994748801ddd98fb8e091",
+      "diff": "--- skill_lens/core/config.py\n+++ skill_lens/core/config.py\n@@ -526,7 +526,7 @@\n             else:\n                 cands.append(canonical_path.rsplit(\"/SKILL.md\", 1)[0])\n \n-        return any(self.codex_disabled_paths.get(c) is False for c in cands)\n+        return False\n \n \n def _ancestor_chain(cwd: Path, boundary: Path | None) -> list[Path]:\n",
+      "restored_hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565"
+    },
+    {
+      "mutation": "claude_declared",
+      "file": "skill_lens/core/config.py",
+      "copy": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/coordinator-mutations-trzznlbg",
+      "original_hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_d_repairs.py::test_coordinator_r1_repro_4_claude_settings_declared_command_identity",
+        "--no-cov",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/coordinator-mutations-trzznlbg/cache",
+        "--tb=short",
+        "-q"
+      ],
+      "phases": {
+        "clean": {
+          "exit_code": 0,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/claude_declared-clean.log",
+          "hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/claude_declared-mutant.log",
+          "hash": "50a1cdddb662ee52ebf949093458f1a010dbd9714bd35990abddab8d9a67b06b"
+        },
+        "restored": {
+          "exit_code": 0,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/claude_declared-restored.log",
+          "hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565"
+        }
+      },
+      "mutant_hash": "50a1cdddb662ee52ebf949093458f1a010dbd9714bd35990abddab8d9a67b06b",
+      "diff": "--- skill_lens/core/config.py\n+++ skill_lens/core/config.py\n@@ -912,9 +912,7 @@\n     # 1. Claude\n     if agent.id == \"claude\":\n         alias = entrypoint_alias(entrypoint_path, hit.is_file if hit else entry.is_file)\n-        command_name = (\n-            entry.parse.frontmatter_name if entry.parse and entry.parse.frontmatter_name else alias\n-        )\n+        command_name = alias\n         val = (\n             controls.claude_settings.get(command_name)\n             if controls.claude_settings is not None\n",
+      "restored_hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565"
+    },
+    {
+      "mutation": "ancestor_order",
+      "file": "skill_lens/core/resolver.py",
+      "copy": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/coordinator-mutations-trzznlbg",
+      "original_hash": "83c250e9743899f6f533ed142694aaffc5d61fb23f073036391319db6611940b",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_d_repairs.py::test_coordinator_r1_repro_6_opencode_closest_source_ancestor_collision",
+        "--no-cov",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/coordinator-mutations-trzznlbg/cache",
+        "--tb=short",
+        "-q"
+      ],
+      "phases": {
+        "clean": {
+          "exit_code": 0,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/ancestor_order-clean.log",
+          "hash": "83c250e9743899f6f533ed142694aaffc5d61fb23f073036391319db6611940b"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/ancestor_order-mutant.log",
+          "hash": "bf68edd748503c492ca235ce658803dad7ced3e108c5f605318f1c71fc58294f"
+        },
+        "restored": {
+          "exit_code": 0,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/ancestor_order-restored.log",
+          "hash": "83c250e9743899f6f533ed142694aaffc5d61fb23f073036391319db6611940b"
+        }
+      },
+      "mutant_hash": "bf68edd748503c492ca235ce658803dad7ced3e108c5f605318f1c71fc58294f",
+      "diff": "--- skill_lens/core/resolver.py\n+++ skill_lens/core/resolver.py\n@@ -364,9 +364,6 @@\n         return {}\n     top_rank = max(c.rank for c in searched_valid)\n     winners = [c for c in searched_valid if c.rank == top_rank]\n-    if len(winners) > 1:\n-        top_specificity = max(c.hit.specificity for c in winners)\n-        winners = [c for c in winners if c.hit.specificity == top_specificity]\n     ambiguous = len(winners) > 1\n     winner = winners[0] if len(winners) == 1 else None\n     multi = len(searched_valid) > 1\n",
+      "restored_hash": "83c250e9743899f6f533ed142694aaffc5d61fb23f073036391319db6611940b"
+    },
+    {
+      "mutation": "invalid_override",
+      "file": "skill_lens/core/config.py",
+      "copy": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/coordinator-mutations-trzznlbg",
+      "original_hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_d_repairs.py::test_coordinator_r1_repro_9_invalid_override_value_status",
+        "--no-cov",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/coordinator-mutations-trzznlbg/cache",
+        "--tb=short",
+        "-q"
+      ],
+      "phases": {
+        "clean": {
+          "exit_code": 0,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/invalid_override-clean.log",
+          "hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/invalid_override-mutant.log",
+          "hash": "6683b8a14494fe05fcdddf07554b2ad6b17ef543fedfdef8c81d2add7c15f82e"
+        },
+        "restored": {
+          "exit_code": 0,
+          "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/invalid_override-restored.log",
+          "hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565"
+        }
+      },
+      "mutant_hash": "6683b8a14494fe05fcdddf07554b2ad6b17ef543fedfdef8c81d2add7c15f82e",
+      "diff": "--- skill_lens/core/config.py\n+++ skill_lens/core/config.py\n@@ -169,7 +169,7 @@\n         ):\n             result[key] = val\n         else:\n-            error_status = \"malformed\"\n+            pass\n     return result, error_status\n \n \n",
+      "restored_hash": "35938bfd13e203ce659f9161a261da0e31bbe1f984c8b4aa582cfef8edb31565"
+    }
+  ],
+  "import_provenance": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/coordinator-mutations-trzznlbg/skill_lens/__init__.py"
+}

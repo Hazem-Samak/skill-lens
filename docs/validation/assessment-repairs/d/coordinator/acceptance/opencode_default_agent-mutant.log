@@ -1,0 +1,11 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_opencode_bounded_disclosure_and_default_agent_confidence _________
+tests/test_stage_d_repairs.py:1519: in test_opencode_bounded_disclosure_and_default_agent_confidence
+    assert live_plan.candidates[0].permission is PermissionEffect.UNKNOWN
+E   AssertionError: assert <PermissionEffect.ALLOW: 'allow'> is <PermissionEffect.UNKNOWN: 'unknown'>
+E    +  where <PermissionEffect.ALLOW: 'allow'> = CandidateResolution(state=<HeadlineState.ACTIVE: 'ACTIVE'>, visibility=<Visibility.ACTIVE_ROOT: 'active_root'>, collis...tyStatus.LOADABLE: 'loadable'>, invocation=<InvocationPolicy.ALL: 'all'>, permission=<PermissionEffect.ALLOW: 'allow'>).permission
+E    +  and   <PermissionEffect.UNKNOWN: 'unknown'> = PermissionEffect.UNKNOWN
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_opencode_bounded_disclosure_and_default_agent_confidence
+1 failed in 0.12s

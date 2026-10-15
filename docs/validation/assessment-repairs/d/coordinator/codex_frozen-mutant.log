@@ -1,0 +1,11 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_coordinator_r1_repro_1_codex_frozen_is_dir_pure_lexical _________
+tests/test_stage_d_repairs.py:952: in test_coordinator_r1_repro_1_codex_frozen_is_dir_pure_lexical
+    assert r.headline is HeadlineState.DISABLED
+E   AssertionError: assert <HeadlineState.ACTIVE: 'ACTIVE'> is <HeadlineState.DISABLED: 'DISABLED'>
+E    +  where <HeadlineState.ACTIVE: 'ACTIVE'> = ResolutionReport(skill_name='deploy', agent='codex', agent_name='OpenAI Codex', cwd='/private/var/folders/tf/jsdyxcts6...ble'>, invocation=<InvocationPolicy.ALL: 'all'>, permission=<PermissionEffect.ALLOW: 'allow'>),), notes=(), found=True).headline
+E    +  and   <HeadlineState.DISABLED: 'DISABLED'> = HeadlineState.DISABLED
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_coordinator_r1_repro_1_codex_frozen_is_dir_pure_lexical
+1 failed in 0.77s

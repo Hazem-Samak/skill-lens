@@ -37,6 +37,7 @@ entry_format = "standalone_md"
 rank = 30
 rule_id = "grok_bundled"
 evidence = "empirical"
+loadability = "unknown"
 
 [[roots]]
 id = "grok_project"
@@ -47,3 +48,4 @@ entry_format = "standalone_md"
 rank = 90
 rule_id = "grok_project_shadow"
 evidence = "empirical"
+loadability = "unknown"

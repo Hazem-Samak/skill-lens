@@ -15,9 +15,9 @@ here is observed on disk and tagged ``empirical``.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 from skill_lens.core import paths
+from skill_lens.core.config import is_loadable_for_agent
 from skill_lens.core.discovery import DiscoveredEntry, DiscoveryIndex, discover
 from skill_lens.core.health import classify_entry_health
 from skill_lens.core.system import (
@@ -29,12 +29,12 @@ from skill_lens.core.system import (
     shared_library,
 )
 from skill_lens.models.doctor import DoctorFinding, DoctorReport
-from skill_lens.models.enums import Evidence, ParseStatus, Severity
+from skill_lens.models.enums import Evidence, LoadabilityStatus, ParseStatus, Severity
 from skill_lens.models.parsing import (
     ERR_PERMISSION_DENIED,
     ERR_UNDECODABLE_TEXT,
 )
-from skill_lens.registry.loader import AgentDefinition
+from skill_lens.registry.loader import AgentDefinition, load_registry
 
 #: Codex prepends every skill description to the model context. Vendor docs
 #: describe a budget of roughly 8,000 characters; past it Codex is documented
@@ -56,7 +56,7 @@ def build_doctor_report(
     home: Path,
     cwd: Path,
     index: DiscoveryIndex | None = None,
-    registry: Any | None = None,
+    registry: dict[str, AgentDefinition] | None = None,
 ) -> DoctorReport:
     """Run every hygiene check over one discovery pass.
 
@@ -68,7 +68,10 @@ def build_doctor_report(
 
     findings: list[DoctorFinding] = []
     findings.extend(_symlink_findings(discovery))
-    findings.extend(_frontmatter_findings(discovery))
+    if registry is not None:
+        findings.extend(_frontmatter_findings(discovery, registry=registry))
+    else:
+        findings.extend(_frontmatter_findings(discovery))
     findings.extend(_unreadable_findings(discovery))
     findings.extend(_codex_budget_findings(discovery))
     findings.extend(_traversal_findings(discovery))
@@ -187,13 +190,17 @@ def _reached_by(entry: DiscoveredEntry) -> str:
     return ", ".join(agents) if agents else "no agent"
 
 
-def _frontmatter_findings(index: DiscoveryIndex) -> list[DoctorFinding]:
+def _frontmatter_findings(
+    index: DiscoveryIndex,
+    registry: dict[str, AgentDefinition] | None = None,
+) -> list[DoctorFinding]:
     """Skills whose document will be rejected by any parser (❌).
 
     Discovery resolves the frontmatter state per *canonical target*; several
     agents reach it through the farm, so one finding names the library and
     lists who is affected.
     """
+    agents = registry if registry is not None else load_registry()
     findings: list[DoctorFinding] = []
     for entry in index.entries:
         cond = classify_entry_health(entry)
@@ -205,10 +212,91 @@ def _frontmatter_findings(index: DiscoveryIndex) -> list[DoctorFinding]:
                 f" -- {_reached_by(entry)} will skip '{entry.name}'."
             )
         elif cond.reason == "missing_description":
-            message = (
-                f"'{_entrypoint(entry)}' is missing the required 'description' field"
-                f" -- {_reached_by(entry)} will skip '{entry.name}'."
-            )
+            reaching = sorted({hit.agent_id for hit in entry.hits})
+            accepting: list[str] = []
+            skipping: list[str] = []
+            unknown: list[str] = []
+            for a in reaching:
+                ag = agents.get(a)
+                if not ag:
+                    continue
+                statuses = {
+                    is_loadable_for_agent(ag, entry, h)[0] for h in entry.hits if h.agent_id == a
+                }
+                if LoadabilityStatus.LOADABLE in statuses:
+                    accepting.append(a)
+                elif LoadabilityStatus.INVALID in statuses:
+                    skipping.append(a)
+                else:
+                    unknown.append(a)
+            if skipping and accepting:
+                skip_str = ", ".join(skipping)
+                acc_str = ", ".join(accepting)
+                message = (
+                    f"'{_entrypoint(entry)}' is missing the required 'description' field"
+                    f" -- {skip_str} will skip '{entry.name}' (accepted at runtime by {acc_str})."
+                )
+            elif accepting and not skipping:
+                acc_str = ", ".join(accepting)
+                message = (
+                    f"'{_entrypoint(entry)}' is missing the standard 'description' field"
+                    f" -- portable agents will skip '{entry.name}'"
+                    f" (accepted at runtime by {acc_str})."
+                )
+            elif skipping:
+                skip_str = ", ".join(skipping)
+                message = (
+                    f"'{_entrypoint(entry)}' is missing the required 'description' field"
+                    f" -- {skip_str} will skip '{entry.name}'."
+                )
+            else:
+                message = (
+                    f"'{_entrypoint(entry)}' is missing the required 'description' field"
+                    f" -- {_reached_by(entry)} loadability is unverified."
+                )
+        elif cond.reason == "missing_frontmatter":
+            reaching = sorted({hit.agent_id for hit in entry.hits})
+            accepting = []
+            skipping = []
+            unknown = []
+            for a in reaching:
+                ag = agents.get(a)
+                if not ag:
+                    continue
+                statuses = {
+                    is_loadable_for_agent(ag, entry, h)[0] for h in entry.hits if h.agent_id == a
+                }
+                if LoadabilityStatus.LOADABLE in statuses:
+                    accepting.append(a)
+                elif LoadabilityStatus.INVALID in statuses:
+                    skipping.append(a)
+                else:
+                    unknown.append(a)
+            if skipping and accepting:
+                skip_str = ", ".join(skipping)
+                acc_str = ", ".join(accepting)
+                message = (
+                    f"'{_entrypoint(entry)}' has no YAML frontmatter fence"
+                    f" -- {skip_str} will skip '{entry.name}' (accepted at runtime by {acc_str})."
+                )
+            elif accepting and not skipping:
+                acc_str = ", ".join(accepting)
+                message = (
+                    f"'{_entrypoint(entry)}' has no YAML frontmatter fence"
+                    f" -- portable agents will skip '{entry.name}'"
+                    f" (accepted at runtime by {acc_str})."
+                )
+            elif skipping:
+                skip_str = ", ".join(skipping)
+                message = (
+                    f"'{_entrypoint(entry)}' has no YAML frontmatter fence"
+                    f" -- {skip_str} will skip '{entry.name}'."
+                )
+            else:
+                message = (
+                    f"'{_entrypoint(entry)}' has no YAML frontmatter fence"
+                    f" -- {_reached_by(entry)} loadability is unverified."
+                )
         else:
             continue
         findings.append(
@@ -236,6 +324,22 @@ def _unreadable_findings(index: DiscoveryIndex) -> list[DoctorFinding]:
     """
     findings: list[DoctorFinding] = []
     for root in index.unreadable_roots:
+        if root.detail == "depth_limit_truncated":
+            findings.append(
+                DoctorFinding(
+                    code="depth_limit_truncated",
+                    severity=Severity.WARNING,
+                    message=(
+                        f"{root.agent_id}'s search path '{paths.display(Path(root.path))}' "
+                        "exceeded maximum recursion depth -- deeper skills were truncated."
+                    ),
+                    rule_id="doctor_depth_limit",
+                    evidence=Evidence.EMPIRICAL,
+                    path=root.path,
+                    detail=root.detail,
+                )
+            )
+            continue
         findings.append(
             DoctorFinding(
                 code="unreadable_root",
@@ -449,7 +553,9 @@ def _lockfile_findings(home: Path) -> list[DoctorFinding]:
     ]
 
 
-def _registry_evidence_findings(registry: Any | None = None) -> list[DoctorFinding]:
+def _registry_evidence_findings(
+    registry: dict[str, AgentDefinition] | None = None,
+) -> list[DoctorFinding]:
     """Report agents whose behaviour Skill Lens cannot cite (ℹ️).
 
     Every other check in this module reports something about the *user's* setup.

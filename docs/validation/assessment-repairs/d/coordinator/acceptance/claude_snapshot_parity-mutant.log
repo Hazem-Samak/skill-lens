@@ -1,0 +1,11 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_claude_live_frozen_command_identity_parity ________________
+tests/test_stage_d_repairs.py:1438: in test_claude_live_frozen_command_identity_parity
+    assert snap_res_b.headline is HeadlineState.ACTIVE
+E   AssertionError: assert <HeadlineState.DISABLED: 'DISABLED'> is <HeadlineState.ACTIVE: 'ACTIVE'>
+E    +  where <HeadlineState.DISABLED: 'DISABLED'> = ResolutionReport(skill_name='folder', agent='claude', agent_name='Claude Code', cwd='/private/var/folders/tf/jsdyxcts6...ble'>, invocation=<InvocationPolicy.NONE: 'none'>, permission=<PermissionEffect.DENY: 'deny'>),), notes=(), found=True).headline
+E    +  and   <HeadlineState.ACTIVE: 'ACTIVE'> = HeadlineState.ACTIVE
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_claude_live_frozen_command_identity_parity
+1 failed in 0.13s

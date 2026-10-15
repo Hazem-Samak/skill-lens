@@ -1,0 +1,13 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________________ test_privacy_synthetic_secrets_not_leaked ___________________
+tests/test_stage_d_repairs.py:1589: in test_privacy_synthetic_secrets_not_leaked
+    assert secret_effect not in opencode_json_str
+E   assert 'SYNTHETIC_SECRET_EFFECT_42' not in '{"skill_nam...le format"]}'
+E     
+E     'SYNTHETIC_SECRET_EFFECT_42' is contained here:
+E       on effect SYNTHETIC_SECRET_EFFECT_42", "Unsupported OpenCode configuration detected: Unsupported permission/pattern rule format"]}
+E     ?           ++++++++++++++++++++++++++
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_privacy_synthetic_secrets_not_leaked
+1 failed in 0.11s

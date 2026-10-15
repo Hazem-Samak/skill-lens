@@ -1,0 +1,20 @@
+[
+  {
+    "case": "boolean",
+    "invocation": "user_only",
+    "permission": "allow",
+    "notes": []
+  },
+  {
+    "case": "quoted",
+    "invocation": "all",
+    "permission": "allow",
+    "notes": []
+  },
+  {
+    "case": "other",
+    "invocation": "all",
+    "permission": "allow",
+    "notes": []
+  }
+]

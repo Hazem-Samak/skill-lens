@@ -1,0 +1,31 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_cyclic_symlink_config_error_containment _________________
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/pathlib.py:1003: in resolve
+    p.stat()
+tests/conftest.py:64: in guarded
+    return original_fn(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/pathlib.py:1013: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/conftest.py:82: in guarded
+    return original_fn(path, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   OSError: [Errno 62] Too many levels of symbolic links: '/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-68/test_cyclic_symlink_config_err0/cycle-a/SKILL.md'
+
+During handling of the above exception, another exception occurred:
+tests/test_stage_d_repairs.py:1708: in test_cyclic_symlink_config_error_containment
+    ctrls = resolve_agent_controls(codex_agent, tmp_path, tmp_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+skill_lens/core/config.py:747: in resolve_agent_controls
+    real = str(Path(norm).resolve())
+               ^^^^^^^^^^^^^^^^^^^^
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/pathlib.py:1005: in resolve
+    check_eloop(e)
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/pathlib.py:990: in check_eloop
+    raise RuntimeError("Symlink loop from %r" % e.filename)
+E   RuntimeError: Symlink loop from '/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-68/test_cyclic_symlink_config_err0/cycle-a/SKILL.md'
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_cyclic_symlink_config_error_containment
+1 failed in 0.14s

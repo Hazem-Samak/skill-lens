@@ -175,25 +175,25 @@
       "candidates": [
         {
           "state": "ACTIVE",
-          "canonical_path": "project/.pi/skills/pg_pi",
-          "entrypoint_path": "project/.pi/skills/pg_pi",
-          "scope": "project",
-          "visibility": "active_root",
-          "collision": "winning_entry",
-          "variant_label": "A",
-          "rule_id": "pi_project_shadow",
-          "reason": "Highest-priority copy (Project copy.)."
-        },
-        {
-          "state": "SHADOWED",
           "canonical_path": ".pi/agent/skills/pg_pi",
           "entrypoint_path": ".pi/agent/skills/pg_pi",
           "scope": "user",
           "visibility": "active_root",
-          "collision": "suppressed_shadow",
+          "collision": "winning_entry",
           "variant_label": "B",
-          "rule_id": "pi_project_shadow",
-          "reason": "Suppressed by the higher-priority copy in the project root .pi/skills."
+          "rule_id": "pi_global_symlink_farm",
+          "reason": "Highest-priority copy (Global copy.)."
+        },
+        {
+          "state": "SHADOWED",
+          "canonical_path": "project/.pi/skills/pg_pi",
+          "entrypoint_path": "project/.pi/skills/pg_pi",
+          "scope": "project",
+          "visibility": "active_root",
+          "collision": "suppressed_shadow",
+          "variant_label": "A",
+          "rule_id": "pi_global_symlink_farm",
+          "reason": "Suppressed by the higher-priority copy in the global root ~/.pi/agent/skills."
         }
       ]
     },
@@ -235,25 +235,25 @@
       "candidates": [
         {
           "state": "ACTIVE",
-          "canonical_path": "project/.qoder/skills/pg_qoder",
-          "entrypoint_path": "project/.qoder/skills/pg_qoder",
-          "scope": "project",
-          "visibility": "active_root",
-          "collision": "winning_entry",
-          "variant_label": "A",
-          "rule_id": "qoder_project_shadow",
-          "reason": "Highest-priority copy (Project copy.)."
-        },
-        {
-          "state": "SHADOWED",
           "canonical_path": ".qoder/skills/pg_qoder",
           "entrypoint_path": ".qoder/skills/pg_qoder",
           "scope": "user",
           "visibility": "active_root",
-          "collision": "suppressed_shadow",
+          "collision": "winning_entry",
           "variant_label": "B",
-          "rule_id": "qoder_project_shadow",
-          "reason": "Suppressed by the higher-priority copy in the project root .qoder/skills."
+          "rule_id": "qoder_global_symlink_farm",
+          "reason": "Highest-priority copy (Global copy.)."
+        },
+        {
+          "state": "SHADOWED",
+          "canonical_path": "project/.qoder/skills/pg_qoder",
+          "entrypoint_path": "project/.qoder/skills/pg_qoder",
+          "scope": "project",
+          "visibility": "active_root",
+          "collision": "suppressed_shadow",
+          "variant_label": "A",
+          "rule_id": "qoder_global_symlink_farm",
+          "reason": "Suppressed by the higher-priority copy in the global root ~/.qoder/skills."
         }
       ]
     },

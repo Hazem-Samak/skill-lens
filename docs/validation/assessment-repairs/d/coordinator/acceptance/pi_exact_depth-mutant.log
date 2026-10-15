@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________________ test_pi_recursion_cap_boundaries _______________________
+tests/test_stage_d_repairs.py:2067: in test_pi_recursion_cap_boundaries
+    assert res_exact.found is True
+E   AssertionError: assert False is True
+E    +  where False = ResolutionReport(skill_name='pi_exact', agent='pi', agent_name='Pi Agent', cwd='/private/var/folders/tf/jsdyxcts6y72fs...ARCHED: 'UNSEARCHED'>, candidates=(), notes=('No copy of this skill name was found in any search root.',), found=False).found
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_pi_recursion_cap_boundaries - Asse...
+1 failed in 0.14s

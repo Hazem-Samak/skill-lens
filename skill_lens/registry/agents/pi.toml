@@ -1,25 +1,30 @@
 id = "pi"
 name = "Pi Agent"
-identity_source = "directory_name"
-collision_policy = "Shadow (Project > Global)"
-policy_evidence = "empirical"
+identity_source = "frontmatter_name"
+collision_policy = "Shadow (User > Project)"
+policy_evidence = "documented"
 coexist_policy = "shadow"
 walk_boundary = "git_root"
 unsearched_rule_id = "pi_search_roots"
 source = "https://github.com/earendil-works/pi/blob/main/packages/coding-agent/src/core/skills.ts"
 
-# Precedence is Project > Global, and the spec matrix orders the project roots
-# as ``.pi/skills`` then ``.agents/skills`` (spec section 3, Pi row).
-# The live 83-link symlink farm into the shared canonical library.
+# Upstream skills.ts lines 463-466: loadSkills loads user defaults before project defaults.
+# addSkills records collisionDiagnostics with winnerPath=existing.filePath (the user skill)
+# and loserPath=skill.filePath (the project skill), keeping existing in skillMap.
+# Precedence is therefore User > Project.
+# Upstream loadSkillsFromDirInternal loads direct .md children at root, recurses into subdirectories,
+# and treats any directory containing SKILL.md as a skill root without recursing deeper into it.
+
 [[roots]]
 id = "pi_global_agent"
 kind = "global"
 path = ".pi/agent/skills"
 entry_format = "qualified_standalone_md"
 scope = "user"
-rank = 70
+rank = 95
 rule_id = "pi_global_symlink_farm"
-evidence = "empirical"
+evidence = "documented"
+recursive = true
 
 [[roots]]
 id = "pi_global"
@@ -27,9 +32,10 @@ kind = "global"
 path = ".pi/skills"
 entry_format = "qualified_standalone_md"
 scope = "user"
-rank = 65
+rank = 90
 rule_id = "pi_global_skills"
-evidence = "empirical"
+evidence = "inferred"
+recursive = true
 
 [[roots]]
 id = "pi_project"
@@ -37,9 +43,10 @@ kind = "project"
 path = ".pi/skills"
 entry_format = "qualified_standalone_md"
 scope = "project"
-rank = 90
+rank = 70
 rule_id = "pi_project_shadow"
-evidence = "empirical"
+evidence = "documented"
+recursive = true
 
 [[roots]]
 id = "pi_project_agents"
@@ -47,6 +54,7 @@ kind = "project"
 path = ".agents/skills"
 entry_format = "qualified_standalone_md"
 scope = "project"
-rank = 85
+rank = 65
 rule_id = "pi_project_shadow"
-evidence = "empirical"
+evidence = "inferred"
+recursive = true

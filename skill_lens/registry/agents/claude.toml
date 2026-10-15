@@ -1,6 +1,6 @@
 id = "claude"
 name = "Claude Code"
-identity_source = "directory_name"
+identity_source = "hybrid"
 collision_policy = "Personal > Project"
 policy_evidence = "documented"
 coexist_policy = "shadow"
@@ -14,8 +14,8 @@ source = "https://code.claude.com/docs/en/skills"
 # Format evidence (2026-10-13):
 # Primary documentation https://code.claude.com/docs/en/skills:
 # Skills live in directories containing SKILL.md (~/.claude/skills/<skill>/SKILL.md
-# and .claude/skills/<skill>/SKILL.md). Legacy .claude/commands/*.md are commands
-# at a different root, not standalone skills under .claude/skills.
+# and .claude/skills/<skill>/SKILL.md). Command name is set by frontmatter name,
+# and directory name also works to invoke (/name and /dirname).
 # Both retained roots explicitly declare entry_format = "directory".
 
 # Personal user skills outrank project skills (documented).

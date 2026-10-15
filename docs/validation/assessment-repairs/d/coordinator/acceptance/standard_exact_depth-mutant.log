@@ -1,0 +1,11 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_standard_recursive_roots_cap_boundaries _________________
+tests/test_stage_d_repairs.py:2122: in test_standard_recursive_roots_cap_boundaries
+    assert len(idx_clean.unreadable_roots) == 0
+E   AssertionError: assert 1 == 0
+E    +  where 1 = len([UnreadableRoot(agent_id='codex', root_id='codex_plugin', path='/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn...standard_recursive_roots_0/.codex/.tmp/plugins', detail='depth_limit_truncated', display_path='~/.codex/.tmp/plugins')])
+E    +    where [UnreadableRoot(agent_id='codex', root_id='codex_plugin', path='/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn...standard_recursive_roots_0/.codex/.tmp/plugins', detail='depth_limit_truncated', display_path='~/.codex/.tmp/plugins')] = DiscoveryIndex(home='/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-80/test_standa...tandard_recursive_roots_0/.codex/.tmp/plugins', detail='depth_limit_truncated', display_path='~/.codex/.tmp/plugins')]).unreadable_roots
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_standard_recursive_roots_cap_boundaries
+1 failed in 0.12s

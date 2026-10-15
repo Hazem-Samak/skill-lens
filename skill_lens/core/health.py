@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from skill_lens.models.enums import ParseStatus, Severity
 from skill_lens.models.parsing import (
     ERR_DANGLING_SYMLINK,
+    ERR_MISSING_FRONTMATTER,
     ERR_SYMLINK_CYCLE,
     ERR_UNDECODABLE_TEXT,
     CanonicalStatus,
@@ -99,6 +100,14 @@ def classify_entry_health(entry: DiscoveredEntry) -> HealthCondition:
 
     # 5. Parse frontmatter issues
     if entry.parse is not None and entry.parse.status is ParseStatus.MALFORMED_YAML:
+        if entry.parse.errors and ERR_MISSING_FRONTMATTER in entry.parse.errors:
+            return HealthCondition(
+                code="malformed_frontmatter",
+                severity=Severity.ERROR,
+                is_complete=True,
+                reason="missing_frontmatter",
+                clause="has no readable YAML frontmatter",
+            )
         return HealthCondition(
             code="malformed_frontmatter",
             severity=Severity.ERROR,
@@ -124,10 +133,4 @@ def classify_entry_health(entry: DiscoveredEntry) -> HealthCondition:
             clause="has no skill document (SKILL.md)",
         )
 
-    return HealthCondition(
-        code="ok",
-        severity=None,
-        is_complete=True,
-        reason=None,
-        clause="",
-    )
+    return HealthCondition()

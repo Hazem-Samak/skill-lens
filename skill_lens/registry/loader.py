@@ -32,6 +32,7 @@ class AgentRoot:
     recursive: bool = False
     base: RootBase = RootBase.HOME
     entry_format: EntryFormat = EntryFormat.DIRECTORY
+    loadability: str | None = None
 
     @property
     def is_project(self) -> bool:
@@ -92,6 +93,7 @@ def _parse_root(raw: dict[str, Any]) -> AgentRoot:
         recursive=bool(raw.get("recursive", False)),
         base=base,
         entry_format=entry_format,
+        loadability=raw.get("loadability"),
     )
 
 

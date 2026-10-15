@@ -15,6 +15,11 @@ from types import MappingProxyType
 from skill_lens.core import paths
 from skill_lens.core.cancellation import check_cancelled
 from skill_lens.core.compare import run_compare
+from skill_lens.core.config import (
+    ResolvedAgentControls,
+    collect_all_config_paths,
+    resolve_agent_controls,
+)
 from skill_lens.core.diff import build_diff_report
 from skill_lens.core.discovery import (
     DiscoveredEntry,
@@ -30,7 +35,6 @@ from skill_lens.core.hasher import (
 )
 from skill_lens.core.parser import parse_skill_bytes
 from skill_lens.core.resolver import (
-    disabled_overrides_from_bytes,
     lookup_name_for_entry,
     resolve_skill,
 )
@@ -156,11 +160,10 @@ def capture_session(
     norm_cwd = Path(index_1.cwd)
 
     # 2. Capture settings and lock bytes/status through guarded reader
+    # Unconditionally register candidate paths so absent -> created mid-capture
+    # triggers recheck failure
     check_cancelled(cancelled)
-    config_paths: list[Path] = [installer_lockfile(norm_home)]
-    for agent in registry_dict.values():
-        if agent.disabled_settings:
-            config_paths.append(norm_home / agent.disabled_settings)
+    config_paths = collect_all_config_paths(registry_dict, norm_home, norm_cwd)
 
     config_inputs: dict[str, CapturedInput] = {}
     for p in config_paths:
@@ -168,15 +171,19 @@ def capture_session(
         if p_str not in config_inputs:
             config_inputs[p_str] = _read_input_guarded(p, cancelled=cancelled)
 
+    # Resolve full immutable configuration controls for all agents from captured inputs
     disabled_overrides: dict[str, frozenset[str]] = {}
+    resolved_controls_map: dict[str, ResolvedAgentControls] = {}
     for agent in registry_dict.values():
-        if not agent.disabled_settings:
-            disabled_overrides[agent.id] = frozenset()
-        else:
-            sett_p = str(norm_home / agent.disabled_settings)
-            ci = config_inputs.get(sett_p)
-            data = ci.data if ci is not None else None
-            disabled_overrides[agent.id] = disabled_overrides_from_bytes(agent, data)
+        check_cancelled(cancelled)
+        ctrl = resolve_agent_controls(
+            agent,
+            norm_home,
+            norm_cwd,
+            config_inputs=config_inputs,
+        )
+        resolved_controls_map[agent.id] = ctrl
+        disabled_overrides[agent.id] = ctrl.disabled_names
 
     # 3. Capture file bytes for each discovered canonical copy
     captured_files: dict[str, tuple[CapturedFile, ...]] = {}
@@ -239,7 +246,6 @@ def capture_session(
                 raise SnapshotChanged("Files changed while scanning. Press r to retry.")
             captured_files[key] = tuple(items)
         else:
-            # Standalone file: canonical filename
             try:
                 with root.open("rb") as f:
                     chunks = []
@@ -400,6 +406,20 @@ def capture_session(
         if ci != new_ci:
             raise SnapshotChanged("Files changed while scanning. Press r to retry.")
 
+    # Recheck mapping stability for resolved controls
+    # (ensures canonical identities/targets are unchanged)
+    for agent in registry_dict.values():
+        check_cancelled(cancelled)
+        new_ctrl = resolve_agent_controls(
+            agent,
+            norm_home,
+            norm_cwd,
+            config_inputs=config_inputs,
+        )
+        old_ctrl = resolved_controls_map.get(agent.id)
+        if old_ctrl != new_ctrl:
+            raise SnapshotChanged("Files changed while scanning. Press r to retry.")
+
     # 7. Check cancellation and effective-home agreement immediately before publication
     check_cancelled(cancelled)
     if paths.home() != norm_home:
@@ -449,6 +469,7 @@ def capture_session(
         same_locations=frozenset(same_locations),
         scan=owned_scan,
         doctor=doctor_report,
+        resolved_controls=MappingProxyType(dict(resolved_controls_map)),
     )
 
 
@@ -469,7 +490,17 @@ def snapshot_why(snapshot: SessionSnapshot, key: str, agent_id: str) -> Resoluti
         raise KeyError(f"unknown agent '{agent_id}'. Known agents: {known}")
     agent = registry_dict[agent_id]
     lookup_name = lookup_name_for_entry(entry, agent)
-    overrides = snapshot.disabled_overrides.get(agent_id, frozenset())
+    ctrl = (
+        snapshot.resolved_controls.get(agent_id)
+        if hasattr(snapshot, "resolved_controls") and snapshot.resolved_controls
+        else None
+    )
+    overrides = (
+        snapshot.disabled_overrides.get(agent_id)
+        if hasattr(snapshot, "disabled_overrides") and snapshot.disabled_overrides
+        else None
+    )
+    disp_paths = snapshot.display_paths if hasattr(snapshot, "display_paths") else None
     return resolve_skill(
         lookup_name,
         agent_id,
@@ -477,7 +508,9 @@ def snapshot_why(snapshot: SessionSnapshot, key: str, agent_id: str) -> Resoluti
         snapshot.home,
         index=snapshot.index,
         registry=registry_dict,
-        disabled_overrides=overrides,
+        controls=ctrl,
+        disabled_overrides=overrides if ctrl is None else None,
+        display_paths=disp_paths,
     )
 
 

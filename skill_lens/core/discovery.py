@@ -32,6 +32,8 @@ from skill_lens.models.parsing import (
 from skill_lens.registry.loader import AgentDefinition, AgentRoot, load_registry
 
 MAX_WALK_DEPTH = 4
+MAX_OPENCODE_WALK_DEPTH = 32
+MAX_PI_WALK_DEPTH = 16
 
 #: Most specific scope first. Used for stable ordering of scan rows and of
 #: Variant A / B labels, so both commands agree on what "first" means.
@@ -149,6 +151,7 @@ class UnreadableRoot:
     root_id: str
     path: str
     detail: str
+    display_path: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -177,6 +180,7 @@ class RootHit:
     specificity: int = 0
     entrypoint_path: str = ""
     is_file: bool = False
+    loadability: str | None = None
 
     def rule_for(self, is_file: bool) -> str:
         if self.nested and self.nested_rule_id:
@@ -215,7 +219,7 @@ class DiscoveredEntry:
 
     @property
     def canonical_path(self) -> str | None:
-        return self.canonical.resolved_path
+        return self.canonical.resolved_path if self.canonical is not None else None
 
     @property
     def parse_status(self) -> str:
@@ -225,6 +229,8 @@ class DiscoveredEntry:
 
     @property
     def error_code(self) -> str | None:
+        if self.canonical is None:
+            return None
         if self.canonical.status is CanonicalStatus.CYCLE:
             return ERR_SYMLINK_CYCLE
         if self.canonical.status is CanonicalStatus.BROKEN:
@@ -452,19 +458,50 @@ def _list_entries(
     return results
 
 
+def _record_truncation(
+    truncated_collector: list[UnreadableRoot] | None,
+    agent_id: str,
+    root: AgentRoot | None,
+    base: Path,
+) -> None:
+    if (
+        truncated_collector is not None
+        and root is not None
+        and not any(
+            ur.agent_id == agent_id
+            and ur.root_id == root.id
+            and ur.path == str(base)
+            and ur.detail == "depth_limit_truncated"
+            for ur in truncated_collector
+        )
+    ):
+        truncated_collector.append(
+            UnreadableRoot(
+                agent_id=agent_id,
+                root_id=root.id,
+                path=str(base),
+                detail="depth_limit_truncated",
+                display_path=paths.display(base),
+            )
+        )
+
+
 def _list_recursive_entries(
     base: Path,
     *,
     cancelled: Callable[[], bool] | None = None,
     root: AgentRoot | None = None,
+    truncated_collector: list[UnreadableRoot] | None = None,
+    agent_id: str = "",
 ) -> list[tuple[Path, bool]]:
-    """Find skill directories under ``base`` up to :data:`MAX_WALK_DEPTH`."""
+    """Find skill directories under ``base``."""
     check_cancelled(cancelled)
     fmt = root.entry_format if root is not None else EntryFormat.DIRECTORY
 
     found: list[tuple[Path, bool]] = []
     base_depth = len(base.parts)
 
+    # 1. OpenCode V2 discovery
     if fmt == EntryFormat.OPENCODE_V2:
         try:
             root_children = sorted(base.iterdir(), key=lambda p: p.name)
@@ -488,45 +525,150 @@ def _list_recursive_entries(
             elif child.is_file() and child.suffix.lower() == ".md":
                 found.append((child, True))
 
-        for dirpath, dirnames, _filenames in os.walk(base):
+        visited_real: set[Path] = set()
+        for dirpath, dirnames, filenames in os.walk(base):
             check_cancelled(cancelled)
             current = Path(dirpath)
+            try:
+                real_p = current.resolve()
+                if real_p in visited_real:
+                    dirnames[:] = []
+                    continue
+                visited_real.add(real_p)
+            except (OSError, RuntimeError):
+                pass
+
             if current == base:
                 dirnames[:] = [d for d in dirnames if d != ".git"]
                 continue
-            if len(current.parts) - base_depth >= MAX_WALK_DEPTH:
+
+            dirnames[:] = [d for d in dirnames if d != ".git"]
+            depth = len(current.parts) - base_depth
+
+            if depth > MAX_OPENCODE_WALK_DEPTH:
+                if dirnames and truncated_collector is not None and root is not None:
+                    _record_truncation(truncated_collector, agent_id, root, base)
                 dirnames[:] = []
                 continue
-            dirnames[:] = [d for d in dirnames if d != ".git"]
+
             if _has_exact_skill_md(current) or _unreadable(current):
                 found.append((current, False))
+                # OpenCode V2: DO NOT clear dirnames; continue descending to find nested skills!
+
+            if depth >= MAX_OPENCODE_WALK_DEPTH:
+                if dirnames and truncated_collector is not None and root is not None:
+                    _record_truncation(truncated_collector, agent_id, root, base)
                 dirnames[:] = []
-            else:
-                for name in list(dirnames) + list(_filenames):
-                    check_cancelled(cancelled)
-                    child = current / name
-                    if child.is_symlink():
-                        try:
-                            target = child.resolve()
-                        except (OSError, RuntimeError):
-                            found.append((child, False))
-                            continue
-                        if not target.exists():
-                            found.append((child, False))
-                            continue
-                        if target.is_dir() and (_has_exact_skill_md(target) or _unreadable(target)):
-                            found.append((child, False))
+                continue
+
+            for name in list(dirnames) + list(filenames):
+                check_cancelled(cancelled)
+                child = current / name
+                if child.is_symlink():
+                    try:
+                        target = child.resolve()
+                    except (OSError, RuntimeError):
+                        found.append((child, False))
+                        continue
+                    if not target.exists():
+                        found.append((child, False))
+                        continue
+                    if target.is_dir() and (_has_exact_skill_md(target) or _unreadable(target)):
+                        found.append((child, False))
         return found
 
+    # 2. Pi Coding Agent discovery (stop-at-SKILL.md, recursion with ignore rules)
+    is_pi_root = root is not None and (
+        root.id in ("pi_global_agent", "pi_global", "pi_project", "pi_project_agents")
+        or (root.id.startswith("pi_") and root.rule_id.startswith("pi_"))
+    )
+    if is_pi_root:
+        try:
+            root_children = sorted(base.iterdir(), key=lambda p: p.name)
+        except OSError:
+            return []
+        for child in root_children:
+            check_cancelled(cancelled)
+            if child.is_symlink():
+                try:
+                    target = child.resolve()
+                except (OSError, RuntimeError):
+                    found.append((child, False))
+                    continue
+                if not target.exists():
+                    found.append((child, False))
+                    continue
+                if target.is_file() and (child.suffix.lower() == ".md" or child.name == "SKILL.md"):
+                    if _is_declared_or_qualified_standalone_md(target):
+                        found.append((child, True))
+                elif target.is_dir() and (_has_exact_skill_md(target) or _unreadable(target)):
+                    found.append((child, False))
+            elif child.is_file() and child.suffix.lower() == ".md":
+                if child.name in (
+                    "SKILL.md",
+                    "skill.md",
+                ) or _is_declared_or_qualified_standalone_md(child):
+                    found.append((child, True))
+
+        visited_real_pi: set[Path] = set()
+        for dirpath, dirnames, _filenames in os.walk(base):
+            check_cancelled(cancelled)
+            current = Path(dirpath)
+            try:
+                real_p = current.resolve()
+                if real_p in visited_real_pi:
+                    dirnames[:] = []
+                    continue
+                visited_real_pi.add(real_p)
+            except (OSError, RuntimeError):
+                pass
+
+            if current == base:
+                dirnames[:] = [d for d in dirnames if not d.startswith(".") and d != "node_modules"]
+                continue
+
+            dirnames[:] = [d for d in dirnames if not d.startswith(".") and d != "node_modules"]
+            depth = len(current.parts) - base_depth
+
+            if depth > MAX_PI_WALK_DEPTH:
+                if dirnames and truncated_collector is not None and root is not None:
+                    _record_truncation(truncated_collector, agent_id, root, base)
+                dirnames[:] = []
+                continue
+
+            if _has_exact_skill_md(current) or _unreadable(current):
+                found.append((current, False))
+                # Pi STOP-AT-SKILL: do not recurse into subdirectories of a skill
+                dirnames[:] = []
+            elif depth >= MAX_PI_WALK_DEPTH:
+                if dirnames and truncated_collector is not None and root is not None:
+                    _record_truncation(truncated_collector, agent_id, root, base)
+                dirnames[:] = []
+        return found
+
+    # 3. Standard recursive roots
     for dirpath, dirnames, _filenames in os.walk(base):
         check_cancelled(cancelled)
         current = Path(dirpath)
-        if len(current.parts) - base_depth >= MAX_WALK_DEPTH:
+        if current == base:
+            dirnames[:] = [d for d in dirnames if d != ".git"]
+            continue
+
+        dirnames[:] = [d for d in dirnames if d != ".git"]
+        depth = len(current.parts) - base_depth
+
+        if depth > MAX_WALK_DEPTH:
+            if dirnames and truncated_collector is not None and root is not None:
+                _record_truncation(truncated_collector, agent_id, root, base)
             dirnames[:] = []
             continue
-        dirnames[:] = [d for d in dirnames if d != ".git"]
+
         if current.name == "skills":
             found.extend(_list_entries(current, cancelled=cancelled, root=root))
+            dirnames[:] = []
+        elif depth >= MAX_WALK_DEPTH:
+            if dirnames and truncated_collector is not None and root is not None:
+                _record_truncation(truncated_collector, agent_id, root, base)
             dirnames[:] = []
     return found
 
@@ -565,6 +707,7 @@ def discover(
                                 root_id=root.id,
                                 path=str(base),
                                 detail=ERR_PERMISSION_DENIED,
+                                display_path=paths.display(base),
                             )
                         )
                         continue
@@ -577,7 +720,13 @@ def discover(
                     # ``exists``/``is_dir``; 3.14 swallows it).
                     continue
                 listing = (
-                    _list_recursive_entries(base, cancelled=cancelled, root=root)
+                    _list_recursive_entries(
+                        base,
+                        cancelled=cancelled,
+                        root=root,
+                        truncated_collector=index.unreadable_roots,
+                        agent_id=agent.id,
+                    )
                     if root.recursive or root.entry_format == EntryFormat.OPENCODE_V2
                     else _list_entries(base, cancelled=cancelled, root=root)
                 )
@@ -597,9 +746,12 @@ def discover(
                         nested=nested,
                         file_rule_id=root.file_rule_id,
                         nested_rule_id=root.nested_rule_id,
-                        specificity=len(Path(root.path).parts),
+                        specificity=(
+                            len(base.parts) if root.is_project else len(Path(root.path).parts)
+                        ),
                         entrypoint_path=str(entrypoint),
                         is_file=is_file,
+                        loadability=root.loadability,
                     )
                     index.entries.append(
                         _build_entry(entrypoint, is_file, hit, cancelled=cancelled)

@@ -1,0 +1,58 @@
+{
+  "scratch": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-resume-20261013-bt9bpeqe/reviewed-r2-boundaries-mx1lk7tc",
+  "cases": [
+    {
+      "case": "codex-symlink-config-parity",
+      "actual": {
+        "live": "DISABLED",
+        "frozen": "ACTIVE"
+      },
+      "expected": "same exact config/path interpretation during live acquisition and capture"
+    },
+    {
+      "case": "opencode-config-above-git",
+      "actual": {
+        "headline": "ACTIVE",
+        "permission": "allow",
+        "notes": []
+      },
+      "expected": "deny or explicit limitation: V2 config walks to filesystem root"
+    },
+    {
+      "case": "qoder-compatibility-loadability",
+      "actual": {
+        "headline": "ACTIVE",
+        "loadability": "loadable",
+        "notes": []
+      },
+      "expected": "unknown non-native retained root support disclosed"
+    },
+    {
+      "case": "opencode-autoinvoke-no-description",
+      "actual": "all",
+      "expected": "not advertised without description even with true flag"
+    },
+    {
+      "case": "explicit-disabled-alias-api",
+      "actual": "ACTIVE",
+      "expected": "preserved old explicit disabled_overrides all supported identities contract"
+    },
+    {
+      "case": "opencode-runtime-depth-disclosure",
+      "actual": {
+        "found": false,
+        "notes": [
+          "No copy of this skill name was found in any search root."
+        ]
+      },
+      "expected": "explicit discovery truncation/unknown, not no-copy-found alone"
+    },
+    {
+      "case": "opencode-plain-doctor",
+      "actual": [
+        "'~/.opencode/skills/plain' has no readable YAML frontmatter -- opencode will skip 'plain'."
+      ],
+      "expected": "portable warning must not claim OpenCode skips optional frontmatter"
+    }
+  ]
+}

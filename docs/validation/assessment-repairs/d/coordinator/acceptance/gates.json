@@ -1,0 +1,48 @@
+[
+  {
+    "gate": "pytest",
+    "command": [
+      ".venv/bin/pytest",
+      "--cov=skill_lens",
+      "-o",
+      "cache_dir=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-council-r2-20261015-9b1w24yg/pytest-cache"
+    ],
+    "exit": 0,
+    "seconds": 51.71650299999965,
+    "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-council-r2-20261015-9b1w24yg/pytest.log"
+  },
+  {
+    "gate": "mypy",
+    "command": [
+      ".venv/bin/mypy",
+      "--cache-dir",
+      "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-council-r2-20261015-9b1w24yg/mypy-cache"
+    ],
+    "exit": 0,
+    "seconds": 1.6610255839987076,
+    "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-council-r2-20261015-9b1w24yg/mypy.log"
+  },
+  {
+    "gate": "ruff",
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "exit": 0,
+    "seconds": 0.07976912499907485,
+    "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-council-r2-20261015-9b1w24yg/ruff.log"
+  },
+  {
+    "gate": "format",
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "exit": 0,
+    "seconds": 0.07831337499919755,
+    "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-stage-d-council-r2-20261015-9b1w24yg/format.log"
+  }
+]

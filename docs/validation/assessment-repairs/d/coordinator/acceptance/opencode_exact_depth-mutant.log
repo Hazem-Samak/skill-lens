@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________________ test_opencode_recursion_cap_boundaries ____________________
+tests/test_stage_d_repairs.py:1975: in test_opencode_recursion_cap_boundaries
+    assert res_exact.found is True
+E   assert False is True
+E    +  where False = ResolutionReport(skill_name='oc_exact', agent='opencode', agent_name='OpenCode V2', cwd='/private/var/folders/tf/jsdyx...cific policies are omitted from runtime modeling, which may affect permission and discovery confidence."), found=False).found
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_opencode_recursion_cap_boundaries
+1 failed in 0.13s

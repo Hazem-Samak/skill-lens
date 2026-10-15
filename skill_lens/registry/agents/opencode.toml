@@ -1,36 +1,28 @@
 id = "opencode"
-name = "OpenCode"
-identity_source = "frontmatter_name"
-# Duplicate names across searched roots have no documented winner.
-collision_policy = "Ambiguous on duplicate"
-policy_evidence = "empirical"
-coexist_policy = "ambiguous"
+name = "OpenCode V2"
+identity_source = "directory_name"
+collision_policy = "Shadow (Later-registered source wins)"
+policy_evidence = "documented"
+coexist_policy = "shadow"
 walk_boundary = "git_worktree_root"
 unsearched_rule_id = "opencode_search_roots"
-ambiguous_rule_id = "opencode_duplicate_ambiguous"
-source = "https://opencode.ai/docs/skills"
+disabled_rule_id = "opencode_permission_denied"
+disabled_settings = ".config/opencode/opencode.json"
+source = "https://opencode.ai/v2/docs/skills"
 
-[[roots]]
-id = "opencode_native"
-kind = "global"
-path = ".config/opencode/skills"
-base = "xdg_config_home"
-entry_format = "opencode_v2"
-scope = "user"
-rank = 80
-rule_id = "opencode_native_skills"
-evidence = "empirical"
-
-# OpenCode also searches the shared library upward from the working directory.
-[[roots]]
-id = "opencode_shared_global"
-kind = "global"
-path = ".agents/skills"
-entry_format = "opencode_v2"
-scope = "user"
-rank = 80
-rule_id = "opencode_shared_skills"
-evidence = "empirical"
+# Format evidence (2026-10-13):
+# Primary source: https://opencode.ai/v2/docs/skills/
+# OpenCode V2 ONLY (V1 explicitly unsupported).
+# Default sources and precedence (later-registered source wins):
+# 1. ~/.claude/skills (global)
+# 2. .claude/skills (project)
+# 3. ~/.agents/skills (global)
+# 4. .agents/skills (project)
+# 5. ~/.config/opencode/skills (global)
+# 6. .opencode/skills (project)
+# Path-derived IDs (directory_name): filename stem for root .md, directory for SKILL.md.
+# entry_format = "opencode_v2" supports root *.md and nested **/SKILL.md at any depth.
+# Documented Claude compatibility roots (.claude/skills) discover root *.md and **/SKILL.md per V2 spec.
 
 [[roots]]
 id = "opencode_project"
@@ -38,9 +30,20 @@ kind = "project"
 path = ".opencode/skills"
 entry_format = "opencode_v2"
 scope = "project"
-rank = 70
+rank = 80
 rule_id = "opencode_project_skills"
-evidence = "empirical"
+evidence = "documented"
+
+[[roots]]
+id = "opencode_native"
+kind = "global"
+path = "opencode/skills"
+base = "xdg_config_home"
+entry_format = "opencode_v2"
+scope = "user"
+rank = 70
+rule_id = "opencode_native_skills"
+evidence = "documented"
 
 [[roots]]
 id = "opencode_project_agents"
@@ -48,6 +51,36 @@ kind = "project"
 path = ".agents/skills"
 entry_format = "opencode_v2"
 scope = "project"
-rank = 70
-rule_id = "opencode_project_skills"
-evidence = "empirical"
+rank = 65
+rule_id = "opencode_project_agents_skills"
+evidence = "documented"
+
+[[roots]]
+id = "opencode_shared_global"
+kind = "global"
+path = ".agents/skills"
+entry_format = "opencode_v2"
+scope = "user"
+rank = 60
+rule_id = "opencode_shared_skills"
+evidence = "documented"
+
+[[roots]]
+id = "opencode_project_claude"
+kind = "project"
+path = ".claude/skills"
+entry_format = "opencode_v2"
+scope = "project"
+rank = 55
+rule_id = "opencode_project_claude_skills"
+evidence = "documented"
+
+[[roots]]
+id = "opencode_global_claude"
+kind = "global"
+path = ".claude/skills"
+entry_format = "opencode_v2"
+scope = "user"
+rank = 50
+rule_id = "opencode_global_claude_skills"
+evidence = "documented"

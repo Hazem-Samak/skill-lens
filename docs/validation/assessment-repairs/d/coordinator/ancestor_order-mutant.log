@@ -1,0 +1,11 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_coordinator_r1_repro_6_opencode_closest_source_ancestor_collision ____
+tests/test_stage_d_repairs.py:1048: in test_coordinator_r1_repro_6_opencode_closest_source_ancestor_collision
+    assert r.headline is HeadlineState.ACTIVE
+E   AssertionError: assert <HeadlineState.AMBIGUOUS: 'AMBIGUOUS'> is <HeadlineState.ACTIVE: 'ACTIVE'>
+E    +  where <HeadlineState.AMBIGUOUS: 'AMBIGUOUS'> = ResolutionReport(skill_name='deploy', agent='opencode', agent_name='OpenCode V2', cwd='/private/var/folders/tf/jsdyxct...=<PermissionEffect.ALLOW: 'allow'>)), notes=('OpenCode V2 has no documented winner for duplicate names.',), found=True).headline
+E    +  and   <HeadlineState.ACTIVE: 'ACTIVE'> = HeadlineState.ACTIVE
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_coordinator_r1_repro_6_opencode_closest_source_ancestor_collision
+1 failed in 0.08s

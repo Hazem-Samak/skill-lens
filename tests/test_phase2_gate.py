@@ -309,7 +309,7 @@ def test_directory_name_agent_matches_a_broken_skill_by_folder(mock_home: Path) 
     """A directory-name agent (Claude) still finds the same copy by folder name."""
     write_skill(
         mock_home / ".claude" / "skills" / "custom_folder",
-        "---\nname: my-skill\n---\n# Body without a description.\n",
+        "---\nname: [unclosed\n---\n# Malformed YAML frontmatter.\n",
     )
     home = mock_home.resolve()
     report = resolve_skill("custom_folder", "claude", home, home)
@@ -446,9 +446,7 @@ def test_scan_reports_variant_labels(mock_home: Path) -> None:
     ("agent", "skill"),
     [
         ("antigravity", "pg_antigravity"),
-        ("pi", "pg_pi"),
         ("grok", "pg_grok"),
-        ("qoder", "pg_qoder"),
         ("windsurf", "pg_windsurf"),
         ("omp", "pg_omp"),
     ],
@@ -471,6 +469,24 @@ def test_project_beats_global_for_every_shadow_agent(
     assert by_scope[Scope.PROJECT].rank > by_scope[Scope.USER].rank
 
 
+@pytest.mark.parametrize(
+    ("agent", "skill"),
+    [
+        ("pi", "pg_pi"),
+        ("qoder", "pg_qoder"),
+    ],
+)
+def test_user_beats_project_for_pi_and_qoder(agent: str, skill: str, mock_home: Path) -> None:
+    """Primary sources prove Pi and Qoder prioritize User skills over Project skills."""
+    build_scenario("project_beats_global", mock_home)
+    home = mock_home.resolve()
+    report = resolve_skill(skill, agent, home / "project", home)
+    by_scope = {c.installation.scope: c for c in report.candidates}
+    assert by_scope[Scope.USER].state is HeadlineState.ACTIVE
+    assert by_scope[Scope.PROJECT].state is HeadlineState.SHADOWED
+    assert by_scope[Scope.USER].rank > by_scope[Scope.PROJECT].rank
+
+
 def test_claude_personal_still_beats_project(mock_home: Path) -> None:
     """The F-01 inversion must not flip Claude, whose documented rule is inverse."""
     build_scenario("claude_personal_beats_project", mock_home)
@@ -481,21 +497,18 @@ def test_claude_personal_still_beats_project(mock_home: Path) -> None:
     assert by_scope[Scope.PROJECT].state is HeadlineState.SHADOWED
 
 
-def test_opencode_ties_stay_ambiguous(mock_home: Path) -> None:
-    """Intentional ties must not be 'fixed' into a winner."""
+def test_opencode_v2_later_source_precedence(mock_home: Path) -> None:
+    """OpenCode V2 later-registered source precedence: native config outranks shared."""
     build_scenario("opencode_ambiguous", mock_home)
     home = mock_home.resolve()
     report = resolve_skill("dup", "opencode", home, home)
-    assert report.headline is HeadlineState.AMBIGUOUS
-
-
-def test_opencode_ambiguous_headline(mock_home: Path) -> None:
-    build_scenario("opencode_ambiguous", mock_home)
-    home = mock_home.resolve()
-    report = resolve_skill("dup", "opencode", home, home)
-    assert report.headline is HeadlineState.AMBIGUOUS
-    assert all(c.state is HeadlineState.AMBIGUOUS for c in report.candidates)
-    assert report.notes
+    assert report.headline is HeadlineState.ACTIVE
+    native = next(
+        c for c in report.candidates if ".config/opencode" in c.installation.canonical_path
+    )
+    shared = next(c for c in report.candidates if ".agents" in c.installation.canonical_path)
+    assert native.state is HeadlineState.ACTIVE
+    assert shared.state is HeadlineState.SHADOWED
 
 
 def test_disabled_override(mock_home: Path) -> None:
@@ -517,9 +530,10 @@ def test_non_object_settings_are_ignored(mock_home: Path, payload: str) -> None:
 def test_malformed_is_invalid(mock_home: Path) -> None:
     build_scenario("malformed_frontmatter", mock_home)
     home = mock_home.resolve()
-    for skill in ("broken", "nodesc"):
-        report = resolve_skill(skill, "claude", home, home)
-        assert report.headline is HeadlineState.INVALID
+    report_broken = resolve_skill("broken", "claude", home, home)
+    assert report_broken.headline is HeadlineState.INVALID
+    report_nodesc = resolve_skill("nodesc", "claude", home, home)
+    assert report_nodesc.headline is HeadlineState.ACTIVE
 
 
 def test_cycle_is_invalid_not_hang(mock_home: Path) -> None:

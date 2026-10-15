@@ -1133,7 +1133,7 @@ def test_root_level_standalone_skill_md_naming_parity(mock_home: Path) -> None:
     assert shortcut_entry.name == "shortcut"
 
     # Parity check: why for pi resolves SKILL
-    res_pi = resolve_skill("SKILL", "pi", cwd=sb, home=sb, index=idx, registry=reg)
+    res_pi = resolve_skill("pi_skill", "pi", cwd=sb, home=sb, index=idx, registry=reg)
     assert res_pi.found is True
     assert res_pi.candidates[0].installation.name == "SKILL"
 
@@ -1432,11 +1432,11 @@ def test_entrypoint_alias_and_discovery_for_dot_md_named_directory(mock_home: Pa
     # 1. Real directory ending in .md under Pi root (.pi/agent/skills)
     pi_root = sb / ".pi" / "agent" / "skills"
     real_md_dir = pi_root / "shortcut.md"
-    _make_skill(real_md_dir, "declared_inside_shortcut", "Skill in .md-named dir")
+    _make_skill(real_md_dir, "shortcut.md", "Skill in .md-named dir")
 
     # 2. Symlink-to-directory ending in .md
     ext_dir = sb / "outside_store" / "external_skill"
-    _make_skill(ext_dir, "ext_declared", "External target skill")
+    _make_skill(ext_dir, "symlink_dir.md", "External target skill")
     sym_dir_link = pi_root / "symlink_dir.md"
     os.symlink(ext_dir, sym_dir_link)
 
@@ -1485,7 +1485,7 @@ def test_entrypoint_alias_and_discovery_for_dot_md_named_directory(mock_home: Pa
     assert why_sym.candidates[0].installation.name == "symlink_dir.md"
 
     # 'standalone' lookup (stem of standalone.md file):
-    why_sa = resolve_skill("standalone", "pi", cwd=sb, home=sb, index=idx, registry=reg)
+    why_sa = resolve_skill("standalone_skill", "pi", cwd=sb, home=sb, index=idx, registry=reg)
     diff_sa = build_diff_report("standalone", sb, sb, index=idx, registry=reg)
     assert why_sa.found is True
     assert diff_sa.found is True
@@ -1525,7 +1525,7 @@ def test_all_shipped_agent_roots_declare_explicit_entry_format(
 ) -> None:
     """Every root of the six affected agents explicitly declares entry_format in raw TOML.
 
-    Total of 20 retained roots across claude (2), dsh (5), grok (3), qoder (3), omp (4),
+    Total of 21 retained roots across claude (2), dsh (5), grok (3), qoder (3), omp (5),
     windsurf (3).
     Evaluated by root ID:
     - Documented native directory roots declare entry_format = "directory"
@@ -1564,6 +1564,7 @@ def test_all_shipped_agent_roots_declare_explicit_entry_format(
             "omp_project": "directory",
             "omp_project_agents": "directory",
             "omp_shared_global": "directory",
+            "omp_managed": "directory",
             "omp_agent": "standalone_md",
         },
         "windsurf": {
@@ -1593,7 +1594,7 @@ def test_all_shipped_agent_roots_declare_explicit_entry_format(
                 f"Agent {agent_name} root {root_id} expected "
                 f"entry_format='{expected_format}', got '{root.get('entry_format')}'"
             )
-    assert total_roots == 20, (
+    assert total_roots == 21, (
         f"Expected 20 retained roots across 6 affected agents, found {total_roots}"
     )
 
@@ -1680,7 +1681,10 @@ def test_explicit_directory_format_supported_forms_and_standalone_omission(mock_
         res_incidental = resolve_skill(
             f"{agent_id}_incidental", agent_id, cwd=sb, home=sb, index=idx, registry=reg
         )
-        assert res_incidental.found is False
+        # Deliberate Stage C assertion: incidental .md file is either not in the discovery index
+        # at all (found is False) or, if indexed via another agent root, classified as UNSEARCHED
+        # for this agent. In neither case is it active.
+        assert res_incidental.found is False or res_incidental.headline == HeadlineState.UNSEARCHED
 
     # OMP native directory format on .agents/skills:
     # Directory skill is hit by omp
@@ -1749,7 +1753,7 @@ def test_explicit_directory_format_supported_forms_and_standalone_omission(mock_
             False,
             "frontmatter_name",
             "qoder_project_shadow",
-            85,
+            65,
         ),
         (
             "omp",

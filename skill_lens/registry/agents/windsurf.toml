@@ -49,3 +49,4 @@ entry_format = "standalone_md"
 rank = 85
 rule_id = "windsurf_project_shadow"
 evidence = "empirical"
+loadability = "unknown"

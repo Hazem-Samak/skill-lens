@@ -9,6 +9,9 @@ from skill_lens.models.enums import (
     Collision,
     Evidence,
     HeadlineState,
+    InvocationPolicy,
+    LoadabilityStatus,
+    PermissionEffect,
     Visibility,
 )
 from skill_lens.models.installation import SkillInstallation
@@ -30,6 +33,9 @@ class CandidateResolution:
     reason: str
     rank: int
     installation: SkillInstallation
+    loadability: LoadabilityStatus = LoadabilityStatus.LOADABLE
+    invocation: InvocationPolicy = InvocationPolicy.ALL
+    permission: PermissionEffect = PermissionEffect.ALLOW
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -41,6 +47,9 @@ class CandidateResolution:
             "reason": self.reason,
             "rank": self.rank,
             "installation": self.installation.to_dict(),
+            "loadability": self.loadability.value,
+            "invocation": self.invocation.value,
+            "permission": self.permission.value,
         }
 
     @classmethod
@@ -54,6 +63,11 @@ class CandidateResolution:
             reason=data["reason"],
             rank=int(data["rank"]),
             installation=SkillInstallation.from_dict(data["installation"]),
+            loadability=LoadabilityStatus(
+                data.get("loadability", LoadabilityStatus.LOADABLE.value)
+            ),
+            invocation=InvocationPolicy(data.get("invocation", InvocationPolicy.ALL.value)),
+            permission=PermissionEffect(data.get("permission", PermissionEffect.ALLOW.value)),
         )
 
 

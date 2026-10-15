@@ -6,6 +6,6 @@
 ┏━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Skill Name ┃ Scope  ┃ Status ┃ Canonical Path          ┃ Active Entrypoints        ┃
 ┡━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ deploy     │ Global │ valid  │ ~/.claude/skills/deploy │ claude                    │
+│ deploy     │ Global │ valid  │ ~/.claude/skills/deploy │ claude, opencode          │
 │ deploy     │ Global │ valid  │ ~/.agents/skills/deploy │ codex, dsh, omp, opencode │
 └────────────┴────────┴────────┴─────────────────────────┴───────────────────────────┘

@@ -1,0 +1,9 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_coordinator_r1_repro_9_invalid_override_value_status ___________
+tests/test_stage_d_repairs.py:1092: in test_coordinator_r1_repro_9_invalid_override_value_status
+    assert err == "malformed"
+E   AssertionError: assert None == 'malformed'
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_coordinator_r1_repro_9_invalid_override_value_status
+1 failed in 0.11s

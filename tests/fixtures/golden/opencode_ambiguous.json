@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "scenario": "opencode_ambiguous",
-  "description": "Two same-rank searched roots collide with no documented winner: AMBIGUOUS.",
+  "description": "OpenCode V2 later-registered source precedence: native config wins over shared.",
   "installations": [
     {
       "name": "dup",
@@ -31,29 +31,29 @@
       "skill": "dup",
       "agent": "opencode",
       "cwd": ".",
-      "headline": "AMBIGUOUS",
+      "headline": "ACTIVE",
       "candidates": [
         {
-          "state": "AMBIGUOUS",
-          "canonical_path": ".agents/skills/dup",
-          "entrypoint_path": ".agents/skills/dup",
-          "scope": "user",
-          "visibility": "active_root",
-          "collision": "ambiguous_tie",
-          "variant_label": "A",
-          "rule_id": "opencode_duplicate_ambiguous",
-          "reason": "Ties with another copy; OpenCode's collision policy is undocumented."
-        },
-        {
-          "state": "AMBIGUOUS",
+          "state": "ACTIVE",
           "canonical_path": ".config/opencode/skills/dup",
           "entrypoint_path": ".config/opencode/skills/dup",
           "scope": "user",
           "visibility": "active_root",
-          "collision": "ambiguous_tie",
+          "collision": "winning_entry",
           "variant_label": "B",
-          "rule_id": "opencode_duplicate_ambiguous",
-          "reason": "Ties with another copy; OpenCode's collision policy is undocumented."
+          "rule_id": "opencode_native_skills",
+          "reason": "Highest-priority copy (OpenCode native dup.)."
+        },
+        {
+          "state": "SHADOWED",
+          "canonical_path": ".agents/skills/dup",
+          "entrypoint_path": ".agents/skills/dup",
+          "scope": "user",
+          "visibility": "active_root",
+          "collision": "suppressed_shadow",
+          "variant_label": "A",
+          "rule_id": "opencode_native_skills",
+          "reason": "Suppressed by the higher-priority copy in the global root ~/.config/opencode/skills."
         }
       ]
     }

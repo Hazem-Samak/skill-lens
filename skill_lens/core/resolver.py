@@ -15,9 +15,17 @@ The three axes:
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from pathlib import Path
 
+from skill_lens.core import paths
+from skill_lens.core.config import (
+    ResolvedAgentControls,
+    is_loadable_for_agent,
+    resolve_agent_controls,
+    resolve_candidate_controls,
+)
 from skill_lens.core.discovery import (
     DiscoveredEntry,
     DiscoveryIndex,
@@ -31,7 +39,11 @@ from skill_lens.models.enums import (
     Collision,
     Evidence,
     HeadlineState,
+    InvocationPolicy,
+    LoadabilityStatus,
     ParseStatus,
+    PermissionEffect,
+    RootBase,
     Scope,
     Visibility,
 )
@@ -103,8 +115,11 @@ class Candidate:
 # --- Small predicates ------------------------------------------------------
 
 
-def _is_valid(entry: DiscoveredEntry) -> bool:
-    return entry.parse_status == ParseStatus.VALID.value
+def _is_valid_for_agent(
+    agent: AgentDefinition, entry: DiscoveredEntry, hit: RootHit | None = None
+) -> bool:
+    loadability, _ = is_loadable_for_agent(agent, entry, hit)
+    return loadability is not LoadabilityStatus.INVALID
 
 
 def _searched_hits(agent: AgentDefinition, entry: DiscoveredEntry) -> list[RootHit]:
@@ -126,6 +141,7 @@ def _representative_hit(
         rule_id=root.rule_id if root else agent.unsearched_rule_id,
         evidence=root.evidence.value if root else agent.policy_evidence.value,
         scope=root.scope if root else (entry.hits[0].scope if entry.hits else Scope.USER),
+        is_file=entry.is_file,
     )
 
 
@@ -151,12 +167,12 @@ def _hit_identity_names(agent: AgentDefinition, entry: DiscoveredEntry, hit: Roo
     if parse is None:
         return {alias}
     directory_name = alias
-    frontmatter_name = parse.frontmatter_name or directory_name
+    frontmatter_name = parse.frontmatter_name
+    if agent.identity_source == "frontmatter_name":
+        return {frontmatter_name} if frontmatter_name else {directory_name}
     if agent.identity_source == "directory_name":
         return {directory_name}
-    if agent.identity_source == "frontmatter_name":
-        return {frontmatter_name}
-    return {directory_name, frontmatter_name}
+    return {directory_name, frontmatter_name or directory_name}
 
 
 def lookup_name_for_entry(
@@ -167,7 +183,7 @@ def lookup_name_for_entry(
     Reuses hit-specific alias and agent policy:
     - When no parse exists, returns alias.
     - For 'frontmatter_name', chooses frontmatter name with alias fallback.
-    - For 'directory_name' or 'either', chooses alias.
+    - For 'directory_name' or 'either'/'hybrid', chooses alias.
     The returned name always belongs to the agent's identity names.
     """
     if hit is not None:
@@ -196,7 +212,7 @@ def disabled_overrides_from_bytes(agent: AgentDefinition, data: bytes | None) ->
 
     Returns an empty frozenset for missing (None), unreadable/undecodable input,
     invalid JSON, a non-object top level, or a non-object overrides member. Only an
-    override value that is False disables a skill name."""
+    override value that is False or 'off' disables a skill name."""
     if not agent.disabled_settings or not agent.disabled_key or data is None:
         return frozenset()
     try:
@@ -209,7 +225,9 @@ def disabled_overrides_from_bytes(agent: AgentDefinition, data: bytes | None) ->
     override = parsed.get(agent.disabled_key)
     if not isinstance(override, dict):
         return frozenset()
-    return frozenset(str(name) for name, enabled in override.items() if enabled is False)
+    return frozenset(
+        str(name) for name, enabled in override.items() if enabled is False or enabled == "off"
+    )
 
 
 def _load_disabled_overrides(agent: AgentDefinition, home: Path) -> set[str]:
@@ -227,44 +245,47 @@ def _candidates_for(
     index: DiscoveryIndex | FrozenDiscoveryIndex,
     name: str,
     *,
-    disabled_overrides: frozenset[str] | None = None,
+    controls: ResolvedAgentControls,
+    explicit_overrides: frozenset[str] | None = None,
 ) -> list[Candidate]:
-    """Build one candidate per entrypoint this agent reaches for ``name``.
+    """Build one candidate per entrypoint this agent reaches for name.
 
-    A symlink farm reaches one canonical library through several paths. Each of
-    those paths is a genuine candidate for *this* agent, because precedence is
-    judged on the entrypoint path (spec section 4) -- a project shortcut into a
-    global library outranks the global root. Entries the agent never searches
-    contribute a single ``UNSEARCHED`` candidate.
+    Uses unified controls to determine override status without duplicate reads.
     """
-    overrides = (
-        disabled_overrides
-        if disabled_overrides is not None
-        else _load_disabled_overrides(agent, Path(index.home))
-    )
     fallback_root_id = _default_root_id(agent)
     candidates: list[Candidate] = []
     for entry in index.entries:
         hits = _searched_hits(agent, entry)
         if hits:
-            # One candidate per distinct entrypoint path; if two roots of the same
-            # agent reach the identical path, the higher-ranked rule represents it.
             best: dict[str, RootHit] = {}
             for hit in hits:
                 path = hit.entrypoint_path
                 current = best.get(path)
-                if current is None or hit.rank > current.rank:
+                if agent.id == "opencode":
+                    hit_key = (hit.rank, hit.specificity)
+                    cur_key = (current.rank, current.specificity) if current else (-1, -1)
+                else:
+                    hit_key = (hit.rank, 0)
+                    cur_key = (current.rank, 0) if current else (-1, 0)
+                if current is None or hit_key > cur_key:
                     best[path] = hit
             for hit in best.values():
                 hit_names = _hit_identity_names(agent, entry, hit)
                 if name in hit_names:
-                    overridden = bool(hit_names & overrides)
+                    ctrls = resolve_candidate_controls(
+                        agent,
+                        entry,
+                        hit,
+                        hit_names,
+                        controls=controls,
+                        captured_disabled_overrides=explicit_overrides,
+                    )
                     candidates.append(
                         Candidate(
                             entry=entry,
                             hit=hit,
                             searched=True,
-                            overridden=overridden,
+                            overridden=ctrls.is_disabled,
                         )
                     )
         else:
@@ -289,13 +310,21 @@ def _candidates_for(
                 supported_identities = aliases | ({fm} if fm else set())
 
             if matches:
-                overridden = bool(supported_identities & overrides)
+                rep_hit = _representative_hit(agent, entry, fallback_root_id)
+                ctrls = resolve_candidate_controls(
+                    agent,
+                    entry,
+                    rep_hit,
+                    supported_identities,
+                    controls=controls,
+                    captured_disabled_overrides=explicit_overrides,
+                )
                 candidates.append(
                     Candidate(
                         entry=entry,
-                        hit=_representative_hit(agent, entry, fallback_root_id),
+                        hit=rep_hit,
                         searched=False,
-                        overridden=overridden,
+                        overridden=ctrls.is_disabled,
                     )
                 )
     return candidates
@@ -312,7 +341,7 @@ def _assign_states(
     if not searched:
         return [(c, HeadlineState.UNSEARCHED) for c in candidates]
 
-    valid = [c for c in searched if _is_valid(c.entry)]
+    valid = [c for c in searched if _is_valid_for_agent(agent, c.entry, c.hit)]
     if not valid:
         return [
             (c, HeadlineState.INVALID if c.searched else HeadlineState.UNSEARCHED)
@@ -321,11 +350,11 @@ def _assign_states(
 
     enabled = [c for c in valid if not c.overridden]
     if not enabled:
-        return [(c, _fallback_state(c, HeadlineState.DISABLED)) for c in candidates]
+        return [(c, _fallback_state(agent, c, HeadlineState.DISABLED)) for c in candidates]
 
     roles = _active_roles(candidates, agent)
     return [
-        (c, roles.get(index, _fallback_state(c, HeadlineState.ACTIVE)))
+        (c, roles.get(index, _fallback_state(agent, c, HeadlineState.ACTIVE)))
         for index, c in enumerate(candidates)
     ]
 
@@ -334,49 +363,50 @@ def _assign_states(
 
 
 def _active_roles(candidates: list[Candidate], agent: AgentDefinition) -> dict[int, HeadlineState]:
-    """Map each candidate's position to its collision state.
-
-    The top-ranked searched, valid, enabled entrypoint wins. A nested
-    (qualified) copy coexists. Under an ``ambiguous`` or ``merge`` coexistence
-    policy any other searched valid copy coexists; otherwise it is shadowed.
-
-    States are keyed by candidate index, not by canonical target: two
-    entrypoints of the same library are distinct candidates with distinct
-    ranks, and collapsing them here is what used to lose a shadowed copy.
-    """
+    """Map each candidate's position to its collision state."""
     searched_valid = [
-        c for c in candidates if c.searched and _is_valid(c.entry) and not c.overridden
+        c
+        for c in candidates
+        if c.searched and _is_valid_for_agent(agent, c.entry, c.hit) and not c.overridden
     ]
     if not searched_valid:
         return {}
     top_rank = max(c.rank for c in searched_valid)
     winners = [c for c in searched_valid if c.rank == top_rank]
+    if len(winners) > 1 and agent.id == "opencode":
+        top_specificity = max(c.hit.specificity for c in winners)
+        winners = [c for c in winners if c.hit.specificity == top_specificity]
     ambiguous = len(winners) > 1
+    winner = winners[0] if len(winners) == 1 else None
     multi = len(searched_valid) > 1
     roles: dict[int, HeadlineState] = {}
     for index, candidate in enumerate(candidates):
         if ambiguous:
-            roles[index] = _fallback_state(candidate, HeadlineState.AMBIGUOUS)
+            roles[index] = _fallback_state(agent, candidate, HeadlineState.AMBIGUOUS)
             continue
-        roles[index] = _role_for_active(agent, candidate, top_rank, multi)
+        roles[index] = _role_for_active(agent, candidate, winner, multi)
     return roles
 
 
 def _role_for_active(
-    agent: AgentDefinition, candidate: Candidate, top_rank: int, multi: bool
+    agent: AgentDefinition,
+    candidate: Candidate,
+    winner: Candidate | None,
+    multi: bool,
 ) -> HeadlineState:
     if not candidate.searched:
         return HeadlineState.UNSEARCHED
-    if not _is_valid(candidate.entry):
+    if not _is_valid_for_agent(agent, candidate.entry, candidate.hit):
         return HeadlineState.INVALID
     if candidate.overridden:
         return HeadlineState.DISABLED
-    if candidate.rank == top_rank:
-        # A nested winner is qualified; it only "coexists" if another copy exists.
-        if candidate.hit.nested and multi:
+    if candidate == winner:
+        if candidate.hit.nested and multi and agent.id != "opencode":
             return HeadlineState.COEXISTS
         return HeadlineState.ACTIVE
     if candidate.hit.nested:
+        if agent.id == "opencode":
+            return HeadlineState.SHADOWED
         return HeadlineState.COEXISTS
     if agent.coexist_policy in _COEXISTING_POLICIES:
         return HeadlineState.COEXISTS
@@ -400,7 +430,9 @@ def _headline_from_states(states: list[HeadlineState]) -> HeadlineState:
     return HeadlineState.UNSEARCHED
 
 
-def _fallback_state(candidate: Candidate, headline: HeadlineState) -> HeadlineState:
+def _fallback_state(
+    agent: AgentDefinition, candidate: Candidate, headline: HeadlineState
+) -> HeadlineState:
     """Assign a candidate's state for a non-ACTIVE headline."""
     if not candidate.searched:
         return HeadlineState.UNSEARCHED
@@ -411,12 +443,12 @@ def _fallback_state(candidate: Candidate, headline: HeadlineState) -> HeadlineSt
     if headline is HeadlineState.AMBIGUOUS:
         if candidate.overridden:
             return HeadlineState.DISABLED
-        if not _is_valid(candidate.entry):
+        if not _is_valid_for_agent(agent, candidate.entry, candidate.hit):
             return HeadlineState.INVALID
         return HeadlineState.AMBIGUOUS
     if headline is HeadlineState.DISABLED:
         return HeadlineState.DISABLED if candidate.overridden else HeadlineState.UNSEARCHED
-    if not _is_valid(candidate.entry):
+    if not _is_valid_for_agent(agent, candidate.entry, candidate.hit):
         return HeadlineState.INVALID
     if candidate.overridden:
         return HeadlineState.DISABLED
@@ -429,7 +461,7 @@ def _fallback_state(candidate: Candidate, headline: HeadlineState) -> HeadlineSt
 def _installation(candidate: Candidate) -> SkillInstallation:
     entry = candidate.entry
     parse = entry.parse
-    alias = entrypoint_alias(candidate.entrypoint_path, candidate.hit.is_file)
+    alias = entrypoint_alias(candidate.entrypoint_path, candidate.hit.is_file or entry.is_file)
     return SkillInstallation(
         name=alias,
         entrypoint_path=candidate.entrypoint_path,
@@ -440,20 +472,13 @@ def _installation(candidate: Candidate) -> SkillInstallation:
         description=parse.description if parse else None,
         frontmatter_name=parse.frontmatter_name if parse else None,
         is_symlink=entry.is_symlink,
-        # Paths, not agent ids (Phase 0 contract): every entrypoint that reaches
-        # this canonical library, home-relative in display contexts.
         agent_entrypoints=entry.entrypoint_paths or (candidate.entrypoint_path,),
         variant_label=entry.variant_label,
     )
 
 
 def _winner_label(agent: AgentDefinition, winner: Candidate) -> str:
-    """A short, human label for the root that won, e.g. ``the project root .grok/skills``.
-
-    Registry paths are home-relative for global roots and repository-relative
-    for project roots, so the two must be named differently -- otherwise
-    "``.agents/skills``" would read as the home copy when the project copy won.
-    """
+    """A short, human label for the root that won."""
     root = agent.root_by_id(winner.hit.root_id)
     if root is None:
         return f"the {winner.hit.root_id} root"
@@ -461,6 +486,8 @@ def _winner_label(agent: AgentDefinition, winner: Candidate) -> str:
         return f"the absolute root {root.path}"
     if root.is_project:
         return f"the project root {root.path}"
+    if root.base == RootBase.XDG_CONFIG_HOME:
+        return f"the global root ~/.config/{root.path}"
     return f"the global root ~/{root.path}"
 
 
@@ -469,6 +496,7 @@ def _reason(
     candidate: Candidate,
     state: HeadlineState,
     winner: Candidate | None = None,
+    qualification: str | None = None,
 ) -> str:
     entry = candidate.entry
     if entry.error_code == _CYCLE:
@@ -478,6 +506,8 @@ def _reason(
     if entry.error_code == _DENIED or candidate.canonical_key == _UNREADABLE_CANONICAL:
         return "Directory unreadable (permission denied)."
     if state is HeadlineState.DISABLED:
+        if qualification and "Denied" in qualification:
+            return qualification
         return "Disabled by agent configuration override."
     if state is HeadlineState.UNSEARCHED:
         return f"Not searched by {agent.name} (found via another agent's root)."
@@ -501,7 +531,6 @@ def _reason(
             return "Listed alongside another copy; collision policy is undocumented."
         return "Coexists with another copy; both remain available."
     if state is HeadlineState.SHADOWED:
-        # Name the *winning* copy's root, never this copy's own description.
         if winner is not None:
             return f"Suppressed by the higher-priority copy in {_winner_label(agent, winner)}."
         return _FALLBACK_REASON[state]
@@ -538,19 +567,25 @@ def _rule_and_evidence(
     entry = candidate.entry
     if entry.error_code == _CYCLE:
         return "symlink_cycle_guard", Evidence.EMPIRICAL
-    if not _is_valid(entry):
+    if not _is_valid_for_agent(agent, entry, candidate.hit):
         if candidate.hit.nested and candidate.hit.nested_rule_id:
             return candidate.hit.nested_rule_id, Evidence(candidate.hit.evidence)
         return "parser_requires_valid_frontmatter", Evidence.DOCUMENTED
     if state is HeadlineState.AMBIGUOUS and agent.ambiguous_rule_id:
         return agent.ambiguous_rule_id, Evidence(agent.policy_evidence)
-    if state is HeadlineState.DISABLED and agent.disabled_rule_id:
-        return agent.disabled_rule_id, Evidence.DOCUMENTED
+    if state is HeadlineState.DISABLED:
+        if agent.disabled_rule_id:
+            return agent.disabled_rule_id, Evidence.DOCUMENTED
+        if agent.id == "codex":
+            return "codex_skills_config_disabled", Evidence.DOCUMENTED
+        if agent.id == "opencode":
+            return "opencode_permission_denied", Evidence.DOCUMENTED
+        if agent.id == "omp":
+            return "omp_frontmatter_disabled", Evidence.DOCUMENTED
+        return f"{agent.id}_disabled", Evidence.DOCUMENTED
     if state is HeadlineState.UNSEARCHED:
         return agent.unsearched_rule_id, Evidence(agent.policy_evidence)
     if state is HeadlineState.SHADOWED and winner is not None:
-        # The rule that explains a shadow is the rule of the copy that beat it,
-        # so the reason is traceable to the actual cause, not to the loser.
         return winner.hit.rule_for(winner.hit.is_file), Evidence(winner.hit.evidence)
     return candidate.hit.rule_for(candidate.hit.is_file), Evidence(candidate.hit.evidence)
 
@@ -560,20 +595,48 @@ def _resolution(
     candidate: Candidate,
     state: HeadlineState,
     winner: Candidate | None = None,
+    *,
+    controls: ResolvedAgentControls,
+    explicit_overrides: frozenset[str] | None = None,
 ) -> CandidateResolution:
     rule_id, evidence = _rule_and_evidence(agent, candidate, state, winner)
     collision = _COLLISION_FOR_STATE[state]
     if state is HeadlineState.COEXISTS and candidate.hit.nested:
-        collision = Collision.QUALIFIED_NAMESPACE
+        if agent.id in ("claude", "omp"):
+            collision = Collision.QUALIFIED_NAMESPACE
+        else:
+            collision = Collision.COEXISTING_MERGED
+    loadability, _ = is_loadable_for_agent(agent, candidate.entry, candidate.hit)
+    hit_names = _hit_identity_names(agent, candidate.entry, candidate.hit)
+    ctrls = resolve_candidate_controls(
+        agent,
+        candidate.entry,
+        candidate.hit,
+        hit_names,
+        controls=controls,
+        captured_disabled_overrides=explicit_overrides,
+    )
+    invocation = ctrls.invocation
+    permission = ctrls.permission
+    if candidate.overridden or state is HeadlineState.DISABLED:
+        invocation = InvocationPolicy.NONE
+        permission = PermissionEffect.DENY
+    elif state is HeadlineState.INVALID:
+        invocation = InvocationPolicy.NONE
+        loadability = LoadabilityStatus.INVALID
+
     return CandidateResolution(
         state=state,
         visibility=_VISIBILITY_FOR_STATE[state],
         collision=collision,
         rule_id=rule_id,
         evidence=evidence,
-        reason=_reason(agent, candidate, state, winner),
+        reason=_reason(agent, candidate, state, winner, qualification=ctrls.qualification),
         rank=max(candidate.rank, 0),
         installation=_installation(candidate),
+        loadability=loadability,
+        invocation=invocation,
+        permission=permission,
     )
 
 
@@ -591,11 +654,11 @@ _STATE_ORDER = {
 def _assign_variant_labels(candidates: list[Candidate]) -> dict[int, str]:
     """Label differing copies of one name as Variant A / B / C.
 
-    Delegates to the shared rule in :mod:`skill_lens.core.discovery` so that
-    ``why``, ``scan`` and ``diff`` can never disagree about a copy's label.
+    Delegates to the shared rule in :mod: so that
+    why, scan and diff can never disagree about a copy's label.
     Ordering is by scope specificity (project before user), then discovery
-    order -- *not* by this agent's rank, because ``scan`` has no agent to rank
-    with. Which copy actually wins is reported by the candidate's ``state``, not
+    order -- *not* by this agent's rank, because scan has no agent to rank
+    with. Which copy actually wins is reported by the candidate's state, not
     by its letter.
     """
     labels_by_key = labels_for_entries(candidate.entry for candidate in candidates)
@@ -624,6 +687,42 @@ def _sort_resolutions(resolutions: list[CandidateResolution]) -> list[CandidateR
     return deduped
 
 
+def _label_resolution(
+    resolution: CandidateResolution, labels: dict[str, str]
+) -> CandidateResolution:
+    label = labels.get(resolution.installation.entrypoint_path)
+    if label == resolution.installation.variant_label:
+        return resolution
+    return replace(
+        resolution,
+        installation=replace(resolution.installation, variant_label=label),
+    )
+
+
+def _lexical_display(path: str, home_path: str | Path) -> str:
+    """Format path collapsing home prefix purely in-memory without filesystem access."""
+    home_str = str(home_path).rstrip("/")
+    p_str = str(path)
+    if p_str == home_str:
+        return "~"
+    prefix = home_str + "/"
+    if p_str.startswith(prefix):
+        return "~/" + p_str[len(prefix) :]
+    if home_str.startswith("/private/"):
+        alt_home = home_str[len("/private") :]
+        if p_str == alt_home:
+            return "~"
+        if p_str.startswith(alt_home + "/"):
+            return "~/" + p_str[len(alt_home) + 1 :]
+    elif not home_str.startswith("/private/") and p_str.startswith("/private/"):
+        alt_path = p_str[len("/private") :]
+        if alt_path == home_str:
+            return "~"
+        if alt_path.startswith(prefix):
+            return "~/" + alt_path[len(prefix) :]
+    return p_str
+
+
 # --- Public entry point ----------------------------------------------------
 
 
@@ -636,6 +735,8 @@ def resolve_skill(
     registry: dict[str, AgentDefinition] | None = None,
     *,
     disabled_overrides: frozenset[str] | None = None,
+    controls: ResolvedAgentControls | None = None,
+    display_paths: Mapping[str, str] | None = None,
 ) -> ResolutionReport:
     """Resolve ``name`` for ``agent_id`` from ``cwd`` and explain the result."""
     if disabled_overrides is not None:
@@ -646,7 +747,7 @@ def resolve_skill(
     if isinstance(index, FrozenDiscoveryIndex):
         if registry is None:
             raise ValueError("registry must be supplied when index is a FrozenDiscoveryIndex")
-        if disabled_overrides is None:
+        if disabled_overrides is None and controls is None:
             raise ValueError(
                 "disabled_overrides must be supplied when index is a FrozenDiscoveryIndex"
             )
@@ -658,7 +759,24 @@ def resolve_skill(
     agent = agents[agent_id]
     discovery = index if index is not None else discover(home, cwd, agents)
 
-    candidates = _candidates_for(agent, discovery, name, disabled_overrides=disabled_overrides)
+    # Determine unified effective controls
+    if controls is not None:
+        effective_controls = controls
+    elif disabled_overrides is not None:
+        effective_controls = ResolvedAgentControls(
+            agent_id=agent_id,
+            disabled_names=disabled_overrides,
+        )
+    else:
+        effective_controls = resolve_agent_controls(agent, home, cwd)
+
+    candidates = _candidates_for(
+        agent,
+        discovery,
+        name,
+        controls=effective_controls,
+        explicit_overrides=disabled_overrides,
+    )
     outcomes = _assign_states(agent, candidates)
     headline = _headline_from_states([state for _candidate, state in outcomes])
 
@@ -667,8 +785,19 @@ def resolve_skill(
     winner = next(
         (c for c, state in outcomes if state is HeadlineState.ACTIVE and c.searched), None
     )
+
     ordered = _sort_resolutions(
-        [_resolution(agent, candidate, state, winner) for candidate, state in outcomes]
+        [
+            _resolution(
+                agent,
+                candidate,
+                state,
+                winner,
+                controls=effective_controls,
+                explicit_overrides=disabled_overrides,
+            )
+            for candidate, state in outcomes
+        ]
     )
 
     labels = {
@@ -679,12 +808,36 @@ def resolve_skill(
 
     report_notes: list[str] = []
     if not candidates:
-        # F-10: UNSEARCHED means "on disk, outside this agent's search rules".
-        # Zero candidates is a different fact: the name is nowhere on disk.
         report_notes.append(_NOT_FOUND_NOTE)
     elif headline is HeadlineState.AMBIGUOUS:
         report_notes.append(f"{agent.name} has no documented winner for duplicate names.")
+
     seen_notes = set(report_notes)
+    for n in effective_controls.notes:
+        if n not in seen_notes:
+            report_notes.append(n)
+            seen_notes.add(n)
+
+    if hasattr(discovery, "unreadable_roots"):
+        for ur in discovery.unreadable_roots:
+            if ur.agent_id == agent.id and ur.detail == "depth_limit_truncated":
+                disp = ""
+                if getattr(ur, "display_path", ""):
+                    disp = ur.display_path
+                elif display_paths and ur.path in display_paths:
+                    disp = display_paths[ur.path]
+                elif isinstance(discovery, FrozenDiscoveryIndex):
+                    disp = _lexical_display(ur.path, discovery.home)
+                else:
+                    disp = paths.display(Path(ur.path))
+                note = (
+                    f"Discovery traversal in '{disp}' "
+                    "was truncated by depth limit; inventory may be incomplete."
+                )
+                if note not in seen_notes:
+                    report_notes.append(note)
+                    seen_notes.add(note)
+
     for c in candidates:
         if not c.entry.traversal_complete:
             reason = c.entry.traversal_error or "denied"
@@ -692,6 +845,28 @@ def resolve_skill(
             if note not in seen_notes:
                 report_notes.append(note)
                 seen_notes.add(note)
+        cand_load, _ = is_loadable_for_agent(agent, c.entry, c.hit)
+        if cand_load is LoadabilityStatus.UNKNOWN:
+            note = f"Search root '{c.hit.entrypoint_path}' vendor loadability is unverified."
+            if note not in seen_notes:
+                report_notes.append(note)
+                seen_notes.add(note)
+
+    if winner is not None:
+        winner_root = agent.root_by_id(winner.hit.root_id)
+        if (
+            (winner_root and winner_root.evidence == Evidence.INFERRED)
+            or winner.hit.loadability == "unknown"
+            or winner.hit.root_id == "omp_agent"
+        ):
+            note = (
+                f"Winning copy at '{winner.entrypoint_path}' is from an "
+                "unverified compatibility root; vendor loadability is unverified."
+            )
+            if note not in seen_notes:
+                report_notes.append(note)
+                seen_notes.add(note)
+
     return ResolutionReport(
         skill_name=name,
         agent=agent.id,
@@ -704,16 +879,6 @@ def resolve_skill(
         notes=tuple(report_notes),
         found=bool(candidates),
     )
-
-
-def _label_resolution(
-    resolution: CandidateResolution, labels: dict[str, str]
-) -> CandidateResolution:
-    """Attach this entrypoint's variant label to its installation."""
-    label = labels.get(resolution.installation.entrypoint_path)
-    if label is None or resolution.installation.variant_label == label:
-        return resolution
-    return replace(resolution, installation=replace(resolution.installation, variant_label=label))
 
 
 __all__ = ["Candidate", "entrypoint_alias", "lookup_name_for_entry", "resolve_skill"]

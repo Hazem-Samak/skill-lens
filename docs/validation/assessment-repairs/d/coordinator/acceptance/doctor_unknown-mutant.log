@@ -1,0 +1,9 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_doctor_mixed_root_loadability_and_unknown_discipline ___________
+tests/test_stage_d_repairs.py:1634: in test_doctor_mixed_root_loadability_and_unknown_discipline
+    assert "codex, dsh will skip 'deploy'" in msg
+E   assert "codex, dsh will skip 'deploy'" in "'~/.agents/skills/deploy' is missing the required 'description' field -- antigravity, codex, dsh, grok, pi, qoder, windsurf will skip 'deploy' (accepted at runtime by omp, opencode)."
+=========================== short test summary info ============================
+FAILED tests/test_stage_d_repairs.py::test_doctor_mixed_root_loadability_and_unknown_discipline
+1 failed in 0.12s

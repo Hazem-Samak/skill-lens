@@ -6,14 +6,16 @@ Specification reference: FULL_SCREEN_TUI.md §21.2.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+from types import MappingProxyType
 from typing import TYPE_CHECKING, Literal
 
 from skill_lens.core.discovery import DiscoveredEntry, UnreadableRoot
 from skill_lens.registry.loader import AgentDefinition
 
 if TYPE_CHECKING:
+    from skill_lens.core.config import ResolvedAgentControls
     from skill_lens.core.scanner import ScanReport
     from skill_lens.models.doctor import DoctorReport
 
@@ -66,6 +68,9 @@ class SessionSnapshot:
     same_locations: frozenset[tuple[str, str]]
     scan: ScanReport
     doctor: DoctorReport
+    resolved_controls: Mapping[str, ResolvedAgentControls] = field(
+        default_factory=lambda: MappingProxyType({})
+    )
 
 
 __all__ = [

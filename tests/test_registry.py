@@ -64,7 +64,7 @@ def test_every_root_has_rule_id_and_evidence(agent_id: str) -> None:
 def test_claude_policy_is_documented() -> None:
     claude = load_agent("claude")
     assert claude.policy_evidence is Evidence.DOCUMENTED
-    assert claude.identity_source == "directory_name"
+    assert claude.identity_source == "hybrid"
     assert claude.disabled_rule_id == "claude_skill_override_disabled"
 
 
@@ -74,10 +74,10 @@ def test_claude_has_personal_and_project_roots() -> None:
     assert {"global", "project"} <= kinds
 
 
-def test_opencode_is_ambiguous() -> None:
+def test_opencode_v2_policy() -> None:
     opencode = load_agent("opencode")
-    assert opencode.coexist_policy == "ambiguous"
-    assert opencode.ambiguous_rule_id == "opencode_duplicate_ambiguous"
+    assert opencode.coexist_policy == "shadow"
+    assert opencode.collision_policy == "Shadow (Later-registered source wins)"
 
 
 def test_no_agent_claims_verified_evidence_without_a_source() -> None:
