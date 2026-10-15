@@ -35,7 +35,12 @@ from skill_lens.core.discovery import (
     entry_scope,
     labels_for_entries,
 )
-from skill_lens.core.hasher import IncompleteTreeError, hash_file, iter_files, normalized_text
+from skill_lens.core.hasher import (
+    IncompleteTreeError,
+    hash_file,
+    iter_files,
+    normalized_text,
+)
 from skill_lens.core.snapshot_models import CapturedFile, FrozenDiscoveryIndex
 from skill_lens.models.diff import DiffChange, DiffCopy, DiffFile, DiffHunk, DiffReport
 from skill_lens.models.enums import ParseStatus
@@ -48,6 +53,9 @@ MAX_CHANGED_LINES_PER_COPY = 400
 MAX_CHARS_PER_REPORT = 20_000
 #: Context lines around each change, matching ``difflib.unified_diff``'s default.
 CONTEXT_LINES = 3
+
+#: The conventional marker for a file ending without a trailing newline.
+NO_NEWLINE_MARKER = r"\ No newline at end of file"
 
 #: The label :func:`~skill_lens.core.discovery.variant_labels` gives the copy
 #: every other copy is compared against.
@@ -165,16 +173,26 @@ def _copy_files(
 # --- Hunk construction -----------------------------------------------------
 
 
-def _lines(text: str) -> list[str]:
-    """Split on ``\\n`` only -- the one line separator the hasher normalises.
+def _split_lines(text: str) -> list[str]:
+    """Split on ``\\n`` only, keeping the trailing newline on each line.
 
-    ``str.splitlines`` would also break on characters such as ``\\x0b``, which
-    the fingerprint treats as ordinary content; using it would let the diff
-    disagree with the hash.
+    Splitting on ``\\n`` only treats lone CR and other separators as ordinary
+    content, matching hash_file and normalisation. An empty string yields an
+    empty list.
     """
-    if text.endswith("\n"):
-        text = text[:-1]
-    return text.split("\n") if text else []
+    if not text:
+        return []
+    lines: list[str] = []
+    start = 0
+    text_len = len(text)
+    while start < text_len:
+        idx = text.find("\n", start)
+        if idx == -1:
+            lines.append(text[start:])
+            break
+        lines.append(text[start : idx + 1])
+        start = idx + 1
+    return lines
 
 
 def _range_start(start: int, count: int) -> int:
@@ -190,10 +208,25 @@ def _hunks(old_lines: Sequence[str], new_lines: Sequence[str]) -> tuple[DiffHunk
         lines: list[str] = []
         for tag, i1, i2, j1, j2 in group:
             if tag == "equal":
-                lines.extend(f" {line}" for line in old_lines[i1:i2])
+                for line in old_lines[i1:i2]:
+                    if line.endswith("\n"):
+                        lines.append(f" {line[:-1]}")
+                    else:
+                        lines.append(f" {line}")
+                        lines.append(NO_NEWLINE_MARKER)
                 continue
-            lines.extend(f"-{line}" for line in old_lines[i1:i2])
-            lines.extend(f"+{line}" for line in new_lines[j1:j2])
+            for line in old_lines[i1:i2]:
+                if line.endswith("\n"):
+                    lines.append(f"-{line[:-1]}")
+                else:
+                    lines.append(f"-{line}")
+                    lines.append(NO_NEWLINE_MARKER)
+            for line in new_lines[j1:j2]:
+                if line.endswith("\n"):
+                    lines.append(f"+{line[:-1]}")
+                else:
+                    lines.append(f"+{line}")
+                    lines.append(NO_NEWLINE_MARKER)
         old_start, old_end = group[0][1], group[-1][2]
         new_start, new_end = group[0][3], group[-1][4]
         hunks.append(
@@ -210,18 +243,25 @@ def _hunks(old_lines: Sequence[str], new_lines: Sequence[str]) -> tuple[DiffHunk
 
 def _single_sided(content: _Collected, *, removed: bool) -> tuple[DiffHunk, ...]:
     """Hunks for a file that exists on one side only: all added, or all removed."""
-    lines = _lines(content.text) if content.text is not None else []
-    if not lines:
+    raw_lines = _split_lines(content.text) if content.text is not None else []
+    if not raw_lines:
         return ()
     marker = "-" if removed else "+"
-    count = len(lines)
+    count = len(raw_lines)
+    lines: list[str] = []
+    for line in raw_lines:
+        if line.endswith("\n"):
+            lines.append(f"{marker}{line[:-1]}")
+        else:
+            lines.append(f"{marker}{line}")
+            lines.append(NO_NEWLINE_MARKER)
     return (
         DiffHunk(
             old_start=_range_start(0, count if removed else 0),
             old_count=count if removed else 0,
             new_start=_range_start(0, 0 if removed else count),
             new_count=0 if removed else count,
-            lines=tuple(f"{marker}{line}" for line in lines),
+            lines=tuple(lines),
         ),
     )
 
@@ -262,7 +302,7 @@ def _files_between(old: dict[str, _Collected], new: dict[str, _Collected]) -> li
             DiffFile(
                 path=relative,
                 change=DiffChange.MODIFIED,
-                hunks=_hunks(_lines(before.text or ""), _lines(after.text or "")),
+                hunks=_hunks(_split_lines(before.text or ""), _split_lines(after.text or "")),
             )
         )
     return files
@@ -310,7 +350,8 @@ def _recount(hunk: DiffHunk, lines: Sequence[str]) -> DiffHunk:
     Without this a truncated hunk would advertise line counts it no longer
     contains, and the printed diff would not add up. The starts are recomputed
     too: a range that truncation emptied must name the line before it, not the
-    line it used to begin at.
+    line it used to begin at. Marker lines (starting with '\\') never count toward
+    old or new line counts.
     """
     old_count = sum(1 for line in lines if line[:1] in (" ", "-"))
     new_count = sum(1 for line in lines if line[:1] in (" ", "+"))
@@ -329,18 +370,33 @@ def _fit_hunk(hunk: DiffHunk, changed_budget: int, char_budget: int) -> tuple[li
     Returns the lines, how many of them are changes, and how many characters they
     cost. ``changed_budget`` and ``char_budget`` are what is *left*, so a caller
     can fit one hunk at a time without double-counting.
+
+    Marker lines (starting with '\\') are tied to the line they annotate: they
+    consume character budget but never changed-line budget, and are never
+    emitted without their preceding line or split by truncation.
     """
     lines: list[str] = []
     changed = 0
     chars = 0
-    for line in hunk.lines:
+    raw_lines = hunk.lines
+    n = len(raw_lines)
+    i = 0
+    while i < n:
+        line = raw_lines[i]
+        has_marker = (i + 1 < n) and raw_lines[i + 1].startswith("\\")
         line_changed = 1 if line[:1] in ("-", "+") else 0
         cost = len(line) + 1
+        if has_marker:
+            cost += len(raw_lines[i + 1]) + 1
         if changed + line_changed > changed_budget or chars + cost > char_budget:
             break
         lines.append(line)
+        if has_marker:
+            lines.append(raw_lines[i + 1])
+            i += 1
         changed += line_changed
         chars += cost
+        i += 1
     return lines, changed, chars
 
 
@@ -567,5 +623,6 @@ __all__ = [
     "CONTEXT_LINES",
     "MAX_CHANGED_LINES_PER_COPY",
     "MAX_CHARS_PER_REPORT",
+    "NO_NEWLINE_MARKER",
     "build_diff_report",
 ]

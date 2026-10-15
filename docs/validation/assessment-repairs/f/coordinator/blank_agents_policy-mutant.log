@@ -1,0 +1,62 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_________________ test_render_agents_pins_real_registry_output _________________
+tests/test_stage_f_repairs.py:819: in test_render_agents_pins_real_registry_output
+    assert output == EXPECTED_AGENTS_TABLE
+E   AssertionError: assert '┏━━━━━━━━━━━...──┴───────┘\n' == '┏━━━━━━━━━━━...──┴───────┘\n'
+E     
+E     Skipping 41 identical leading characters in diff, use -v to show
+E     - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+E     + ━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+E     - ┃ Agent           ┃ ID          ┃ Collision Policy                            ┃ Evidence   ┃ Roots ┃
+E     ?                                                    ---------------------------
+E     + ┃ Agent           ┃ ID          ┃ Collision Policy ┃ Evidence   ┃ Roots ┃...
+E     
+E     ...Full output truncated (36 lines hidden), use '-vv' to show
+----------------------------- Captured stdout call -----------------------------
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+┃ Agent           ┃ ID          ┃ Collision Policy ┃ Evidence   ┃ Roots ┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩
+│ Antigravity CLI │ antigravity │                  │ empirical  │     5 │
+│ Claude Code     │ claude      │                  │ documented │     2 │
+│ OpenAI Codex    │ codex       │                  │ empirical  │     6 │
+│ DSH             │ dsh         │                  │ documented │     5 │
+│ Grok CLI        │ grok        │                  │ empirical  │     3 │
+│ Oh My Pi        │ omp         │                  │ documented │     5 │
+│ OpenCode V2     │ opencode    │                  │ documented │     6 │
+│ Pi Agent        │ pi          │                  │ documented │     4 │
+│ Qoder CLI       │ qoder       │                  │ documented │     3 │
+│ Windsurf        │ windsurf    │                  │ empirical  │     3 │
+└─────────────────┴─────────────┴──────────────────┴────────────┴───────┘
+______________________ test_render_agents_snapshot_pinned ______________________
+tests/test_render_snapshots.py:430: in test_render_agents_snapshot_pinned
+    assert rendered == EXPECTED_AGENTS_TABLE
+E   AssertionError: assert '┏━━━━━━━━━━━...──┴───────┘\n' == '┏━━━━━━━━━━━...──┴───────┘\n'
+E     
+E     Skipping 41 identical leading characters in diff, use -v to show
+E     - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+E     + ━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+E     - ┃ Agent           ┃ ID          ┃ Collision Policy                            ┃ Evidence   ┃ Roots ┃
+E     ?                                                    ---------------------------
+E     + ┃ Agent           ┃ ID          ┃ Collision Policy ┃ Evidence   ┃ Roots ┃...
+E     
+E     ...Full output truncated (36 lines hidden), use '-vv' to show
+----------------------------- Captured stdout call -----------------------------
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+┃ Agent           ┃ ID          ┃ Collision Policy ┃ Evidence   ┃ Roots ┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩
+│ Antigravity CLI │ antigravity │                  │ empirical  │     5 │
+│ Claude Code     │ claude      │                  │ documented │     2 │
+│ OpenAI Codex    │ codex       │                  │ empirical  │     6 │
+│ DSH             │ dsh         │                  │ documented │     5 │
+│ Grok CLI        │ grok        │                  │ empirical  │     3 │
+│ Oh My Pi        │ omp         │                  │ documented │     5 │
+│ OpenCode V2     │ opencode    │                  │ documented │     6 │
+│ Pi Agent        │ pi          │                  │ documented │     4 │
+│ Qoder CLI       │ qoder       │                  │ documented │     3 │
+│ Windsurf        │ windsurf    │                  │ empirical  │     3 │
+└─────────────────┴─────────────┴──────────────────┴────────────┴───────┘
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_render_agents_pins_real_registry_output
+FAILED tests/test_render_snapshots.py::test_render_agents_snapshot_pinned - A...
+2 failed in 0.11s

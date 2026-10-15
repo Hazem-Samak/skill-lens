@@ -1,0 +1,28 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_diff_captured_and_live_equivalence_for_final_newline ___________
+tests/test_stage_f_repairs.py:388: in test_diff_captured_and_live_equivalence_for_final_newline
+    frozen_diff = snapshot_diff(snapshot, key_diff)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+skill_lens/core/snapshot.py:521: in snapshot_diff
+    return build_diff_report(
+skill_lens/core/diff.py:580: in build_diff_report
+    baseline_files = _copy_files(baseline, captured_files=captured_files)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+skill_lens/core/diff.py:160: in _copy_files
+    collected = _collect(root)
+                ^^^^^^^^^^^^^^
+skill_lens/core/diff.py:114: in _collect
+    fingerprint = hash_file(path)
+                  ^^^^^^^^^^^^^^^
+skill_lens/core/hasher.py:130: in hash_file
+    _update_text(text_hasher, path, cancelled=cancelled)
+skill_lens/core/hasher.py:91: in _update_text
+    with path.open("r", encoding="utf-8", newline="") as handle:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_stage_f_repairs.py:374: in forbid_fs
+    raise AssertionError("Forbidden disk read invoked during frozen snapshot operation")
+E   AssertionError: Forbidden disk read invoked during frozen snapshot operation
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_diff_captured_and_live_equivalence_for_final_newline
+1 failed in 0.13s

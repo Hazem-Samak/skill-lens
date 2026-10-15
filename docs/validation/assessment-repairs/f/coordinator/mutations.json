@@ -1,0 +1,500 @@
+{
+  "import_provenance": [
+    "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-source/skill_lens/core/diff.py",
+    "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-source/skill_lens/core/resolver.py",
+    "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-source/skill_lens/render.py"
+  ],
+  "results": [
+    {
+      "name": "omit_newline_markers",
+      "path": "skill_lens/core/diff.py",
+      "source_hash": "22747cdb2870afc0c1d522d922c5aac522e2545e209d130c9ba3006f6891b702",
+      "mutant_hash": "08f95d223b66e494acbf312b5d6681f8b161445cceca3a870805f7ab4bf96b22",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_diff_explains_final_newline_removal",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/omit_newline_markers-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/omit_newline_markers-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/omit_newline_markers-restored.log"
+        }
+      },
+      "seconds": 1.168546624998271,
+      "diff": "--- skill_lens/core/diff.py\n+++ skill_lens/core/diff.py mutant\n@@ -213,20 +213,20 @@\n                         lines.append(f\" {line[:-1]}\")\n                     else:\n                         lines.append(f\" {line}\")\n-                        lines.append(NO_NEWLINE_MARKER)\n+                        pass\n                 continue\n             for line in old_lines[i1:i2]:\n                 if line.endswith(\"\\n\"):\n                     lines.append(f\"-{line[:-1]}\")\n                 else:\n                     lines.append(f\"-{line}\")\n-                    lines.append(NO_NEWLINE_MARKER)\n+                    pass\n             for line in new_lines[j1:j2]:\n                 if line.endswith(\"\\n\"):\n                     lines.append(f\"+{line[:-1]}\")\n                 else:\n                     lines.append(f\"+{line}\")\n-                    lines.append(NO_NEWLINE_MARKER)\n+                    pass\n         old_start, old_end = group[0][1], group[-1][2]\n         new_start, new_end = group[0][3], group[-1][4]\n         hunks.append(\n@@ -254,7 +254,7 @@\n             lines.append(f\"{marker}{line[:-1]}\")\n         else:\n             lines.append(f\"{marker}{line}\")\n-            lines.append(NO_NEWLINE_MARKER)\n+            pass\n     return (\n         DiffHunk(\n             old_start=_range_start(0, count if removed else 0),\n"
+    },
+    {
+      "name": "omit_added_removed_marker",
+      "path": "skill_lens/core/diff.py",
+      "source_hash": "22747cdb2870afc0c1d522d922c5aac522e2545e209d130c9ba3006f6891b702",
+      "mutant_hash": "7590023898eed1b75c5fef18deab41756618da479cd324a6184fee26771feff0",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_diff_added_and_removed_files_without_newline",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/omit_added_removed_marker-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/omit_added_removed_marker-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/omit_added_removed_marker-restored.log"
+        }
+      },
+      "seconds": 0.4967545830004383,
+      "diff": "--- skill_lens/core/diff.py\n+++ skill_lens/core/diff.py mutant\n@@ -254,7 +254,7 @@\n             lines.append(f\"{marker}{line[:-1]}\")\n         else:\n             lines.append(f\"{marker}{line}\")\n-            lines.append(NO_NEWLINE_MARKER)\n+            pass\n     return (\n         DiffHunk(\n             old_start=_range_start(0, count if removed else 0),\n"
+    },
+    {
+      "name": "split_marker_pair",
+      "path": "skill_lens/core/diff.py",
+      "source_hash": "22747cdb2870afc0c1d522d922c5aac522e2545e209d130c9ba3006f6891b702",
+      "mutant_hash": "683256ec8347b4093335f64e1709261cd27b954c439a446ec155b454678fe113",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_diff_truncation_budget_rules",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/split_marker_pair-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/split_marker_pair-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/split_marker_pair-restored.log"
+        }
+      },
+      "seconds": 0.4871966659993632,
+      "diff": "--- skill_lens/core/diff.py\n+++ skill_lens/core/diff.py mutant\n@@ -383,7 +383,7 @@\n     i = 0\n     while i < n:\n         line = raw_lines[i]\n-        has_marker = (i + 1 < n) and raw_lines[i + 1].startswith(\"\\\\\")\n+        has_marker = False and raw_lines[i + 1].startswith(\"\\\\\")\n         line_changed = 1 if line[:1] in (\"-\", \"+\") else 0\n         cost = len(line) + 1\n         if has_marker:\n"
+    },
+    {
+      "name": "ignore_marker_char_cost",
+      "path": "skill_lens/core/diff.py",
+      "source_hash": "22747cdb2870afc0c1d522d922c5aac522e2545e209d130c9ba3006f6891b702",
+      "mutant_hash": "bf2b697a471c84138d6e22a346cb69071f55b639ce3260aabf2c27908e35e953",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_diff_truncation_budget_rules",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/ignore_marker_char_cost-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/ignore_marker_char_cost-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/ignore_marker_char_cost-restored.log"
+        }
+      },
+      "seconds": 0.48180391600180883,
+      "diff": "--- skill_lens/core/diff.py\n+++ skill_lens/core/diff.py mutant\n@@ -387,7 +387,7 @@\n         line_changed = 1 if line[:1] in (\"-\", \"+\") else 0\n         cost = len(line) + 1\n         if has_marker:\n-            cost += len(raw_lines[i + 1]) + 1\n+            cost += 0\n         if changed + line_changed > changed_budget or chars + cost > char_budget:\n             break\n         lines.append(line)\n"
+    },
+    {
+      "name": "count_marker_as_change",
+      "path": "skill_lens/core/diff.py",
+      "source_hash": "22747cdb2870afc0c1d522d922c5aac522e2545e209d130c9ba3006f6891b702",
+      "mutant_hash": "f4aebcb5a3d7250e9eb4a7fb887ef6e52b838b509b8f3652a0f5f47a765c06c2",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_diff_truncation_budget_rules",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/count_marker_as_change-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/count_marker_as_change-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/count_marker_as_change-restored.log"
+        }
+      },
+      "seconds": 0.48312758400061284,
+      "diff": "--- skill_lens/core/diff.py\n+++ skill_lens/core/diff.py mutant\n@@ -322,7 +322,7 @@\n \n \n def _count_changed(hunks: Sequence[DiffHunk]) -> int:\n-    return sum(1 for hunk in hunks for line in hunk.lines if line[:1] in (\"-\", \"+\"))\n+    return sum(1 for hunk in hunks for line in hunk.lines if line[:1] in (\"-\", \"+\") or line == NO_NEWLINE_MARKER)\n \n \n def _count_chars(hunks: Sequence[DiffHunk]) -> int:\n"
+    },
+    {
+      "name": "count_marker_old_line",
+      "path": "skill_lens/core/diff.py",
+      "source_hash": "22747cdb2870afc0c1d522d922c5aac522e2545e209d130c9ba3006f6891b702",
+      "mutant_hash": "0a45935c1c917c792d17786c70efede539455fcbd07826cd75e25cbe52e59f4f",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_diff_truncation_budget_rules",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/count_marker_old_line-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/count_marker_old_line-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/count_marker_old_line-restored.log"
+        }
+      },
+      "seconds": 0.5022162500026752,
+      "diff": "--- skill_lens/core/diff.py\n+++ skill_lens/core/diff.py mutant\n@@ -353,7 +353,7 @@\n     line it used to begin at. Marker lines (starting with '\\\\') never count toward\n     old or new line counts.\n     \"\"\"\n-    old_count = sum(1 for line in lines if line[:1] in (\" \", \"-\"))\n+    old_count = sum(1 for line in lines if line[:1] in (\" \", \"-\") or line == NO_NEWLINE_MARKER)\n     new_count = sum(1 for line in lines if line[:1] in (\" \", \"+\"))\n     return DiffHunk(\n         old_start=_recount_start(hunk.old_start, hunk.old_count, old_count),\n"
+    },
+    {
+      "name": "active_only_winner",
+      "path": "skill_lens/core/resolver.py",
+      "source_hash": "dfa3524e863b7cc7f28e3788b80d466f116cc37485a504e349b9e7c31727b73e",
+      "mutant_hash": "2ddb05fce202f072572da82780d579d2084e85759fb7d8e8dcef39a30d18af52",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_nested_precedence_winner_explains_shadow",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/active_only_winner-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/active_only_winner-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/active_only_winner-restored.log"
+        }
+      },
+      "seconds": 0.49462079200020526,
+      "diff": "--- skill_lens/core/resolver.py\n+++ skill_lens/core/resolver.py mutant\n@@ -784,7 +784,8 @@\n         controls=effective_controls,\n         explicit_overrides=disabled_overrides,\n     )\n-    outcomes, winner = _assign_states(agent, candidates)\n+    outcomes, _ = _assign_states(agent, candidates)\n+    winner = next((c for c, state in outcomes if state is HeadlineState.ACTIVE and c.searched), None)\n     headline = _headline_from_states([state for _candidate, state in outcomes])\n \n     # The winning copy explains every shadow, so it is resolved first and passed\n"
+    },
+    {
+      "name": "loser_evidence",
+      "path": "skill_lens/core/resolver.py",
+      "source_hash": "dfa3524e863b7cc7f28e3788b80d466f116cc37485a504e349b9e7c31727b73e",
+      "mutant_hash": "4b9613b653abee5a4df6156849991dcc929d881a37aad9dea026028c1efedb6c",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_nested_precedence_winner_explains_shadow",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/loser_evidence-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/loser_evidence-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/loser_evidence-restored.log"
+        }
+      },
+      "seconds": 0.49472550000064075,
+      "diff": "--- skill_lens/core/resolver.py\n+++ skill_lens/core/resolver.py mutant\n@@ -593,7 +593,7 @@\n     if state is HeadlineState.UNSEARCHED:\n         return agent.unsearched_rule_id, Evidence(agent.policy_evidence)\n     if state is HeadlineState.SHADOWED and winner is not None:\n-        return winner.hit.rule_for(winner.hit.is_file), Evidence(winner.hit.evidence)\n+        return winner.hit.rule_for(winner.hit.is_file), Evidence(candidate.hit.evidence)\n     return candidate.hit.rule_for(candidate.hit.is_file), Evidence(candidate.hit.evidence)\n \n \n"
+    },
+    {
+      "name": "ignore_disabled_eligibility",
+      "path": "skill_lens/core/resolver.py",
+      "source_hash": "dfa3524e863b7cc7f28e3788b80d466f116cc37485a504e349b9e7c31727b73e",
+      "mutant_hash": "4207dbd46c86c077ff4d5354520d958a497ca265f1f44d2089658217baf14d90",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_disabled_high_ranked_candidate_cannot_be_causal_winner",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/ignore_disabled_eligibility-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/ignore_disabled_eligibility-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/ignore_disabled_eligibility-restored.log"
+        }
+      },
+      "seconds": 0.4982213330004015,
+      "diff": "--- skill_lens/core/resolver.py\n+++ skill_lens/core/resolver.py mutant\n@@ -369,7 +369,7 @@\n     searched_valid = [\n         c\n         for c in candidates\n-        if c.searched and _is_valid_for_agent(agent, c.entry, c.hit) and not c.overridden\n+        if c.searched and _is_valid_for_agent(agent, c.entry, c.hit)\n     ]\n     if not searched_valid:\n         return {}, None\n"
+    },
+    {
+      "name": "ignore_opencode_specificity",
+      "path": "skill_lens/core/resolver.py",
+      "source_hash": "dfa3524e863b7cc7f28e3788b80d466f116cc37485a504e349b9e7c31727b73e",
+      "mutant_hash": "65c0917bc534f22bc65b70cab8c532f38388b654909f002cddedd42efccbbece",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_opencode_specificity_tiebreaker_carries_causal_winner",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/ignore_opencode_specificity-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/ignore_opencode_specificity-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/ignore_opencode_specificity-restored.log"
+        }
+      },
+      "seconds": 0.4984959999965213,
+      "diff": "--- skill_lens/core/resolver.py\n+++ skill_lens/core/resolver.py mutant\n@@ -375,7 +375,7 @@\n         return {}, None\n     top_rank = max(c.rank for c in searched_valid)\n     winners = [c for c in searched_valid if c.rank == top_rank]\n-    if len(winners) > 1 and agent.id == \"opencode\":\n+    if False:\n         top_specificity = max(c.hit.specificity for c in winners)\n         winners = [c for c in winners if c.hit.specificity == top_specificity]\n     ambiguous = len(winners) > 1\n"
+    },
+    {
+      "name": "blank_agents_policy",
+      "path": "skill_lens/render.py",
+      "source_hash": "dea5d3bd72e78050745a038fd2e2d6c9ff61e3fd8fd8eb17e8e72fbb6ea9c20a",
+      "mutant_hash": "5cea71f408dc8f880928c8d523a3bb5c99a73bbf45910726b15ba67f2349bf91",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_render_agents_pins_real_registry_output",
+        "tests/test_render_snapshots.py::test_render_agents_snapshot_pinned",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/blank_agents_policy-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/blank_agents_policy-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/blank_agents_policy-restored.log"
+        }
+      },
+      "seconds": 0.5272091250008089,
+      "diff": "--- skill_lens/render.py\n+++ skill_lens/render.py mutant\n@@ -161,7 +161,7 @@\n         table.add_row(\n             escape(agent.name),\n             escape(agent.id),\n-            escape(agent.collision_policy),\n+            \"\",\n             agent.policy_evidence.value,\n             str(len(agent.roots)),\n         )\n"
+    },
+    {
+      "name": "wrong_agents_root_count",
+      "path": "skill_lens/render.py",
+      "source_hash": "dea5d3bd72e78050745a038fd2e2d6c9ff61e3fd8fd8eb17e8e72fbb6ea9c20a",
+      "mutant_hash": "5ee35363ae0db76c90fdf1a2d0921ab95ff5a01a4d5f24cdc8b1a76b646896c6",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_render_agents_pins_real_registry_output",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/wrong_agents_root_count-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/wrong_agents_root_count-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/wrong_agents_root_count-restored.log"
+        }
+      },
+      "seconds": 0.5033380839995516,
+      "diff": "--- skill_lens/render.py\n+++ skill_lens/render.py mutant\n@@ -163,7 +163,7 @@\n             escape(agent.id),\n             escape(agent.collision_policy),\n             agent.policy_evidence.value,\n-            str(len(agent.roots)),\n+            \"99\",\n         )\n     console.print(table)\n \n"
+    },
+    {
+      "name": "unescaped_agent_name",
+      "path": "skill_lens/render.py",
+      "source_hash": "dea5d3bd72e78050745a038fd2e2d6c9ff61e3fd8fd8eb17e8e72fbb6ea9c20a",
+      "mutant_hash": "69e576db19b77f051755777e2fc937e23b55e489e9f05f371f7a5666854529eb",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_render_agents_markup_escaping",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/unescaped_agent_name-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/unescaped_agent_name-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/unescaped_agent_name-restored.log"
+        }
+      },
+      "seconds": 0.490329832999123,
+      "diff": "--- skill_lens/render.py\n+++ skill_lens/render.py mutant\n@@ -159,7 +159,7 @@\n     table.add_column(\"Roots\", justify=\"right\")\n     for agent in agents:\n         table.add_row(\n-            escape(agent.name),\n+            agent.name,\n             escape(agent.id),\n             escape(agent.collision_policy),\n             agent.policy_evidence.value,\n"
+    },
+    {
+      "name": "reread_frozen_disk",
+      "path": "skill_lens/core/diff.py",
+      "source_hash": "22747cdb2870afc0c1d522d922c5aac522e2545e209d130c9ba3006f6891b702",
+      "mutant_hash": "fafb0129c16bb7e8d877e0d31aa7c2cff35a5ba4a03d0d960518de735e473703",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_stage_f_repairs.py::test_diff_captured_and_live_equivalence_for_final_newline",
+        "-o",
+        "addopts=",
+        "-o",
+        "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/mutation-cache",
+        "--no-cov",
+        "-q",
+        "--tb=short"
+      ],
+      "phases": {
+        "clean": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/reread_frozen_disk-clean.log"
+        },
+        "mutant": {
+          "exit": 1,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/reread_frozen_disk-mutant.log"
+        },
+        "restored": {
+          "exit": 0,
+          "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator/reread_frozen_disk-restored.log"
+        }
+      },
+      "seconds": 0.5777695830001903,
+      "diff": "--- skill_lens/core/diff.py\n+++ skill_lens/core/diff.py mutant\n@@ -137,7 +137,7 @@\n     diff can never see a file the fingerprint ignored. A standalone ``.md`` skill\n     is a single file keyed by its own name.\n     \"\"\"\n-    if captured_files is not None:\n+    if False and captured_files is not None:\n         key = canonical_key(entry)\n         if key not in captured_files:\n             raise ValueError(f\"missing captured files for key {key!r}\")\n"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_opencode_specificity_tiebreaker_carries_causal_winner __________
+tests/test_stage_f_repairs.py:679: in test_opencode_specificity_tiebreaker_carries_causal_winner
+    active = next(c for c in report.candidates if c.state is HeadlineState.ACTIVE)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   StopIteration
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_opencode_specificity_tiebreaker_carries_causal_winner
+1 failed in 0.09s

@@ -1,0 +1,22 @@
+{
+  "F15": [
+    {
+      "path": "SKILL.md",
+      "change": "modified",
+      "is_binary": false,
+      "hunks": []
+    }
+  ],
+  "F16": [
+    {
+      "state": "COEXISTS",
+      "rule": "synthetic_nested_wins",
+      "reason": "Qualified namespaced copy, accessible alongside the winning copy."
+    },
+    {
+      "state": "SHADOWED",
+      "rule": "synthetic_losing_root",
+      "reason": "Suppressed by a higher-priority copy."
+    }
+  ]
+}

@@ -29,7 +29,10 @@ from skill_lens.core.diff import build_diff_report
 from skill_lens.core.doctor import build_doctor_report
 from skill_lens.core.resolver import resolve_skill
 from skill_lens.core.scanner import build_scan_report
+from skill_lens.models.enums import Evidence
+from skill_lens.registry.loader import AgentDefinition, load_registry
 from skill_lens.render import (
+    render_agents,
     render_compare,
     render_diff,
     render_doctor,
@@ -374,3 +377,70 @@ def test_compare_snapshot_empty(mock_home: Path, update_snapshots: bool) -> None
         lambda: _render(render_compare, build_compare_report("claude", "codex", home, home)),
         home,
     )
+
+
+# --- Phase 4: agents rendering -----------------------------------------------
+
+EXPECTED_AGENTS_TABLE = (
+    "┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳"
+    "━━━━━━━━━━━━┳━━━━━━━┓\n"
+    "┃ Agent           ┃ ID          ┃ Collision Policy                            ┃"
+    " Evidence   ┃ Roots ┃\n"
+    "┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇"
+    "━━━━━━━━━━━━╇━━━━━━━┩\n"
+    "│ Antigravity CLI │ antigravity │ Shadow (Project > User > Builtin)           │"
+    " empirical  │     5 │\n"
+    "│ Claude Code     │ claude      │ Personal > Project                          │"
+    " documented │     2 │\n"
+    "│ OpenAI Codex    │ codex       │ Unverified / Merged                         │"
+    " empirical  │     6 │\n"
+    "│ DSH             │ dsh         │ Shadow (Project > User)                     │"
+    " documented │     5 │\n"
+    "│ Grok CLI        │ grok        │ Shadow (Project > Global)                   │"
+    " empirical  │     3 │\n"
+    "│ Oh My Pi        │ omp         │ Namespace (higher precedence keeps the bare │"
+    " documented │     5 │\n"
+    "│                 │             │ name)                                       │"
+    "            │       │\n"
+    "│ OpenCode V2     │ opencode    │ Shadow (Later-registered source wins)       │"
+    " documented │     6 │\n"
+    "│ Pi Agent        │ pi          │ Shadow (User > Project)                     │"
+    " documented │     4 │\n"
+    "│ Qoder CLI       │ qoder       │ Shadow (User > Project)                     │"
+    " documented │     3 │\n"
+    "│ Windsurf        │ windsurf    │ Shadow (Project > Global)                   │"
+    " empirical  │     3 │\n"
+    "└─────────────────┴─────────────┴─────────────────────────────────────────────┴"
+    "────────────┴───────┘\n"
+)
+
+EXPECTED_MARKUP_AGENT_TABLE = (
+    "┏━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓\n"
+    "┃ Agent                   ┃ ID        ┃ Collision Policy        ┃ Evidence   ┃ Roots ┃\n"
+    "┡━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩\n"
+    "│ [bold red]Evil Agent[/] │ [evil_id] │ [green]Custom Policy[/] │ documented │     0 │\n"
+    "└─────────────────────────┴───────────┴─────────────────────────┴────────────┴───────┘\n"
+)
+
+
+def test_render_agents_snapshot_pinned(mock_home: Path) -> None:
+    """Pin the real render_agents output for all normal registry rows at fixed width."""
+    agents = list(load_registry().values())
+    rendered = _render(render_agents, agents)
+    assert rendered == EXPECTED_AGENTS_TABLE
+
+
+def test_render_agents_escapes_markup(mock_home: Path) -> None:
+    """Unusual names, IDs, and policy strings containing Rich markup must stay literal."""
+    markup_agent = AgentDefinition(
+        id="[evil_id]",
+        name="[bold red]Evil Agent[/]",
+        identity_source="test",
+        collision_policy="[green]Custom Policy[/]",
+        policy_evidence=Evidence.DOCUMENTED,
+        coexist_policy="shadow",
+        walk_boundary="project_root",
+        unsearched_rule_id="unsearched",
+    )
+    rendered = _render(render_agents, [markup_agent])
+    assert rendered == EXPECTED_MARKUP_AGENT_TABLE

@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________________ test_diff_explains_final_newline_removal ___________________
+tests/test_stage_f_repairs.py:82: in test_diff_explains_final_newline_removal
+    assert hunk.lines == ("-alpha", "+alpha", NO_NEWLINE_MARKER)
+E   AssertionError: assert ('-alpha', '+alpha') == ('-alpha', '+... end of file')
+E     
+E     Right contains one more item: '\\ No newline at end of file'
+E     Use -v to get more diff
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_diff_explains_final_newline_removal
+1 failed in 0.10s

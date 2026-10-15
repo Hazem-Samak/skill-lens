@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________ test_diff_added_and_removed_files_without_newline _______________
+tests/test_stage_f_repairs.py:203: in test_diff_added_and_removed_files_without_newline
+    assert added_file.hunks[0].lines == ("+new", NO_NEWLINE_MARKER)
+E   AssertionError: assert ('+new',) == ('+new', '\\ ... end of file')
+E     
+E     Right contains one more item: '\\ No newline at end of file'
+E     Use -v to get more diff
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_diff_added_and_removed_files_without_newline
+1 failed in 0.09s

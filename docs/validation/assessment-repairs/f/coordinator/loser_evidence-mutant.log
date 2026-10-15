@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________________ test_nested_precedence_winner_explains_shadow _________________
+tests/test_stage_f_repairs.py:525: in test_nested_precedence_winner_explains_shadow
+    assert shadowed_cand.evidence == Evidence.DOCUMENTED
+E   AssertionError: assert <Evidence.EMP...: 'empirical'> == <Evidence.DOC... 'documented'>
+E     
+E     - documented
+E     + empirical
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_nested_precedence_winner_explains_shadow
+1 failed in 0.09s

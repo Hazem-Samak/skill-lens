@@ -335,42 +335,44 @@ def _candidates_for(
 
 def _assign_states(
     agent: AgentDefinition, candidates: list[Candidate]
-) -> list[tuple[Candidate, HeadlineState]]:
-    """Assign each candidate a state and return them alongside it."""
+) -> tuple[list[tuple[Candidate, HeadlineState]], Candidate | None]:
+    """Assign each candidate a state and return them alongside the unique causal winner."""
     searched = [c for c in candidates if c.searched]
     if not searched:
-        return [(c, HeadlineState.UNSEARCHED) for c in candidates]
+        return [(c, HeadlineState.UNSEARCHED) for c in candidates], None
 
     valid = [c for c in searched if _is_valid_for_agent(agent, c.entry, c.hit)]
     if not valid:
         return [
             (c, HeadlineState.INVALID if c.searched else HeadlineState.UNSEARCHED)
             for c in candidates
-        ]
+        ], None
 
     enabled = [c for c in valid if not c.overridden]
     if not enabled:
-        return [(c, _fallback_state(agent, c, HeadlineState.DISABLED)) for c in candidates]
+        return [(c, _fallback_state(agent, c, HeadlineState.DISABLED)) for c in candidates], None
 
-    roles = _active_roles(candidates, agent)
+    roles, winner = _active_roles(candidates, agent)
     return [
         (c, roles.get(index, _fallback_state(agent, c, HeadlineState.ACTIVE)))
         for index, c in enumerate(candidates)
-    ]
+    ], winner
 
 
 # --- Per-candidate state assignment ----------------------------------------
 
 
-def _active_roles(candidates: list[Candidate], agent: AgentDefinition) -> dict[int, HeadlineState]:
-    """Map each candidate's position to its collision state."""
+def _active_roles(
+    candidates: list[Candidate], agent: AgentDefinition
+) -> tuple[dict[int, HeadlineState], Candidate | None]:
+    """Map each candidate's position to its collision state and return the causal winner."""
     searched_valid = [
         c
         for c in candidates
         if c.searched and _is_valid_for_agent(agent, c.entry, c.hit) and not c.overridden
     ]
     if not searched_valid:
-        return {}
+        return {}, None
     top_rank = max(c.rank for c in searched_valid)
     winners = [c for c in searched_valid if c.rank == top_rank]
     if len(winners) > 1 and agent.id == "opencode":
@@ -385,7 +387,12 @@ def _active_roles(candidates: list[Candidate], agent: AgentDefinition) -> dict[i
             roles[index] = _fallback_state(agent, candidate, HeadlineState.AMBIGUOUS)
             continue
         roles[index] = _role_for_active(agent, candidate, winner, multi)
-    return roles
+    causal_winner = (
+        winner
+        if (winner is not None and agent.coexist_policy not in _COEXISTING_POLICIES)
+        else None
+    )
+    return roles, causal_winner
 
 
 def _role_for_active(
@@ -777,14 +784,11 @@ def resolve_skill(
         controls=effective_controls,
         explicit_overrides=disabled_overrides,
     )
-    outcomes = _assign_states(agent, candidates)
+    outcomes, winner = _assign_states(agent, candidates)
     headline = _headline_from_states([state for _candidate, state in outcomes])
 
     # The winning copy explains every shadow, so it is resolved first and passed
     # to the rest: their reason and rule then name the real cause.
-    winner = next(
-        (c for c, state in outcomes if state is HeadlineState.ACTIVE and c.searched), None
-    )
 
     ordered = _sort_resolutions(
         [

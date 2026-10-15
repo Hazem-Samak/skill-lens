@@ -1,0 +1,7 @@
+ M docs/plans/2026-10-12-assessment-repairs.md
+ M skill_lens/core/diff.py
+ M skill_lens/core/resolver.py
+ M skill_lens/models/diff.py
+ M tests/test_render_snapshots.py
+?? .path
+?? tests/test_stage_f_repairs.py

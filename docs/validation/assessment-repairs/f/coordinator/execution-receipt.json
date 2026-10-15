@@ -1,0 +1,36 @@
+{
+  "expected_initial_tasks": 3,
+  "actual_launches": 4,
+  "reason_for_extra_launch": "Coordinator reproduced assurance gaps before council; sole Gemini implementer strengthened tests and fixture isolation.",
+  "substantive_council_waves": 1,
+  "first_dispatch": "2026-10-15T17:35:25.750000+00:00",
+  "recorded": "2026-10-15T18:25:51.624205+00:00",
+  "wall_elapsed_seconds_from_first_dispatch": 3025.874205,
+  "active_compute_seconds": null,
+  "billed_tokens": null,
+  "metrics_note": "Wall time includes orchestration and waiting; task runtime is not billed compute. Providers exposed no billed token totals.",
+  "terminal_tasks": 4,
+  "pending_children": false,
+  "new_worktrees_created": 0,
+  "source_base": "3762f1059fe34e79a0c1e93fc5032600bb648b78",
+  "frozen_contract": "fe6f89bc55eb3f4f04187567b968dd96ae9c86c1",
+  "file_fingerprints_unchanged_during_reviews": 515,
+  "coordinator_gates": {
+    "pytest_passed": 989,
+    "pytest_skipped": 1,
+    "coverage_percent": 91.11,
+    "mypy_source_files": 36,
+    "ruff_format_files": 138
+  },
+  "production_mutations": 14,
+  "mutation_phase_results": [
+    0,
+    1,
+    0
+  ],
+  "generated_budget_cases": 4235,
+  "review_verdicts": {
+    "minimax": "pass",
+    "muse": "pass"
+  }
+}

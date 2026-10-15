@@ -1,0 +1,11 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________________ test_diff_truncation_budget_rules _______________________
+tests/test_stage_f_repairs.py:253: in test_diff_truncation_budget_rules
+    assert chars == len("-old_line") + 1 + len(NO_NEWLINE_MARKER) + 1
+E   AssertionError: assert 10 == (((9 + 1) + 27) + 1)
+E    +  where 9 = len('-old_line')
+E    +  and   27 = len('\\ No newline at end of file')
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_diff_truncation_budget_rules - Ass...
+1 failed in 0.09s

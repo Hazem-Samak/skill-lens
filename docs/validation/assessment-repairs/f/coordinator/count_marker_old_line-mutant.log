@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________________ test_diff_truncation_budget_rules _______________________
+tests/test_stage_f_repairs.py:265: in test_diff_truncation_budget_rules
+    assert recounted.old_count == 1
+E   AssertionError: assert 2 == 1
+E    +  where 2 = DiffHunk(old_start=1, old_count=2, new_start=0, new_count=0, lines=('-old_line', '\\ No newline at end of file')).old_count
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_diff_truncation_budget_rules - Ass...
+1 failed in 0.10s

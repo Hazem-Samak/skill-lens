@@ -37,8 +37,11 @@ class DiffHunk:
 
     ``lines`` holds the body lines with their leading marker: ``" "`` for
     context, ``"-"`` for a line only the baseline has, ``"+"`` for a line only
-    the other copy has. Storing the marker means the renderer can print the
-    hunk without recomputing the diff.
+    the other copy has, and the conventional ``"\\ No newline at end of file"``
+    marker when the preceding line lacks a trailing newline. Storing the marker
+    means the renderer can print the hunk without recomputing the diff. Marker
+    lines explain missing trailing newlines without increasing line counts or
+    changed-line budgets.
     """
 
     old_start: int

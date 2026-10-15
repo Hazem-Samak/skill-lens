@@ -1,0 +1,51 @@
+```text
+EFFECTIVE_MODEL: [antigravity/gemini-3.8-flash-high, none, full-access, default | requested: antigravity/gemini-3.8-flash-high, full-access, default via delegate_task; configured: thread modelSelection antigravity/gemini-3.8-flash-high, runtimeMode full-access, interactionMode default; provider-confirmed: runtime_info gemini-3.8-flash-high under Antigravity harness]
+OUTCOME: succeeded
+FILES_CHANGED: [
+  "skill_lens/core/diff.py",
+  "skill_lens/core/resolver.py",
+  "skill_lens/models/diff.py",
+  "tests/test_render_snapshots.py",
+  "tests/test_stage_f_repairs.py"
+]
+CHECKS: pytest=988 passed, 1 skipped (exit 0; 91.02% total coverage; log /Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/pytest.log) mypy=36 source files clean (exit 0; log /Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mypy.log) ruff-check=clean (exit 0; log /Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/ruff-check.log) ruff-format=138 files clean (exit 0; log /Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/ruff-format.log)
+TESTS_ADDED: [
+  "tests/test_stage_f_repairs.py::test_split_lines_preserves_final_newline_semantics",
+  "tests/test_stage_f_repairs.py::test_diff_explains_final_newline_removal",
+  "tests/test_stage_f_repairs.py::test_diff_explains_final_newline_addition",
+  "tests/test_stage_f_repairs.py::test_diff_both_files_no_newline_with_diff",
+  "tests/test_stage_f_repairs.py::test_diff_context_line_no_newline_at_eof",
+  "tests/test_stage_f_repairs.py::test_diff_empty_vs_single_newline",
+  "tests/test_stage_f_repairs.py::test_diff_empty_vs_non_empty_without_newline",
+  "tests/test_stage_f_repairs.py::test_diff_added_and_removed_files_without_newline",
+  "tests/test_stage_f_repairs.py::test_diff_crlf_lf_equivalence_preserved",
+  "tests/test_stage_f_repairs.py::test_diff_truncation_budget_rules",
+  "tests/test_stage_f_repairs.py::test_diff_captured_and_live_equivalence_for_final_newline",
+  "tests/test_stage_f_repairs.py::test_diff_json_schema_round_trip_with_marker",
+  "tests/test_stage_f_repairs.py::test_nested_precedence_winner_explains_shadow",
+  "tests/test_stage_f_repairs.py::test_ambiguous_tie_does_not_fabricate_winner",
+  "tests/test_stage_f_repairs.py::test_merged_policy_does_not_fabricate_winner",
+  "tests/test_stage_f_repairs.py::test_opencode_specificity_tiebreaker_carries_causal_winner",
+  "tests/test_stage_f_repairs.py::test_disabled_or_invalid_candidate_cannot_be_causal_winner",
+  "tests/test_stage_f_repairs.py::test_render_agents_pins_real_registry_output",
+  "tests/test_stage_f_repairs.py::test_render_agents_markup_escaping",
+  "tests/test_render_snapshots.py::test_render_agents_snapshot_pinned",
+  "tests/test_render_snapshots.py::test_render_agents_escapes_markup"
+]
+DEVIATIONS_FROM_PLAN: []
+BLOCKED_ON: []
+```
+
+### Mutation Proof Paths
+- Disposable copies executed outside checkout with clean/mutant/restored controls:
+  - `mutant_1_diff_newline_marker_omitted`: clean=0, mutant=1, restored=0  
+    Log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mutations/mutant_1_diff_newline_marker_omitted.log`
+  - `mutant_2_resolver_revert_to_active_only_winner`: clean=0, mutant=1, restored=0  
+    Log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mutations/mutant_2_resolver_revert_to_active_only_winner.log`
+  - `mutant_3_render_agents_escape_disabled`: clean=0, mutant=1, restored=0  
+    Log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mutations/mutant_3_render_agents_escape_disabled.log`
+
+### Snapshot Difference Review
+- Zero historical snapshots or golden files were modified or regenerated.
+- `tests/fixtures/snapshots/` maintains its exact 17 files, preserving packaging gate expectations.
+- All historical render snapshots and newly added pinned render tests pass.

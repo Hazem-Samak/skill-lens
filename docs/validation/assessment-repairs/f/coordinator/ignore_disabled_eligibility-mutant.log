@@ -1,0 +1,11 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_disabled_high_ranked_candidate_cannot_be_causal_winner __________
+tests/test_stage_f_repairs.py:749: in test_disabled_high_ranked_candidate_cannot_be_causal_winner
+    assert low_cand.state is HeadlineState.ACTIVE
+E   AssertionError: assert <HeadlineState.SHADOWED: 'SHADOWED'> is <HeadlineState.ACTIVE: 'ACTIVE'>
+E    +  where <HeadlineState.SHADOWED: 'SHADOWED'> = CandidateResolution(state=<HeadlineState.SHADOWED: 'SHADOWED'>, visibility=<Visibility.ACTIVE_ROOT: 'active_root'>, co...tyStatus.LOADABLE: 'loadable'>, invocation=<InvocationPolicy.ALL: 'all'>, permission=<PermissionEffect.ALLOW: 'allow'>).state
+E    +  and   <HeadlineState.ACTIVE: 'ACTIVE'> = HeadlineState.ACTIVE
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_disabled_high_ranked_candidate_cannot_be_causal_winner
+1 failed in 0.09s

@@ -1,0 +1,33 @@
+from pathlib import Path
+import shutil,subprocess,os,json,difflib,hashlib,time
+repo=Path('/Users/corvette/Documents/Projects Coding/Skill Lens');work=Path(__file__).parent;copy=work/'mutation-source'
+for name in ('skill_lens','tests'):
+ shutil.copytree(repo/name,copy/name,ignore=shutil.ignore_patterns('__pycache__','*.pyc'),dirs_exist_ok=True)
+shutil.copy2(repo/'pyproject.toml',copy/'pyproject.toml')
+env=os.environ.copy();env['PYTHONPATH']=str(copy);env['PYTHONDONTWRITEBYTECODE']='1';py=str(repo/'.venv/bin/python');records=[]
+base='tests/test_stage_f_repairs.py::'
+cases=[
+ ('omit_newline_markers','skill_lens/core/diff.py','lines.append(NO_NEWLINE_MARKER)','pass',[base+'test_diff_explains_final_newline_removal'],0),
+ ('omit_added_removed_marker','skill_lens/core/diff.py','            lines.append(NO_NEWLINE_MARKER)\n    return (','            pass\n    return (',[base+'test_diff_added_and_removed_files_without_newline'],1),
+ ('split_marker_pair','skill_lens/core/diff.py','has_marker = (i + 1 < n) and','has_marker = False and',[base+'test_diff_truncation_budget_rules'],1),
+ ('ignore_marker_char_cost','skill_lens/core/diff.py','cost += len(raw_lines[i + 1]) + 1','cost += 0',[base+'test_diff_truncation_budget_rules'],1),
+ ('count_marker_as_change','skill_lens/core/diff.py','if line[:1] in ("-", "+"))','if line[:1] in ("-", "+") or line == NO_NEWLINE_MARKER)',[base+'test_diff_truncation_budget_rules'],1),
+ ('count_marker_old_line','skill_lens/core/diff.py','old_count = sum(1 for line in lines if line[:1] in (" ", "-"))','old_count = sum(1 for line in lines if line[:1] in (" ", "-") or line == NO_NEWLINE_MARKER)',[base+'test_diff_truncation_budget_rules'],1),
+ ('active_only_winner','skill_lens/core/resolver.py','outcomes, winner = _assign_states(agent, candidates)','outcomes, _ = _assign_states(agent, candidates)\n    winner = next((c for c, state in outcomes if state is HeadlineState.ACTIVE and c.searched), None)',[base+'test_nested_precedence_winner_explains_shadow'],1),
+ ('loser_evidence','skill_lens/core/resolver.py','return winner.hit.rule_for(winner.hit.is_file), Evidence(winner.hit.evidence)','return winner.hit.rule_for(winner.hit.is_file), Evidence(candidate.hit.evidence)',[base+'test_nested_precedence_winner_explains_shadow'],1),
+ ('ignore_disabled_eligibility','skill_lens/core/resolver.py','if c.searched and _is_valid_for_agent(agent, c.entry, c.hit) and not c.overridden','if c.searched and _is_valid_for_agent(agent, c.entry, c.hit)',[base+'test_disabled_high_ranked_candidate_cannot_be_causal_winner'],1),
+ ('ignore_opencode_specificity','skill_lens/core/resolver.py','if len(winners) > 1 and agent.id == "opencode":','if False:',[base+'test_opencode_specificity_tiebreaker_carries_causal_winner'],1),
+ ('blank_agents_policy','skill_lens/render.py','escape(agent.collision_policy),','"",',[base+'test_render_agents_pins_real_registry_output','tests/test_render_snapshots.py::test_render_agents_snapshot_pinned'],1),
+ ('wrong_agents_root_count','skill_lens/render.py','str(len(agent.roots)),','"99",',[base+'test_render_agents_pins_real_registry_output'],1),
+ ('unescaped_agent_name','skill_lens/render.py','escape(agent.name),','agent.name,',[base+'test_render_agents_markup_escaping'],1),
+ ('reread_frozen_disk','skill_lens/core/diff.py','if captured_files is not None:','if False and captured_files is not None:',[base+'test_diff_captured_and_live_equivalence_for_final_newline'],1),
+]
+prov_cmd=[py,'-c','import json,skill_lens.core.diff as d,skill_lens.core.resolver as r,skill_lens.render as v; print(json.dumps([d.__file__,r.__file__,v.__file__]))'];provenance=json.loads(subprocess.check_output(prov_cmd,cwd=copy,env=env,text=True));assert all(str(copy) in p for p in provenance)
+for name,path,old,new,tests,count in cases:
+ p=copy/path;original=p.read_text();assert old in original,(name,old);mutant=original.replace(old,new) if count==0 else original.replace(old,new,count);phases={};cmd=[py,'-m','pytest',*tests,'-o','addopts=','-o',f'cache_dir={work}/mutation-cache','--no-cov','-q','--tb=short'];started=time.monotonic()
+ for phase,source in [('clean',original),('mutant',mutant),('restored',original)]:
+  p.write_text(source);shutil.rmtree(p.parent/'__pycache__',ignore_errors=True);result=subprocess.run(cmd,cwd=copy,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True);log=work/f'{name}-{phase}.log';log.write_text(result.stdout);phases[phase]={'exit':result.returncode,'log':str(log)}
+ records.append({'name':name,'path':path,'source_hash':hashlib.sha256(original.encode()).hexdigest(),'mutant_hash':hashlib.sha256(mutant.encode()).hexdigest(),'command':cmd,'phases':phases,'seconds':time.monotonic()-started,'diff':''.join(difflib.unified_diff(original.splitlines(True),mutant.splitlines(True),fromfile=path,tofile=path+' mutant'))})
+ print(name,{k:v['exit'] for k,v in phases.items()},flush=True)
+ (work/'mutations.json').write_text(json.dumps({'import_provenance':provenance,'results':records},indent=2)+'\n')
+ assert [phases[x]['exit'] for x in ('clean','mutant','restored')]==[0,1,0],name

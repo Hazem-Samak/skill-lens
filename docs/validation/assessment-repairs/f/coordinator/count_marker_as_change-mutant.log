@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________________ test_diff_truncation_budget_rules _______________________
+tests/test_stage_f_repairs.py:243: in test_diff_truncation_budget_rules
+    assert _count_changed([hunk]) == 2
+E   AssertionError: assert 4 == 2
+E    +  where 4 = _count_changed([DiffHunk(old_start=1, old_count=1, new_start=1, new_count=1, lines=('-old_line', '\\ No newline at end of file', '+new_line', '\\ No newline at end of file'))])
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_diff_truncation_budget_rules - Ass...
+1 failed in 0.09s

@@ -1,0 +1,12 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________________ test_diff_truncation_budget_rules _______________________
+tests/test_stage_f_repairs.py:260: in test_diff_truncation_budget_rules
+    assert lines_tight == []
+E   AssertionError: assert ['-old_line'] == []
+E     
+E     Left contains one more item: '-old_line'
+E     Use -v to get more diff
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_diff_truncation_budget_rules - Ass...
+1 failed in 0.09s

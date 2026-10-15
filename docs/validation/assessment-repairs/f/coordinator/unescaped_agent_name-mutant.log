@@ -1,0 +1,24 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________________ test_render_agents_markup_escaping ______________________
+tests/test_stage_f_repairs.py:837: in test_render_agents_markup_escaping
+    assert output == EXPECTED_MARKUP_AGENT_TABLE
+E   AssertionError: assert '┏━━━━━━━━━━━...──┴───────┘\n' == '┏━━━━━━━━━━━...──┴───────┘\n'
+E     
+E     - ┏━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+E     ?  -------------
+E     + ┏━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+E     - ┃ Agent                   ┃ ID        ┃ Collision Policy        ┃ Evidence   ┃ Roots ┃
+E     ?              -------------
+E     + ┃ Agent      ┃ ID        ┃ Collision Policy        ┃ Evidence   ┃ Roots ┃...
+E     
+E     ...Full output truncated (9 lines hidden), use '-vv' to show
+----------------------------- Captured stdout call -----------------------------
+┏━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+┃ Agent      ┃ ID        ┃ Collision Policy        ┃ Evidence   ┃ Roots ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩
+│ Evil Agent │ [evil_id] │ [green]Custom Policy[/] │ documented │     0 │
+└────────────┴───────────┴─────────────────────────┴────────────┴───────┘
+=========================== short test summary info ============================
+FAILED tests/test_stage_f_repairs.py::test_render_agents_markup_escaping - As...
+1 failed in 0.09s

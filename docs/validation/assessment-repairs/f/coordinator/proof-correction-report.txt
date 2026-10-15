@@ -1,0 +1,75 @@
+EFFECTIVE_MODEL: Antigravity/gemini-3.8-flash-high, temperature default, thinking high, runtimeMode=acp, interactionMode=default | requested gemini-3.8-flash-high vs configured gemini-3.8-flash-high vs provider-confirmed gemini-3.8-flash-high
+OUTCOME: succeeded
+FILES_CHANGED:
+- [skill_lens/core/diff.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/core/diff.py)
+- [skill_lens/core/resolver.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/core/resolver.py)
+- [skill_lens/models/diff.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/models/diff.py)
+- [tests/test_render_snapshots.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_render_snapshots.py)
+- [tests/test_stage_f_repairs.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_stage_f_repairs.py)
+
+CHECKS:
+- pytest=PASSED (989 passed, 1 skipped in 52.65s, 91.11% total coverage; command: `.venv/bin/pytest --cov=skill_lens -o cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/pytest-cache`, log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/pytest.log`)
+- mypy=PASSED (Success: no issues found in 36 source files; command: `.venv/bin/mypy --cache-dir /Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mypy-cache`, log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mypy.log`)
+- ruff-check=PASSED (All checks passed across 138 files; command: `.venv/bin/ruff check .`, log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/ruff-check.log`)
+- ruff-format=PASSED (138 files already formatted; command: `.venv/bin/ruff format --check .`, log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/ruff-format.log`)
+
+TESTS_ADDED:
+- [tests/test_stage_f_repairs.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_stage_f_repairs.py):
+  - `test_split_lines_preserves_final_newline_semantics`
+  - `test_diff_explains_final_newline_removal`
+  - `test_diff_explains_final_newline_addition`
+  - `test_diff_both_files_no_newline_with_diff`
+  - `test_diff_context_line_no_newline_at_eof`
+  - `test_diff_empty_vs_single_newline`
+  - `test_diff_empty_vs_non_empty_without_newline`
+  - `test_diff_added_and_removed_files_without_newline`
+  - `test_diff_crlf_lf_equivalence_preserved`
+  - `test_diff_truncation_budget_rules`
+  - `test_diff_captured_and_live_equivalence_for_final_newline` (strengthened with bidirectional newline changes, contrasting causal winner/loser evidence and nested_rule_id, post-capture disk deletion, and filesystem tripwires during frozen calls)
+  - `test_diff_json_schema_round_trip_with_marker`
+  - `test_nested_precedence_winner_explains_shadow` (isolated under `mock_home`, contrasting winner/loser evidence and nested_rule_id)
+  - `test_ambiguous_tie_does_not_fabricate_winner` (isolated under `mock_home`)
+  - `test_merged_policy_does_not_fabricate_winner` (isolated under `mock_home`)
+  - `test_opencode_specificity_tiebreaker_carries_causal_winner` (isolated under `mock_home`)
+  - `test_disabled_high_ranked_candidate_cannot_be_causal_winner` (isolated under `mock_home`, tests actual disabled candidate via `disabled_overrides`)
+  - `test_invalid_high_ranked_candidate_cannot_be_causal_winner` (isolated under `mock_home`, tests invalid frontmatter candidate)
+  - `test_render_agents_pins_real_registry_output` (pinned full literal table)
+  - `test_render_agents_markup_escaping` (pinned full literal table for markup)
+- [tests/test_render_snapshots.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/tests/test_render_snapshots.py):
+  - `test_render_agents_snapshot_pinned` (pinned full literal table `EXPECTED_AGENTS_TABLE`)
+  - `test_render_agents_escapes_markup` (pinned full literal table `EXPECTED_MARKUP_AGENT_TABLE`)
+
+DEVIATIONS_FROM_PLAN: None. Product behavior was preserved unchanged; scope hygiene restored original module-level docstrings in [skill_lens/core/diff.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/core/diff.py) and [skill_lens/models/diff.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/models/diff.py), removed the unused `_lines` wrapper, retained only necessary marker semantics documentation in [`DiffHunk`](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/models/diff.py#L40-L55), and kept untracked `.path` untouched.
+
+BLOCKED_ON: None.
+
+### Mutation Proof (Executed in Disposable Source with Clean/Mutant/Restored Controls)
+Verified imported module source: `/Users/corvette/.t3/userdata/antigravity-tmp/.../disposable_repo/skill_lens/__init__.py`
+- `r1_agents_policy_not_pinned` ([skill_lens/render.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/render.py)):
+  - Diff: `escape(agent.collision_policy),` -> `"",`
+  - Targets: `test_render_agents_pins_real_registry_output`, `test_render_agents_snapshot_pinned`
+  - Results: clean=0, mutant=1, restored=0 (KILLED)
+  - Log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mutations/r1_agents_policy_not_pinned.log`
+- `r1_frozen_reads_disk_survives` ([skill_lens/core/diff.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/core/diff.py)):
+  - Diff: `if captured_files is not None:` -> `if False and captured_files is not None:`
+  - Target: `test_diff_captured_and_live_equivalence_for_final_newline`
+  - Results: clean=0, mutant=1, restored=0 (KILLED via `AssertionError: Forbidden disk read invoked during frozen snapshot operation`)
+  - Log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mutations/r1_frozen_reads_disk_survives.log`
+- `r1_mutant_1_diff_newline_marker_omitted` ([skill_lens/core/diff.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/core/diff.py)):
+  - Diff: omit `NO_NEWLINE_MARKER` in `_hunks`
+  - Target: `test_diff_explains_final_newline_removal`
+  - Results: clean=0, mutant=1, restored=0 (KILLED)
+  - Log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mutations/r1_mutant_1_diff_newline_marker_omitted.log`
+- `r1_mutant_2_resolver_revert_to_active_only_winner` ([skill_lens/core/resolver.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/core/resolver.py)):
+  - Diff: revert winner search back to ACTIVE only
+  - Target: `test_nested_precedence_winner_explains_shadow`
+  - Results: clean=0, mutant=1, restored=0 (KILLED)
+  - Log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mutations/r1_mutant_2_resolver_revert_to_active_only_winner.log`
+- `r1_mutant_3_render_agents_escape_disabled` ([skill_lens/render.py](file:///Users/corvette/Documents/Projects%20Coding/Skill%20Lens/skill_lens/render.py)):
+  - Diff: remove `escape()` on `agent.name`
+  - Target: `test_render_agents_markup_escaping`
+  - Results: clean=0, mutant=1, restored=0 (KILLED)
+  - Log: `/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/worker/mutations/r1_mutant_3_render_agents_escape_disabled.log`
+
+### Snapshot Review
+No historical goldens under `tests/fixtures/snapshots/` required modification or regeneration. `render_agents` output is asserted as a literal string in inline table tests (`EXPECTED_AGENTS_TABLE` and `EXPECTED_MARKUP_AGENT_TABLE`).

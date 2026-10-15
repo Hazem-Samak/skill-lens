@@ -1,0 +1,8 @@
+{
+  "generated_budget_cases": 4235,
+  "nested_frozen_why": {
+    "rule": "actual_nested_winner",
+    "evidence": "empirical",
+    "reason": "Suppressed by the higher-priority copy in the project root .skills."
+  }
+}

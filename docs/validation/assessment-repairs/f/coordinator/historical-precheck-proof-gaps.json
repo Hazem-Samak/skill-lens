@@ -1,0 +1,49 @@
+[
+  {
+    "name": "agents_policy_not_pinned",
+    "path": "skill_lens/render.py",
+    "command": [
+      "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_stage_f_repairs.py::test_render_agents_pins_real_registry_output",
+      "tests/test_render_snapshots.py::test_render_agents_snapshot_pinned",
+      "-o",
+      "addopts=",
+      "-o",
+      "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator-precheck/cache",
+      "--no-cov",
+      "-q",
+      "--tb=short"
+    ],
+    "phases": {
+      "clean": 0,
+      "mutant": 0,
+      "restored": 0
+    },
+    "diff": "--- skill_lens/render.py\n+++ skill_lens/render.py mutant\n@@ -161,7 +161,7 @@\n         table.add_row(\n             escape(agent.name),\n             escape(agent.id),\n-            escape(agent.collision_policy),\n+            \"\",\n             agent.policy_evidence.value,\n             str(len(agent.roots)),\n         )\n"
+  },
+  {
+    "name": "frozen_reads_disk_survives",
+    "path": "skill_lens/core/diff.py",
+    "command": [
+      "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_stage_f_repairs.py::test_diff_captured_and_live_equivalence_for_final_newline",
+      "-o",
+      "addopts=",
+      "-o",
+      "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-15-stage-f-work/coordinator-precheck/cache",
+      "--no-cov",
+      "-q",
+      "--tb=short"
+    ],
+    "phases": {
+      "clean": 0,
+      "mutant": 0,
+      "restored": 0
+    },
+    "diff": "--- skill_lens/core/diff.py\n+++ skill_lens/core/diff.py mutant\n@@ -138,7 +138,7 @@\n     diff can never see a file the fingerprint ignored. A standalone ``.md`` skill\n     is a single file keyed by its own name.\n     \"\"\"\n-    if captured_files is not None:\n+    if False and captured_files is not None:\n         key = canonical_key(entry)\n         if key not in captured_files:\n             raise ValueError(f\"missing captured files for key {key!r}\")\n"
+  }
+]
