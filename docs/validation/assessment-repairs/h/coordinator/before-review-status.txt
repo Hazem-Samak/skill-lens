@@ -1,0 +1,37 @@
+ M AGENTS.md
+ M CHANGELOG.md
+ M DEVELOPMENT.md
+ M FULL_SCREEN_TUI.md
+ M README.md
+ M docs/plans/2026-10-12-assessment-repairs.md
+?? .path
+?? docs/validation/assessment-repairs/h/benchmark-results.json
+?? docs/validation/assessment-repairs/h/benchmark_capture.py
+?? docs/validation/assessment-repairs/h/coordinator/benchmark-results.json
+?? docs/validation/assessment-repairs/h/coordinator/benchmark-summary.json
+?? docs/validation/assessment-repairs/h/coordinator/benchmark.log
+?? docs/validation/assessment-repairs/h/coordinator/coordinator-r1-reproduction.json
+?? docs/validation/assessment-repairs/h/coordinator/coordinator-r2-reproduction.json
+?? docs/validation/assessment-repairs/h/coordinator/correction-r1-terminal.json
+?? docs/validation/assessment-repairs/h/coordinator/correction-r1.md
+?? docs/validation/assessment-repairs/h/coordinator/correction-r2-dispatch.json
+?? docs/validation/assessment-repairs/h/coordinator/correction-r2-terminal.json
+?? docs/validation/assessment-repairs/h/coordinator/correction-r2.md
+?? docs/validation/assessment-repairs/h/coordinator/format.log
+?? docs/validation/assessment-repairs/h/coordinator/gates.json
+?? docs/validation/assessment-repairs/h/coordinator/implementation-brief.md
+?? docs/validation/assessment-repairs/h/coordinator/implementation-r1-terminal.json
+?? docs/validation/assessment-repairs/h/coordinator/mypy.log
+?? docs/validation/assessment-repairs/h/coordinator/preservation.json
+?? docs/validation/assessment-repairs/h/coordinator/probe_guards.json
+?? docs/validation/assessment-repairs/h/coordinator/probe_guards.py.txt
+?? docs/validation/assessment-repairs/h/coordinator/pypi-current.json
+?? docs/validation/assessment-repairs/h/coordinator/pytest.log
+?? docs/validation/assessment-repairs/h/coordinator/ruff.log
+?? docs/validation/assessment-repairs/h/coordinator/scope-check.json
+?? docs/validation/assessment-repairs/h/coordinator/task-ledger.json
+?? docs/validation/assessment-repairs/h/historical/README.md
+?? docs/validation/assessment-repairs/h/historical/STATUS.md
+?? docs/validation/assessment-repairs/h/historical/benchmark-results-pre-correction.json
+?? docs/validation/assessment-repairs/h/historical/benchmark-results-second-attempt.json
+?? docs/validation/assessment-repairs/h/resource-risk.md

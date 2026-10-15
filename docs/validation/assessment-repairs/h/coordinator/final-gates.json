@@ -1,0 +1,48 @@
+[
+  {
+    "name": "pytest",
+    "command": [
+      ".venv/bin/pytest",
+      "--cov=skill_lens",
+      "-o",
+      "cache_dir=/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-16-stage-h-work/final/pytest-cache"
+    ],
+    "exit": 0,
+    "seconds": 54.43848433400126,
+    "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-16-stage-h-work/final/pytest.log"
+  },
+  {
+    "name": "mypy",
+    "command": [
+      ".venv/bin/mypy",
+      "--cache-dir",
+      "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-16-stage-h-work/final/mypy-cache"
+    ],
+    "exit": 0,
+    "seconds": 1.559372458003054,
+    "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-16-stage-h-work/final/mypy.log"
+  },
+  {
+    "name": "ruff",
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "exit": 0,
+    "seconds": 0.056355333006649744,
+    "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-16-stage-h-work/final/ruff.log"
+  },
+  {
+    "name": "format",
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "exit": 0,
+    "seconds": 0.011565875000087544,
+    "log": "/Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-16-stage-h-work/final/format.log"
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "stage": "H",
+  "frozenReference": "fe6f89bc55eb3f4f04187567b968dd96ae9c86c1",
+  "baseline": "9faffb34a1de045e0ca25fbd79fe85116fd037da",
+  "expectedInitialTasks": 3,
+  "actualLaunches": 5,
+  "failedProviderLaunches": 0,
+  "correctionTasks": 2,
+  "reasonForExtraTasks": "Coordinator reproduced invalid benchmark method/proofs and inconsistent documentation in two pre-council batches.",
+  "reviewWaves": 1,
+  "reviewVerdicts": {
+    "deepseek": "pass; no blockers",
+    "minimax": "pass; no blockers"
+  },
+  "startedAt": "2026-10-15T22:50:08.557Z",
+  "acceptedAt": "2026-10-15T23:40:16.919Z",
+  "elapsedSecondsFromRecordedFirstDispatch": 3008.362,
+  "elapsedTimeBasis": "Recorded task-ledger first dispatch to acceptance preparation; excludes earlier startup inspection and final gate/commit time.",
+  "activeComputeTime": "unavailable",
+  "billedTokens": "unavailable",
+  "nativeServingIdentity": "unverified",
+  "familyDiversity": "unverified; owner-selected named reviewer pair",
+  "mode": "Full access; reviewer plan interaction and instruction guard; no hard read-only guarantee",
+  "pendingChildRuns": false,
+  "pendingQuestions": false,
+  "extraWorktrees": 0,
+  "delivery": "local commit only; no push authorization",
+  "memoryPolicy": "unchanged; no bound introduced"
+}

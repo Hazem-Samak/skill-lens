@@ -57,27 +57,62 @@ and the build proceeds by phase:
   which revealed that `dsh` was **missing both user-level roots** and that `omp`'s
   managed-skills folder was ranked **above** the folders that should win. All 10
   agents now cite a source, and an enforced invariant guarantees it.
-- [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope, planned, not
-  built.* An optional, additive, read-only browsing layer built on the existing
-  frozen models, shipped as the opt-in `[tui]` extra so the base install gains
-  nothing. Overturns the v1 "no full-screen TUI" rule for 0.2. The complete plan
-  — vision, screens, phasing and gates — is
-  [`FULL_SCREEN_TUI.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/FULL_SCREEN_TUI.md).
-  The 2026-10-04 readiness review recorded two engine fixes required before
-  Step 0: P1 (non-object settings robustness) and P2 (lock decoding robustness).
-  Both have been implemented and verified with regression tests. P3 cost and
-  capture-scope review measured full capture vs selective retention on synthetic
-  fixtures (>600 skills), confirming the §21 Q9 full-capture contract is practical
-  and retained. Assignment C1 implemented the pure byte/hash helpers,
-  shared text parser, settings decoder, and identity helper, backed by
-  `tests/test_snapshot_inputs.py`.
-  Sections 21–22 define the exact Step 0 input types, engine signatures,
-  capture algorithm, acceptance tests and ordered assignments for implementers
-  (C1–C5). Bare launch requires both terminal input and output. Earlier review
-  history is linked from the plan's short header.
+- [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope, partially
+  implemented through U2; U3–U9 planned.* An optional, additive, read-only
+  browsing layer built on the existing frozen models, shipped as the opt-in
+  `[tui]` extra so the base install gains nothing. Overturns the v1 "no
+  full-screen TUI" rule for 0.2. The complete plan — vision, screens, phasing
+  and gates — is [`FULL_SCREEN_TUI.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/FULL_SCREEN_TUI.md).
+  **Status:** C1–C5 (byte/hash helpers, captured engine inputs, capture and
+  cancellation, presentation extraction, Step 0 audit) and U1–U2 (optional
+  install, worker controller and skeleton placeholder screen) are complete as
+  development work on the current branch. U3–U9 browsing screens and 0.2
+  publishing remain future work. The 2026-10-04 readiness review recorded two
+  engine fixes required before Step 0: P1 (non-object settings robustness) and
+  P2 (lock decoding robustness). Both have been implemented and verified with
+  regression tests. P3 cost and capture-scope review measured full capture vs
+  selective retention on synthetic fixtures (>600 skills), confirming the §21 Q9
+  full-capture contract is practical and retained for its limited fixture result.
+  Sections 21–22 define the exact Step 0 input types, engine signatures, capture
+  algorithm, acceptance tests and ordered assignments for implementers (C1–C5);
+  §22 is the ordered assignment list. Bare launch requires both terminal input
+  and output.
 
-Current gate: **491 tests pass** at **93% branch coverage** (93.18%), `mypy` strict clean,
-`ruff check .` clean, `ruff format --check .` clean.
+  **HISTORY INDEX (dated records, marked historical — not edited here):** prior
+  plans and walkthroughs under `docs/archive/`:
+  [`PHASE2_FINDINGS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE2_FINDINGS.md)
+  (F-01…F-20), [`PHASE3_FINDINGS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE3_FINDINGS.md)
+  (D-01…D-04), [`PHASE4_FINDINGS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE4_FINDINGS.md)
+  (C-01…C-08), [`PHASE5_WALKTHROUGH.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE5_WALKTHROUGH.md),
+  [`PHASE6_PLAN.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_PLAN.md),
+  [`PHASE6_WALKTHROUGH.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_WALKTHROUGH.md),
+  [`TUI_PLAN_REVIEWS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/TUI_PLAN_REVIEWS.md).
+  The 2026-10-04 readiness review (P1/P2/P3) is recorded in
+  `FULL_SCREEN_TUI.md` §20 as a historical readiness finding.
+  C1–C5 / U1–U2 plan links (dated, existing docs/plans files; no C1 plan file
+  exists — not invented here):
+  [`2026-10-06-tui-c2-captured-engine-inputs.md`](docs/plans/2026-10-06-tui-c2-captured-engine-inputs.md),
+  [`2026-10-07-tui-c3-capture-and-cancellation.md`](docs/plans/2026-10-07-tui-c3-capture-and-cancellation.md),
+  [`2026-10-11-tui-c4-presentation-extraction.md`](docs/plans/2026-10-11-tui-c4-presentation-extraction.md),
+  [`2026-10-11-tui-c5-step0-audit.md`](docs/plans/2026-10-11-tui-c5-step0-audit.md),
+  [`2026-10-11-tui-u1-optional-install.md`](docs/plans/2026-10-11-tui-u1-optional-install.md),
+  [`2026-10-12-tui-u2-controller-skeleton.md`](docs/plans/2026-10-12-tui-u2-controller-skeleton.md).
+
+  **Stage H reconciliation (2026-10-16):** this plan correctly describes C1–C5
+  and U1–U2 as shipped development work (TUI entrypoint/controller/skeleton),
+  with U3–U9 screens and 0.2 publishing remaining future work. Published PyPI
+  0.1.1 has no TUI extra; do not recommend released `skill-lens-cli[tui]`.
+
+Latest dated verification: [Stage H acceptance, 16 October 2026](docs/validation/assessment-repairs/h/acceptance.md).
+It records the four local gates and their limits; coverage is the combined score
+with branch measurement enabled, not the branch-only percentage. Earlier
+[Stage G acceptance](docs/validation/assessment-repairs/g/acceptance.md) retains
+its packaging and installed-wheel evidence. Unexecuted CI lanes are not claimed.
+
+Stage H closes the assessment repairs with current-status documentation and
+[synthetic byte-heavy capture/refresh measurements](docs/validation/assessment-repairs/h/resource-risk.md).
+Snapshot memory remains unbounded by bytes; no resource policy was added.
+U3–U9 and 0.2 publishing remain a separate feature/release campaign.
 
 > The Phase 6 plan is
 > [`PHASE6_PLAN.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_PLAN.md);

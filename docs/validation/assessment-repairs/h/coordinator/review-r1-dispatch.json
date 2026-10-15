@@ -1,0 +1,84 @@
+[
+  {
+    "reviewer": "deepseek",
+    "dispatch": {
+      "taskId": "node:delegated-task:command%3Amcp%3Af93885e2-68c7-4a99-9b74-1b71bbb32636%3Adelegate-task%3Astage-h-20261016-deepseek-review-r1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3Af93885e2-68c7-4a99-9b74-1b71bbb32636%3Adelegate-task%3Astage-h-20261016-deepseek-review-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Af93885e2-68c7-4a99-9b74-1b71bbb32636%253Adelegate-task%253Astage-h-20261016-deepseek-review-r1:ordinal:1",
+      "childNodeId": "node:delegated-task:command%3Amcp%3Af93885e2-68c7-4a99-9b74-1b71bbb32636%3Adelegate-task%3Astage-h-20261016-deepseek-review-r1",
+      "status": "running",
+      "workState": "working",
+      "hasPendingChildRuns": false,
+      "latestTerminalRunId": null,
+      "latestTerminalStatus": null,
+      "latestTerminalSummary": null,
+      "latestTerminalResultContextTransferId": null,
+      "providerInstanceId": "opencode",
+      "model": "opencode/deepseek-v4.1-flash-free",
+      "summary": null,
+      "resultContextTransferId": null,
+      "hasPendingQuestion": false,
+      "waitTimedOut": false
+    },
+    "configuration": {
+      "threadId": "thread:delegated-task:command%3Amcp%3Af93885e2-68c7-4a99-9b74-1b71bbb32636%3Adelegate-task%3Astage-h-20261016-deepseek-review-r1",
+      "modelSelection": {
+        "instanceId": "opencode",
+        "model": "opencode/deepseek-v4.1-flash-free",
+        "options": [
+          {
+            "id": "variant",
+            "value": "high"
+          }
+        ]
+      },
+      "runtimeMode": "full-access",
+      "interactionMode": "plan"
+    }
+  },
+  {
+    "reviewer": "minimax",
+    "dispatch": {
+      "taskId": "node:delegated-task:command%3Amcp%3Af93885e2-68c7-4a99-9b74-1b71bbb32636%3Adelegate-task%3Astage-h-20261016-minimax-review-r1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3Af93885e2-68c7-4a99-9b74-1b71bbb32636%3Adelegate-task%3Astage-h-20261016-minimax-review-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Af93885e2-68c7-4a99-9b74-1b71bbb32636%253Adelegate-task%253Astage-h-20261016-minimax-review-r1:ordinal:1",
+      "childNodeId": "node:delegated-task:command%3Amcp%3Af93885e2-68c7-4a99-9b74-1b71bbb32636%3Adelegate-task%3Astage-h-20261016-minimax-review-r1",
+      "status": "running",
+      "workState": "working",
+      "hasPendingChildRuns": false,
+      "latestTerminalRunId": null,
+      "latestTerminalStatus": null,
+      "latestTerminalSummary": null,
+      "latestTerminalResultContextTransferId": null,
+      "providerInstanceId": "mcode",
+      "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+      "summary": null,
+      "resultContextTransferId": null,
+      "hasPendingQuestion": false,
+      "waitTimedOut": false
+    },
+    "configuration": {
+      "threadId": "thread:delegated-task:command%3Amcp%3Af93885e2-68c7-4a99-9b74-1b71bbb32636%3Adelegate-task%3Astage-h-20261016-minimax-review-r1",
+      "modelSelection": {
+        "instanceId": "mcode",
+        "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+        "options": [
+          {
+            "id": "thinkingEffort",
+            "value": "high"
+          },
+          {
+            "id": "permissionMode",
+            "value": "bypassPermissions"
+          },
+          {
+            "id": "_t3/session-mode",
+            "value": "plan"
+          }
+        ]
+      },
+      "runtimeMode": "full-access",
+      "interactionMode": "plan"
+    }
+  }
+]

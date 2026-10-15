@@ -1,0 +1,3224 @@
+{
+  "benchmark": "Stage H byte-heavy capture/refresh (capture_session)",
+  "source_hash": "80de11dfe36c4ec9cfa97d503ccc8912447f49ec08216d728fb6b04e982ce41a",
+  "product_source_hashes": {
+    "skill_lens/core/paths.py": "dfe829ac6f162171c5b84d2abd2e64ac2aa5d430d1eadda07feac5f8eff7c771",
+    "skill_lens/core/snapshot.py": "b5340fd5c5128de88ea19e222c9e919c42dfbe6a4e86bb0c8833e54046dfd12b",
+    "skill_lens/core/hasher.py": "7fd755adf9d4bced1b7f4f5c6b2e5a931681868368ae974ab0a82d69e0113c64",
+    "skill_lens/registry/loader.py": "c34d87bb865ce246289ea1cb79adc17a8bd5bf3007f7f2095f34018096813f60",
+    "_combined": "8b0c1dec6c50ab5ed4fb61e151a9b49c851797d16e0035545bb59237b1eb3428"
+  },
+  "timestamp_utc": "2026-10-15T23:11:19Z",
+  "timestamp_local": "2026-10-16T02:11:19+0300",
+  "argv": [
+    "docs/validation/assessment-repairs/h/benchmark_capture.py",
+    "--output",
+    "docs/validation/assessment-repairs/h/benchmark-results.json"
+  ],
+  "methodology": {
+    "instrumentation": "stdlib only; capture_session uses installed skill_lens runtime",
+    "scenarios": [
+      [
+        "8x2MiB",
+        8,
+        2097152
+      ],
+      [
+        "8x8MiB",
+        8,
+        8388608
+      ],
+      [
+        "1x16MiB",
+        1,
+        16777216
+      ]
+    ],
+    "repeats": 3,
+    "fixture_seed": 20261016,
+    "fixture_symlinks_added": false,
+    "tracing": "tracemalloc.start() BEFORE old generation exists; baseline read after start; gc.collect before each current reading; reset_peak immediately before refresh; retained_heap_* = CURRENT traced allocations (old held / both held); peak_traced_* = transient peaks reported separately; excludes RSS/native",
+    "refresh": "untraced initial + refresh captures keep generation 1 alive through refresh (raw capture_session overlap, simulated refresh, not controller pipeline); both released before traced runs",
+    "fingerprint": "chunked SHA-256 per regular file before/after; directories incl. modes; symlink targets recorded without following; errors raise, never silently skipped",
+    "assertions": "exact file/payload/largest/canonical counts vs fixture totals for initial/refresh/old/new; generation IDs; distinct objects/bytes; enforced, fail nonzero",
+    "config_bytes": "reported separately from payload totals",
+    "preservation": "checked AFTER releasing snapshot temporaries, tracing off"
+  },
+  "conditions": {
+    "platform": "Darwin arm64",
+    "python_version": "3.11.16",
+    "interpreter": "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+    "no_live_skills_home_system_root": true,
+    "no_network": true,
+    "fixture_cache": "Warm OS page cache likely; cold disk may vary.",
+    "cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens"
+  },
+  "scenarios": [
+    [
+      "8x2MiB",
+      8,
+      2097152
+    ],
+    [
+      "8x8MiB",
+      8,
+      8388608
+    ],
+    [
+      "1x16MiB",
+      1,
+      16777216
+    ]
+  ],
+  "repeats": 3,
+  "all_assertions_passed": true,
+  "results": [
+    {
+      "scenario": "8x2MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 2097152,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a34830499e6d54a8a68445a22d2f6befdc136b74256787d2e0042f2a912e874e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82413a90a9315040d5a502addc5d1fd05465496698e07ea02165286f7e6bd64d"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a78095516953150ef38720b39ea59b5841bd352d9003e3460b750f43db24d658"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "bd2927c3ba9ca015b216f32734dea9ae3553192272f43309ecc13aa95aed5d68"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "94afd17291a89d9dcb9738a263da6db8051005341f335739ec355b842b2b7be9"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2e09d891edf99d0c35891fd52c9d81a6fc47e57b9e2a36834aadd55f0c15049b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "8fe52c9d27e56154e4e9b3eb43ec105ea7f359ba3bd29b1bca46640ff96ae63b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e1f28d5f618f0b4227a0260379c1b73a7fdbff757c3c282ec40854faec4aaa32"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "35e53bf4afc3826cfd57de6e6b9074e83db0cbaa9586a2bbc24884cecebec779"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "eff1abd16f82c184746085e9477e715b140251938fdae33e9a7e48104f3c6762"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f65d62acb48f0de4a27e790b934c625d9849ff9aab616a13d7cf4ef9cdeec864"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "87a69aa94409a1d83d274942807fd9e07f311a844b6054dc248a83564de18d62"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "7a1482f4bb399e969d4adce29832987f5a264a3498a362d244263fbb5ee3f46e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e9c83f3d47b6b825b197236e25bbca022018ea83336d7a037bf7adb886bb293f"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e41fd61fd9a718d98054d775799fea9f5eb892add29d4c42ffcd3a6216b22d6b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "9ea4b76c2a75b2b84241f341a4ea87be783af5161bbe6778b9393ea7e714cf9a"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a34830499e6d54a8a68445a22d2f6befdc136b74256787d2e0042f2a912e874e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82413a90a9315040d5a502addc5d1fd05465496698e07ea02165286f7e6bd64d"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a78095516953150ef38720b39ea59b5841bd352d9003e3460b750f43db24d658"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "bd2927c3ba9ca015b216f32734dea9ae3553192272f43309ecc13aa95aed5d68"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "94afd17291a89d9dcb9738a263da6db8051005341f335739ec355b842b2b7be9"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2e09d891edf99d0c35891fd52c9d81a6fc47e57b9e2a36834aadd55f0c15049b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "8fe52c9d27e56154e4e9b3eb43ec105ea7f359ba3bd29b1bca46640ff96ae63b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e1f28d5f618f0b4227a0260379c1b73a7fdbff757c3c282ec40854faec4aaa32"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "35e53bf4afc3826cfd57de6e6b9074e83db0cbaa9586a2bbc24884cecebec779"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "eff1abd16f82c184746085e9477e715b140251938fdae33e9a7e48104f3c6762"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f65d62acb48f0de4a27e790b934c625d9849ff9aab616a13d7cf4ef9cdeec864"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "87a69aa94409a1d83d274942807fd9e07f311a844b6054dc248a83564de18d62"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "7a1482f4bb399e969d4adce29832987f5a264a3498a362d244263fbb5ee3f46e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e9c83f3d47b6b825b197236e25bbca022018ea83336d7a037bf7adb886bb293f"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e41fd61fd9a718d98054d775799fea9f5eb892add29d4c42ffcd3a6216b22d6b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "9ea4b76c2a75b2b84241f341a4ea87be783af5161bbe6778b9393ea7e714cf9a"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "fixture_symlinks_present": false,
+      "initial_run": {
+        "wall_ms": 27.917667001020163,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 1
+        },
+        "config_bytes": 0,
+        "note": "untraced initial capture (generation 1), snapshot held alive through refresh"
+      },
+      "refresh_run": {
+        "wall_ms": 27.49687500181608,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 2
+        },
+        "config_bytes": 0,
+        "note": "untraced refresh capture (generation 2) with generation 1 held; raw capture_session overlap, simulated refresh, not controller pipeline"
+      },
+      "traced_run": {
+        "tracing_baseline_current_bytes": 0,
+        "tracing_baseline_peak_bytes": 0,
+        "peak_traced_first_capture_bytes": 23117914,
+        "peak_traced_refresh_overlap_bytes": 39934178,
+        "current_traced_one_generation_bytes": 16815865,
+        "current_traced_both_generations_bytes": 33632062,
+        "retained_heap_one_generation_bytes": 16815865,
+        "retained_heap_both_generations_bytes": 33632062,
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 16778912,
+        "old_captured_largest_bytes": 2097152,
+        "old_canonical_keys": 8,
+        "old_config_bytes": 0,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 16778912,
+        "new_captured_largest_bytes": 2097152,
+        "new_canonical_keys": 8,
+        "new_config_bytes": 0,
+        "note": "tracemalloc traced heap (Python allocations only; excludes total RSS/native). Started BEFORE old generation exists; baseline read after start. gc.collect before each current reading. reset_peak immediately before refresh. retained_heap_*_bytes are CURRENT traced allocations (old held / both held), separate from transient peaks (peak_traced_*_bytes). Pre-tracing registry allocations excluded."
+      },
+      "assertions": {
+        "expected_files": 16,
+        "expected_payload_bytes": 16778912,
+        "expected_largest_file_bytes": 2097152,
+        "expected_canonical_skills": 8,
+        "initial_files": 16,
+        "initial_payload_bytes": 16778912,
+        "initial_largest_bytes": 2097152,
+        "initial_canonical_keys": 8,
+        "initial_generation": 1,
+        "refresh_files": 16,
+        "refresh_payload_bytes": 16778912,
+        "refresh_largest_bytes": 2097152,
+        "refresh_canonical_keys": 8,
+        "refresh_generation": 2,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "old_new_same_payload": true,
+        "no_silent_missing_capture": true,
+        "all_assertions_enforced": true
+      },
+      "repeat": 1,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-hcmbqpvn"
+    },
+    {
+      "scenario": "8x2MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 2097152,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a34830499e6d54a8a68445a22d2f6befdc136b74256787d2e0042f2a912e874e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82413a90a9315040d5a502addc5d1fd05465496698e07ea02165286f7e6bd64d"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a78095516953150ef38720b39ea59b5841bd352d9003e3460b750f43db24d658"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "bd2927c3ba9ca015b216f32734dea9ae3553192272f43309ecc13aa95aed5d68"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "94afd17291a89d9dcb9738a263da6db8051005341f335739ec355b842b2b7be9"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2e09d891edf99d0c35891fd52c9d81a6fc47e57b9e2a36834aadd55f0c15049b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "8fe52c9d27e56154e4e9b3eb43ec105ea7f359ba3bd29b1bca46640ff96ae63b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e1f28d5f618f0b4227a0260379c1b73a7fdbff757c3c282ec40854faec4aaa32"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "35e53bf4afc3826cfd57de6e6b9074e83db0cbaa9586a2bbc24884cecebec779"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "eff1abd16f82c184746085e9477e715b140251938fdae33e9a7e48104f3c6762"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f65d62acb48f0de4a27e790b934c625d9849ff9aab616a13d7cf4ef9cdeec864"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "87a69aa94409a1d83d274942807fd9e07f311a844b6054dc248a83564de18d62"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "7a1482f4bb399e969d4adce29832987f5a264a3498a362d244263fbb5ee3f46e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e9c83f3d47b6b825b197236e25bbca022018ea83336d7a037bf7adb886bb293f"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e41fd61fd9a718d98054d775799fea9f5eb892add29d4c42ffcd3a6216b22d6b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "9ea4b76c2a75b2b84241f341a4ea87be783af5161bbe6778b9393ea7e714cf9a"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a34830499e6d54a8a68445a22d2f6befdc136b74256787d2e0042f2a912e874e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82413a90a9315040d5a502addc5d1fd05465496698e07ea02165286f7e6bd64d"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a78095516953150ef38720b39ea59b5841bd352d9003e3460b750f43db24d658"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "bd2927c3ba9ca015b216f32734dea9ae3553192272f43309ecc13aa95aed5d68"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "94afd17291a89d9dcb9738a263da6db8051005341f335739ec355b842b2b7be9"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2e09d891edf99d0c35891fd52c9d81a6fc47e57b9e2a36834aadd55f0c15049b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "8fe52c9d27e56154e4e9b3eb43ec105ea7f359ba3bd29b1bca46640ff96ae63b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e1f28d5f618f0b4227a0260379c1b73a7fdbff757c3c282ec40854faec4aaa32"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "35e53bf4afc3826cfd57de6e6b9074e83db0cbaa9586a2bbc24884cecebec779"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "eff1abd16f82c184746085e9477e715b140251938fdae33e9a7e48104f3c6762"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f65d62acb48f0de4a27e790b934c625d9849ff9aab616a13d7cf4ef9cdeec864"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "87a69aa94409a1d83d274942807fd9e07f311a844b6054dc248a83564de18d62"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "7a1482f4bb399e969d4adce29832987f5a264a3498a362d244263fbb5ee3f46e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e9c83f3d47b6b825b197236e25bbca022018ea83336d7a037bf7adb886bb293f"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e41fd61fd9a718d98054d775799fea9f5eb892add29d4c42ffcd3a6216b22d6b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "9ea4b76c2a75b2b84241f341a4ea87be783af5161bbe6778b9393ea7e714cf9a"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "fixture_symlinks_present": false,
+      "initial_run": {
+        "wall_ms": 32.433416999992914,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 1
+        },
+        "config_bytes": 0,
+        "note": "untraced initial capture (generation 1), snapshot held alive through refresh"
+      },
+      "refresh_run": {
+        "wall_ms": 26.254374999552965,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 2
+        },
+        "config_bytes": 0,
+        "note": "untraced refresh capture (generation 2) with generation 1 held; raw capture_session overlap, simulated refresh, not controller pipeline"
+      },
+      "traced_run": {
+        "tracing_baseline_current_bytes": 0,
+        "tracing_baseline_peak_bytes": 0,
+        "peak_traced_first_capture_bytes": 23118647,
+        "peak_traced_refresh_overlap_bytes": 39933571,
+        "current_traced_one_generation_bytes": 16815664,
+        "current_traced_both_generations_bytes": 33630454,
+        "retained_heap_one_generation_bytes": 16815664,
+        "retained_heap_both_generations_bytes": 33630454,
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 16778912,
+        "old_captured_largest_bytes": 2097152,
+        "old_canonical_keys": 8,
+        "old_config_bytes": 0,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 16778912,
+        "new_captured_largest_bytes": 2097152,
+        "new_canonical_keys": 8,
+        "new_config_bytes": 0,
+        "note": "tracemalloc traced heap (Python allocations only; excludes total RSS/native). Started BEFORE old generation exists; baseline read after start. gc.collect before each current reading. reset_peak immediately before refresh. retained_heap_*_bytes are CURRENT traced allocations (old held / both held), separate from transient peaks (peak_traced_*_bytes). Pre-tracing registry allocations excluded."
+      },
+      "assertions": {
+        "expected_files": 16,
+        "expected_payload_bytes": 16778912,
+        "expected_largest_file_bytes": 2097152,
+        "expected_canonical_skills": 8,
+        "initial_files": 16,
+        "initial_payload_bytes": 16778912,
+        "initial_largest_bytes": 2097152,
+        "initial_canonical_keys": 8,
+        "initial_generation": 1,
+        "refresh_files": 16,
+        "refresh_payload_bytes": 16778912,
+        "refresh_largest_bytes": 2097152,
+        "refresh_canonical_keys": 8,
+        "refresh_generation": 2,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "old_new_same_payload": true,
+        "no_silent_missing_capture": true,
+        "all_assertions_enforced": true
+      },
+      "repeat": 2,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-ke5yz_rf"
+    },
+    {
+      "scenario": "8x2MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 2097152,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a34830499e6d54a8a68445a22d2f6befdc136b74256787d2e0042f2a912e874e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82413a90a9315040d5a502addc5d1fd05465496698e07ea02165286f7e6bd64d"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a78095516953150ef38720b39ea59b5841bd352d9003e3460b750f43db24d658"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "bd2927c3ba9ca015b216f32734dea9ae3553192272f43309ecc13aa95aed5d68"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "94afd17291a89d9dcb9738a263da6db8051005341f335739ec355b842b2b7be9"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2e09d891edf99d0c35891fd52c9d81a6fc47e57b9e2a36834aadd55f0c15049b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "8fe52c9d27e56154e4e9b3eb43ec105ea7f359ba3bd29b1bca46640ff96ae63b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e1f28d5f618f0b4227a0260379c1b73a7fdbff757c3c282ec40854faec4aaa32"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "35e53bf4afc3826cfd57de6e6b9074e83db0cbaa9586a2bbc24884cecebec779"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "eff1abd16f82c184746085e9477e715b140251938fdae33e9a7e48104f3c6762"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f65d62acb48f0de4a27e790b934c625d9849ff9aab616a13d7cf4ef9cdeec864"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "87a69aa94409a1d83d274942807fd9e07f311a844b6054dc248a83564de18d62"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "7a1482f4bb399e969d4adce29832987f5a264a3498a362d244263fbb5ee3f46e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e9c83f3d47b6b825b197236e25bbca022018ea83336d7a037bf7adb886bb293f"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e41fd61fd9a718d98054d775799fea9f5eb892add29d4c42ffcd3a6216b22d6b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "9ea4b76c2a75b2b84241f341a4ea87be783af5161bbe6778b9393ea7e714cf9a"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a34830499e6d54a8a68445a22d2f6befdc136b74256787d2e0042f2a912e874e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82413a90a9315040d5a502addc5d1fd05465496698e07ea02165286f7e6bd64d"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a78095516953150ef38720b39ea59b5841bd352d9003e3460b750f43db24d658"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "bd2927c3ba9ca015b216f32734dea9ae3553192272f43309ecc13aa95aed5d68"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "94afd17291a89d9dcb9738a263da6db8051005341f335739ec355b842b2b7be9"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2e09d891edf99d0c35891fd52c9d81a6fc47e57b9e2a36834aadd55f0c15049b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "8fe52c9d27e56154e4e9b3eb43ec105ea7f359ba3bd29b1bca46640ff96ae63b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e1f28d5f618f0b4227a0260379c1b73a7fdbff757c3c282ec40854faec4aaa32"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "35e53bf4afc3826cfd57de6e6b9074e83db0cbaa9586a2bbc24884cecebec779"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "eff1abd16f82c184746085e9477e715b140251938fdae33e9a7e48104f3c6762"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f65d62acb48f0de4a27e790b934c625d9849ff9aab616a13d7cf4ef9cdeec864"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "87a69aa94409a1d83d274942807fd9e07f311a844b6054dc248a83564de18d62"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "7a1482f4bb399e969d4adce29832987f5a264a3498a362d244263fbb5ee3f46e"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e9c83f3d47b6b825b197236e25bbca022018ea83336d7a037bf7adb886bb293f"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "e41fd61fd9a718d98054d775799fea9f5eb892add29d4c42ffcd3a6216b22d6b"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "9ea4b76c2a75b2b84241f341a4ea87be783af5161bbe6778b9393ea7e714cf9a"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "fixture_symlinks_present": false,
+      "initial_run": {
+        "wall_ms": 27.019209002901334,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 1
+        },
+        "config_bytes": 0,
+        "note": "untraced initial capture (generation 1), snapshot held alive through refresh"
+      },
+      "refresh_run": {
+        "wall_ms": 26.588832995912526,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 2
+        },
+        "config_bytes": 0,
+        "note": "untraced refresh capture (generation 2) with generation 1 held; raw capture_session overlap, simulated refresh, not controller pipeline"
+      },
+      "traced_run": {
+        "tracing_baseline_current_bytes": 0,
+        "tracing_baseline_peak_bytes": 0,
+        "peak_traced_first_capture_bytes": 23118312,
+        "peak_traced_refresh_overlap_bytes": 39933236,
+        "current_traced_one_generation_bytes": 16815530,
+        "current_traced_both_generations_bytes": 33630387,
+        "retained_heap_one_generation_bytes": 16815530,
+        "retained_heap_both_generations_bytes": 33630387,
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 16778912,
+        "old_captured_largest_bytes": 2097152,
+        "old_canonical_keys": 8,
+        "old_config_bytes": 0,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 16778912,
+        "new_captured_largest_bytes": 2097152,
+        "new_canonical_keys": 8,
+        "new_config_bytes": 0,
+        "note": "tracemalloc traced heap (Python allocations only; excludes total RSS/native). Started BEFORE old generation exists; baseline read after start. gc.collect before each current reading. reset_peak immediately before refresh. retained_heap_*_bytes are CURRENT traced allocations (old held / both held), separate from transient peaks (peak_traced_*_bytes). Pre-tracing registry allocations excluded."
+      },
+      "assertions": {
+        "expected_files": 16,
+        "expected_payload_bytes": 16778912,
+        "expected_largest_file_bytes": 2097152,
+        "expected_canonical_skills": 8,
+        "initial_files": 16,
+        "initial_payload_bytes": 16778912,
+        "initial_largest_bytes": 2097152,
+        "initial_canonical_keys": 8,
+        "initial_generation": 1,
+        "refresh_files": 16,
+        "refresh_payload_bytes": 16778912,
+        "refresh_largest_bytes": 2097152,
+        "refresh_canonical_keys": 8,
+        "refresh_generation": 2,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "old_new_same_payload": true,
+        "no_silent_missing_capture": true,
+        "all_assertions_enforced": true
+      },
+      "repeat": 3,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-m8zom8oe"
+    },
+    {
+      "scenario": "8x8MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 8388608,
+      "total_payload_bytes": 67108864,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6456ba3df4cd0d80acf4abf2eb0f623397523e16cc502abbce1925f28291e0e0"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "adfb4fb74bc2bebf2d73e9bec2658f9f4703048130825c1c654964d99625efa2"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "c8589e520c511dfbbada31d61e1ecfc3c3325ec5f44b8cbebbbb724c4d0e118c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f391785b044d9374ad6f3d62a6fd8b55aa174ae6a0b506ce73755f8fc0969185"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "45e1a6a5e94f2ad9db2a230d74c4ab0f823ba1fbd26e561594257224d4b7ef35"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "0469da9dd4dbc959c94c07117229cac9396cfd8c980956fa329cacbaf251edca"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2b4b0002c94338d2f0bdfb4473701c43a90309bb841cf36cf0a993d42204442c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d883b78638161d1ebe82c7a7530ca1ef4f665145e956bc270c3d27624cdfe8e3"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "26f5d664cec898be0ec6600a0f88043fa75ffb1759ec3a037b4c4495c027fd26"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6c61fe9e2dffaa1213730ead3295e71d2bdb47a538c5e8bf08092279d3f55d97"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "022bebc896c213c764f17a07ebadbfa361d99dc9071443925c067a147b592d12"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "70f1da4231baa189bac2ae9ef38e9e207586f3109505735a320d17099591c773"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82b2d299621ddc624960da1798212f3bbac4db7eb84d5faaae3ddd0c992de05b"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a4480df15ad163560ad58f71d4ab81a6253bb40f339eb763f9e33ae5842ea442"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2a82407d269aee1ff0c19e52e0e7b5631483f67d084568c7348cdef5348ed13e"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d442ffc0215a905fefc42484c0c989ed340aac4feabe5c5e973215c8c5adcad3"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6456ba3df4cd0d80acf4abf2eb0f623397523e16cc502abbce1925f28291e0e0"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "adfb4fb74bc2bebf2d73e9bec2658f9f4703048130825c1c654964d99625efa2"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "c8589e520c511dfbbada31d61e1ecfc3c3325ec5f44b8cbebbbb724c4d0e118c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f391785b044d9374ad6f3d62a6fd8b55aa174ae6a0b506ce73755f8fc0969185"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "45e1a6a5e94f2ad9db2a230d74c4ab0f823ba1fbd26e561594257224d4b7ef35"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "0469da9dd4dbc959c94c07117229cac9396cfd8c980956fa329cacbaf251edca"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2b4b0002c94338d2f0bdfb4473701c43a90309bb841cf36cf0a993d42204442c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d883b78638161d1ebe82c7a7530ca1ef4f665145e956bc270c3d27624cdfe8e3"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "26f5d664cec898be0ec6600a0f88043fa75ffb1759ec3a037b4c4495c027fd26"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6c61fe9e2dffaa1213730ead3295e71d2bdb47a538c5e8bf08092279d3f55d97"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "022bebc896c213c764f17a07ebadbfa361d99dc9071443925c067a147b592d12"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "70f1da4231baa189bac2ae9ef38e9e207586f3109505735a320d17099591c773"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82b2d299621ddc624960da1798212f3bbac4db7eb84d5faaae3ddd0c992de05b"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a4480df15ad163560ad58f71d4ab81a6253bb40f339eb763f9e33ae5842ea442"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2a82407d269aee1ff0c19e52e0e7b5631483f67d084568c7348cdef5348ed13e"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d442ffc0215a905fefc42484c0c989ed340aac4feabe5c5e973215c8c5adcad3"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "fixture_symlinks_present": false,
+      "initial_run": {
+        "wall_ms": 91.83516700431937,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 1
+        },
+        "config_bytes": 0,
+        "note": "untraced initial capture (generation 1), snapshot held alive through refresh"
+      },
+      "refresh_run": {
+        "wall_ms": 91.52304199960781,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 2
+        },
+        "config_bytes": 0,
+        "note": "untraced refresh capture (generation 2) with generation 1 held; raw capture_session overlap, simulated refresh, not controller pipeline"
+      },
+      "traced_run": {
+        "tracing_baseline_current_bytes": 0,
+        "tracing_baseline_peak_bytes": 0,
+        "peak_traced_first_capture_bytes": 92328130,
+        "peak_traced_refresh_overlap_bytes": 159474836,
+        "current_traced_one_generation_bytes": 67146910,
+        "current_traced_both_generations_bytes": 134293683,
+        "retained_heap_one_generation_bytes": 67146910,
+        "retained_heap_both_generations_bytes": 134293683,
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 67110560,
+        "old_captured_largest_bytes": 8388608,
+        "old_canonical_keys": 8,
+        "old_config_bytes": 0,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 67110560,
+        "new_captured_largest_bytes": 8388608,
+        "new_canonical_keys": 8,
+        "new_config_bytes": 0,
+        "note": "tracemalloc traced heap (Python allocations only; excludes total RSS/native). Started BEFORE old generation exists; baseline read after start. gc.collect before each current reading. reset_peak immediately before refresh. retained_heap_*_bytes are CURRENT traced allocations (old held / both held), separate from transient peaks (peak_traced_*_bytes). Pre-tracing registry allocations excluded."
+      },
+      "assertions": {
+        "expected_files": 16,
+        "expected_payload_bytes": 67110560,
+        "expected_largest_file_bytes": 8388608,
+        "expected_canonical_skills": 8,
+        "initial_files": 16,
+        "initial_payload_bytes": 67110560,
+        "initial_largest_bytes": 8388608,
+        "initial_canonical_keys": 8,
+        "initial_generation": 1,
+        "refresh_files": 16,
+        "refresh_payload_bytes": 67110560,
+        "refresh_largest_bytes": 8388608,
+        "refresh_canonical_keys": 8,
+        "refresh_generation": 2,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "old_new_same_payload": true,
+        "no_silent_missing_capture": true,
+        "all_assertions_enforced": true
+      },
+      "repeat": 1,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-_u4t0byk"
+    },
+    {
+      "scenario": "8x8MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 8388608,
+      "total_payload_bytes": 67108864,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6456ba3df4cd0d80acf4abf2eb0f623397523e16cc502abbce1925f28291e0e0"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "adfb4fb74bc2bebf2d73e9bec2658f9f4703048130825c1c654964d99625efa2"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "c8589e520c511dfbbada31d61e1ecfc3c3325ec5f44b8cbebbbb724c4d0e118c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f391785b044d9374ad6f3d62a6fd8b55aa174ae6a0b506ce73755f8fc0969185"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "45e1a6a5e94f2ad9db2a230d74c4ab0f823ba1fbd26e561594257224d4b7ef35"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "0469da9dd4dbc959c94c07117229cac9396cfd8c980956fa329cacbaf251edca"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2b4b0002c94338d2f0bdfb4473701c43a90309bb841cf36cf0a993d42204442c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d883b78638161d1ebe82c7a7530ca1ef4f665145e956bc270c3d27624cdfe8e3"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "26f5d664cec898be0ec6600a0f88043fa75ffb1759ec3a037b4c4495c027fd26"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6c61fe9e2dffaa1213730ead3295e71d2bdb47a538c5e8bf08092279d3f55d97"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "022bebc896c213c764f17a07ebadbfa361d99dc9071443925c067a147b592d12"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "70f1da4231baa189bac2ae9ef38e9e207586f3109505735a320d17099591c773"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82b2d299621ddc624960da1798212f3bbac4db7eb84d5faaae3ddd0c992de05b"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a4480df15ad163560ad58f71d4ab81a6253bb40f339eb763f9e33ae5842ea442"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2a82407d269aee1ff0c19e52e0e7b5631483f67d084568c7348cdef5348ed13e"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d442ffc0215a905fefc42484c0c989ed340aac4feabe5c5e973215c8c5adcad3"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6456ba3df4cd0d80acf4abf2eb0f623397523e16cc502abbce1925f28291e0e0"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "adfb4fb74bc2bebf2d73e9bec2658f9f4703048130825c1c654964d99625efa2"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "c8589e520c511dfbbada31d61e1ecfc3c3325ec5f44b8cbebbbb724c4d0e118c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f391785b044d9374ad6f3d62a6fd8b55aa174ae6a0b506ce73755f8fc0969185"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "45e1a6a5e94f2ad9db2a230d74c4ab0f823ba1fbd26e561594257224d4b7ef35"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "0469da9dd4dbc959c94c07117229cac9396cfd8c980956fa329cacbaf251edca"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2b4b0002c94338d2f0bdfb4473701c43a90309bb841cf36cf0a993d42204442c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d883b78638161d1ebe82c7a7530ca1ef4f665145e956bc270c3d27624cdfe8e3"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "26f5d664cec898be0ec6600a0f88043fa75ffb1759ec3a037b4c4495c027fd26"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6c61fe9e2dffaa1213730ead3295e71d2bdb47a538c5e8bf08092279d3f55d97"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "022bebc896c213c764f17a07ebadbfa361d99dc9071443925c067a147b592d12"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "70f1da4231baa189bac2ae9ef38e9e207586f3109505735a320d17099591c773"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82b2d299621ddc624960da1798212f3bbac4db7eb84d5faaae3ddd0c992de05b"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a4480df15ad163560ad58f71d4ab81a6253bb40f339eb763f9e33ae5842ea442"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2a82407d269aee1ff0c19e52e0e7b5631483f67d084568c7348cdef5348ed13e"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d442ffc0215a905fefc42484c0c989ed340aac4feabe5c5e973215c8c5adcad3"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "fixture_symlinks_present": false,
+      "initial_run": {
+        "wall_ms": 87.38262499537086,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 1
+        },
+        "config_bytes": 0,
+        "note": "untraced initial capture (generation 1), snapshot held alive through refresh"
+      },
+      "refresh_run": {
+        "wall_ms": 86.00183299859054,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 2
+        },
+        "config_bytes": 0,
+        "note": "untraced refresh capture (generation 2) with generation 1 held; raw capture_session overlap, simulated refresh, not controller pipeline"
+      },
+      "traced_run": {
+        "tracing_baseline_current_bytes": 0,
+        "tracing_baseline_peak_bytes": 0,
+        "peak_traced_first_capture_bytes": 92328063,
+        "peak_traced_refresh_overlap_bytes": 159474769,
+        "current_traced_one_generation_bytes": 67146910,
+        "current_traced_both_generations_bytes": 134293683,
+        "retained_heap_one_generation_bytes": 67146910,
+        "retained_heap_both_generations_bytes": 134293683,
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 67110560,
+        "old_captured_largest_bytes": 8388608,
+        "old_canonical_keys": 8,
+        "old_config_bytes": 0,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 67110560,
+        "new_captured_largest_bytes": 8388608,
+        "new_canonical_keys": 8,
+        "new_config_bytes": 0,
+        "note": "tracemalloc traced heap (Python allocations only; excludes total RSS/native). Started BEFORE old generation exists; baseline read after start. gc.collect before each current reading. reset_peak immediately before refresh. retained_heap_*_bytes are CURRENT traced allocations (old held / both held), separate from transient peaks (peak_traced_*_bytes). Pre-tracing registry allocations excluded."
+      },
+      "assertions": {
+        "expected_files": 16,
+        "expected_payload_bytes": 67110560,
+        "expected_largest_file_bytes": 8388608,
+        "expected_canonical_skills": 8,
+        "initial_files": 16,
+        "initial_payload_bytes": 67110560,
+        "initial_largest_bytes": 8388608,
+        "initial_canonical_keys": 8,
+        "initial_generation": 1,
+        "refresh_files": 16,
+        "refresh_payload_bytes": 67110560,
+        "refresh_largest_bytes": 8388608,
+        "refresh_canonical_keys": 8,
+        "refresh_generation": 2,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "old_new_same_payload": true,
+        "no_silent_missing_capture": true,
+        "all_assertions_enforced": true
+      },
+      "repeat": 2,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-duemn673"
+    },
+    {
+      "scenario": "8x8MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 8388608,
+      "total_payload_bytes": 67108864,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6456ba3df4cd0d80acf4abf2eb0f623397523e16cc502abbce1925f28291e0e0"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "adfb4fb74bc2bebf2d73e9bec2658f9f4703048130825c1c654964d99625efa2"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "c8589e520c511dfbbada31d61e1ecfc3c3325ec5f44b8cbebbbb724c4d0e118c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f391785b044d9374ad6f3d62a6fd8b55aa174ae6a0b506ce73755f8fc0969185"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "45e1a6a5e94f2ad9db2a230d74c4ab0f823ba1fbd26e561594257224d4b7ef35"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "0469da9dd4dbc959c94c07117229cac9396cfd8c980956fa329cacbaf251edca"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2b4b0002c94338d2f0bdfb4473701c43a90309bb841cf36cf0a993d42204442c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d883b78638161d1ebe82c7a7530ca1ef4f665145e956bc270c3d27624cdfe8e3"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "26f5d664cec898be0ec6600a0f88043fa75ffb1759ec3a037b4c4495c027fd26"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6c61fe9e2dffaa1213730ead3295e71d2bdb47a538c5e8bf08092279d3f55d97"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "022bebc896c213c764f17a07ebadbfa361d99dc9071443925c067a147b592d12"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "70f1da4231baa189bac2ae9ef38e9e207586f3109505735a320d17099591c773"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82b2d299621ddc624960da1798212f3bbac4db7eb84d5faaae3ddd0c992de05b"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a4480df15ad163560ad58f71d4ab81a6253bb40f339eb763f9e33ae5842ea442"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2a82407d269aee1ff0c19e52e0e7b5631483f67d084568c7348cdef5348ed13e"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d442ffc0215a905fefc42484c0c989ed340aac4feabe5c5e973215c8c5adcad3"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "dir_count": 11,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6456ba3df4cd0d80acf4abf2eb0f623397523e16cc502abbce1925f28291e0e0"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "adfb4fb74bc2bebf2d73e9bec2658f9f4703048130825c1c654964d99625efa2"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "c8589e520c511dfbbada31d61e1ecfc3c3325ec5f44b8cbebbbb724c4d0e118c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "f391785b044d9374ad6f3d62a6fd8b55aa174ae6a0b506ce73755f8fc0969185"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "45e1a6a5e94f2ad9db2a230d74c4ab0f823ba1fbd26e561594257224d4b7ef35"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "0469da9dd4dbc959c94c07117229cac9396cfd8c980956fa329cacbaf251edca"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2b4b0002c94338d2f0bdfb4473701c43a90309bb841cf36cf0a993d42204442c"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d883b78638161d1ebe82c7a7530ca1ef4f665145e956bc270c3d27624cdfe8e3"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "26f5d664cec898be0ec6600a0f88043fa75ffb1759ec3a037b4c4495c027fd26"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "6c61fe9e2dffaa1213730ead3295e71d2bdb47a538c5e8bf08092279d3f55d97"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "022bebc896c213c764f17a07ebadbfa361d99dc9071443925c067a147b592d12"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "70f1da4231baa189bac2ae9ef38e9e207586f3109505735a320d17099591c773"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "82b2d299621ddc624960da1798212f3bbac4db7eb84d5faaae3ddd0c992de05b"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "a4480df15ad163560ad58f71d4ab81a6253bb40f339eb763f9e33ae5842ea442"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "2a82407d269aee1ff0c19e52e0e7b5631483f67d084568c7348cdef5348ed13e"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "d442ffc0215a905fefc42484c0c989ed340aac4feabe5c5e973215c8c5adcad3"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "fixture_symlinks_present": false,
+      "initial_run": {
+        "wall_ms": 94.18754200305557,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 1
+        },
+        "config_bytes": 0,
+        "note": "untraced initial capture (generation 1), snapshot held alive through refresh"
+      },
+      "refresh_run": {
+        "wall_ms": 84.98704199882923,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 2
+        },
+        "config_bytes": 0,
+        "note": "untraced refresh capture (generation 2) with generation 1 held; raw capture_session overlap, simulated refresh, not controller pipeline"
+      },
+      "traced_run": {
+        "tracing_baseline_current_bytes": 0,
+        "tracing_baseline_peak_bytes": 0,
+        "peak_traced_first_capture_bytes": 92328130,
+        "peak_traced_refresh_overlap_bytes": 159474635,
+        "current_traced_one_generation_bytes": 67147111,
+        "current_traced_both_generations_bytes": 134293549,
+        "retained_heap_one_generation_bytes": 67147111,
+        "retained_heap_both_generations_bytes": 134293549,
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 67110560,
+        "old_captured_largest_bytes": 8388608,
+        "old_canonical_keys": 8,
+        "old_config_bytes": 0,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 67110560,
+        "new_captured_largest_bytes": 8388608,
+        "new_canonical_keys": 8,
+        "new_config_bytes": 0,
+        "note": "tracemalloc traced heap (Python allocations only; excludes total RSS/native). Started BEFORE old generation exists; baseline read after start. gc.collect before each current reading. reset_peak immediately before refresh. retained_heap_*_bytes are CURRENT traced allocations (old held / both held), separate from transient peaks (peak_traced_*_bytes). Pre-tracing registry allocations excluded."
+      },
+      "assertions": {
+        "expected_files": 16,
+        "expected_payload_bytes": 67110560,
+        "expected_largest_file_bytes": 8388608,
+        "expected_canonical_skills": 8,
+        "initial_files": 16,
+        "initial_payload_bytes": 67110560,
+        "initial_largest_bytes": 8388608,
+        "initial_canonical_keys": 8,
+        "initial_generation": 1,
+        "refresh_files": 16,
+        "refresh_payload_bytes": 67110560,
+        "refresh_largest_bytes": 8388608,
+        "refresh_canonical_keys": 8,
+        "refresh_generation": 2,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "old_new_same_payload": true,
+        "no_silent_missing_capture": true,
+        "all_assertions_enforced": true
+      },
+      "repeat": 3,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-8qd6vq10"
+    },
+    {
+      "scenario": "1x16MiB",
+      "skill_count": 1,
+      "asset_bytes_each": 16777216,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "dir_count": 4,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "ae5b50f4f766c3d577405379d50a743a0d353d89e5ae77cbcc2a32e9de22d79f"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "58b9c3b857ddaacdf9d98e6119056cc2d80eb3dd2ac657de8e1db006bea12412"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "dir_count": 4,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "ae5b50f4f766c3d577405379d50a743a0d353d89e5ae77cbcc2a32e9de22d79f"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "58b9c3b857ddaacdf9d98e6119056cc2d80eb3dd2ac657de8e1db006bea12412"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "fixture_symlinks_present": false,
+      "initial_run": {
+        "wall_ms": 23.610374999407213,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 1
+        },
+        "config_bytes": 0,
+        "note": "untraced initial capture (generation 1), snapshot held alive through refresh"
+      },
+      "refresh_run": {
+        "wall_ms": 23.266500000318047,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 2
+        },
+        "config_bytes": 0,
+        "note": "untraced refresh capture (generation 2) with generation 1 held; raw capture_session overlap, simulated refresh, not controller pipeline"
+      },
+      "traced_run": {
+        "tracing_baseline_current_bytes": 0,
+        "tracing_baseline_peak_bytes": 0,
+        "peak_traced_first_capture_bytes": 67145691,
+        "peak_traced_refresh_overlap_bytes": 83939188,
+        "current_traced_one_generation_bytes": 16793366,
+        "current_traced_both_generations_bytes": 33586863,
+        "retained_heap_one_generation_bytes": 16793366,
+        "retained_heap_both_generations_bytes": 33586863,
+        "old_captured_files": 2,
+        "old_captured_payload_bytes": 16777429,
+        "old_captured_largest_bytes": 16777216,
+        "old_canonical_keys": 1,
+        "old_config_bytes": 0,
+        "new_captured_files": 2,
+        "new_captured_payload_bytes": 16777429,
+        "new_captured_largest_bytes": 16777216,
+        "new_canonical_keys": 1,
+        "new_config_bytes": 0,
+        "note": "tracemalloc traced heap (Python allocations only; excludes total RSS/native). Started BEFORE old generation exists; baseline read after start. gc.collect before each current reading. reset_peak immediately before refresh. retained_heap_*_bytes are CURRENT traced allocations (old held / both held), separate from transient peaks (peak_traced_*_bytes). Pre-tracing registry allocations excluded."
+      },
+      "assertions": {
+        "expected_files": 2,
+        "expected_payload_bytes": 16777429,
+        "expected_largest_file_bytes": 16777216,
+        "expected_canonical_skills": 1,
+        "initial_files": 2,
+        "initial_payload_bytes": 16777429,
+        "initial_largest_bytes": 16777216,
+        "initial_canonical_keys": 1,
+        "initial_generation": 1,
+        "refresh_files": 2,
+        "refresh_payload_bytes": 16777429,
+        "refresh_largest_bytes": 16777216,
+        "refresh_canonical_keys": 1,
+        "refresh_generation": 2,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "old_new_same_payload": true,
+        "no_silent_missing_capture": true,
+        "all_assertions_enforced": true
+      },
+      "repeat": 1,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-2m11llcp"
+    },
+    {
+      "scenario": "1x16MiB",
+      "skill_count": 1,
+      "asset_bytes_each": 16777216,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "dir_count": 4,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "ae5b50f4f766c3d577405379d50a743a0d353d89e5ae77cbcc2a32e9de22d79f"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "58b9c3b857ddaacdf9d98e6119056cc2d80eb3dd2ac657de8e1db006bea12412"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "dir_count": 4,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "ae5b50f4f766c3d577405379d50a743a0d353d89e5ae77cbcc2a32e9de22d79f"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "58b9c3b857ddaacdf9d98e6119056cc2d80eb3dd2ac657de8e1db006bea12412"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "fixture_symlinks_present": false,
+      "initial_run": {
+        "wall_ms": 21.974957999191247,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 1
+        },
+        "config_bytes": 0,
+        "note": "untraced initial capture (generation 1), snapshot held alive through refresh"
+      },
+      "refresh_run": {
+        "wall_ms": 21.657625002262648,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 2
+        },
+        "config_bytes": 0,
+        "note": "untraced refresh capture (generation 2) with generation 1 held; raw capture_session overlap, simulated refresh, not controller pipeline"
+      },
+      "traced_run": {
+        "tracing_baseline_current_bytes": 0,
+        "tracing_baseline_peak_bytes": 0,
+        "peak_traced_first_capture_bytes": 67145762,
+        "peak_traced_refresh_overlap_bytes": 83939125,
+        "current_traced_one_generation_bytes": 16793433,
+        "current_traced_both_generations_bytes": 33586863,
+        "retained_heap_one_generation_bytes": 16793433,
+        "retained_heap_both_generations_bytes": 33586863,
+        "old_captured_files": 2,
+        "old_captured_payload_bytes": 16777429,
+        "old_captured_largest_bytes": 16777216,
+        "old_canonical_keys": 1,
+        "old_config_bytes": 0,
+        "new_captured_files": 2,
+        "new_captured_payload_bytes": 16777429,
+        "new_captured_largest_bytes": 16777216,
+        "new_canonical_keys": 1,
+        "new_config_bytes": 0,
+        "note": "tracemalloc traced heap (Python allocations only; excludes total RSS/native). Started BEFORE old generation exists; baseline read after start. gc.collect before each current reading. reset_peak immediately before refresh. retained_heap_*_bytes are CURRENT traced allocations (old held / both held), separate from transient peaks (peak_traced_*_bytes). Pre-tracing registry allocations excluded."
+      },
+      "assertions": {
+        "expected_files": 2,
+        "expected_payload_bytes": 16777429,
+        "expected_largest_file_bytes": 16777216,
+        "expected_canonical_skills": 1,
+        "initial_files": 2,
+        "initial_payload_bytes": 16777429,
+        "initial_largest_bytes": 16777216,
+        "initial_canonical_keys": 1,
+        "initial_generation": 1,
+        "refresh_files": 2,
+        "refresh_payload_bytes": 16777429,
+        "refresh_largest_bytes": 16777216,
+        "refresh_canonical_keys": 1,
+        "refresh_generation": 2,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "old_new_same_payload": true,
+        "no_silent_missing_capture": true,
+        "all_assertions_enforced": true
+      },
+      "repeat": 2,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-85ncf2hq"
+    },
+    {
+      "scenario": "1x16MiB",
+      "skill_count": 1,
+      "asset_bytes_each": 16777216,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "dir_count": 4,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "ae5b50f4f766c3d577405379d50a743a0d353d89e5ae77cbcc2a32e9de22d79f"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "58b9c3b857ddaacdf9d98e6119056cc2d80eb3dd2ac657de8e1db006bea12412"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "dir_count": 4,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "ae5b50f4f766c3d577405379d50a743a0d353d89e5ae77cbcc2a32e9de22d79f"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null,
+            "sha256": "58b9c3b857ddaacdf9d98e6119056cc2d80eb3dd2ac657de8e1db006bea12412"
+          }
+        ],
+        "dirs": [
+          {
+            "path": ".",
+            "mode": "0o700"
+          },
+          {
+            "path": ".codex",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills",
+            "mode": "0o755"
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000",
+            "mode": "0o755"
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "fixture_symlinks_present": false,
+      "initial_run": {
+        "wall_ms": 22.60625000053551,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 1
+        },
+        "config_bytes": 0,
+        "note": "untraced initial capture (generation 1), snapshot held alive through refresh"
+      },
+      "refresh_run": {
+        "wall_ms": 22.064457996748388,
+        "traced": false,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 2
+        },
+        "config_bytes": 0,
+        "note": "untraced refresh capture (generation 2) with generation 1 held; raw capture_session overlap, simulated refresh, not controller pipeline"
+      },
+      "traced_run": {
+        "tracing_baseline_current_bytes": 0,
+        "tracing_baseline_peak_bytes": 0,
+        "peak_traced_first_capture_bytes": 67145762,
+        "peak_traced_refresh_overlap_bytes": 83939259,
+        "current_traced_one_generation_bytes": 16793433,
+        "current_traced_both_generations_bytes": 33586930,
+        "retained_heap_one_generation_bytes": 16793433,
+        "retained_heap_both_generations_bytes": 33586930,
+        "old_captured_files": 2,
+        "old_captured_payload_bytes": 16777429,
+        "old_captured_largest_bytes": 16777216,
+        "old_canonical_keys": 1,
+        "old_config_bytes": 0,
+        "new_captured_files": 2,
+        "new_captured_payload_bytes": 16777429,
+        "new_captured_largest_bytes": 16777216,
+        "new_canonical_keys": 1,
+        "new_config_bytes": 0,
+        "note": "tracemalloc traced heap (Python allocations only; excludes total RSS/native). Started BEFORE old generation exists; baseline read after start. gc.collect before each current reading. reset_peak immediately before refresh. retained_heap_*_bytes are CURRENT traced allocations (old held / both held), separate from transient peaks (peak_traced_*_bytes). Pre-tracing registry allocations excluded."
+      },
+      "assertions": {
+        "expected_files": 2,
+        "expected_payload_bytes": 16777429,
+        "expected_largest_file_bytes": 16777216,
+        "expected_canonical_skills": 1,
+        "initial_files": 2,
+        "initial_payload_bytes": 16777429,
+        "initial_largest_bytes": 16777216,
+        "initial_canonical_keys": 1,
+        "initial_generation": 1,
+        "refresh_files": 2,
+        "refresh_payload_bytes": 16777429,
+        "refresh_largest_bytes": 16777216,
+        "refresh_canonical_keys": 1,
+        "refresh_generation": 2,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "old_new_same_payload": true,
+        "no_silent_missing_capture": true,
+        "all_assertions_enforced": true
+      },
+      "repeat": 3,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-seld45z8"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "same_size_byte_mutation_detected": false,
+  "before_bytes_sha256": "63c1dd951ffedf6f7fd968ad4efa39b8ed584f162f46e715114ee184f8de9201",
+  "after_bytes_sha256": "4a8d8134f29b0b7b60c126f5532bc9f5d9bb73037373cf6fb872d81f1dcefdfd",
+  "benchmark_result_hash_matches_current_script": false,
+  "retention_equals_peak_not_current": true,
+  "untraced_refresh_releases_old_before_capture": true,
+  "capture_assertions_are_booleans_not_enforced": true
+}

@@ -1,0 +1,11 @@
+{
+  "broken_relative_links": [],
+  "changed_baseline_files": [
+    "AGENTS.md",
+    "CHANGELOG.md",
+    "DEVELOPMENT.md",
+    "FULL_SCREEN_TUI.md",
+    "README.md"
+  ],
+  "unexpected_changes": []
+}

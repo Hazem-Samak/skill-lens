@@ -91,8 +91,22 @@ skill_lens/
 │   ├── diff.py             # Unified diff computation (pure; no Rich)
 │   ├── doctor.py           # Phase 4: diagnostics & hygiene checks
 │   ├── compare.py          # Phase 4: pairwise capability comparison (pure; no Rich)
+│   ├── config.py           # Resolved agent controls and config-path collection
+│   ├── health.py           # Health checks
 │   ├── system.py           # Phase 4: TCC-resilient live discovery adapter
-│   └── exitcodes.py        # Phase 6: exit-code contract + --fail-on policy (pure; no Typer/Rich)
+│   ├── exitcodes.py        # Phase 6: exit-code contract + --fail-on policy (pure; no Typer/Rich)
+│   ├── cancellation.py     # Cancellation exception and checkpoint helper (Assignment C3)
+│   ├── snapshot_models.py  # Captured input and session dataclasses (Assignment C2)
+│   └── snapshot.py         # Capture, validation and report services (Assignment C3)
+├── presentation/           # Shared plain-text/heading parts (Assignment C4)
+│   ├── __init__.py
+│   ├── state.py
+│   └── text.py
+├── tui/                    # Optional Textual-free SessionController + Textual app (U1-U2)
+│   ├── __init__.py
+│   ├── app.py
+│   ├── session.py
+│   └── _textual_compat.py
 └── registry/
     ├── loader.py           # TOML agent-definition loader
     └── agents/             # Agent definition TOML files (codex.toml, claude.toml, ...)
@@ -127,10 +141,23 @@ rules in them were paid for:
   two registry defects found by reading vendor docs, the mutation results, and
   the mistakes made. Read it before changing `core/exitcodes.py`, adding a
   `--fail-on`, or editing an agent's `evidence` / `source` fields.
-- [`PHASE5_WALKTHROUGH.md`](./docs/archive/PHASE5_WALKTHROUGH.md) — the packaging and release
-  walkthrough: what ships in the wheel, the CI gate, and the deliberate decision
-  to defer publishing. Section 10 covers the Phase 5 gate test. Read it before
-  changing `pyproject.toml`, the contents of the wheel, or the release steps.
+- [`PHASE5_WALKTHROUGH.md`](./docs/archive/PHASE5_WALKTHROUGH.md) — **historical**
+  (pre-Stage G): the packaging and release walkthrough — what shipped in the
+  wheel, the CI gate, and the deliberate decision to defer publishing. Section 10
+  covers the Phase 5 gate test. Read it before changing `pyproject.toml`, the
+  contents of the wheel, or the release steps. For current packaging and
+  fault-adapter gates, see Stage G acceptance under
+  [`docs/validation/assessment-repairs/g/acceptance.md`](docs/validation/assessment-repairs/g/acceptance.md).
+- [`docs/validation/assessment-repairs/h/resource-risk.md`](./docs/validation/assessment-repairs/h/resource-risk.md)
+  — Stage H resource-risk measurement: byte-heavy capture/refresh benchmarks on
+  synthetic fixtures, measured results, limitations, and explicit (not
+  implemented) resource-policy choices. Read before touching snapshot capture
+  behavior or imposing any memory bound.
+- [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md) §21–22 — read-before-changing
+  contract for the snapshot service (`core/snapshot.py`), presentation layer
+  (`presentation/`), and TUI controller/skeleton (`tui/`): Step 0 input types,
+  engine signatures, capture algorithm, and the ordered C1–C5 / U1–U2
+  assignments.
 
 They were produced by independent read-only review delegated to other models
 (Phase 4 by two axes: one reviewer per repo standards, one per specification),

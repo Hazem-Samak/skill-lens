@@ -1,0 +1,29 @@
+{
+  "source": "https://pypi.org/pypi/skill-lens-cli/json",
+  "version": "0.1.1",
+  "provides_extra": [
+    "dev"
+  ],
+  "requires_dist": [
+    "pyyaml>=6.0.0",
+    "rich>=13.0.0",
+    "typer>=0.12.0",
+    "mypy>=1.11.0; extra == \"dev\"",
+    "pytest-cov>=5.0.0; extra == \"dev\"",
+    "pytest>=8.0.0; extra == \"dev\"",
+    "ruff>=0.5.0; extra == \"dev\"",
+    "types-pyyaml>=6.0.12; extra == \"dev\""
+  ],
+  "release_files": [
+    {
+      "filename": "skill_lens_cli-0.1.1-py3-none-any.whl",
+      "upload_time": "2026-10-01T19:11:35.202417Z",
+      "sha256": "31dd61317c326aa473dfb44cd849b466b4090b158c8b10b9462e081da1dc58e9"
+    },
+    {
+      "filename": "skill_lens_cli-0.1.1.tar.gz",
+      "upload_time": "2026-10-01T19:11:36.709671Z",
+      "sha256": "263bb5ac9e40ee0b97dd701b22d82f98975cc6cf35a9a1f7cae93f4036c7168c"
+    }
+  ]
+}

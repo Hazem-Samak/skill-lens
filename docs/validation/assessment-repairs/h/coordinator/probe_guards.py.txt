@@ -1,0 +1,67 @@
+"""Disposable coordinator probes of actual Stage H measurement guards."""
+import hashlib,importlib.util,json,os,sys,tempfile,tracemalloc
+from pathlib import Path
+from dataclasses import replace
+from types import MappingProxyType
+from unittest.mock import patch
+repo=Path('/Users/corvette/Documents/Projects Coding/Skill Lens')
+p=repo/'docs/validation/assessment-repairs/h/benchmark_capture.py'
+spec=importlib.util.spec_from_file_location('stage_h_verified',p);m=importlib.util.module_from_spec(spec);sys.modules[spec.name]=m;spec.loader.exec_module(m)
+results=[]
+def record(name,fn):
+ try:fn();results.append({'name':name,'passed':True})
+ except Exception as e:results.append({'name':name,'passed':False,'error':repr(e)})
+def fingerprint():
+ with tempfile.TemporaryDirectory() as td:
+  root=Path(td);f=root/'data';f.write_bytes(b'AAAA');a=m._fingerprint_tree(root);assert m._same_fingerprint(a,m._fingerprint_tree(root));f.write_bytes(b'BBBB');assert not m._same_fingerprint(a,m._fingerprint_tree(root));f.write_bytes(b'AAAA');assert m._same_fingerprint(a,m._fingerprint_tree(root))
+  f.chmod(0o400);assert not m._same_fingerprint(a,m._fingerprint_tree(root));f.chmod(0o644)
+def walk():
+ with tempfile.TemporaryDirectory() as td:
+  with patch('os.scandir',side_effect=PermissionError('injected denial')):
+   try:m._fingerprint_tree(Path(td))
+   except OSError:return
+   raise AssertionError('walk failure silently skipped')
+def tiny(mode):
+ original=m.capture_session;calls=0;prior=m.paths.get_sandbox();env=(os.environ.get('HOME'),os.environ.get('XDG_CONFIG_HOME'))
+ def capture(**kw):
+  nonlocal calls
+  calls+=1;s=original(**kw)
+  if mode=='missing_traced' and calls>=3:s=replace(s,files=MappingProxyType({k:tuple(cf for cf in fs if cf.relative_path!='asset.bin') for k,fs in s.files.items()}))
+  if mode=='corrupt_traced' and calls>=3:s=replace(s,files=MappingProxyType({k:tuple(replace(cf,data=b'X'*len(cf.data)) if cf.relative_path=='asset.bin' else cf for cf in fs) for k,fs in s.files.items()}))
+  if mode=='wrong_generation' and calls==2:s=replace(s,generation=999)
+  if mode=='capture_error' and calls==3:raise OSError('injected capture fault')
+  if mode=='same_object' and calls==4:raise OSError('not used')
+  return s
+ m.capture_session=capture
+ try:
+  with tempfile.TemporaryDirectory() as td:
+   try:r=m._scenario_run(Path(td),'tiny',1,1024,1)
+   except (m._AssertionFailure,OSError):assert mode!='clean'
+   else:assert mode=='clean',f'{mode} was not rejected';assert r['fixture_preserved']
+ finally:m.capture_session=original
+ assert m.paths.get_sandbox()==prior
+ assert (os.environ.get('HOME'),os.environ.get('XDG_CONFIG_HOME'))==env
+ assert not tracemalloc.is_tracing()
+def active_trace():
+ tracemalloc.start()
+ try:
+  with tempfile.TemporaryDirectory() as td:
+   try:m._scenario_run(Path(td),'tiny',1,1024,1)
+   except m._AssertionFailure:pass
+   else:raise AssertionError('active tracer accepted')
+  assert tracemalloc.is_tracing()
+ finally:tracemalloc.stop()
+def output():
+ with tempfile.TemporaryDirectory() as td:
+  p=Path(td)/'evidence';m._exclusive_write_text(p,'original')
+  try:m._exclusive_write_text(p,'changed')
+  except FileExistsError:pass
+  else:raise AssertionError('existing evidence overwritten')
+  assert p.read_text()=='original'
+record('fingerprint_clean_same_size_byte_mutation_mode_mutation_restored',fingerprint)
+record('walk_failure_rejected',walk)
+for mode in ['clean','missing_traced','clean','corrupt_traced','clean','wrong_generation','clean','capture_error','clean']:record(mode,lambda mode=mode:tiny(mode))
+record('existing_tracer_preserved_and_rejected',active_trace)
+record('existing_output_preserved_and_rejected',output)
+receipt={'script_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'results':results,'all_passed':all(x['passed'] for x in results)}
+print(json.dumps(receipt,indent=2));Path(__file__).with_suffix('.json').write_text(json.dumps(receipt,indent=2)+'\n');sys.exit(0 if receipt['all_passed'] else 1)

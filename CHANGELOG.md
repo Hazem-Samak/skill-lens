@@ -5,9 +5,11 @@ All notable changes to Skill Lens are recorded here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Every entry below was verified against the repository gate: `pytest --cov=skill_lens`,
-`mypy`, `ruff check .` and `ruff format --check .` all clean, plus a green CI run on
-macOS and Linux.
+Every **released** entry below was verified against the repository gate:
+`pytest --cov=skill_lens`, `mypy`, `ruff check .` and `ruff format --check .`
+all clean. Unreleased work in `[Unreleased]` and Stage H has executed local
+gates only (pytest, mypy, ruff check, ruff format on macOS/Python 3.11); it is
+accepted locally and makes no claim about unexecuted CI lanes. Prior Stage G contains local packaging evidence.
 
 ---
 
@@ -15,10 +17,17 @@ macOS and Linux.
 
 Fixes and improvements waiting for the next version. Nothing here is published
 yet: `[Unreleased]` is deliberately not a released heading, so the version gate
-(`test_changelog_documents_the_current_version`) still demands a real `0.1.2`
-section before a release. When the next batch of features lands, rename this
-heading to `## [0.1.2] — <date>` and add the release link at the foot of the
-file.
+(`test_changelog_documents_the_current_version`) still demands a real release
+section before a release. This project targets 0.2 for the next versioned
+release (the optional `[tui]` browsing layer), not 0.1.2 — do not rename this
+heading to 0.1.2.
+
+The current development branch ships six line-oriented CLI commands plus an
+optional, additive, read-only TUI entrypoint/controller/skeleton through U2
+(C1–C5 and U1–U2 complete). U3–U9 browsing screens and 0.2 publishing remain
+separate future work. No unreleased work in this section claims to have executed
+all CI lanes; local gate evidence is recorded under
+`docs/validation/assessment-repairs/h/`.
 
 ### Planned
 
@@ -29,9 +38,37 @@ file.
   built from, and ships as the opt-in `[tui]` extra so the base install gains no
   new runtime dependency. All existing commands, flags, JSON shapes and exit
   codes are unchanged; the line-oriented CLI remains the primary interface.
-  This overturns the v1 "no full-screen TUI" rule for 0.2. **Nothing is
-  implemented yet** — the full design lives in
+  This overturns the v1 "no full-screen TUI" rule for 0.2. **Partial status:**
+  C1–C5 (byte/hash helpers, captured engine inputs, capture and cancellation,
+  presentation extraction, Step 0 audit) and U1–U2 (optional install, worker
+  controller and skeleton placeholder screen) are complete as development work
+  on the current branch; U3–U9 browsing screens remain future work. The full
+  design lives in
   [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
+
+### Development documentation and resource measurements (Stage H)
+
+These are documentation and measurement repairs only — no product, test, CI,
+dependency, snapshot or golden changes. Local verification and independent
+review are recorded in the [Stage H acceptance record](docs/validation/assessment-repairs/h/acceptance.md).
+
+- **README/DEVELOPMENT status reconciliation.** Published 0.1.1 (six CLI
+  commands, no TUI extra) vs current development (six CLI commands plus C1–C5
+  and U1–U2 TUI entrypoint/controller/skeleton; U3–U9 future work). Dated gate
+  numbers linked instead of stale counters; historical measurements preserved.
+- **FULL_SCREEN_TUI.md status header.** Reflects C1–C5 + U1–U2 as complete
+  development work and U3–U9 as future work; operative contract and historical
+  metrics preserved.
+- **AGENTS.md architecture map/pointers.** Read-before-changing pointers updated
+  to reference Stage H validation evidence.
+- **Resource-risk measurement.** Byte-heavy capture/refresh benchmarks on
+  synthetic fixtures (8 skills × 2 MiB, 8 × 8 MiB, one larger aggregate file,
+  3 repeats each) with tracemalloc traced heap, retention and preservation
+  reporting. See
+  [`docs/validation/assessment-repairs/h/resource-risk.md`](./docs/validation/assessment-repairs/h/resource-risk.md)
+  and [`benchmark_capture.py`](./docs/validation/assessment-repairs/h/benchmark_capture.py).
+  No resource policy is approved or implemented; the snapshot remains
+  unbounded by bytes.
 
 ### Fixed
 

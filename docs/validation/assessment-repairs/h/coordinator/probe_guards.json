@@ -1,0 +1,58 @@
+{
+  "script_sha256": "af42adee9f5fb8d490689a1a8250fc82c48ec245b28de341e489510ad8c9e231",
+  "results": [
+    {
+      "name": "fingerprint_clean_same_size_byte_mutation_mode_mutation_restored",
+      "passed": true
+    },
+    {
+      "name": "walk_failure_rejected",
+      "passed": true
+    },
+    {
+      "name": "clean",
+      "passed": true
+    },
+    {
+      "name": "missing_traced",
+      "passed": true
+    },
+    {
+      "name": "clean",
+      "passed": true
+    },
+    {
+      "name": "corrupt_traced",
+      "passed": true
+    },
+    {
+      "name": "clean",
+      "passed": true
+    },
+    {
+      "name": "wrong_generation",
+      "passed": true
+    },
+    {
+      "name": "clean",
+      "passed": true
+    },
+    {
+      "name": "capture_error",
+      "passed": true
+    },
+    {
+      "name": "clean",
+      "passed": true
+    },
+    {
+      "name": "existing_tracer_preserved_and_rejected",
+      "passed": true
+    },
+    {
+      "name": "existing_output_preserved_and_rejected",
+      "passed": true
+    }
+  ],
+  "all_passed": true
+}

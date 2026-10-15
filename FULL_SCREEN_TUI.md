@@ -1,8 +1,12 @@
 # Skill Lens 0.2 — Full-Screen TUI
 
-> **Status:** 📋 **Plan only — not implemented.** This document is the agreed
-> design for the `0.2` release, subject to the readiness gates in §11. No TUI
-> code has been written against it yet.
+> **Status:** 🛠️ **Partially implemented in development — 0.2 plan not released.**
+> C1–C5 (byte/hash helpers, captured engine inputs, capture and cancellation,
+> presentation extraction, Step 0 audit) and U1–U2 (optional install, worker
+> controller and skeleton placeholder screen) are complete as development work
+> on the current branch. U3–U9 browsing screens and 0.2 publishing remain
+> separate future work. No TUI extra is released: published PyPI 0.1.1 contains
+> no TUI package and no `[tui]` extra.
 > It overturns a v1 rule ("no full-screen TUI"), so it is deliberately detailed:
 > the point of the plan is that the next person can scaffold the work without
 > re-litigating the decisions below.
@@ -11,12 +15,18 @@
 > **Supersedes:** the "NO full-screen TUI" rule in `AGENTS.md` §1.5 and
 > `SKILL_LENS_SPECIFICATION.md` §5.
 > **Author:** maintainer, 2026-10-04.
-> **Current revision:** 2026-10-04. Checked against source, temporary crash
-> reproductions and published dependency metadata. Engine prerequisites P1 and P2
-> are complete and verified with regression tests. P3 speed/memory probe confirms
-> the full-capture contract (§21) is practical and retained. Findings and
-> prerequisite records are in §20; [earlier review history](docs/archive/TUI_PLAN_REVIEWS.md)
-> is retained separately. Step 0 implementation (C1–C5) proceeds under §21.
+> **Current revision:** 2026-10-16. Original readiness finding dated 2026-10-04
+> (checked against source, temporary crash reproductions and published dependency
+> metadata at that date) remains a historical record. Current revision sees Stage
+> H resource-risk evidence at
+> [`docs/validation/assessment-repairs/h/resource-risk.md`](./docs/validation/assessment-repairs/h/resource-risk.md)
+> (accepted locally; no memory policy change).
+> **Engine prerequisites:** P1 and P2 complete and verified with regression tests.
+> P3 speed/memory probe confirms the full-capture contract (§21) is practical and
+> retained for its limited fixture result. Findings and prerequisite records are
+> in §20; [earlier review history](docs/archive/TUI_PLAN_REVIEWS.md) is retained
+> separately. Step 0 implementation (C1–C5) is complete under §21;
+> U1–U2 controller/skeleton complete; U3–U9 assignments (§22) remain future work.
 
 > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
 > Catalog, skill contents, settings and diagnostic inputs remain fixed until
@@ -26,8 +36,9 @@
 > **Implementer handoff:** [§21](#21-step-0-implementation-contract) specifies
 > Step 0 types, function signatures, files and acceptance tests.
 > [§22](#22-assignments-for-the-implementer) is the ordered assignment list.
-> Start with P1 → P2 → P3 (early cost review), then C1–C5. Complete and
-> review each gate before the next assignment.
+> Current next work: **U3** (first browsing screen), per §22 order, after
+> separate authorization. Prerequisites (P1→P2→P3, C1–C5, U1–U2) are complete;
+> U3–U9 remain future work.
 
 ---
 

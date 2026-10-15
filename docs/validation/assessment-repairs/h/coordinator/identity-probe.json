@@ -1,0 +1,6 @@
+{
+  "shared_bytes_rejected": true,
+  "reason": "old/new data for .codex/skills/tiny-skill-000/SKILL.md must be distinct bytes objects",
+  "script_sha256": "af42adee9f5fb8d490689a1a8250fc82c48ec245b28de341e489510ad8c9e231",
+  "restored_clean_passed": true
+}

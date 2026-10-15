@@ -1,0 +1,2083 @@
+{
+  "benchmark": "Stage H byte-heavy capture/refresh (capture_session)",
+  "source_hash": "b6d9deb9ab18f0d9d450a1c3aca223edfe2e11c980db3c86aea8ff95c4489c7f",
+  "timestamp_utc": "2026-10-15T22:58:00Z",
+  "conditions": {
+    "platform": "Darwin arm64",
+    "python_version": "3.11.16",
+    "interpreter": "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+    "stdlib_only": true,
+    "no_live_skills_home_system_root": true,
+    "no_network": true,
+    "fixture_cache": "Warm OS page cache likely; cold disk may vary."
+  },
+  "scenarios": [
+    [
+      "8x2MiB",
+      8,
+      2097152
+    ],
+    [
+      "8x8MiB",
+      8,
+      8388608
+    ],
+    [
+      "1x16MiB",
+      1,
+      16777216
+    ]
+  ],
+  "repeats": 3,
+  "results": [
+    {
+      "scenario": "8x2MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 2097152,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "initial_run": {
+        "wall_ms": 27.571999999054242,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 1
+        }
+      },
+      "refresh_run": {
+        "wall_ms": 26.001334001193754,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 2
+        }
+      },
+      "traced_run": {
+        "peak_traced_first_capture_bytes": 23118166,
+        "peak_traced_both_generations_bytes": 39938874,
+        "peak_traced_refresh_overlap_bytes": 39938874,
+        "current_traced_after_refresh_bytes": 33648512,
+        "retained_heap_one_generation_bytes": 23118166,
+        "retained_heap_both_generations_bytes": 39938874,
+        "note": "tracemalloc traced heap (Python allocations only); excludes total RSS and native allocations. Old generation held while new capture completes (overlap / simulated refresh)."
+      },
+      "assertions": {
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 16778912,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 16778912,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "payload_matches_fixture": true,
+        "no_silent_missing_capture": true
+      },
+      "repeat": 1,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-m9_j0ndr"
+    },
+    {
+      "scenario": "8x2MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 2097152,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "initial_run": {
+        "wall_ms": 26.23591699375538,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 1
+        }
+      },
+      "refresh_run": {
+        "wall_ms": 26.36966700083576,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 2
+        }
+      },
+      "traced_run": {
+        "peak_traced_first_capture_bytes": 23118107,
+        "peak_traced_both_generations_bytes": 39937810,
+        "peak_traced_refresh_overlap_bytes": 39937810,
+        "current_traced_after_refresh_bytes": 33647574,
+        "retained_heap_one_generation_bytes": 23118107,
+        "retained_heap_both_generations_bytes": 39937810,
+        "note": "tracemalloc traced heap (Python allocations only); excludes total RSS and native allocations. Old generation held while new capture completes (overlap / simulated refresh)."
+      },
+      "assertions": {
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 16778912,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 16778912,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "payload_matches_fixture": true,
+        "no_silent_missing_capture": true
+      },
+      "repeat": 2,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-vihgd9dt"
+    },
+    {
+      "scenario": "8x2MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 2097152,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 16778912,
+        "largest_file_bytes": 2097152,
+        "entries": [
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x2MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 2097152,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "initial_run": {
+        "wall_ms": 26.034625007014256,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 1
+        }
+      },
+      "refresh_run": {
+        "wall_ms": 26.175957995292265,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 16778912,
+          "captured_largest_file_bytes": 2097152,
+          "canonical_keys": 8,
+          "generation": 2
+        }
+      },
+      "traced_run": {
+        "peak_traced_first_capture_bytes": 23118442,
+        "peak_traced_both_generations_bytes": 39938078,
+        "peak_traced_refresh_overlap_bytes": 39938078,
+        "current_traced_after_refresh_bytes": 33647641,
+        "retained_heap_one_generation_bytes": 23118442,
+        "retained_heap_both_generations_bytes": 39938078,
+        "note": "tracemalloc traced heap (Python allocations only); excludes total RSS and native allocations. Old generation held while new capture completes (overlap / simulated refresh)."
+      },
+      "assertions": {
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 16778912,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 16778912,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "payload_matches_fixture": true,
+        "no_silent_missing_capture": true
+      },
+      "repeat": 3,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-t3co9qmu"
+    },
+    {
+      "scenario": "8x8MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 8388608,
+      "total_payload_bytes": 67108864,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "initial_run": {
+        "wall_ms": 87.23008399829268,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 1
+        }
+      },
+      "refresh_run": {
+        "wall_ms": 85.39791600196622,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 2
+        }
+      },
+      "traced_run": {
+        "peak_traced_first_capture_bytes": 92328532,
+        "peak_traced_both_generations_bytes": 159479615,
+        "peak_traced_refresh_overlap_bytes": 159479615,
+        "current_traced_after_refresh_bytes": 134310937,
+        "retained_heap_one_generation_bytes": 92328532,
+        "retained_heap_both_generations_bytes": 159479615,
+        "note": "tracemalloc traced heap (Python allocations only); excludes total RSS and native allocations. Old generation held while new capture completes (overlap / simulated refresh)."
+      },
+      "assertions": {
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 67110560,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 67110560,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "payload_matches_fixture": true,
+        "no_silent_missing_capture": true
+      },
+      "repeat": 1,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-0tvk0sjz"
+    },
+    {
+      "scenario": "8x8MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 8388608,
+      "total_payload_bytes": 67108864,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "initial_run": {
+        "wall_ms": 83.9884590022848,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 1
+        }
+      },
+      "refresh_run": {
+        "wall_ms": 84.99304200086044,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 2
+        }
+      },
+      "traced_run": {
+        "peak_traced_first_capture_bytes": 92328532,
+        "peak_traced_both_generations_bytes": 159480218,
+        "peak_traced_refresh_overlap_bytes": 159480218,
+        "current_traced_after_refresh_bytes": 134311406,
+        "retained_heap_one_generation_bytes": 92328532,
+        "retained_heap_both_generations_bytes": 159480218,
+        "note": "tracemalloc traced heap (Python allocations only); excludes total RSS and native allocations. Old generation held while new capture completes (overlap / simulated refresh)."
+      },
+      "assertions": {
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 67110560,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 67110560,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "payload_matches_fixture": true,
+        "no_silent_missing_capture": true
+      },
+      "repeat": 2,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-0d8clsnn"
+    },
+    {
+      "scenario": "8x8MiB",
+      "skill_count": 8,
+      "asset_bytes_each": 8388608,
+      "total_payload_bytes": 67108864,
+      "fixture_before": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 16,
+        "total_bytes": 67110560,
+        "largest_file_bytes": 8388608,
+        "entries": [
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-001/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-002/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-003/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-004/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-005/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-006/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/SKILL.md",
+            "is_symlink": false,
+            "size": 212,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/8x8MiB-skill-007/asset.bin",
+            "is_symlink": false,
+            "size": 8388608,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "initial_run": {
+        "wall_ms": 85.3789999964647,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 1
+        }
+      },
+      "refresh_run": {
+        "wall_ms": 86.27320900268387,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 16,
+          "captured_payload_bytes": 67110560,
+          "captured_largest_file_bytes": 8388608,
+          "canonical_keys": 8,
+          "generation": 2
+        }
+      },
+      "traced_run": {
+        "peak_traced_first_capture_bytes": 92328457,
+        "peak_traced_both_generations_bytes": 159479808,
+        "peak_traced_refresh_overlap_bytes": 159479808,
+        "current_traced_after_refresh_bytes": 134311004,
+        "retained_heap_one_generation_bytes": 92328457,
+        "retained_heap_both_generations_bytes": 159479808,
+        "note": "tracemalloc traced heap (Python allocations only); excludes total RSS and native allocations. Old generation held while new capture completes (overlap / simulated refresh)."
+      },
+      "assertions": {
+        "old_captured_files": 16,
+        "old_captured_payload_bytes": 67110560,
+        "new_captured_files": 16,
+        "new_captured_payload_bytes": 67110560,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "payload_matches_fixture": true,
+        "no_silent_missing_capture": true
+      },
+      "repeat": 3,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-mfqefydi"
+    },
+    {
+      "scenario": "1x16MiB",
+      "skill_count": 1,
+      "asset_bytes_each": 16777216,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "initial_run": {
+        "wall_ms": 22.937541994906496,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 1
+        }
+      },
+      "refresh_run": {
+        "wall_ms": 21.67083300446393,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 2
+        }
+      },
+      "traced_run": {
+        "peak_traced_first_capture_bytes": 67145746,
+        "peak_traced_both_generations_bytes": 83941274,
+        "peak_traced_refresh_overlap_bytes": 83941274,
+        "current_traced_after_refresh_bytes": 33596713,
+        "retained_heap_one_generation_bytes": 67145746,
+        "retained_heap_both_generations_bytes": 83941274,
+        "note": "tracemalloc traced heap (Python allocations only); excludes total RSS and native allocations. Old generation held while new capture completes (overlap / simulated refresh)."
+      },
+      "assertions": {
+        "old_captured_files": 2,
+        "old_captured_payload_bytes": 16777429,
+        "new_captured_files": 2,
+        "new_captured_payload_bytes": 16777429,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "payload_matches_fixture": true,
+        "no_silent_missing_capture": true
+      },
+      "repeat": 1,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-2x9ngdvw"
+    },
+    {
+      "scenario": "1x16MiB",
+      "skill_count": 1,
+      "asset_bytes_each": 16777216,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "initial_run": {
+        "wall_ms": 22.02983399911318,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 1
+        }
+      },
+      "refresh_run": {
+        "wall_ms": 21.72137500019744,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 2
+        }
+      },
+      "traced_run": {
+        "peak_traced_first_capture_bytes": 67145687,
+        "peak_traced_both_generations_bytes": 83941282,
+        "peak_traced_refresh_overlap_bytes": 83941282,
+        "current_traced_after_refresh_bytes": 33596646,
+        "retained_heap_one_generation_bytes": 67145687,
+        "retained_heap_both_generations_bytes": 83941282,
+        "note": "tracemalloc traced heap (Python allocations only); excludes total RSS and native allocations. Old generation held while new capture completes (overlap / simulated refresh)."
+      },
+      "assertions": {
+        "old_captured_files": 2,
+        "old_captured_payload_bytes": 16777429,
+        "new_captured_files": 2,
+        "new_captured_payload_bytes": 16777429,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "payload_matches_fixture": true,
+        "no_silent_missing_capture": true
+      },
+      "repeat": 2,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-auxvm3iu"
+    },
+    {
+      "scenario": "1x16MiB",
+      "skill_count": 1,
+      "asset_bytes_each": 16777216,
+      "total_payload_bytes": 16777216,
+      "fixture_before": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_after": {
+        "file_count": 2,
+        "total_bytes": 16777429,
+        "largest_file_bytes": 16777216,
+        "entries": [
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/SKILL.md",
+            "is_symlink": false,
+            "size": 213,
+            "mode": "0o644",
+            "symlink_target": null
+          },
+          {
+            "path": ".codex/skills/1x16MiB-skill-000/asset.bin",
+            "is_symlink": false,
+            "size": 16777216,
+            "mode": "0o644",
+            "symlink_target": null
+          }
+        ]
+      },
+      "fixture_preserved": true,
+      "initial_run": {
+        "wall_ms": 22.15370800695382,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 1
+        }
+      },
+      "refresh_run": {
+        "wall_ms": 23.138333999668248,
+        "traced": false,
+        "peak_traced_bytes": null,
+        "current_traced_bytes": null,
+        "snapshot": {
+          "captured_file_count": 2,
+          "captured_payload_bytes": 16777429,
+          "captured_largest_file_bytes": 16777216,
+          "canonical_keys": 1,
+          "generation": 2
+        }
+      },
+      "traced_run": {
+        "peak_traced_first_capture_bytes": 67145691,
+        "peak_traced_both_generations_bytes": 83941219,
+        "peak_traced_refresh_overlap_bytes": 83941219,
+        "current_traced_after_refresh_bytes": 33596579,
+        "retained_heap_one_generation_bytes": 67145691,
+        "retained_heap_both_generations_bytes": 83941219,
+        "note": "tracemalloc traced heap (Python allocations only); excludes total RSS and native allocations. Old generation held while new capture completes (overlap / simulated refresh)."
+      },
+      "assertions": {
+        "old_captured_files": 2,
+        "old_captured_payload_bytes": 16777429,
+        "new_captured_files": 2,
+        "new_captured_payload_bytes": 16777429,
+        "old_generation": 1,
+        "new_generation": 2,
+        "old_new_coexist": true,
+        "payload_matches_fixture": true,
+        "no_silent_missing_capture": true
+      },
+      "repeat": 3,
+      "fixture_dir": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-h-zmryjg5s"
+    }
+  ]
+}

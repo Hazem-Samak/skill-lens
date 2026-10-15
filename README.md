@@ -168,13 +168,26 @@ fault.
 
 Early development, and honest about it: the agent registry tags every precedence
 rule `documented`, `empirical`, or `inferred`, and says `ambiguous` rather than
-guessing. Six phases are complete and reviewed, and the current gate is
-**471 tests pass** at **93% branch coverage**, `mypy` strict clean,
-`ruff check .` clean, `ruff format --check .` clean.
+guessing. Original development Phases 0–6 are complete and reviewed; the separate
+assessment-repair stages A–H are accepted. Stage H documents the remaining
+snapshot memory risk; no byte limit has been introduced.
 
-The build record — every phase, the defects found in each review, and what is
-still open — lives in
-[`DEVELOPMENT.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/DEVELOPMENT.md).
+**Published (PyPI `skill-lens-cli` 0.1.1):** six line-oriented CLI commands
+(`scan`, `why`, `agents`, `diff`, `compare`, `doctor`), no TUI extra. No `pip`
+release ships a TUI.
+
+**Current development branch:** the same six line-oriented commands plus an
+optional, additive, read-only TUI entrypoint/controller/skeleton through U2
+(C1–C5 and U1–U2 complete). U3–U9 browsing screens and 0.2 publishing remain
+separate future work. Do not install released `skill-lens-cli[tui]` expecting a
+browsing UI — the published 0.1.1 has no TUI extra at all.
+
+The dated local verification result (2026-10-16) is recorded in the
+[Stage H acceptance record](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/validation/assessment-repairs/h/acceptance.md).
+See [`DEVELOPMENT.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/DEVELOPMENT.md)
+for the full build record, including dated historical measurements, and the
+resource-risk evidence under
+[`docs/validation/assessment-repairs/h/`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/validation/assessment-repairs/h/).
 
 ## Development
 

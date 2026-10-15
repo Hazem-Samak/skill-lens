@@ -1,0 +1,50 @@
+[
+  {
+    "scenario": "8x2MiB",
+    "initial_wall_ms_range": [
+      29.337249994568992,
+      30.43012499983888
+    ],
+    "simulated_refresh_wall_ms_range": [
+      28.90912499424303,
+      30.2090839977609
+    ],
+    "payload_bytes": 16778912,
+    "largest_file_bytes": 2097152,
+    "one_generation_retained_mib": 16.037050247192383,
+    "two_generation_retained_mib": 32.07435321807861,
+    "refresh_peak_mib": 38.08425998687744
+  },
+  {
+    "scenario": "8x8MiB",
+    "initial_wall_ms_range": [
+      92.69425000093179,
+      94.55866699863691
+    ],
+    "simulated_refresh_wall_ms_range": [
+      91.43879200564697,
+      94.91487500054063
+    ],
+    "payload_bytes": 67110560,
+    "largest_file_bytes": 8388608,
+    "one_generation_retained_mib": 64.03628349304199,
+    "two_generation_retained_mib": 128.07224464416504,
+    "refresh_peak_mib": 152.08705139160156
+  },
+  {
+    "scenario": "1x16MiB",
+    "initial_wall_ms_range": [
+      26.73687499918742,
+      47.86345900356537
+    ],
+    "simulated_refresh_wall_ms_range": [
+      25.06924999761395,
+      32.10945799946785
+    ],
+    "payload_bytes": 16777429,
+    "largest_file_bytes": 16777216,
+    "one_generation_retained_mib": 16.01533794403076,
+    "two_generation_retained_mib": 32.03073692321777,
+    "refresh_peak_mib": 80.0505838394165
+  }
+]

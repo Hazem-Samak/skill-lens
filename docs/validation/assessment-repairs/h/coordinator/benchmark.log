@@ -1,0 +1,60 @@
+======================================================================
+Stage H byte-heavy capture/refresh benchmark
+======================================================================
+Platform: Darwin arm64 Python 3.11.16
+Interpreter: /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python
+Date (UTC): 2026-10-15T23:29:46Z
+Date (local): 2026-10-16T02:29:46+0300
+Source hash: af42adee9f5fb8d490689a1a8250fc82c48ec245b28de341e489510ad8c9e231
+Product source hashes: {"skill_lens/core/paths.py": "dfe829ac6f162171c5b84d2abd2e64ac2aa5d430d1eadda07feac5f8eff7c771", "skill_lens/core/snapshot.py": "b5340fd5c5128de88ea19e222c9e919c42dfbe6a4e86bb0c8833e54046dfd12b", "skill_lens/core/hasher.py": "7fd755adf9d4bced1b7f4f5c6b2e5a931681868368ae974ab0a82d69e0113c64", "skill_lens/registry/loader.py": "c34d87bb865ce246289ea1cb79adc17a8bd5bf3007f7f2095f34018096813f60", "_combined": "8b0c1dec6c50ab5ed4fb61e151a9b49c851797d16e0035545bb59237b1eb3428"}
+argv: docs/validation/assessment-repairs/h/benchmark_capture.py --output /Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-16-stage-h-work/coordinator/benchmark-results.json
+Scenarios: [('8x2MiB', 8, 2097152), ('8x8MiB', 8, 8388608), ('1x16MiB', 1, 16777216)]
+Repeats per scenario: 3
+
+[8x2MiB repeat 1/3] 8 skills x 2 MiB asset...
+  initial: 30.4 ms  files=16  payload=16,778,912 B
+  refresh: 30.2 ms  files=16  payload=16,778,912 B
+  traced: 1gen current=16.04 MiB  2gen current=32.07 MiB  refresh_peak=38.08 MiB
+  preserved=True  distinct=True  assertions_enforced=True
+[8x2MiB repeat 2/3] 8 skills x 2 MiB asset...
+  initial: 29.3 ms  files=16  payload=16,778,912 B
+  refresh: 28.9 ms  files=16  payload=16,778,912 B
+  traced: 1gen current=16.04 MiB  2gen current=32.07 MiB  refresh_peak=38.08 MiB
+  preserved=True  distinct=True  assertions_enforced=True
+[8x2MiB repeat 3/3] 8 skills x 2 MiB asset...
+  initial: 29.5 ms  files=16  payload=16,778,912 B
+  refresh: 29.7 ms  files=16  payload=16,778,912 B
+  traced: 1gen current=16.04 MiB  2gen current=32.07 MiB  refresh_peak=38.08 MiB
+  preserved=True  distinct=True  assertions_enforced=True
+[8x8MiB repeat 1/3] 8 skills x 8 MiB asset...
+  initial: 94.6 ms  files=16  payload=67,110,560 B
+  refresh: 94.9 ms  files=16  payload=67,110,560 B
+  traced: 1gen current=64.04 MiB  2gen current=128.07 MiB  refresh_peak=152.09 MiB
+  preserved=True  distinct=True  assertions_enforced=True
+[8x8MiB repeat 2/3] 8 skills x 8 MiB asset...
+  initial: 93.7 ms  files=16  payload=67,110,560 B
+  refresh: 92.7 ms  files=16  payload=67,110,560 B
+  traced: 1gen current=64.04 MiB  2gen current=128.07 MiB  refresh_peak=152.09 MiB
+  preserved=True  distinct=True  assertions_enforced=True
+[8x8MiB repeat 3/3] 8 skills x 8 MiB asset...
+  initial: 92.7 ms  files=16  payload=67,110,560 B
+  refresh: 91.4 ms  files=16  payload=67,110,560 B
+  traced: 1gen current=64.04 MiB  2gen current=128.07 MiB  refresh_peak=152.09 MiB
+  preserved=True  distinct=True  assertions_enforced=True
+[1x16MiB repeat 1/3] 1 skills x 16 MiB asset...
+  initial: 27.2 ms  files=2  payload=16,777,429 B
+  refresh: 32.1 ms  files=2  payload=16,777,429 B
+  traced: 1gen current=16.02 MiB  2gen current=32.03 MiB  refresh_peak=80.05 MiB
+  preserved=True  distinct=True  assertions_enforced=True
+[1x16MiB repeat 2/3] 1 skills x 16 MiB asset...
+  initial: 26.7 ms  files=2  payload=16,777,429 B
+  refresh: 25.1 ms  files=2  payload=16,777,429 B
+  traced: 1gen current=16.02 MiB  2gen current=32.03 MiB  refresh_peak=80.05 MiB
+  preserved=True  distinct=True  assertions_enforced=True
+[1x16MiB repeat 3/3] 1 skills x 16 MiB asset...
+  initial: 47.9 ms  files=2  payload=16,777,429 B
+  refresh: 30.0 ms  files=2  payload=16,777,429 B
+  traced: 1gen current=16.02 MiB  2gen current=32.03 MiB  refresh_peak=80.05 MiB
+  preserved=True  distinct=True  assertions_enforced=True
+
+Artifact written: /Users/corvette/.t3/userdata/skill-lens-repair-checkpoints/2026-10-16-stage-h-work/coordinator/benchmark-results.json

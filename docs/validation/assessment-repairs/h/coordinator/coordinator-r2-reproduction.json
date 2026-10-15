@@ -1,0 +1,7 @@
+{
+  "same_size_byte_change_detected": true,
+  "walk_denial_raises": false,
+  "incomplete_traced_captures_rejected": false,
+  "incomplete_traced_payload": 210,
+  "expected_payload": 1234
+}
