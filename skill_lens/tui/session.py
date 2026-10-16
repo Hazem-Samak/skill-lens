@@ -18,7 +18,7 @@ from skill_lens.core.cancellation import CaptureCancelled
 from skill_lens.core.discovery import canonical_key
 from skill_lens.core.exitcodes import ExitCode
 from skill_lens.core.hasher import IncompleteTreeError
-from skill_lens.core.snapshot import SnapshotChanged
+from skill_lens.core.snapshot import SnapshotChanged, SnapshotTooLarge
 from skill_lens.core.snapshot_models import SessionSnapshot
 from skill_lens.models.compare import CompareReport
 from skill_lens.models.diff import DiffReport
@@ -60,6 +60,7 @@ class SessionController:
         self.closed: bool = False
 
         self.retry_message: str | None = None
+        self.refusal_message: str | None = None
         self.last_error_details: str | None = None
 
         self._capture_events: dict[int, threading.Event] = {}
@@ -78,6 +79,8 @@ class SessionController:
     @property
     def status(self) -> str:
         """Return a human-readable controller status token."""
+        if self.refusal_message is not None:
+            return "refused"
         if self.retry_message is not None:
             return "retry"
         if self.failed:
@@ -110,6 +113,7 @@ class SessionController:
         self._capture_events[gen] = event
         self.pending_generation = gen
         self.retry_message = None
+        self.refusal_message = None
         return gen, event
 
     def accept_capture(self, snapshot: SessionSnapshot, generation: int) -> bool:
@@ -132,6 +136,7 @@ class SessionController:
         self.pending_generation = None
         self.current = snapshot
         self.retry_message = None
+        self.refusal_message = None
 
         # Clean up capture event
         self._capture_events.pop(generation, None)
@@ -158,6 +163,9 @@ class SessionController:
         """Accept an error from a capture worker.
 
         Rejects stale errors before affecting any state.
+        A size refusal (``SnapshotTooLarge``) sets a dedicated refusal message and
+        never gains retry guidance, because retrying an unchanged oversized home
+        cannot help.
         Expected SnapshotChanged and IncompleteTreeError display retry message
         without setting failed.
         CaptureCancelled is quiet.
@@ -173,6 +181,11 @@ class SessionController:
         self.pending_generation = None
         self._capture_events.pop(generation, None)
 
+        if isinstance(error, SnapshotTooLarge):
+            # Permanent for this home: show the reason, never "press r to retry".
+            self.refusal_message = str(error)
+            self.retry_message = None
+            return True
         if isinstance(error, (SnapshotChanged, IncompleteTreeError)):
             msg = str(error)
             if "retry" not in msg.lower():
@@ -188,6 +201,8 @@ class SessionController:
             traceback.format_exception(type(error), error, error.__traceback__)
         )
         self.retry_message = None
+        # An internal fault must stay visible: a standing refusal must not mask it.
+        self.refusal_message = None
         return True
 
     def request_view(
@@ -303,6 +318,8 @@ class SessionController:
             traceback.format_exception(type(error), error, error.__traceback__)
         )
         self.retry_message = None
+        # An internal fault must stay visible: a standing refusal must not mask it.
+        self.refusal_message = None
         return True
 
     def invalidate_view(self, view: ViewName) -> None:

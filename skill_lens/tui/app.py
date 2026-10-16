@@ -30,6 +30,7 @@ from skill_lens import __version__
 from skill_lens.core.cancellation import CaptureCancelled
 from skill_lens.core.exitcodes import ExitCode
 from skill_lens.core.snapshot import (
+    DEFAULT_MAX_SNAPSHOT_BYTES,
     capture_session,
     snapshot_compare,
     snapshot_diff,
@@ -180,10 +181,12 @@ class SkillLensApp(App[int]):
         home: Path,
         cwd: Path,
         controller: SessionController | None = None,
+        max_snapshot_bytes: int | None = DEFAULT_MAX_SNAPSHOT_BYTES,
     ) -> None:
         super().__init__()
         self._home = home
         self._cwd = cwd
+        self._max_snapshot_bytes = max_snapshot_bytes
         self.controller: SessionController = (
             controller if controller is not None else SessionController()
         )
@@ -237,6 +240,7 @@ class SkillLensApp(App[int]):
                 generation=generation,
                 home=home,
                 cwd=cwd,
+                max_snapshot_bytes=self._max_snapshot_bytes,
                 cancelled=event.is_set,
             )
         except Exception as exc:
@@ -358,6 +362,10 @@ class SkillLensApp(App[int]):
                 else 0
             )
             status_widget.update(f"Ready: {count} skills discovered")
+            details_widget.update("")
+        elif status == "refused":
+            msg = self.controller.refusal_message or "Snapshot refused."
+            status_widget.update(msg)
             details_widget.update("")
         elif status == "retry":
             msg = self.controller.retry_message or "Files changed while scanning. Press r to retry."

@@ -22,6 +22,7 @@ import skill_lens.cli as cli
 from skill_lens.cli import app
 from skill_lens.core import paths
 from skill_lens.core.exitcodes import ExitCode
+from skill_lens.core.snapshot import DEFAULT_MAX_SNAPSHOT_BYTES
 from tests.fixtures.scenarios import build_scenario
 
 _ANSI_ESCAPE = re.compile(rb"\x1b\[[0-9;]*m")
@@ -74,7 +75,7 @@ def test_bare_invocation_stream_matrix(
     """
     called_with: list[tuple[Path, Path]] = []
 
-    def fake_runner(home: Path, cwd: Path) -> int:
+    def fake_runner(home: Path, cwd: Path, *, max_snapshot_bytes: Any = None) -> int:
         called_with.append((home, cwd))
         return 0
 
@@ -154,7 +155,7 @@ def test_plain_tui_explicitly_launches(mock_home: Path, monkeypatch: pytest.Monk
     """`--plain tui` ignores root --plain and still explicitly dispatches tui."""
     called_with: list[tuple[Path, Path]] = []
 
-    def fake_runner(home: Path, cwd: Path) -> int:
+    def fake_runner(home: Path, cwd: Path, *, max_snapshot_bytes: Any = None) -> int:
         called_with.append((home, cwd))
         return 0
 
@@ -239,7 +240,7 @@ def test_explicit_tui_rejects_noninteractive_streams(
     """Explicit `skill-lens tui` requires BOTH stdin and stdout to be interactive."""
     called: list[bool] = []
 
-    def fake_runner(home: Path, cwd: Path) -> int:
+    def fake_runner(home: Path, cwd: Path, *, max_snapshot_bytes: Any = None) -> int:
         called.append(True)
         return 0
 
@@ -267,7 +268,7 @@ def test_explicit_tui_interactive_streams_launches(
     """Explicit `skill-lens tui` launches when both streams are interactive."""
     called: list[bool] = []
 
-    def fake_runner(home: Path, cwd: Path) -> int:
+    def fake_runner(home: Path, cwd: Path, *, max_snapshot_bytes: Any = None) -> int:
         called.append(True)
         return 0
 
@@ -287,7 +288,7 @@ def test_explicit_tui_missing_textual_precedes_stream_check(
     """When Textual is absent, explicit `tui` shows install hint even on non-tty."""
     called: list[bool] = []
 
-    def fake_runner(home: Path, cwd: Path) -> int:
+    def fake_runner(home: Path, cwd: Path, *, max_snapshot_bytes: Any = None) -> int:
         called.append(True)
         return 0
 
@@ -337,7 +338,7 @@ def test_explicit_tui_forwards_sandbox_and_cwd(
     """Explicit `tui` validates and forwards sandbox home and cwd to runner."""
     received: list[tuple[Path, Path]] = []
 
-    def fake_runner(home: Path, cwd: Path) -> int:
+    def fake_runner(home: Path, cwd: Path, *, max_snapshot_bytes: Any = None) -> int:
         received.append((home, cwd))
         return 0
 
@@ -389,7 +390,7 @@ def test_tui_runner_exit_code_0_propagates(
 ) -> None:
     """Runner returning 0 exits process with 0."""
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
-    _install_fake_tui(monkeypatch, lambda h, c: 0)
+    _install_fake_tui(monkeypatch, lambda h, c, *, max_snapshot_bytes=None: 0)
     monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == 0
@@ -400,7 +401,7 @@ def test_tui_runner_exit_code_3_propagates(
 ) -> None:
     """Runner returning 3 exits process with 3."""
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
-    _install_fake_tui(monkeypatch, lambda h, c: 3)
+    _install_fake_tui(monkeypatch, lambda h, c, *, max_snapshot_bytes=None: 3)
     monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
     result = runner.invoke(app, ["tui", "--sandbox", str(mock_home)])
     assert result.exit_code == int(ExitCode.INTERNAL)
@@ -412,7 +413,7 @@ def test_tui_runner_unexpected_exception_exits_3_no_traceback(
 ) -> None:
     """Runner throwing an unexpected exception prints plain error to stderr and exits 3."""
 
-    def exploding_runner(h: Path, c: Path) -> int:
+    def exploding_runner(h: Path, c: Path, *, max_snapshot_bytes: Any = None) -> int:
         raise RuntimeError("Terminal device disconnected unexpectedly")
 
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
@@ -547,7 +548,7 @@ def test_literal_bracket_details_rendered_safely(
     without crashing or being parsed as Rich markup.
     """
 
-    def bracket_exploding_runner(h: Path, c: Path) -> int:
+    def bracket_exploding_runner(h: Path, c: Path, *, max_snapshot_bytes: Any = None) -> int:
         raise RuntimeError("[tag:error] device [127.0.0.1:8080] failed [fatal]")
 
     monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
@@ -592,12 +593,20 @@ def test_cli_tui_sandbox_real_runner_e2e_normal_quit(
 
     orig_run = real_tui.run
 
-    def headless_autopilot_run(home: Path, cwd: Path) -> int:
+    def headless_autopilot_run(
+        home: Path, cwd: Path, *, max_snapshot_bytes: int | None = None
+    ) -> int:
         async def auto_quit(pilot: Pilot) -> None:
             await pilot.pause()
             await pilot.press("q")
 
-        return orig_run(home, cwd, headless=True, auto_pilot=auto_quit)
+        return orig_run(
+            home,
+            cwd,
+            headless=True,
+            auto_pilot=auto_quit,
+            max_snapshot_bytes=max_snapshot_bytes,
+        )
 
     monkeypatch.setattr(real_tui, "run", headless_autopilot_run)
 
@@ -623,12 +632,20 @@ def test_cli_tui_sandbox_real_runner_e2e_internal_fault_exits_3(
 
     orig_run = real_tui.run
 
-    def headless_autopilot_run(home: Path, cwd: Path) -> int:
+    def headless_autopilot_run(
+        home: Path, cwd: Path, *, max_snapshot_bytes: int | None = None
+    ) -> int:
         async def auto_quit(pilot: Pilot) -> None:
             await pilot.pause()
             await pilot.press("q")
 
-        return orig_run(home, cwd, headless=True, auto_pilot=auto_quit)
+        return orig_run(
+            home,
+            cwd,
+            headless=True,
+            auto_pilot=auto_quit,
+            max_snapshot_bytes=max_snapshot_bytes,
+        )
 
     monkeypatch.setattr(real_tui, "run", headless_autopilot_run)
 
@@ -636,3 +653,65 @@ def test_cli_tui_sandbox_real_runner_e2e_internal_fault_exits_3(
     result = runner.invoke(app, ["tui", "--sandbox", str(tmp_path)])
     assert result.exit_code == int(ExitCode.INTERNAL)
     assert "Traceback" not in result.stderr
+
+
+# --- R01 capture budget plumbing -------------------------------------------
+
+
+def _capture_budgets(
+    monkeypatch: pytest.MonkeyPatch, extra_args: list[str], mock_home: Path
+) -> tuple[Any, list[int | None]]:
+    """Invoke ``tui`` with a recording runner and return (result, budgets)."""
+    received: list[int | None] = []
+
+    def fake_runner(home: Path, cwd: Path, *, max_snapshot_bytes: int | None = None) -> int:
+        received.append(max_snapshot_bytes)
+        return 0
+
+    monkeypatch.setattr(cli, "_is_textual_available", lambda: True)
+    monkeypatch.setattr(cli, "_stream_isatty", lambda s: True)
+    _install_fake_tui(monkeypatch, fake_runner)
+
+    result = runner.invoke(app, ["tui", "--sandbox", str(mock_home), *extra_args])
+    return result, received
+
+
+def test_tui_forwards_the_default_snapshot_budget(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`skill-lens tui` is bounded by default, with no flag needed."""
+    result, received = _capture_budgets(monkeypatch, [], mock_home)
+
+    assert result.exit_code == 0
+    assert received == [DEFAULT_MAX_SNAPSHOT_BYTES]
+
+
+def test_tui_forwards_an_explicit_snapshot_budget(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An explicit byte count reaches the runner unchanged."""
+    result, received = _capture_budgets(monkeypatch, ["--max-snapshot-bytes", "12345"], mock_home)
+
+    assert result.exit_code == 0
+    assert received == [12345]
+
+
+def test_tui_accepts_zero_to_disable_the_budget(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """``0`` is the documented opt-out and is forwarded as-is."""
+    result, received = _capture_budgets(monkeypatch, ["--max-snapshot-bytes", "0"], mock_home)
+
+    assert result.exit_code == 0
+    assert received == [0]
+
+
+def test_tui_rejects_a_negative_snapshot_budget(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A negative budget is a usage error and never reaches the runner."""
+    result, received = _capture_budgets(monkeypatch, ["--max-snapshot-bytes", "-1"], mock_home)
+
+    assert result.exit_code == int(ExitCode.USAGE)
+    assert received == []
+    assert "must be 0 (no limit) or a positive byte count" in " ".join(result.stderr.split())
