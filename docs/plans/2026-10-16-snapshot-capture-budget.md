@@ -1,10 +1,10 @@
 # Plan: bound TUI snapshot capture with an explicit refusal budget (R01)
 
-Status: Agreed
+Status: Agreed, amended 2026-10-16 (see the Amendment section at the end)
 Authorization: User instruction, 2026-10-16: "ok we will follow GLM composite / create the PR and do
 the fix and tell me when it's Merge ready." Scope narrowed by the user's answers to three explicit
 questions: refusal budget only (no binary elision), payload bytes only, 256 MiB default, on by default.
-Reference: a802b1f04836bb9641527372be80aee218ad0903
+Reference: pending — amendment freeze in progress (original freeze: a802b1f04836bb9641527372be80aee218ad0903)
 Risk and review: **High** — the change touches the snapshot capture consistency path and the frozen
 error surface of the TUI session controller. Planning review: two independent read-only critics from
 verified different families — Codex `gpt-6.1-sol` (OpenAI) and GLM `glm-5.3-flash` (Zhipu). Both
@@ -49,7 +49,8 @@ Verified facts, with the evidence each rests on:
 
 In scope:
 
-- Pre-flight payload sizing and refusal in `capture_session`, before any payload byte is read.
+- Payload sizing and refusal in `capture_session`, measured before the capture
+  phase reads any file and enforced again against the bytes actually read.
 - A dedicated `SnapshotTooLarge` error carrying the measured total and the configured limit.
 - A TUI refusal surface that is distinct from the transient retry surface.
 - A `--max-snapshot-bytes` option on `skill-lens tui`, default 256 MiB, with `0` meaning "no limit".
@@ -113,7 +114,8 @@ Out of scope, deliberately:
      measurements.
 
 6. **Tests**
-   - New `tests/test_snapshot_budget.py`: refusal fires before any payload read (reads patched to
+   - New `tests/test_snapshot_budget.py`: refusal fires before the capture phase reads any file
+     (reads patched to
      raise); exactly-at-limit is admitted; one byte over is refused; config and lockfile bytes are not
      counted; an incomplete tree still raises `IncompleteTreeError` rather than `SnapshotTooLarge`;
      `max_snapshot_bytes=None` and `0` mean unbounded.
@@ -124,8 +126,9 @@ Out of scope, deliberately:
 
 ## Acceptance
 
-- The refusal is raised before any payload byte is read, proven by a guard test that patches the read
-  path to raise.
+- The refusal is raised before the capture phase reads any file, proven by a guard test that patches
+  the capture-phase read path to raise, and the budget is enforced again against the bytes actually
+  read so a file that grows after the measurement cannot carry the capture past the limit.
 - Boundary behaviour is exact: total equal to the limit is admitted; one byte more is refused.
 - Only skill payload bytes count toward the limit; captured configuration and lockfile bytes do not.
 - An unreadable or incomplete tree still produces `IncompleteTreeError`, unchanged.
@@ -154,3 +157,45 @@ Out of scope, deliberately:
   review checklist. It becomes worthwhile only with evidence about the real-world binary/text
   composition of retained payloads, which Stage H explicitly did not measure.
 - **Rejected**: the issue's proposals 1-4, for the contract reasons recorded above.
+
+## Amendment (2026-10-16) — scope of the pre-read guarantee
+
+**Authorization:** the owner selected "Amend the guarantee" on 2026-10-16 in response to the
+independent implementation review. This amendment changes the execution contract, so it was frozen
+with the same two-commit procedure as the original plan.
+
+**Finding that forced it.** The implementation review (Codex `gpt-6.1-sol`) showed that the original
+acceptance criterion — the refusal is raised "before any payload byte is read" — is **not
+achievable**, and that this plan was internally inconsistent: the implementation steps place the
+measurement *after* `live_discovery()`, while the acceptance criterion demanded a guarantee that
+ordering cannot provide. The reason is structural, not a placement mistake:
+
+- `capture_session` must call `live_discovery()` before it can measure anything, because discovery is
+  what determines the set of entrypoints to measure.
+- Discovery parses each skill's source document (`discovery.py:785-790` → `parser.py:185`,
+  `path.read_text()`) and retains the body on the entry.
+- Discovery's own enumeration reads a candidate document to decide whether a qualified standalone
+  markdown file qualifies at all (`discovery.py:368-384`).
+
+Meeting the original criterion would therefore require redesigning how discovery identifies
+candidates — a change to a load-bearing module, with its own plan and review round. The owner chose
+not to fold that into this change.
+
+**Amended contract.** The budget now guarantees:
+
+- the capture phase reads no payload once the home is known to be over budget; and
+- the budget is enforced again against the bytes actually read, so a file that grows after the
+  measurement cannot carry the capture past the limit. Normalised fingerprints cannot catch that
+  alone: replacing LF with CRLF doubles the raw bytes while leaving the normalised hash unchanged.
+
+It does **not** bound discovery's parse of each skill source document. That read is a recorded
+residual, stated as such in `FULL_SCREEN_TUI.md` §9.3, the CHANGELOG entry, and the R01 addendum.
+
+**Why the residual is acceptable.** The payload R01 measured is support-file assets, which discovery
+only streams for hashing and never retains; the budget fully covers them. What sits outside it is a
+single skill source document large enough to matter on its own. Closing that is recorded as future
+work, not claimed as done.
+
+**Also amended by this round**, from the same review: the budget is enforced against bytes actually
+read; an accepted internal fault clears a standing refusal so a fault is never masked; and the
+documentation no longer claims the line-oriented commands retain no payload.
