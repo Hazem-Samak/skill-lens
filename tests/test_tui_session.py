@@ -32,7 +32,7 @@ from skill_lens.core.discovery import (
 )
 from skill_lens.core.exitcodes import ExitCode
 from skill_lens.core.scanner import ScanReport, ScanSummary
-from skill_lens.core.snapshot import SnapshotChanged
+from skill_lens.core.snapshot import SnapshotChanged, SnapshotTooLarge
 from skill_lens.core.snapshot_models import FrozenDiscoveryIndex, SessionSnapshot
 from skill_lens.models.compare import CompareReport
 from skill_lens.models.diff import DiffReport
@@ -754,3 +754,61 @@ def test_report_error_during_refresh_regression() -> None:
 
     # Close returns exit code 3
     assert ctrl.close() == int(ExitCode.INTERNAL)
+
+
+# --- R01 refusal budget ----------------------------------------------------
+
+
+def test_size_refusal_sets_dedicated_refusal_message() -> None:
+    """A budget refusal is reported as a refusal, never as a retryable change."""
+    ctrl = SessionController()
+    gen1, _ = ctrl.request_refresh()  # type: ignore[misc]
+    snap1 = _make_dummy_snapshot(gen1)
+    ctrl.accept_capture(snap1, gen1)
+
+    gen2, _ = ctrl.request_refresh()  # type: ignore[misc]
+    err = SnapshotTooLarge(total_bytes=300 * 1024 * 1024, limit_bytes=256 * 1024 * 1024)
+    assert ctrl.accept_capture_error(gen2, err) is True
+
+    assert ctrl.current is snap1  # Previous generation is preserved!
+    assert ctrl.is_failed is False  # A refusal is not an internal fault!
+    assert ctrl.retry_message is None  # Never uses the retry surface!
+    assert ctrl.refusal_message == str(err)
+    assert ctrl.status == "refused"
+    assert "Press r to retry" not in (ctrl.refusal_message or "")
+
+
+def test_refusal_is_cleared_by_a_later_refresh() -> None:
+    """A new refresh clears a standing refusal."""
+    ctrl = SessionController()
+    gen, _ = ctrl.request_refresh()  # type: ignore[misc]
+    ctrl.accept_capture_error(gen, SnapshotTooLarge(total_bytes=2, limit_bytes=1))
+    assert ctrl.status == "refused"
+
+    ctrl.request_refresh()
+    assert ctrl.refusal_message is None
+    assert ctrl.status == "loading"
+
+
+def test_refusal_is_cleared_by_a_successful_capture() -> None:
+    """A successful capture supersedes a standing refusal."""
+    ctrl = SessionController()
+    gen1, _ = ctrl.request_refresh()  # type: ignore[misc]
+    ctrl.accept_capture_error(gen1, SnapshotTooLarge(total_bytes=2, limit_bytes=1))
+
+    gen2, _ = ctrl.request_refresh()  # type: ignore[misc]
+    snap2 = _make_dummy_snapshot(gen2)
+    assert ctrl.accept_capture(snap2, gen2) is True
+    assert ctrl.refusal_message is None
+    assert ctrl.status == "ready"
+
+
+def test_stale_refusal_is_rejected() -> None:
+    """A refusal from a superseded generation must not affect state."""
+    ctrl = SessionController()
+    gen1, _ = ctrl.request_refresh()  # type: ignore[misc]
+    gen2, _ = ctrl.request_refresh()  # type: ignore[misc]
+    assert gen1 != gen2
+
+    assert ctrl.accept_capture_error(gen1, SnapshotTooLarge(total_bytes=2, limit_bytes=1)) is False
+    assert ctrl.refusal_message is None

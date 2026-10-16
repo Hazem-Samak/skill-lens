@@ -25,6 +25,7 @@ from skill_lens.core.exitcodes import ExitCode, FailOn, exit_code_for, fail_on_h
 from skill_lens.core.hasher import IncompleteTreeError
 from skill_lens.core.resolver import resolve_skill
 from skill_lens.core.scanner import build_scan_report, scan_severities
+from skill_lens.core.snapshot import DEFAULT_MAX_SNAPSHOT_BYTES
 from skill_lens.models import dumps
 from skill_lens.models.enums import Severity
 from skill_lens.registry.loader import list_agents
@@ -51,7 +52,7 @@ error_console = Console(stderr=True)
 class TuiRunner(Protocol):
     """Callable interface for the TUI entry point."""
 
-    def __call__(self, home: Path, cwd: Path) -> int: ...
+    def __call__(self, home: Path, cwd: Path, *, max_snapshot_bytes: int | None = None) -> int: ...
 
 
 def _is_textual_available() -> bool:
@@ -91,11 +92,19 @@ def _load_tui_runner() -> TuiRunner:
     return cast(TuiRunner, runner)
 
 
-def _launch_tui(home: Path, cwd: Path) -> None:
-    """Launch the terminal UI through the lazy adapter boundary."""
+def _launch_tui(
+    home: Path,
+    cwd: Path,
+    max_snapshot_bytes: int | None = DEFAULT_MAX_SNAPSHOT_BYTES,
+) -> None:
+    """Launch the terminal UI through the lazy adapter boundary.
+
+    The budget defaults to the project default so the bare-invocation path,
+    which has no flag to pass, is bounded exactly like ``skill-lens tui``.
+    """
     try:
         runner = _load_tui_runner()
-        code = runner(home, cwd)
+        code = runner(home, cwd, max_snapshot_bytes=max_snapshot_bytes)
     except typer.Exit:
         raise
     except Exception as exc:
@@ -240,8 +249,27 @@ def tui(
         Path | None,
         typer.Option("--cwd", help=_CWD_HELP),
     ] = None,
+    max_snapshot_bytes: Annotated[
+        int,
+        typer.Option(
+            "--max-snapshot-bytes",
+            help=(
+                "Refuse to open a home whose captured skill payload exceeds this many "
+                f"bytes (default {DEFAULT_MAX_SNAPSHOT_BYTES}). 0 disables the limit. "
+                "The line-oriented commands are unaffected."
+            ),
+        ),
+    ] = DEFAULT_MAX_SNAPSHOT_BYTES,
 ) -> None:
     """Open the interactive terminal UI."""
+    if max_snapshot_bytes < 0:
+        error_console.print(
+            "Error: --max-snapshot-bytes must be 0 (no limit) or a positive byte count.",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
+        raise typer.Exit(code=int(ExitCode.USAGE))
     _apply_sandbox(sandbox)
     home = _effective_home()
     working_dir = _effective_cwd(cwd, sandbox)
@@ -264,7 +292,7 @@ def tui(
             highlight=False,
         )
         raise typer.Exit(code=int(ExitCode.USAGE))
-    _launch_tui(home, working_dir)
+    _launch_tui(home, working_dir, max_snapshot_bytes=max_snapshot_bytes)
 
 
 @app.command()

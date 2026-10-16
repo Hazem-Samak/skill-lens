@@ -60,6 +60,44 @@ class SnapshotChanged(Exception):
         super().__init__(message)
 
 
+#: Default ceiling on the total skill payload one capture may read, in bytes.
+#: Chosen with headroom over the largest Stage H fixture (a 64 MiB payload whose
+#: transient refresh peak measured ~152 MiB), so it closes R01 for real homes
+#: without refusing any of the measured scenarios.
+DEFAULT_MAX_SNAPSHOT_BYTES = 256 * 1024 * 1024
+
+_MIB = 1024 * 1024
+
+
+def format_bytes(count: int) -> str:
+    """Format a byte count as a short human-readable size, e.g. ``256.0 MiB``."""
+    if count >= _MIB:
+        return f"{count / _MIB:.1f} MiB"
+    if count >= 1024:
+        return f"{count / 1024:.1f} KiB"
+    return f"{count} B"
+
+
+class SnapshotTooLarge(Exception):
+    """Raised when the capture payload would exceed the configured budget.
+
+    A deliberate refusal, not a fault: nothing is published, the previously
+    valid generation is kept, and the line-oriented CLI still works for the same
+    home. The message deliberately never suggests a retry, because retrying an
+    unchanged oversized home cannot help.
+    """
+
+    def __init__(self, *, total_bytes: int, limit_bytes: int) -> None:
+        self.total_bytes = total_bytes
+        self.limit_bytes = limit_bytes
+        super().__init__(
+            f"Snapshot refused: this home holds {format_bytes(total_bytes)} of skill payload, "
+            f"above the {format_bytes(limit_bytes)} limit, so it was not read. The previous view "
+            "is kept. Use the command line for this home, or raise the limit with "
+            "--max-snapshot-bytes."
+        )
+
+
 def _read_input_guarded(
     path: Path, *, cancelled: Callable[[], bool] | None = None
 ) -> CapturedInput:
@@ -138,15 +176,79 @@ def _collect_display_paths_and_locations(
     return display_paths, same_locations
 
 
+def _stat_size(path: Path) -> int:
+    """Size of one file, mapping filesystem errors the way capture does."""
+    try:
+        return path.stat().st_size
+    except OSError as err:
+        reason = (
+            "denied"
+            if isinstance(err, PermissionError)
+            else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+        )
+        raise IncompleteTreeError(path=path, reason=reason) from err
+
+
+def _measure_capture_payload(
+    index: DiscoveryIndex,
+    *,
+    cancelled: Callable[[], bool] | None = None,
+) -> tuple[int, bool]:
+    """Total payload bytes a capture would read, and whether every entry was measurable.
+
+    Walks the same canonical roots with the same
+    :func:`~skill_lens.core.hasher.iter_files` rules the capture loop uses, so
+    the figure matches what would actually be retained. An entry the capture
+    loop would reject for an incomplete tree is skipped and reported through
+    ``sized_all=False``: the budget must never pre-empt the existing
+    ``IncompleteTreeError`` for a tree that cannot be read, so a false result
+    suppresses the refusal entirely rather than guessing a partial total.
+    """
+    total = 0
+    sized_all = True
+    for entry in index.entries:
+        check_cancelled(cancelled)
+        if entry.canonical.status is not CanonicalStatus.OK:
+            continue
+        if not entry.traversal_complete or entry.content_hash is None:
+            sized_all = False
+            continue
+        root = Path(entry.canonical_path or entry.entrypoint_path)
+        if root.is_dir():
+            try:
+                rel_paths = iter_files(root, cancelled=cancelled)
+            except IncompleteTreeError:
+                raise
+            except OSError as err:
+                reason = (
+                    "denied"
+                    if isinstance(err, PermissionError)
+                    else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+                )
+                raise IncompleteTreeError(path=root, reason=reason) from err
+            for rel in rel_paths:
+                check_cancelled(cancelled)
+                total += _stat_size(root / rel)
+        else:
+            total += _stat_size(root)
+    return total, sized_all
+
+
 def capture_session(
     *,
     generation: int,
     home: Path,
     cwd: Path,
     registry: dict[str, AgentDefinition] | None = None,
+    max_snapshot_bytes: int | None = None,
     cancelled: Callable[[], bool] | None = None,
 ) -> SessionSnapshot:
-    """Capture a consistent photograph of the skill inventory, files, and health."""
+    """Capture a consistent photograph of the skill inventory, files, and health.
+
+    When ``max_snapshot_bytes`` is a positive number, the total skill payload is
+    measured before any payload byte is read and an oversized home is refused
+    with :class:`SnapshotTooLarge`. A value of ``None`` or ``0`` means unbounded.
+    """
     check_cancelled(cancelled)
     if home != paths.home():
         raise ValueError(f"supplied home '{home}' does not match effective home '{paths.home()}'")
@@ -158,6 +260,14 @@ def capture_session(
     index_1 = live_discovery(cwd=cwd, registry=registry_dict, cancelled=cancelled)
     norm_home = Path(index_1.home)
     norm_cwd = Path(index_1.cwd)
+
+    # 1b. Refuse an oversized payload before reading any of it. Checking here,
+    # ahead of the byte capture below, means an oversized home never allocates
+    # the buffers it would be refused for.
+    if max_snapshot_bytes is not None and max_snapshot_bytes > 0:
+        total_bytes, sized_all = _measure_capture_payload(index_1, cancelled=cancelled)
+        if sized_all and total_bytes > max_snapshot_bytes:
+            raise SnapshotTooLarge(total_bytes=total_bytes, limit_bytes=max_snapshot_bytes)
 
     # 2. Capture settings and lock bytes/status through guarded reader
     # Unconditionally register candidate paths so absent -> created mid-capture
@@ -552,9 +662,12 @@ def snapshot_same_location(snapshot: SessionSnapshot, a: str, b: str) -> bool:
 
 
 __all__ = [
+    "DEFAULT_MAX_SNAPSHOT_BYTES",
     "SnapshotChanged",
+    "SnapshotTooLarge",
     "capture_session",
     "entry_for_path",
+    "format_bytes",
     "snapshot_compare",
     "snapshot_diff",
     "snapshot_path",

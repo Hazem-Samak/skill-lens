@@ -216,7 +216,14 @@ def test_prompt_quit_does_not_block_on_worker(
     worker_finished = threading.Event()
     watchdog_fired = threading.Event()
 
-    def blocked_capture(*, generation: int, home: Path, cwd: Path, cancelled: Any = None) -> Any:
+    def blocked_capture(
+        *,
+        generation: int,
+        home: Path,
+        cwd: Path,
+        max_snapshot_bytes: Any = None,
+        cancelled: Any = None,
+    ) -> Any:
         capture_started.set()
         # Block indefinitely until release_capture is explicitly set
         release_capture.wait()

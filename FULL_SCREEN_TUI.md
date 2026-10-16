@@ -679,7 +679,8 @@ the app with a traceback. Merely adding `@work(thread=True)` is insufficient.
 - Use `call_from_thread()` or thread-safe messages for updates. Workers read
   the validated session home/cwd and do not reset global sandbox state.
 - Handle expected conditions (missing skills, unreadable roots, invalid agent
-  selection) as ordinary model results or inline messages.
+  selection, an oversized capture payload per §9.3) as ordinary model results or
+  inline messages.
 - Set `exit_on_error=False` for workers and handle their error events. An
   unexpected internal fault shows a plain-English error panel, retains details
   in memory and marks the run as failed. Acknowledging/exiting then returns `3`;
@@ -734,6 +735,39 @@ do not silently truncate inputs, add a disk cache, or relax the coverage floor.
 Step 1 repeats the probe on the real implementation; Step 3 measures the actual
 widget and keyboard responsiveness. No timings have been measured by this plan
 revision.
+
+### 9.3 Capture payload budget (R01)
+
+Stage H recorded R01: capture held every file's bytes with no byte bound, so a
+byte-heavy home could pull an unbounded amount of file content into memory. It
+is a risk, not a reproduced failure — see
+[`resource-risk.md`](docs/validation/assessment-repairs/h/resource-risk.md). The
+owner's chosen policy is **explicit refusal**, frozen in
+[`docs/plans/2026-10-16-snapshot-capture-budget.md`](docs/plans/2026-10-16-snapshot-capture-budget.md).
+
+- The total skill payload is measured **before** any payload byte is read. An
+  oversized home is refused and nothing is published, so the buffers the refusal
+  is about are never allocated. A check placed after the read would bound only
+  the retained heap and leave the refresh overlap spike intact.
+- Only skill payload bytes count toward the budget. Captured configuration and
+  lockfile bytes are accounted separately and can never tip it over.
+- The default budget is 256 MiB, chosen with headroom over the largest measured
+  fixture (a 64 MiB payload whose transient refresh peak measured ~152 MiB).
+  `skill-lens tui --max-snapshot-bytes <bytes>` overrides it and `0` disables the
+  limit; a negative value is a usage error. Bare invocation, which has no flag to
+  pass, uses the same default.
+- A refusal is an expected condition, not an internal fault. It keeps the
+  previously published generation, leaves a normal quit at exit `0`, and is
+  reported on its own surface. It must never gain the "press r to retry"
+  guidance the transient consistency errors carry: retrying an unchanged
+  oversized home cannot help.
+- A tree that cannot be read keeps its existing `IncompleteTreeError`. The budget
+  never pre-empts it.
+- The line-oriented commands are unaffected and remain the fallback for a home
+  the TUI refuses; they read live and stream, so they retain no payload.
+- No temporary files, no disk cache, no silent truncation and no hash-only
+  degraded mode. A degraded *text* file would need a third render state and would
+  change diff output, so refusing to publish is the honest choice.
 
 ---
 

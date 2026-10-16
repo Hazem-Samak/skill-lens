@@ -358,7 +358,14 @@ def test_synchronous_run_quit_proof_before_blocked_capture_release(
     worker_finished = threading.Event()
     watchdog_fired = threading.Event()
 
-    def blocked_capture(*, generation: int, home: Path, cwd: Path, cancelled: Any = None) -> Any:
+    def blocked_capture(
+        *,
+        generation: int,
+        home: Path,
+        cwd: Path,
+        max_snapshot_bytes: Any = None,
+        cancelled: Any = None,
+    ) -> Any:
         capture_started.set()
         # Block indefinitely until release_capture is explicitly set
         release_capture.wait()
@@ -474,7 +481,14 @@ def test_real_worker_refresh3_finishes_before_refresh2_publishes_newest(
     gen2_cancelled_was_set = threading.Event()
     gen2_completed = threading.Event()
 
-    def racy_capture(*, generation: int, home: Path, cwd: Path, cancelled: Any = None) -> Any:
+    def racy_capture(
+        *,
+        generation: int,
+        home: Path,
+        cwd: Path,
+        max_snapshot_bytes: Any = None,
+        cancelled: Any = None,
+    ) -> Any:
         if generation == 2:
             assert cancelled is not None and callable(cancelled)
             # Before gen3 runs, gen2's event must not be set
@@ -485,7 +499,13 @@ def test_real_worker_refresh3_finishes_before_refresh2_publishes_newest(
                 gen2_cancelled_was_set.set()
             # Deliberately ignore cancellation AFTER verifying correct event was supplied
             # to produce an actual old snapshot and exercise late CaptureComplete
-            snap = real_capture(generation=generation, home=home, cwd=cwd, cancelled=lambda: False)
+            snap = real_capture(
+                generation=generation,
+                home=home,
+                cwd=cwd,
+                max_snapshot_bytes=max_snapshot_bytes,
+                cancelled=lambda: False,
+            )
             gen2_completed.set()
             return snap
         return real_capture(generation=generation, home=home, cwd=cwd, cancelled=cancelled)
@@ -560,7 +580,14 @@ def test_real_worker_refresh3_finishes_before_refresh2_stale_error_rejected(
     gen2_cancelled_was_set = threading.Event()
     gen2_completed = threading.Event()
 
-    def racy_capture_error(*, generation: int, home: Path, cwd: Path, cancelled: Any = None) -> Any:
+    def racy_capture_error(
+        *,
+        generation: int,
+        home: Path,
+        cwd: Path,
+        max_snapshot_bytes: Any = None,
+        cancelled: Any = None,
+    ) -> Any:
         if generation == 2:
             assert cancelled is not None and callable(cancelled)
             assert not cancelled(), "Gen 2 cancellation event was unexpectedly set prematurely"
@@ -570,7 +597,13 @@ def test_real_worker_refresh3_finishes_before_refresh2_stale_error_rejected(
                 gen2_cancelled_was_set.set()
             gen2_completed.set()
             raise RuntimeError("Stale gen 2 background failure")
-        return real_capture(generation=generation, home=home, cwd=cwd, cancelled=cancelled)
+        return real_capture(
+            generation=generation,
+            home=home,
+            cwd=cwd,
+            max_snapshot_bytes=max_snapshot_bytes,
+            cancelled=cancelled,
+        )
 
     monkeypatch.setattr("skill_lens.tui.app.capture_session", racy_capture_error)
 
@@ -774,10 +807,23 @@ def test_real_worker_newest_failure_retains_old_snapshot(
 
     real_capture = snapshot_module.capture_session
 
-    def failing_refresh(*, generation: int, home: Path, cwd: Path, cancelled: Any = None) -> Any:
+    def failing_refresh(
+        *,
+        generation: int,
+        home: Path,
+        cwd: Path,
+        max_snapshot_bytes: Any = None,
+        cancelled: Any = None,
+    ) -> Any:
         if generation > 1:
             raise RuntimeError("Newest refresh IO error")
-        return real_capture(generation=generation, home=home, cwd=cwd, cancelled=cancelled)
+        return real_capture(
+            generation=generation,
+            home=home,
+            cwd=cwd,
+            max_snapshot_bytes=max_snapshot_bytes,
+            cancelled=cancelled,
+        )
 
     monkeypatch.setattr("skill_lens.tui.app.capture_session", failing_refresh)
 

@@ -69,7 +69,7 @@ def test_f08_explicit_tui_noninteractive_streams_exits_2_no_runner(
 ) -> None:
     called = False
 
-    def fake_runner(home: Path, cwd: Path) -> int:
+    def fake_runner(home: Path, cwd: Path, *, max_snapshot_bytes: Any = None) -> int:
         nonlocal called
         called = True
         return 0
@@ -97,7 +97,7 @@ def test_f08_explicit_tui_both_interactive_launches(
 ) -> None:
     called = False
 
-    def fake_runner(home: Path, cwd: Path) -> int:
+    def fake_runner(home: Path, cwd: Path, *, max_snapshot_bytes: Any = None) -> int:
         nonlocal called
         called = True
         return 0
@@ -117,7 +117,7 @@ def test_f08_explicit_tui_missing_textual_precedes_stream_check(
 ) -> None:
     called = False
 
-    def fake_runner(home: Path, cwd: Path) -> int:
+    def fake_runner(home: Path, cwd: Path, *, max_snapshot_bytes: Any = None) -> int:
         nonlocal called
         called = True
         return 0

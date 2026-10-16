@@ -170,6 +170,20 @@ session; historical artifact labels use both bases.
 
 ## R01 — Snapshot memory is unbounded by bytes
 
+> **Update, 2026-10-16 — a resource policy is now implemented.** The owner chose
+> Stage H's *explicit refusal* option (option 2 below) and it shipped the same
+> working day. `capture_session` now measures the total skill payload **before**
+> reading any of it and refuses an oversized home with `SnapshotTooLarge`: nothing
+> is published and the previous generation is kept. The default budget is 256 MiB
+> and is overridable with `skill-lens tui --max-snapshot-bytes <bytes>` (`0`
+> disables it). Only skill payload counts; configuration bytes stay separately
+> accounted. The measurements below are unchanged historical evidence and remain
+> the record of *why* the policy exists. Policy: [`FULL_SCREEN_TUI.md` §9.3](../../../../FULL_SCREEN_TUI.md);
+> plan: [`docs/plans/2026-10-16-snapshot-capture-budget.md`](../../../plans/2026-10-16-snapshot-capture-budget.md).
+> The statements below that "no resource policy is approved or implemented", and
+> the list of future owner choices, describe Stage H as it stood at the time and
+> are superseded by this update.
+
 **Status: Valid resource risk; not a reproduced out-of-memory failure.**
 
 Capture stores every file's bytes, and refresh overlaps old and new generations.
