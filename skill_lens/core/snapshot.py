@@ -85,6 +85,10 @@ class SnapshotTooLarge(Exception):
     valid generation is kept, and the line-oriented CLI still works for the same
     home. The message deliberately never suggests a retry, because retrying an
     unchanged oversized home cannot help.
+
+    It is raised from two places: once from the pre-flight measurement, before
+    the capture phase reads any payload, and once from the capture loop itself if
+    files grew after that measurement.
     """
 
     def __init__(self, *, total_bytes: int, limit_bytes: int) -> None:
@@ -92,8 +96,8 @@ class SnapshotTooLarge(Exception):
         self.limit_bytes = limit_bytes
         super().__init__(
             f"Snapshot refused: this home holds {format_bytes(total_bytes)} of skill payload, "
-            f"above the {format_bytes(limit_bytes)} limit, so it was not read. The previous view "
-            "is kept. Use the command line for this home, or raise the limit with "
+            f"above the {format_bytes(limit_bytes)} limit. Nothing was published and the previous "
+            "view is kept. Use the command line for this home, or raise the limit with "
             "--max-snapshot-bytes."
         )
 
@@ -295,7 +299,13 @@ def capture_session(
         resolved_controls_map[agent.id] = ctrl
         disabled_overrides[agent.id] = ctrl.disabled_names
 
-    # 3. Capture file bytes for each discovered canonical copy
+    # 3. Capture file bytes for each discovered canonical copy. The budget is
+    # re-checked against the bytes actually read, so a file that grows after the
+    # pre-flight measurement cannot carry the capture past the limit. Normalised
+    # fingerprints cannot catch that alone: replacing LF with CRLF doubles the
+    # raw bytes while leaving the normalised hash unchanged.
+    limit = max_snapshot_bytes if (max_snapshot_bytes or 0) > 0 else None
+    captured_total = 0
     captured_files: dict[str, tuple[CapturedFile, ...]] = {}
     for entry in index_1.entries:
         check_cancelled(cancelled)
@@ -343,6 +353,9 @@ def capture_session(
                     ) from None
                 except OSError as err:
                     raise IncompleteTreeError(path=file_path, reason="io") from err
+                captured_total += len(data)
+                if limit is not None and captured_total > limit:
+                    raise SnapshotTooLarge(total_bytes=captured_total, limit_bytes=limit)
                 fingerprint = hash_bytes(data)
                 items.append(
                     CapturedFile(
@@ -372,6 +385,9 @@ def capture_session(
                 raise SnapshotChanged("Files changed while scanning. Press r to retry.") from None
             except OSError as err:
                 raise IncompleteTreeError(path=root, reason="io") from err
+            captured_total += len(data)
+            if limit is not None and captured_total > limit:
+                raise SnapshotTooLarge(total_bytes=captured_total, limit_bytes=limit)
             fingerprint = hash_bytes(data)
             if fingerprint != entry.content_hash:
                 raise SnapshotChanged("Files changed while scanning. Press r to retry.")

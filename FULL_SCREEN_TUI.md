@@ -745,10 +745,22 @@ is a risk, not a reproduced failure — see
 owner's chosen policy is **explicit refusal**, frozen in
 [`docs/plans/2026-10-16-snapshot-capture-budget.md`](docs/plans/2026-10-16-snapshot-capture-budget.md).
 
-- The total skill payload is measured **before** any payload byte is read. An
-  oversized home is refused and nothing is published, so the buffers the refusal
-  is about are never allocated. A check placed after the read would bound only
-  the retained heap and leave the refresh overlap spike intact.
+- The total skill payload is measured before the capture phase reads any file,
+  and the budget is enforced **again** against the bytes actually read, so a file
+  that grows after the measurement cannot carry the capture past the limit.
+  Normalised fingerprints cannot catch that alone: replacing LF with CRLF doubles
+  the raw bytes while leaving the normalised hash unchanged. An oversized home is
+  refused and nothing is published. A check placed only after the read would bound
+  the retained heap alone and leave the refresh overlap spike intact.
+- **What the budget does not cover.** Discovery runs before the measurement and
+  parses each skill's source document, retaining its body on the entry; its
+  qualification probe also reads a candidate document to decide whether it
+  qualifies. Those reads are transient, and they are **not** bounded by this
+  budget. What the budget bounds is the payload the capture retains and the
+  capture-phase read — the dominant driver R01 measured, since support-file
+  assets are only streamed for hashing during discovery and never retained. A
+  single skill source document large enough to matter on its own therefore sits
+  outside the guarantee. This is a recorded residual, not a hidden one.
 - Only skill payload bytes count toward the budget. Captured configuration and
   lockfile bytes are accounted separately and can never tip it over.
 - The default budget is 256 MiB, chosen with headroom over the largest measured
@@ -760,11 +772,14 @@ owner's chosen policy is **explicit refusal**, frozen in
   previously published generation, leaves a normal quit at exit `0`, and is
   reported on its own surface. It must never gain the "press r to retry"
   guidance the transient consistency errors carry: retrying an unchanged
-  oversized home cannot help.
+  oversized home cannot help. An accepted internal fault clears a standing
+  refusal, so a fault is never masked by it.
 - A tree that cannot be read keeps its existing `IncompleteTreeError`. The budget
   never pre-empts it.
-- The line-oriented commands are unaffected and remain the fallback for a home
-  the TUI refuses; they read live and stream, so they retain no payload.
+- The line-oriented commands are unaffected by this refusal policy and remain the
+  fallback for a home the TUI refuses. They are not a memory guarantee in their
+  own right: discovery still retains each parsed source document, and `diff`
+  reads complete text files for the copies it compares.
 - No temporary files, no disk cache, no silent truncation and no hash-only
   degraded mode. A degraded *text* file would need a third render state and would
   change diff output, so refusing to publish is the honest choice.

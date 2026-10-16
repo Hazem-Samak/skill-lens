@@ -74,20 +74,24 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
 
 - **Bounded TUI snapshot capture (R01).** The TUI now refuses to open a home
   whose captured skill payload exceeds a byte budget, instead of reading an
-  unbounded amount of file content into memory. The total is measured **before**
-  any payload byte is read, so an oversized home never allocates the buffers the
-  refusal is about. Only skill payload counts; captured configuration and
+  unbounded amount of file content into memory. The total is measured before the
+  capture phase reads any file and is enforced again against the bytes actually
+  read, so a file that grows after the measurement cannot carry the capture past
+  the limit. Only skill payload counts; captured configuration and
   lockfile bytes are accounted separately. The default budget is 256 MiB —
   headroom over the largest measured fixture (a 64 MiB payload whose transient
   refresh peak measured ~152 MiB). `skill-lens tui --max-snapshot-bytes <bytes>`
   overrides it and `0` disables the limit; a negative value is a usage error, and
   bare invocation uses the same default. A refusal is an expected condition: it
   keeps the previously published generation, leaves a normal quit at exit `0`,
-  and never suggests a retry that cannot help. The line-oriented commands are
-  unchanged and remain the fallback for any size. No temporary files, no disk
-  cache and no truncation; a tree that cannot be read still raises
-  `IncompleteTreeError`. This supersedes the "no resource policy is approved or
-  implemented" note in the Stage H section above. Policy:
+  and never suggests a retry that cannot help. An accepted internal fault clears
+  a standing refusal, so a fault is never masked by it. The line-oriented
+  commands are unaffected by this policy and remain the fallback for any size. No
+  temporary files, no disk cache and no truncation; a tree that cannot be read
+  still raises `IncompleteTreeError`. Discovery parses each skill source document
+  before the measurement, so that read is a recorded residual rather than a
+  bounded one; see `FULL_SCREEN_TUI.md` §9.3. This supersedes the "no resource
+  policy is approved or implemented" note in the Stage H section above. Policy:
   [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md) §9.3; plan:
   [`docs/plans/2026-10-16-snapshot-capture-budget.md`](./docs/plans/2026-10-16-snapshot-capture-budget.md).
 

@@ -33,7 +33,7 @@ from skill_lens.cli import app as cli_app
 from skill_lens.core import paths
 from skill_lens.core.cancellation import CaptureCancelled
 from skill_lens.core.exitcodes import ExitCode
-from skill_lens.core.snapshot import SnapshotChanged
+from skill_lens.core.snapshot import SnapshotChanged, SnapshotTooLarge
 from skill_lens.tui.app import (
     CaptureComplete,
     CaptureFailed,
@@ -1223,5 +1223,38 @@ def test_headless_report_error_during_refresh_widgets(
             # 5. Quit exits with exit code 3
             await pilot.press("q")
             assert app.return_code == int(ExitCode.INTERNAL)
+
+    asyncio.run(_run())
+
+
+def test_headless_size_refusal_renders_and_quits_with_0(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A size refusal shows its own message, keeps the run successful, and offers no retry."""
+    monkeypatch.setattr(paths, "home", lambda: tmp_path)
+    build_scenario("claude_personal_beats_project", tmp_path)
+
+    refusal = SnapshotTooLarge(total_bytes=300 * 1024 * 1024, limit_bytes=256 * 1024 * 1024)
+
+    def refusing_capture(*args: Any, **kwargs: Any) -> Any:
+        raise refusal
+
+    monkeypatch.setattr("skill_lens.tui.app.capture_session", refusing_capture)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=tmp_path, cwd=tmp_path)
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            assert not app.controller.is_failed
+            assert app.controller.refusal_message == str(refusal)
+            assert app.controller.retry_message is None
+            assert app.controller.status == "refused"
+
+            rendered = str(app.query_one("#status-text", Static).render())
+            assert "Snapshot refused" in rendered
+            assert "Press r to retry" not in rendered
+
+            await pilot.press("q")
+            assert app.return_code == int(ExitCode.OK)
 
     asyncio.run(_run())

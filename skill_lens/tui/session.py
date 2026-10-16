@@ -201,6 +201,8 @@ class SessionController:
             traceback.format_exception(type(error), error, error.__traceback__)
         )
         self.retry_message = None
+        # An internal fault must stay visible: a standing refusal must not mask it.
+        self.refusal_message = None
         return True
 
     def request_view(
@@ -316,6 +318,8 @@ class SessionController:
             traceback.format_exception(type(error), error, error.__traceback__)
         )
         self.retry_message = None
+        # An internal fault must stay visible: a standing refusal must not mask it.
+        self.refusal_message = None
         return True
 
     def invalidate_view(self, view: ViewName) -> None:

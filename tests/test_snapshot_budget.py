@@ -65,12 +65,13 @@ def _entry(
     root: Path,
     traversal_complete: bool,
     content_hash: str | None,
+    is_file: bool = False,
 ) -> DiscoveredEntry:
     """A minimal discoverable entry for direct sizing tests."""
     return DiscoveredEntry(
         entrypoint_path=str(root),
         name=name,
-        is_file=False,
+        is_file=is_file,
         is_symlink=False,
         canonical=CanonicalResult(
             status=CanonicalStatus.OK,
@@ -144,13 +145,15 @@ def test_no_limit_means_unbounded(mock_home: Path, budget: int | None) -> None:
 # --- Ordering: the refusal must precede the read ---------------------------
 
 
-def test_refusal_is_raised_before_any_payload_byte_is_read(
+def test_refusal_precedes_the_capture_phase_read(
     mock_home: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """The pre-flight sizing walk runs, and the payload read never happens.
+    """The pre-flight sizing walk runs, and the capture-phase read never happens.
 
-    ``hash_bytes`` is reached only after a whole file has been read into memory
-    by the capture loop, so making it raise proves the refusal came first.
+    ``hash_bytes`` is reached only after the capture loop has read a whole file
+    into memory, so making it raise proves the refusal came first. Discovery runs
+    earlier and does parse each skill source document; that read is a recorded
+    residual and is deliberately not what this test claims to cover.
     """
     skill_dir = _home_with_one_skill(mock_home)
     payload = _payload_bytes(skill_dir)
@@ -179,6 +182,35 @@ def test_refusal_is_raised_before_any_payload_byte_is_read(
     assert sized, "the pre-flight sizing walk must have run before refusing"
 
 
+def test_budget_is_enforced_against_the_bytes_actually_read(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A file that grows after measuring still cannot carry the capture over.
+
+    The pre-flight figure is forced low here, standing in for a file that grew
+    between the measurement and the read — including the case a normalised
+    fingerprint cannot see, where LF becomes CRLF and the raw bytes double while
+    the hash is unchanged.
+    """
+    skill_dir = _home_with_one_skill(mock_home)
+    payload = _payload_bytes(skill_dir)
+
+    monkeypatch.setattr(
+        snapshot_module, "_measure_capture_payload", lambda index, **kwargs: (1, True)
+    )
+
+    with pytest.raises(SnapshotTooLarge) as exc_info:
+        capture_session(
+            generation=1,
+            home=mock_home,
+            cwd=mock_home,
+            max_snapshot_bytes=payload - 1,
+        )
+
+    assert exc_info.value.total_bytes >= payload
+    assert exc_info.value.limit_bytes == payload - 1
+
+
 # --- Accounting: payload only ---------------------------------------------
 
 
@@ -200,6 +232,30 @@ def test_configuration_bytes_do_not_count_toward_the_budget(mock_home: Path) -> 
     )
 
     assert snapshot.generation == 1
+
+
+def test_standalone_file_entry_is_sized_as_one_file(tmp_path: Path) -> None:
+    """A standalone skill document is sized as a single file, not walked as a directory."""
+    document = tmp_path / "solo.md"
+    document.write_text("x" * 64, encoding="utf-8")
+    index = DiscoveryIndex(
+        home=str(tmp_path),
+        cwd=str(tmp_path),
+        entries=[
+            _entry(
+                name="solo",
+                root=document,
+                traversal_complete=True,
+                content_hash="sha256:" + "0" * 64,
+                is_file=True,
+            ),
+        ],
+    )
+
+    total, sized_all = _measure_capture_payload(index)
+
+    assert sized_all is True
+    assert total == 64
 
 
 # --- Preserved behaviour: incomplete trees --------------------------------

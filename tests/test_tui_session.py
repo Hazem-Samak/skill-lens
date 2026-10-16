@@ -812,3 +812,29 @@ def test_stale_refusal_is_rejected() -> None:
 
     assert ctrl.accept_capture_error(gen1, SnapshotTooLarge(total_bytes=2, limit_bytes=1)) is False
     assert ctrl.refusal_message is None
+
+
+def test_internal_fault_clears_a_standing_refusal() -> None:
+    """An accepted internal fault must stay visible, not be masked by a refusal."""
+    ctrl = SessionController()
+    gen1, _ = ctrl.request_refresh()  # type: ignore[misc]
+    snap1 = _make_dummy_snapshot(gen1)
+    ctrl.accept_capture(snap1, gen1)
+
+    gen2, _ = ctrl.request_refresh()  # type: ignore[misc]
+    ctrl.accept_capture_error(gen2, SnapshotTooLarge(total_bytes=2, limit_bytes=1))
+    assert ctrl.status == "refused"
+
+    req, _event, _cached = ctrl.request_view("why", ("skill-a", "claude"))
+    assert req is not None
+    assert (
+        ctrl.accept_view_error(
+            "why", req.request_id, req.generation, req.arguments, RuntimeError("report fault")
+        )
+        is True
+    )
+
+    assert ctrl.is_failed is True
+    assert ctrl.refusal_message is None
+    assert ctrl.status == "error"
+    assert "report fault" in (ctrl.last_error_details or "")
