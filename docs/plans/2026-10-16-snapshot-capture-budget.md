@@ -4,7 +4,7 @@ Status: Agreed
 Authorization: User instruction, 2026-10-16: "ok we will follow GLM composite / create the PR and do
 the fix and tell me when it's Merge ready." Scope narrowed by the user's answers to three explicit
 questions: refusal budget only (no binary elision), payload bytes only, 256 MiB default, on by default.
-Reference: pending until Step 5
+Reference: a802b1f04836bb9641527372be80aee218ad0903
 Risk and review: **High** — the change touches the snapshot capture consistency path and the frozen
 error surface of the TUI session controller. Planning review: two independent read-only critics from
 verified different families — Codex `gpt-6.1-sol` (OpenAI) and GLM `glm-5.3-flash` (Zhipu). Both
