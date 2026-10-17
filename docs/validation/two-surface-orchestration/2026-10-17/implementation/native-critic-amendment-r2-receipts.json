@@ -1,0 +1,151 @@
+{
+  "scope": "Exact amendment content review only; adoption/freeze and runtime still pending",
+  "reviewedSha256": "011648051eb7cd77a3b5d9fa4100cf1c9b9facbf5a8471d19b761132739ad1c3",
+  "records": [
+    {
+      "reviewer": "minimax",
+      "dispatch": {
+        "taskId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-minimax-r2",
+        "childThreadId": "thread:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-minimax-r2",
+        "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-minimax-r2:ordinal:1",
+        "childNodeId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-minimax-r2",
+        "status": "running",
+        "workState": "working",
+        "hasPendingChildRuns": false,
+        "latestTerminalRunId": null,
+        "latestTerminalStatus": null,
+        "latestTerminalSummary": null,
+        "latestTerminalResultContextTransferId": null,
+        "providerInstanceId": "mcode",
+        "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+        "summary": null,
+        "resultContextTransferId": null,
+        "hasPendingQuestion": false,
+        "waitTimedOut": false
+      },
+      "configuration": {
+        "threadId": "thread:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-minimax-r2",
+        "modelSelection": {
+          "instanceId": "mcode",
+          "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+          "options": [
+            {
+              "id": "thinkingEffort",
+              "value": "xhigh"
+            },
+            {
+              "id": "permissionMode",
+              "value": "bypassPermissions"
+            },
+            {
+              "id": "_t3/session-mode",
+              "value": "plan"
+            }
+          ]
+        },
+        "runtimeMode": "full-access",
+        "interactionMode": "plan"
+      },
+      "terminal": {
+        "taskId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-minimax-r2",
+        "childThreadId": "thread:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-minimax-r2",
+        "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-minimax-r2:ordinal:1",
+        "childNodeId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-minimax-r2",
+        "status": "completed",
+        "workState": "result_available",
+        "hasPendingChildRuns": false,
+        "latestTerminalRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-minimax-r2:ordinal:1",
+        "latestTerminalStatus": "completed",
+        "latestTerminalResultContextTransferId": "context-transfer:type:subagent_result:source-thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-minimax-r2:target-thread:38dc5ec9-41d8-4ba2-9c7d-e71a8b4986f7:3a7f46c3-c0a7-4b72-ac76-96d51269e14d",
+        "providerInstanceId": "mcode",
+        "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+        "resultContextTransferId": "context-transfer:type:subagent_result:source-thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-minimax-r2:target-thread:38dc5ec9-41d8-4ba2-9c7d-e71a8b4986f7:3a7f46c3-c0a7-4b72-ac76-96d51269e14d",
+        "hasPendingQuestion": false,
+        "waitTimedOut": false
+      },
+      "recentRuns": [
+        {
+          "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-minimax-r2:ordinal:1",
+          "ordinal": 1,
+          "status": "completed",
+          "providerInstanceId": "mcode",
+          "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+          "requestedAt": "2026-10-17T09:36:39.281Z",
+          "startedAt": "2026-10-17T09:36:41.613Z",
+          "completedAt": "2026-10-17T09:37:25.237Z"
+        }
+      ],
+      "pendingRequestCount": 0,
+      "prompt": "READ-ONLY CRITIC TASK. You are reviewing, not implementing.\n\nDo NOT create, edit, move, delete or rename any file in the repository. Do NOT run\nany command that writes: no formatters, no linters with --fix, no install, no\ngit commit/checkout/stash, no snapshot or golden regeneration, no test runs that\nwrite into the checkout. Test output, if you need it, goes only to a temporary\ndirectory outside the repository.\n\nIf you believe a change is required, do not make it. Report it instead.\n\nReturn only the report format below. Nothing else.\n\nHIGH-RISK AMENDMENT PLANNING REVIEW, ROUND 1. Exact repository root /Users/corvette/Documents/Projects Coding/Skill Lens (use explicit quoted cwd for every repository read; /tmp directories are evidence only; never search /). Current branch main HEAD b6d5a172aeeb4bb271103ad6634459c4bd212b60.\nReview exact draft docs/plans/2026-10-17-herdr-native-pilot-critic-amendment.md SHA256 a40ecffa2a271c636e34d50d1f8244fedf86a3c26680ba4ec071b9356b1e5c41. It is a proposal for adoption/freeze, not live runtime acceptance. Original frozen base docs/plans/2026-10-17-two-surface-orchestration.md @58d48cea483804b22767b381c6edd8274fe6ad44 remains unchanged.\nUser already approved existing session names/lifecycle and Hermes/Gemini/DeepSeek settings, then excluded Grok/XKiro and expressly delegated choosing only from eleven reliable model/provider pairs for all future choices. Read implementation/reliable-model-authorization-20261017.md (under dated evidence root below). Coordinator selected ONLY authorized Pi/AnyModel qwen/qwen3.8-max thinking high as proposed Herdr pilot critic1, alongside unchanged Pi/WorkBuddy DeepSeek high. T3 migration council stays the original MiniMax/mcode xhigh and DeepSeek/Pi high. No replacement was launched. No provider/config/route edits or new wrappers permitted.\nEvidence root docs/validation/two-surface-orchestration/2026-10-17/.\nInitial reads: exact draft, implementation/reliable-model-authorization-20261017.md, implementation/setup-approval-20261017.md, implementation/pilot-critic-research-adjudication.md, setup.md role/isolation sections, base plan sections4-7 and process/council relevant guard/selection/freeze rules. Full research if needed: implementation/grok-native-controls-research-r1.md, grok-native-controls-research-r2.md, pilot-critic-research-terminal-receipts.json. They are RAW historical research, NOT authority to use Grok/XKiro. Historical PROVEN/100% statements are explicitly rejected. AnyModel metadata independently verified exact provider/model; live catalog supports high. No actual model turn/identity/family proof.\nPrior findings/responses (from original proposal/planning/preflight, not an earlier amendment wave): both original preflight reviewers required real commit links/count provenance, single prepared fixture path, direct human Hermes startup instead of self-occupied-pane RPC, Pi --no-mcp plus explicit Herdr extension retention, honest cwd/tool versus jail limitations, no silent MiniMax kind substitution, all P01-P09 pending. They passed the corrected checkpoint only; reports implementation/reviews/preflight-*-r2.md and preflight-adjudication-r1/r2.md retain full context if needed. Gemini's later Grok research errors were reproduced: /tmp sandbox grants, fail-open warning, impossible agent file fallback with read-only tools. Grok now excluded by USER, not made a fallback; only necessary general report-capture lessons carry into Pi mapping.\nSource gates in implementation/pilot-critic-amendment-gates/:1048 passed,1 expected filesystem skip,91.11%;mypy37;Ruff check clean;format205 IN THAT RUN. No source/test/process change afterward. Original .path remains empty/untracked and must not change. Before-review fingerprint /tmp/skill-lens-herdr-critic-amendment-20261017/amendment-review-r1-before.json. No coordinator repository mutations during your review wave.\nRead installed help or narrowly necessary sources to prove concerns. Never access credentials/fullconfig/env/session histories/private skills, no model generation, no live Herdr server/session inventory/control/status from outside HERDR_ENV, no installs/updates/tests/approval/delegation. This is reviewing a safe proposal, not permission to test its launch. Shared mode full-access + plan is instruction restraint, not hard sandbox.\nDoes the exact amendment form a coherent, bounded and usable change to the base contract, with exact native controls/authority and preserved full-pilot acceptance? Pass can approve draft content for later user adoption; it cannot approve runtime, freeze permission or silently waive missing pilot evidence. Treat actual unresolved contract defects as blockers with evidence; do not call required future user adoption/pilot itself a drafting defect when correctly staged.\nReturn only six fields: EFFECTIVE_MODEL (your own provider/model, settings, runtimeMode/interactionMode, requested/configured/confirmed-or-unverified), VERDICT pass|changes_required|unverified, BLOCKERS(path:line,problem,expected,evidence), SUGGESTIONS(nonblocking), FILES_AT_RISK, CONCEDED. <=1200 words. Final message must contain complete report, not reading narration. Do not use approval or ExitPlanMode; remain read-only.\n\nPrimary question: Does the exact amendment respect user selection authority, frozen-reference precedence, adoption/freeze boundaries, unchanged migration reviewer roles and every preserved machine/process constraint?\nROUND 2 TARGETED FOLLOW-UP (CURRENT TARGET SUPERSEDES ROUND1 HASH). Original brief above is preserved as required, but now inspect corrected CURRENT draft SHA256 011648051eb7cd77a3b5d9fa4100cf1c9b9facbf5a8471d19b761132739ad1c3 at the same absolute repo/root/path, HEAD unchanged b6d5a17.\nPrior full reports in implementation/reviews/native-critic-amendment-minimax-r1.md and native-critic-amendment-deepseek-r1-complete.md. Original incomplete stub is native-critic-amendment-deepseek-r1-incomplete.md, not a verdict. Full coordinator reproduction/dispositions: implementation/native-critic-amendment-adjudication-r1.md. First-window fingerprints zero changes; this window /tmp/skill-lens-herdr-critic-amendment-20261017/amendment-review-r2-before.json.\nMiniMax blocker: draft promised newly empty per-dispatch directories for BOTH Pi critics but preserved DeepSeek used fixed pilot-artifacts/pi-sessions. Reproduced. Corrected by explicit delta in sections1/5/6/7: first critic Pi/AnyModel Qwen high AND both critics' session-storage templates. Full DeepSeek native template is now supplied, retaining its provider/model/thinking/tool/context flags while replacing only its session directory with pi-critic-deepseek-<dispatch-token>/sessions. Qwen uses separate pi-critic-qwen-<dispatch-token>/sessions. Both distinct fresh processes/conversations and empty directories still must be PROVEN in P02, never assumed. Old commands did NOT literally share one path; coordinator rejected that supporting overstatement without rejecting real mismatch.\nAlso incorporated: TWO distinct available shell-pane IDs for simultaneous wave; different per-critic tokens/names; submit both prompts before result collection. Read-only Pi report-file fallback unavailable; complete native recovery required or P04 unavailable/stop. This applies to the two mappings, not universal removal of base4.2 fallback for other kinds. Served family unverified disclosure and explicit named-pair adoption remain.\nThe user already delegated model choice within the exclusive eleven-list (Grok and XKiro excluded). No new model question or substitution: AnyModel Qwen high selected; existing migration council remains exact MiniMax/mcode xhigh + WorkBuddy DeepSeek high. No pilot/adoption/freeze/runtime acceptance claimed.\nTargeted question: Is your earlier concern resolved by the explicit both-critic storage delta and coherent topology/scope? Independently inspect affected sections and dependencies; report any actual remaining blocker. Approval would cover exact draft CONTENT for later user adoption, not permission or runtime proof.\nNo new source/product changes; same four source gate evidence is available and no rerun is needed absent a specific concern. No model launches, credentials, liveHerdr control/status, repo writes or broad source explorations. Return COMPLETE six-field council report in final response <=1000words. Never finish with reading narration, and never invoke ExitPlanMode/approval or implement changes.\n"
+    },
+    {
+      "reviewer": "deepseek",
+      "dispatch": {
+        "taskId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-deepseek-r2",
+        "childThreadId": "thread:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-deepseek-r2",
+        "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-deepseek-r2:ordinal:1",
+        "childNodeId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-deepseek-r2",
+        "status": "running",
+        "workState": "working",
+        "hasPendingChildRuns": false,
+        "latestTerminalRunId": null,
+        "latestTerminalStatus": null,
+        "latestTerminalSummary": null,
+        "latestTerminalResultContextTransferId": null,
+        "providerInstanceId": "pi",
+        "model": "workbuddy/deepseek-v4.1-flash",
+        "summary": null,
+        "resultContextTransferId": null,
+        "hasPendingQuestion": false,
+        "waitTimedOut": false
+      },
+      "configuration": {
+        "threadId": "thread:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-deepseek-r2",
+        "modelSelection": {
+          "instanceId": "pi",
+          "model": "workbuddy/deepseek-v4.1-flash",
+          "options": [
+            {
+              "id": "thinking",
+              "value": "high"
+            }
+          ]
+        },
+        "runtimeMode": "full-access",
+        "interactionMode": "plan"
+      },
+      "terminal": {
+        "taskId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-deepseek-r2",
+        "childThreadId": "thread:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-deepseek-r2",
+        "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-deepseek-r2:ordinal:1",
+        "childNodeId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-critic-amendment-20261017-deepseek-r2",
+        "status": "completed",
+        "workState": "result_available",
+        "hasPendingChildRuns": false,
+        "latestTerminalRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-deepseek-r2:ordinal:1",
+        "latestTerminalStatus": "completed",
+        "latestTerminalResultContextTransferId": "context-transfer:type:subagent_result:source-thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-deepseek-r2:target-thread:38dc5ec9-41d8-4ba2-9c7d-e71a8b4986f7:02f2ed39-e07a-43bb-a9e6-2cff5b82d53d",
+        "providerInstanceId": "pi",
+        "model": "workbuddy/deepseek-v4.1-flash",
+        "resultContextTransferId": "context-transfer:type:subagent_result:source-thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-deepseek-r2:target-thread:38dc5ec9-41d8-4ba2-9c7d-e71a8b4986f7:02f2ed39-e07a-43bb-a9e6-2cff5b82d53d",
+        "hasPendingQuestion": false,
+        "waitTimedOut": false
+      },
+      "recentRuns": [
+        {
+          "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-critic-amendment-20261017-deepseek-r2:ordinal:1",
+          "ordinal": 1,
+          "status": "completed",
+          "providerInstanceId": "pi",
+          "model": "workbuddy/deepseek-v4.1-flash",
+          "requestedAt": "2026-10-17T09:36:39.237Z",
+          "startedAt": "2026-10-17T09:36:39.685Z",
+          "completedAt": "2026-10-17T09:39:16.569Z"
+        }
+      ],
+      "pendingRequestCount": 0,
+      "prompt": "READ-ONLY CRITIC TASK. You are reviewing, not implementing.\n\nDo NOT create, edit, move, delete or rename any file in the repository. Do NOT run\nany command that writes: no formatters, no linters with --fix, no install, no\ngit commit/checkout/stash, no snapshot or golden regeneration, no test runs that\nwrite into the checkout. Test output, if you need it, goes only to a temporary\ndirectory outside the repository.\n\nIf you believe a change is required, do not make it. Report it instead.\n\nReturn only the report format below. Nothing else.\n\nHIGH-RISK AMENDMENT PLANNING REVIEW, ROUND 1. Exact repository root /Users/corvette/Documents/Projects Coding/Skill Lens (use explicit quoted cwd for every repository read; /tmp directories are evidence only; never search /). Current branch main HEAD b6d5a172aeeb4bb271103ad6634459c4bd212b60.\nReview exact draft docs/plans/2026-10-17-herdr-native-pilot-critic-amendment.md SHA256 a40ecffa2a271c636e34d50d1f8244fedf86a3c26680ba4ec071b9356b1e5c41. It is a proposal for adoption/freeze, not live runtime acceptance. Original frozen base docs/plans/2026-10-17-two-surface-orchestration.md @58d48cea483804b22767b381c6edd8274fe6ad44 remains unchanged.\nUser already approved existing session names/lifecycle and Hermes/Gemini/DeepSeek settings, then excluded Grok/XKiro and expressly delegated choosing only from eleven reliable model/provider pairs for all future choices. Read implementation/reliable-model-authorization-20261017.md (under dated evidence root below). Coordinator selected ONLY authorized Pi/AnyModel qwen/qwen3.8-max thinking high as proposed Herdr pilot critic1, alongside unchanged Pi/WorkBuddy DeepSeek high. T3 migration council stays the original MiniMax/mcode xhigh and DeepSeek/Pi high. No replacement was launched. No provider/config/route edits or new wrappers permitted.\nEvidence root docs/validation/two-surface-orchestration/2026-10-17/.\nInitial reads: exact draft, implementation/reliable-model-authorization-20261017.md, implementation/setup-approval-20261017.md, implementation/pilot-critic-research-adjudication.md, setup.md role/isolation sections, base plan sections4-7 and process/council relevant guard/selection/freeze rules. Full research if needed: implementation/grok-native-controls-research-r1.md, grok-native-controls-research-r2.md, pilot-critic-research-terminal-receipts.json. They are RAW historical research, NOT authority to use Grok/XKiro. Historical PROVEN/100% statements are explicitly rejected. AnyModel metadata independently verified exact provider/model; live catalog supports high. No actual model turn/identity/family proof.\nPrior findings/responses (from original proposal/planning/preflight, not an earlier amendment wave): both original preflight reviewers required real commit links/count provenance, single prepared fixture path, direct human Hermes startup instead of self-occupied-pane RPC, Pi --no-mcp plus explicit Herdr extension retention, honest cwd/tool versus jail limitations, no silent MiniMax kind substitution, all P01-P09 pending. They passed the corrected checkpoint only; reports implementation/reviews/preflight-*-r2.md and preflight-adjudication-r1/r2.md retain full context if needed. Gemini's later Grok research errors were reproduced: /tmp sandbox grants, fail-open warning, impossible agent file fallback with read-only tools. Grok now excluded by USER, not made a fallback; only necessary general report-capture lessons carry into Pi mapping.\nSource gates in implementation/pilot-critic-amendment-gates/:1048 passed,1 expected filesystem skip,91.11%;mypy37;Ruff check clean;format205 IN THAT RUN. No source/test/process change afterward. Original .path remains empty/untracked and must not change. Before-review fingerprint /tmp/skill-lens-herdr-critic-amendment-20261017/amendment-review-r1-before.json. No coordinator repository mutations during your review wave.\nRead installed help or narrowly necessary sources to prove concerns. Never access credentials/fullconfig/env/session histories/private skills, no model generation, no live Herdr server/session inventory/control/status from outside HERDR_ENV, no installs/updates/tests/approval/delegation. This is reviewing a safe proposal, not permission to test its launch. Shared mode full-access + plan is instruction restraint, not hard sandbox.\nDoes the exact amendment form a coherent, bounded and usable change to the base contract, with exact native controls/authority and preserved full-pilot acceptance? Pass can approve draft content for later user adoption; it cannot approve runtime, freeze permission or silently waive missing pilot evidence. Treat actual unresolved contract defects as blockers with evidence; do not call required future user adoption/pilot itself a drafting defect when correctly staged.\nReturn only six fields: EFFECTIVE_MODEL (your own provider/model, settings, runtimeMode/interactionMode, requested/configured/confirmed-or-unverified), VERDICT pass|changes_required|unverified, BLOCKERS(path:line,problem,expected,evidence), SUGGESTIONS(nonblocking), FILES_AT_RISK, CONCEDED. <=1200 words. Final message must contain complete report, not reading narration. Do not use approval or ExitPlanMode; remain read-only.\n\nPrimary question: Are native Pi tool/context/extension/session controls, the two-Pi independence pattern, report recovery and stop conditions technically coherent with installed help and P01-P09, with no overstated proof or silent permission widening?\nROUND 2 TARGETED FOLLOW-UP (CURRENT TARGET SUPERSEDES ROUND1 HASH). Original brief above is preserved as required, but now inspect corrected CURRENT draft SHA256 011648051eb7cd77a3b5d9fa4100cf1c9b9facbf5a8471d19b761132739ad1c3 at the same absolute repo/root/path, HEAD unchanged b6d5a17.\nPrior full reports in implementation/reviews/native-critic-amendment-minimax-r1.md and native-critic-amendment-deepseek-r1-complete.md. Original incomplete stub is native-critic-amendment-deepseek-r1-incomplete.md, not a verdict. Full coordinator reproduction/dispositions: implementation/native-critic-amendment-adjudication-r1.md. First-window fingerprints zero changes; this window /tmp/skill-lens-herdr-critic-amendment-20261017/amendment-review-r2-before.json.\nMiniMax blocker: draft promised newly empty per-dispatch directories for BOTH Pi critics but preserved DeepSeek used fixed pilot-artifacts/pi-sessions. Reproduced. Corrected by explicit delta in sections1/5/6/7: first critic Pi/AnyModel Qwen high AND both critics' session-storage templates. Full DeepSeek native template is now supplied, retaining its provider/model/thinking/tool/context flags while replacing only its session directory with pi-critic-deepseek-<dispatch-token>/sessions. Qwen uses separate pi-critic-qwen-<dispatch-token>/sessions. Both distinct fresh processes/conversations and empty directories still must be PROVEN in P02, never assumed. Old commands did NOT literally share one path; coordinator rejected that supporting overstatement without rejecting real mismatch.\nAlso incorporated: TWO distinct available shell-pane IDs for simultaneous wave; different per-critic tokens/names; submit both prompts before result collection. Read-only Pi report-file fallback unavailable; complete native recovery required or P04 unavailable/stop. This applies to the two mappings, not universal removal of base4.2 fallback for other kinds. Served family unverified disclosure and explicit named-pair adoption remain.\nThe user already delegated model choice within the exclusive eleven-list (Grok and XKiro excluded). No new model question or substitution: AnyModel Qwen high selected; existing migration council remains exact MiniMax/mcode xhigh + WorkBuddy DeepSeek high. No pilot/adoption/freeze/runtime acceptance claimed.\nTargeted question: Is your earlier concern resolved by the explicit both-critic storage delta and coherent topology/scope? Independently inspect affected sections and dependencies; report any actual remaining blocker. Approval would cover exact draft CONTENT for later user adoption, not permission or runtime proof.\nNo new source/product changes; same four source gate evidence is available and no rerun is needed absent a specific concern. No model launches, credentials, liveHerdr control/status, repo writes or broad source explorations. Return COMPLETE six-field council report in final response <=1000words. Never finish with reading narration, and never invoke ExitPlanMode/approval or implement changes.\n"
+    }
+  ],
+  "identityAdjudication": "DeepSeek-routed report self-labels as MiniMax. Retained verbatim; that self-label is invalid identity proof. T3 task/configuration receipts corroborate requested/configured pi/workbuddy/deepseek-v4.1-flash thinking=high, full-access/plan. Upstream served model/family remains unverified; no verified-family claim."
+}

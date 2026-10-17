@@ -1,0 +1,33 @@
+{
+  "scope": "Read-only research; no model/pilot/session launch, no amendment approval",
+  "dispatch": {
+    "taskId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-pilot-critic-amendment-20261017-gemini-research-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-pilot-critic-amendment-20261017-gemini-research-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-pilot-critic-amendment-20261017-gemini-research-r1:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-pilot-critic-amendment-20261017-gemini-research-r1",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "summary": null,
+    "resultContextTransferId": null,
+    "hasPendingQuestion": false,
+    "waitTimedOut": false
+  },
+  "configuration": {
+    "threadId": "thread:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-pilot-critic-amendment-20261017-gemini-research-r1",
+    "modelSelection": {
+      "instanceId": "antigravity",
+      "model": "gemini-3.8-flash-high",
+      "options": []
+    },
+    "runtimeMode": "full-access",
+    "interactionMode": "plan"
+  },
+  "prompt": "You are the user-selected Gemini 3.8 Flash High worker, doing bounded read-only research for a pilot-critic amendment, NOT implementing or reviewing. Exact repository root: /Users/corvette/Documents/Projects Coding/Skill Lens . Use explicit cwd for reads; never search the whole filesystem. HEAD b6d5a172aeeb4bb271103ad6634459c4bd212b60, branch main, preexisting untracked .path preserved.\nUser just approved reviewed setup names skill-lens and skill-lens-pilot-20261017, human direct Hermes startup/restart, existing Hermes/Gemini/DeepSeek settings. User chose to consider separately reviewed amendment for supported native pilot critic. This permits research/drafting only; no replacement model launch, freeze or new machine policy yet. Exact Grok effort choice is pending. T3 migration council stays MiniMax/mcode xhigh and Pi/WorkBuddy DeepSeek high.\nRead original plan docs/plans/2026-10-17-two-surface-orchestration.md sections4.2-5,6B,7 and docs/validation/two-surface-orchestration/2026-10-17/setup.md; report bounded native Grok candidate controls for the amendment.\nKnown metadata: /Users/corvette/.grok/bin/grok version1.0.62 (1474f9cbdd91), grok models says logged in with grok.com, only grok-4.7. Installed herdr agent start --help lists native grok. Grok --help advertises --model, --reasoning-effort, --permission-mode plan, --tools, --disallowed-tools, --no-subagents, --disable-web-search, --cwd, --session-id new UUID (without resume/continue), --sandbox, --system-prompt-override, --rules, --leader-socket. These are advertised syntax, not proven behavior.\nResearch question: What exact proposed interactive native launch and session-scoped controls can satisfy critic role, fresh context/no automatic recall/import, no nested delegation, preserving Herdr integration, read-only tool limits and complete response capture? Distinguish proven help/source facts from unverified runtime. Do not guess tool IDs, enum values, sandbox profile names, memory-disable settings, or claim flags isolate filesystem universally. If necessary controls cannot be established, explicitly state the gap and pilot stop condition rather than inventing workarounds. Prefer smallest existing route with no wrapper/provider/config changes. Native help supported form herdr agent start <unique-name> --kind grok --pane <available-shell-pane-id> -- <args>.\nAllowed operations: read exact docs and installed CLI help/versions, inspect narrowly relevant installed Herdr integration code/docs and whitelisted non-secret Grok config fields. Do NOT dump credentials, auth/full config/env, session histories or private skills. Do not run Grok prompts, grok inspect (may expose config), model generation, update/install, leader/server/session start/stop, herdr live inventory/control/status, or integration update. Current process outside HERDR_ENV; never fake it.\nNo repository edits, staging, commit, push, delegation or tests. May create only external research artifact /tmp/skill-lens-herdr-critic-amendment-20261017/grok-native-controls.md (create parent if needed). Return full concise report <=1800 words plus artifact path: EFFECTIVE_MODEL(requested/configured/provider-confirmed-or-unverified), verified command/help evidence, proposed launch (label unrun), exact unresolved controls, impacts on P01-P09 and no permission widening. This is evidence gathering, not a feasibility verdict or acceptance. Preserve sole worker/reviewer separation."
+}

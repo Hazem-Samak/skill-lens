@@ -96,3 +96,26 @@ acceptance remains blocked on the concrete conditions above. No task has been re
 replaced to manufacture agreement. Current T3 process remains operational and unchanged.
 Delivery verification for this checkpoint must compare its resulting commit with origin/main
 and the GitHub remote main ref; the coordinator reports the observed hash after pushing.
+
+## Setup approval update
+
+The user approved the existing session/lifecycle and Hermes/Gemini/DeepSeek proposal
+after the reviewed checkpoint. See the [approval record](implementation/setup-approval-20261017.md).
+That approval prerequisite is resolved for those exact items. The user chose to consider
+a separately reviewed native-pilot-critic amendment; exact replacement selection, controls,
+operative approval/freeze, human startup and P01-P09 remain outstanding. The earlier
+missing-approval statements above describe the historical checkpoint, not a request to
+approve the same setup again. Full migration is still incomplete.
+
+## Native critic amendment review closeout
+
+The user delegated choosing within an exclusive eleven-model/provider list and excluded
+Grok/XKiro. The exact proposed Herdr pair is Pi/AnyModel Qwen3.8Max high and
+Pi/WorkBuddy DeepSeek high, with explicit separate empty per-dispatch session directories
+for both. Both configured T3 amendment reviewers passed corrected content with no blockers.
+See [final adjudication](implementation/native-critic-amendment-adjudication-r2.md) and
+[execution receipt](implementation/native-critic-amendment-execution-receipt.json).
+DeepSeek's self-identity mislabel is preserved and adjudicated; requested/configured routes
+are corroborated by T3 receipts, upstream identities remain unverified. These are amendment
+content reviews, not final full-migration/runtime acceptance. Exact amendment adoption and
+freeze remain pending. All P01-P09 remain unexecuted and Phase C remains gated on the pilot.

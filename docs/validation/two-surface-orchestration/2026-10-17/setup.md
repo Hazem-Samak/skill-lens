@@ -1,9 +1,11 @@
 # Two-Surface Orchestration: Herdr + cmux Setup Proposal
 
 **Date:** 2026-10-17  
-**Status:** Proposal / Preflight Complete — Pending User Approval  
+**Status:** Existing setup approved by user — Critic 1 amendment and live startup pending  
 **Plan Reference:** [`docs/plans/2026-10-17-two-surface-orchestration.md`](../../../plans/2026-10-17-two-surface-orchestration.md) @ frozen commit [`58d48cea483804b22767b381c6edd8274fe6ad44`](https://github.com/Hazem-Samak/skill-lens/commit/58d48cea483804b22767b381c6edd8274fe6ad44)  
 **Surface Context:** T3 Code (Outside Herdr; `HERDR_ENV` absent)
+
+**Approval update:** The user approved the existing session names, human-operated direct Hermes startup/restart and Hermes/Gemini/DeepSeek settings. See the [approval record](./implementation/setup-approval-20261017.md). Pending-approval wording below is historical for those approved items; Critic 1 still needs an exact separately reviewed amendment and approval. No pilot has run.
 
 ---
 

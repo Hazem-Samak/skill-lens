@@ -1,0 +1,8 @@
+{
+  "scope": "Amendment drafting source checks only",
+  "HOME": "/tmp/skill-lens-herdr-critic-amendment-20261017/gates/home",
+  "XDG_CONFIG_HOME": "/tmp/skill-lens-herdr-critic-amendment-20261017/gates/xdg",
+  "COVERAGE_FILE": "/tmp/skill-lens-herdr-critic-amendment-20261017/gates/.coverage",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "runtimePilot": "not executed"
+}

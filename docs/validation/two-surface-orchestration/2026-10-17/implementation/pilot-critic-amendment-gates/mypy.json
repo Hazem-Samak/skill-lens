@@ -1,0 +1,11 @@
+{
+  "gate": "mypy",
+  "command": [
+    ".venv/bin/mypy",
+    "--cache-dir",
+    "/tmp/skill-lens-herdr-critic-amendment-20261017/gates/mypy-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 1.83,
+  "log": "/tmp/skill-lens-herdr-critic-amendment-20261017/gates/mypy.log"
+}

@@ -1,0 +1,13 @@
+{
+  "beforeSnapshot": "native-critic-amendment-review-r2-before.json",
+  "beforeSha256": "8e8fb37313377d9cfa840b614079732d73ef5a772a26e6d842f45412b0dd371f",
+  "reviewedDraftSha256": "011648051eb7cd77a3b5d9fa4100cf1c9b9facbf5a8471d19b761132739ad1c3",
+  "reviewedDraftBytes": "native-critic-amendment-reviewed-draft.txt",
+  "operativeSections1Through7Sha256": "bc2ba475b85b403e9e0bdbb38e48664a98b42dc4a308a925a7d28712e9744308",
+  "reviewEndComparison": {
+    "changed_paths": [],
+    "head_unchanged": true,
+    "status_unchanged": true
+  },
+  "postReview": "Reports, metadata and section8 receipt retained by coordinator after both terminal readbacks; operative sections unchanged."
+}

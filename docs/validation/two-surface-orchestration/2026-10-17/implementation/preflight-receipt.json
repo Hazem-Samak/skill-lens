@@ -178,7 +178,7 @@
   "sessionProposal": {
     "projectSession": "skill-lens",
     "pilotSession": "skill-lens-pilot-20261017",
-    "userApprovalStatus": "pending_approval"
+    "userApprovalStatus": "approved_for_existing_session_lifecycle_and_hermes_gemini_deepseek_settings"
   },
   "syntheticFixture": {
     "path": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/synthetic-checkout",
@@ -201,5 +201,8 @@
     "p08": "PENDING",
     "p09": "PENDING"
   },
-  "outcome": "succeeded"
+  "outcome": "succeeded",
+  "approvalRecord": "setup-approval-20261017.md",
+  "nativeCritic1AmendmentStatus": "coordinator_selected_anymodel_qwen_high_under_user_closed_list_authority_review_and_adoption_pending",
+  "reliableModelAuthorization": "reliable-model-authorization-20261017.md"
 }

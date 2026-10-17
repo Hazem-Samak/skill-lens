@@ -1,0 +1,10 @@
+{
+  "beforeSnapshot": "native-critic-amendment-review-r1-before.json",
+  "beforeSha256": "1958919ff0ecf180210cc702478816c6e91dcec99b9b1fa3b2af3ccdff814710",
+  "reviewEndComparison": {
+    "changed_paths": [],
+    "head_unchanged": true,
+    "status_unchanged": true
+  },
+  "scope": "Stable first draft throughout original council and incomplete-result completion retry. Coordinator retained reports and corrected draft only after terminal/no-pending review readbacks."
+}

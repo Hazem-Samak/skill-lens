@@ -1,0 +1,106 @@
+# Amendment: native Herdr pilot critic through Pi/AnyModel
+
+Status: Draft — exact mapping prepared for independent review
+Surface: t3 (migration ownership); Herdr agents are the isolated system under test
+Authorization: The user approved the existing setup, requested consideration of a separately reviewed native-critic amendment, and then delegated model selection within an explicit closed list on 2026-10-17. This authorizes the exact model/effort proposal below and its review. Concrete amendment adoption/freeze remains pending; no live pilot or replacement is launched by drafting.
+Reference: pending
+Base operative plan: [two-surface migration](2026-10-17-two-surface-orchestration.md) @ `58d48cea483804b22767b381c6edd8274fe6ad44`
+Reviewed preflight checkpoint: `b6d5a172aeeb4bb271103ad6634459c4bd212b60`
+Risk and review: High — critic identity, native permissions and context independence. Both original T3 reviewers review this exact draft before adoption.
+Expected tasks: 2 completed Gemini research tasks + 2 independent T3 amendment critics before corrections. Extra launches/rounds remain recorded and never waive a required check.
+
+## 1. Exact change and authority
+
+For the Herdr pilot, replace the unmapped MiniMax/mcode first critic with **Qwen 3.8 Max through native Pi/AnyModel, thinking high**, and explicitly give **both pilot critics separate, newly empty per-dispatch session directories**. The second pilot critic keeps Pi/WorkBuddy DeepSeek high and its existing tool/context controls; only its session-storage template changes as stated below. The migration remains owned by T3 end to end; its review council remains **MiniMax/mcode xhigh + Pi/WorkBuddy DeepSeek high**. Gemini 3.8 Flash High remains sole implementer; Sol remains coordinator.
+
+The [closed-list authorization](../validation/two-surface-orchestration/2026-10-17/implementation/reliable-model-authorization-20261017.md) records all eleven permitted model/provider combinations. The user delegated choosing within that list and excluded Grok and XKiro. This supersedes repeated model-choice questions within the authorized list; it does not activate every listed route on Herdr or change frozen roles, permissions, reviews, lifecycle or acceptance gates. There is no automatic provider/model fallback.
+
+The user already approved project session `skill-lens`, pilot session `skill-lens-pilot-20261017`, human-operated direct Hermes startup/restart and existing Hermes/Gemini/DeepSeek settings. The [setup approval record](../validation/two-surface-orchestration/2026-10-17/implementation/setup-approval-20261017.md) settles those choices. This amendment does not ask for that same approval again.
+
+Once explicitly adopted and frozen, this amendment supplies the operative first-critic mapping and both-critics session-storage delta to the base plan; all other base requirements remain in force. The base frozen text is preserved, and execution receipts must name both operative frozen references. Do not treat a newer unfrozen document as authority.
+
+## 2. Current evidence and limitations
+
+Herdr 0.9.5's installed `agent start --help` lists native `pi`; its kind enum lacks `mcode`/`minimax`. No supported selected MiniMax route was established in the bounded inspected setup.
+
+Coordinator independently read only AnyModel's routing/model metadata from `~/.pi/agent/models.json`: provider `anymodel`, base URL `https://anymodel.org/v1`, model ID `qwen/qwen3.8-max`, reasoning enabled. The live T3 catalog independently exposes `anymodel/qwen/qwen3.8-max` with thinking high. This is existing configured-route evidence, not a completed model turn, a promise of quota, or proof of served identity. No route/configuration change is needed or authorized.
+
+Installed Pi help documents `--provider`, `--model`, `--thinking`, `--tools`, `--no-mcp`, `--no-extensions` with explicit `-e`, `--no-skills`, `--no-context-files`, and `--session-dir`. The retained Herdr Pi state extension already exists. Existing metadata/first-round reviews inspected the extension without finding provider/tool registrations; actual state reporting remains a pilot requirement.
+
+The [research adjudication](../validation/two-surface-orchestration/2026-10-17/implementation/pilot-critic-research-adjudication.md) preserves corrected source findings. Earlier Grok and XKiro proposals are historical and superseded; neither is an executable fallback. Raw reports' PROVEN/100% wording is not runtime acceptance.
+
+## 3. Exact proposed native mapping — unrun
+
+| Field | Value |
+|---|---|
+| Role | First independent Herdr pilot critic |
+| Native kind / executable | `pi` / existing installed Pi CLI |
+| Provider | `anymodel` |
+| Native model ID | `qwen/qwen3.8-max` |
+| Thinking | `high` (coordinator selection under delegated authority) |
+| Tools | Built-in `read,grep,find,ls` only; built-in shell/write/edit excluded |
+| Context | No skills or AGENTS/CLAUDE context-file discovery; no other discovered/built-in extensions; explicit existing Herdr state extension retained |
+| MCP | `--no-mcp`: no built-in MCP servers connect and no MCP tools |
+| Session | New separate Pi process, fresh conversation and newly created empty per-dispatch session directory; no continue/resume flags |
+| T3 permission/interaction fields | N/A on Herdr; native controls recorded instead |
+
+```text
+herdr agent start critic_qwen_<dispatch-token> --kind pi --pane <available-shell-pane-id> -- --provider anymodel --model qwen/qwen3.8-max --thinking high --tools read,grep,find,ls --no-mcp --no-extensions -e /Users/corvette/.pi/agent/extensions/herdr-agent-state.ts --no-skills --no-context-files --session-dir /tmp/skill-lens-herdr-execution-20261017-cg7iv351/pilot-artifacts/pi-critic-qwen-<dispatch-token>/sessions
+```
+
+The second critic retains its approved native flags except that the fixed `pilot-artifacts/pi-sessions` directory is replaced by a distinct empty per-dispatch directory. Its exact template is:
+
+```text
+herdr agent start critic_deepseek_<dispatch-token> --kind pi --pane <second-available-shell-pane-id> -- --provider workbuddy --model deepseek-v4.1-flash --thinking high --tools read,grep,find,ls --no-mcp --no-extensions -e /Users/corvette/.pi/agent/extensions/herdr-agent-state.ts --no-skills --no-context-files --session-dir /tmp/skill-lens-herdr-execution-20261017-cg7iv351/pilot-artifacts/pi-critic-deepseek-<dispatch-token>/sessions
+```
+
+This session-directory change is an explicit part of the amendment, subject to the same adoption approval/freeze. It does not silently reinterpret the earlier fixed-path setup approval.
+
+The bracketed token and pane fields are per-dispatch runtime identities, not unsettled model/settings choices. The in-Herdr coordinator generates and records a unique token/name and empty session directory, obtains **two distinct available shell-pane IDs** from JSON readback for the wave, substitutes them, and retains the exact submitted arguments and brief. Both templates are unrun proposals until adoption/freeze and genuine human-started session entry. The two critics receive different tokens/names and different panes; submit both briefs before collecting completion. Do not try to start two agents in one occupied pane.
+
+Use the base plan's verbatim critic guard, complete report fields plus token/target envelope, exact revision/fingerprint, independent complete briefs and narrow target scope. Original repository is read-only. Pilot evidence belongs only to the owned external artifacts directory; T3 Sol later retains sanitized outcomes in the allowed repository records.
+
+This is a tool/context restriction, not a universal filesystem jail. Preserve fingerprints and the harmless denied-write probe. Stop if prohibited tools/extensions/context appear, a denied-write request modifies the fixture, or native settings do not take effect. Do not edit global config or drop controls to force startup.
+
+These two read-only Pi mappings cannot write a Markdown fallback report. This follows from the tool exclusions, not a waiver or a universal change to the base plan section 4.2 fallback policy for other kinds. P04 must demonstrate complete native response recovery for this mapping, with matching token/target, or mark the required capability unavailable and stop. Do not add write/shell tools to rescue capture. The coordinator may retain recovered report text in external artifacts using its existing role authority.
+
+## 4. Independence and pilot consequences
+
+Two native Pi critics use separate processes, empty per-dispatch session directories, unique agent/session IDs, tokens and complete supplied briefs. P02 must prove actual independent parallel submission before result collection. The shared executable proves neither success nor failure of independence.
+
+Qwen/AnyModel and DeepSeek/WorkBuddy are distinct configured model labels/routes. Upstream identities/families remain unverified; no verified-family-diversity claim is made. Present this exact named pair and limitation in the concrete adoption approval under the existing user-accepted unverified-family path. Model selection delegation does not manufacture served-identity proof.
+
+All P01–P09 remain required and unexecuted. In particular P02 covers the two-Pi wave, P04 complete native capture, P05 exposed tool/denied-write boundaries, P06 stale/fast/uncertain delivery, P07 cancellation/owned-background stop, P08 human detach/restart, and P09 cmux interaction/cleanup. Retain intentional mismatched-token/stale-report and unresolved-liveness rejections. No serial or T3 fallback within the Herdr pilot. No process migration before adequate required pilot evidence.
+
+## 5. Preserved machine and process bounds
+
+All original requirements remain except the explicit first-critic mapping and both-critics session-storage delta above:
+
+- Genuine Herdr pane with HERDR_ENV=1, human-operated startup/restart, no outside-T3 live session control or fake gate.
+- Existing credentials may be used; no credentials copied, global configuration/plugin/provider/model-route changes, service installation, app upgrade or wrapper.
+- Fresh critic conversation each round; no automatic prior reviewer recall/import; native context/discovery controls and Herdr hook must work together. Missing separation stops the role.
+- Critics inspect/report only; no edits, delegation, commit or permission widening. Unique correlation/target binding, complete report readback, bounded owned-stop proof and protected cleanup remain mandatory.
+- Phase C, four source gates, two final independent T3 reviews, trial-ready versus supported boundary and separately authorized real Herdr task remain unchanged.
+
+## 6. Allowed paths, review and implementation sequence
+
+Before adoption, edit only this draft and append research/authorization/review evidence under `docs/validation/two-surface-orchestration/2026-10-17/implementation/`. Administrative setup/receipt/audit updates may record already-granted approval and current evidence without changing native arguments/runtime outcomes. Preserve original frozen text, active process files, product/tests/registry and pre-existing `.path`.
+
+1. Check exact draft fields, documented flags, local links/examples/JSON, permitted scope and source-gate evidence.
+2. Capture fingerprints and dispatch the unchanged MiniMax/mcode xhigh and Pi/WorkBuddy DeepSeek high council in fresh T3 review tasks. Resolve findings; two non-converging rounds escalate.
+3. Present the concrete reviewed amendment for explicit adoption/freeze and exact named-pair unverified-family acceptance. After approval, use the existing two-commit freeze, push each commit and verify local/tracking/remote refs. A commit does not create authorization.
+4. Under both freezes, Gemini updates only the existing setup, receipt, handoff and pilot matrix in the base allow-list to apply the Qwen mapping and both critics' per-dispatch session templates. Retain superseded historical reports. The user starts the approved session; actual pilot control runs only inside its genuine Herdr pane.
+5. Execute the entire required pilot. Only adequate evidence permits Gemini Phase C, full verification, the two final T3 reviews and accepted migration commit/push. No activation or production task is implied by this amendment's review/freeze.
+
+## 7. Acceptance before use
+
+- Exact native mapping and authority recorded, both amendment critics pass, all in-scope blockers resolved, fingerprints unchanged during review, all child work terminal without pending questions.
+- Explicit adoption approval covers this delta and disclosed exact pilot pair; two-commit freeze/push verified. Existing setup approval remains recognized.
+- Four source gates pass with synthetic HOME/XDG and external caches/coverage. These prove source health, not Herdr runtime.
+- After freeze, actual setup/handoff/matrix consistently apply AnyModel Qwen high and distinct empty per-dispatch session directories for both critics, with no Grok/XKiro or unapproved fallback in executable instructions. All pilot outcomes stay pending until observed.
+
+## 8. Review and execution record
+
+Two Gemini research tasks completed; their raw reports, corrections and terminal/configuration receipts are retained. Amendment round 1 inspected SHA-256 `a40ecffa2a271c636e34d50d1f8244fedf86a3c26680ba4ec071b9356b1e5c41`. MiniMax requested one correction: the draft promised per-dispatch empty session storage for both critics while the preserved DeepSeek command still used a fixed directory. Coordinator reproduced that mismatch and made the second directory template an explicit delta. The two commands never literally shared the same path; that part of the raw finding was not adopted. DeepSeek's first task returned narration without a verdict and was not counted; its fresh completion retry passed the draft and confirmed the native controls/P04 staging. Both critics will review the corrected shared session contract. Review-window fingerprints showed zero changes. Full reports and dispositions are retained under implementation/. No replacement launched or amendment freeze performed. Full migration remains incomplete.
+
+Drafting source gates: 1048 passed, 1 expected filesystem skip, 91.11% coverage; mypy clean on 37 files; Ruff check clean; Ruff format 205 for that run. Logs: [amendment drafting gates](../validation/two-surface-orchestration/2026-10-17/implementation/pilot-critic-amendment-gates/). No product/test change occurred afterward. These are not pilot results.
