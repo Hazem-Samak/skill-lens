@@ -2,7 +2,7 @@
 
 Status: Agreed — bounded repair authorized; live P01 remains pending
 Authorization: User, 2026-10-17: "ok fix the remaining issues please, authorized".
-Reference: Pending two-commit freeze.
+Reference: `6a038523e57c217b2b1a3afa64713da6a4ff2d17` (frozen operative text).
 Risk and review: High, because the pilot execution contract changes. MiniMax/mcode
 xhigh reviews authorization and boundaries; Pi/WorkBuddy DeepSeek high reviews
 behavior and proof. Their upstream identities remain unverified under the previously
