@@ -3,7 +3,7 @@
 Status: Agreed — adopted and approved for freeze on 2026-10-17
 Surface: t3 (migration ownership); Herdr agents are the isolated system under test
 Authorization: User, 2026-10-17, answered "Approve adoption and freeze" to the exact reviewed amendment question naming Pi/AnyModel Qwen3.8Max high + Pi/WorkBuddy DeepSeek high, separate fresh session directories/panes, unverified upstream model/family identities, unchanged T3 reviewers and approved setup. This authorizes adoption and the two-commit freeze; implementation continues within the base authorization and these exact bounds. Prior consideration/model-selection authority is retained in the dated evidence.
-Reference: pending
+Reference: b99e212a55b20757eeda8605db4edcc59aad6107
 Base operative plan: [two-surface migration](2026-10-17-two-surface-orchestration.md) @ `58d48cea483804b22767b381c6edd8274fe6ad44`
 Reviewed preflight checkpoint: `b6d5a172aeeb4bb271103ad6634459c4bd212b60`
 Risk and review: High — critic identity, native permissions and context independence. Both original T3 reviewers review this exact draft before adoption.
