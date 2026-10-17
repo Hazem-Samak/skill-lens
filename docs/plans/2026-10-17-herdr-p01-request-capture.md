@@ -4,7 +4,7 @@ Status: Agreed
 Authorization: The user's 2026-10-17 instruction "ok fix the remaining issues please,
 authorized", continued by "so what's next ??". This authorizes a bounded repair
 of evidence capture, not a waiver of P01 or a change of coordinator model/route.
-Reference: Pending two-commit freeze.
+Reference: a9bcda8b6f1e2ac7de15b13eefbdfa299adb830f
 Risk and review: High (private-data handling and pilot entry contract). MiniMax/mcode
 xhigh and Pi/WorkBuddy DeepSeek high review plan and final implementation. Retain
 their previously accepted unverified-upstream-identity policy; no earlier waiver.
