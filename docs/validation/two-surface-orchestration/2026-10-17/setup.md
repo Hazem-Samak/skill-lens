@@ -1,5 +1,12 @@
 # Two-Surface Orchestration: Herdr + cmux Setup Proposal
 
+> Current P01 repair handoff (2026-10-17): the human reported two stopped P01
+> attempts. The corrected subscription route and fresh fixture are prepared under
+> [the frozen repair amendment](../../../plans/2026-10-17-herdr-p01-route-repair.md).
+> Follow the [current P01-only brief](./implementation/p01-repair/P01-only-brief.md)
+> for the next attempt. The startup instructions and temporary paths below are
+> retained as historical evidence. Live P01 and the migration remain unaccepted.
+
 **Date:** 2026-10-17
 **Status:** Setup and Critic 1 Native Amendment Approved and Frozen; Live Pilot Execution Pending Human Startup
 **Operative Base Plan Reference:** [`docs/plans/2026-10-17-two-surface-orchestration.md`](../../../plans/2026-10-17-two-surface-orchestration.md) @ frozen commit [`58d48cea483804b22767b381c6edd8274fe6ad44`](https://github.com/Hazem-Samak/skill-lens/commit/58d48cea483804b22767b381c6edd8274fe6ad44)

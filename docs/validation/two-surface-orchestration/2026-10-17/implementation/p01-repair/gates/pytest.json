@@ -1,0 +1,12 @@
+{
+  "gate": "pytest",
+  "argv": [
+    ".venv/bin/pytest",
+    "--cov=skill_lens",
+    "-o",
+    "cache_dir=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-p01-repair-checks-20261017-mrfq2f4_/pytest-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 53.94,
+  "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-p01-repair-checks-20261017-mrfq2f4_/pytest.log"
+}

@@ -1,0 +1,12 @@
+{
+  "gate": "ruff-format",
+  "argv": [
+    ".venv/bin/ruff",
+    "format",
+    "--check",
+    "."
+  ],
+  "exit_code": 0,
+  "seconds": 0.09,
+  "log": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-p01-repair-checks-20261017-mrfq2f4_/ruff-format.log"
+}

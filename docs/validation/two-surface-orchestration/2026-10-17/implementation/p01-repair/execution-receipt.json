@@ -1,0 +1,48 @@
+{
+  "status": "PREPARED_HANDOFF_ACCEPTED_LIVE_P01_NOT_RUN",
+  "authorization": "User: ok fix the remaining issues please, authorized",
+  "frozen_plan": "docs/plans/2026-10-17-herdr-p01-route-repair.md",
+  "frozen_commit": "6a038523e57c217b2b1a3afa64713da6a4ff2d17",
+  "reference_only_commit": "14f9fdaf22b529fb2bc9e9a933fe70e4543ad745",
+  "surface": "T3 outside Herdr; human alone starts genuine Herdr/Hermes",
+  "repair": "per-launch native subscription endpoint and working model identifier; checked native same-session report prepared if stale",
+  "observed_route_proof": "HTTP200 response.completed, response_model=gpt-6.1-sol, exact reply ROUTE_OK through existing local proxy; no upstream weight/context-capacity proof",
+  "live_registration": "Not performed from T3; pending human P01",
+  "review_verdicts": {
+    "minimax": "pass; full canonical report retained",
+    "deepseek": "pass in bounded report completion; prior direct observations and coordinator-provided facts distinguished",
+    "upstream_identity": "Unverified; user-accepted named-pair policy; requested/configured options corroborated by T3"
+  },
+  "gates": {
+    "pytest": "1048 passed, 1 expected skip; 91.11% coverage",
+    "mypy": "37 source files clean",
+    "ruff_check": "pass",
+    "ruff_format": "pass"
+  },
+  "review_window": {
+    "first_started": "2026-10-17T14:37:51.814Z",
+    "last_completed": "2026-10-17T14:52:53.016Z",
+    "elapsed_seconds": 901.202,
+    "expected_tasks": 4,
+    "actual_tasks": 8,
+    "additional_tasks": "2 targeted planning follow-ups; 2 report-completion recoveries",
+    "token_usage": "Unavailable; no savings claim"
+  },
+  "post_review_admin_only": [
+    "retain review-before manifest and complete reports",
+    "add explicit gate checkout binding and fingerprint pointer",
+    "record verdicts, decisions, task terminality and timing"
+  ],
+  "product_code_tests_changes": false,
+  "global_config_plugin_service_credential_edits": false,
+  "preexisting_path_file": "empty .path retained untracked",
+  "unaccepted": [
+    "live P01",
+    "automatic hook/root cause",
+    "detach/restart",
+    "P02–P09",
+    "Phase C",
+    "full migration"
+  ],
+  "delivery": "Freeze/reference commits each pushed and refs verified. Final handoff commit/push follows; final remote verification reported in parent response."
+}

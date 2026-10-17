@@ -1,0 +1,9 @@
+{
+  "cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+  "head": "14f9fdaf22b529fb2bc9e9a933fe70e4543ad745",
+  "review_snapshot": "../review-before.json",
+  "review_snapshot_sha256": "b925fee8d3c995d0f30b82bad6c86bceec51a1e851c555713b5dfbf800871e2e",
+  "runtime_and_test_manifest_sha256": "5f3ca041736a1f45405ce650b4e22e96a9c10f42d12d165bf2dc66fe4fd579b5",
+  "runtime_and_test_file_count": 124,
+  "provenance": "Coordinator-attested binding of the directly executed four gates to the reviewed checkout. Added administratively after review; original command/exit/log receipts retained unchanged. Source/test bytes were unchanged across gates and review. This is not live Herdr evidence."
+}

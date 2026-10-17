@@ -1,0 +1,52 @@
+{
+  "observed_at": "2026-10-17T17:37:49.291616+03:00",
+  "collector": "Sol coordinator; sanitized direct tool observations; no raw request retained",
+  "proxy": "http://127.0.0.1:8787/chatgpt",
+  "resolver": {
+    "provider": "openai-codex",
+    "api_mode": "codex_responses",
+    "source": "explicit",
+    "has_credential": true
+  },
+  "metadata_check": {
+    "http_status": 200,
+    "path": "/models",
+    "note": "catalog does not list requested aliases; actual requests were checked"
+  },
+  "rejected_alias": {
+    "model": "gpt-6.1-sol-900k",
+    "http_status": 400,
+    "detail": "The 'gpt-6.1-sol-900k' model is not supported when using Codex with a ChatGPT account.",
+    "request_count": 2,
+    "reason_second_request": "first collector omitted the detail error field"
+  },
+  "accepted_model": {
+    "requested": "gpt-6.1-sol",
+    "reasoning": "high",
+    "http_status": 200,
+    "terminal_event": "response.completed",
+    "response_model": "gpt-6.1-sol",
+    "reply_ok": true,
+    "expected_reply": "ROUTE_OK",
+    "request_count": 1
+  },
+  "limitations": [
+    "A direct routing smoke request, not an interactive Hermes or Herdr run",
+    "Upstream weight identity and 900k capacity not established",
+    "Historical temporary pilot artifacts no longer present"
+  ],
+  "native_launch_resolution": {
+    "environment_override": "HERMES_CODEX_BASE_URL=http://127.0.0.1:8787/chatgpt",
+    "requested_provider": "openai-codex",
+    "explicit_base_url_argument": false,
+    "resolved_provider": "openai-codex",
+    "resolved_api_mode": "codex_responses",
+    "resolved_base_url": "http://127.0.0.1:8787/chatgpt",
+    "source": "device_code",
+    "has_credential": true
+  },
+  "cli_verification": {
+    "base_url_flag": "not exposed by installed interactive entrypoint; use command-local environment override",
+    "pass_session_id_flag": "native --pass-session-id injects actual current session ID into agent system prompt (agent/system_prompt.py:511)"
+  }
+}

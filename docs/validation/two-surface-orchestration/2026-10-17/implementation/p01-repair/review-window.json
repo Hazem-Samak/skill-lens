@@ -1,0 +1,14 @@
+{
+  "head": "14f9fdaf22b529fb2bc9e9a933fe70e4543ad745",
+  "before_record": "review-before.json",
+  "checked_files": 985,
+  "changed_paths_during_review": [],
+  "fixture_sha256": "462b045a567486e8acd32f21f3861cb101a4b9c6ccbbb18613615c2ec707014e",
+  "post_review_administrative_additions": [
+    "complete review reports and terminal ledger",
+    "retained fingerprint record and pointer",
+    "gate checkout binding",
+    "execution receipt and README review verdicts"
+  ],
+  "reverified_at": "2026-10-17T17:53:44.530068+03:00"
+}

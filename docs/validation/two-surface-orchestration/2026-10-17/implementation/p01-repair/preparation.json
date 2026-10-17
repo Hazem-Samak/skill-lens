@@ -1,0 +1,20 @@
+{
+  "prepared_at": "2026-10-17T17:46:21.318402+03:00",
+  "fixture_root": "/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p",
+  "checkout": "/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/synthetic-checkout",
+  "fixture": "/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/synthetic-checkout/fixture.txt",
+  "fixture_sha256": "462b045a567486e8acd32f21f3861cb101a4b9c6ccbbb18613615c2ec707014e",
+  "artifacts": "/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts",
+  "fixture_command_home": "/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-home",
+  "fixture_command_xdg": "/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-xdg",
+  "agent_home_policy": "normal authenticated HOME; no fake HOME/XDG exported to agent",
+  "frozen_plan": "docs/plans/2026-10-17-herdr-p01-route-repair.md",
+  "frozen_reference": "6a038523e57c217b2b1a3afa64713da6a4ff2d17",
+  "preparation_repo_head": "14f9fdaf22b529fb2bc9e9a933fe70e4543ad745",
+  "preparation_repo_status": "?? .path\n",
+  "live_p01": "NOT_RUN",
+  "live_baseline_policy": "capture fresh HEAD/status and nonignored file manifest at live P01 entry and compare at exit; preparation is not the live baseline",
+  "review_fingerprint_record": "review-before.json",
+  "review_fingerprint_file_count": 985,
+  "review_fingerprint_scope": "nonignored files including prepared handoff at final-review entry; historical review baseline, not live P01 baseline"
+}

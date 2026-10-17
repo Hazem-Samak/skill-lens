@@ -1,4 +1,13 @@
 # Two-Surface Orchestration: Pilot Evidence & Status (Phase B)
+
+> Current status (2026-10-17): the human reported P01 failure, then a diagnostic
+> retry that passed fresh-context checks but failed the approved route and left
+> session registration unverified. P02–P09 were not run. The original temporary
+> artifacts are now absent. A corrected P01-only retry is prepared in
+> [the repair record](./implementation/p01-repair/README.md); its
+> [current brief](./implementation/p01-repair/P01-only-brief.md) supersedes the
+> historical startup/path instructions below. P01 has not been accepted.
+
 **Date:** 2026-10-17
 **Status:** Pre-Pilot / All Cases PENDING — Setup and Amendment Approved and Frozen; Awaiting Human Startup
 **Operative Base Plan Reference:** [`docs/plans/2026-10-17-two-surface-orchestration.md`](../../../plans/2026-10-17-two-surface-orchestration.md) @ frozen commit [`58d48cea483804b22767b381c6edd8274fe6ad44`](https://github.com/Hazem-Samak/skill-lens/commit/58d48cea483804b22767b381c6edd8274fe6ad44)
