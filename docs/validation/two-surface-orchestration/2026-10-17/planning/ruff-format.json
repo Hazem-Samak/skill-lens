@@ -1,0 +1,13 @@
+{
+  "gate": "ruff-format",
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "--check",
+    ".",
+    "--no-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 0.09,
+  "log": "/tmp/skill-lens-herdr-formal-plan-20261017-sh5jv_bh/ruff-format.log"
+}

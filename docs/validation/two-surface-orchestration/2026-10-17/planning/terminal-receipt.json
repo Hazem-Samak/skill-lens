@@ -1,0 +1,53 @@
+{
+  "tasks": [
+    {
+      "key": "minimax-r1",
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-cmux-proposal-20261017-minimax-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-cmux-proposal-20261017-minimax-r1:ordinal:1",
+      "status": "completed",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "mcode",
+      "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+      "verdict": "changes_required"
+    },
+    {
+      "key": "deepseek-r1",
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-cmux-proposal-20261017-deepseek-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-cmux-proposal-20261017-deepseek-r1:ordinal:1",
+      "status": "completed",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "pi",
+      "model": "workbuddy/deepseek-v4.1-flash",
+      "verdict": "changes_required"
+    },
+    {
+      "key": "minimax-r2",
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-cmux-proposal-20261017-minimax-r2",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-cmux-proposal-20261017-minimax-r2:ordinal:1",
+      "status": "completed",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "mcode",
+      "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+      "verdict": "pass"
+    },
+    {
+      "key": "deepseek-r2",
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-cmux-proposal-20261017-deepseek-r2",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-cmux-proposal-20261017-deepseek-r2:ordinal:1",
+      "status": "completed",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "pi",
+      "model": "workbuddy/deepseek-v4.1-flash",
+      "verdict": "pass"
+    }
+  ],
+  "actualLaunches": 4,
+  "rounds": 2,
+  "tokenUsage": "unavailable",
+  "elapsedTime": "not measured",
+  "scope": "Read-only proposal debate, no implementation"
+}

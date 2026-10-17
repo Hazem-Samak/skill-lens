@@ -1,0 +1,11 @@
+{
+  "gate": "mypy",
+  "command": [
+    ".venv/bin/mypy",
+    "--cache-dir",
+    "/tmp/skill-lens-herdr-formal-plan-20261017-sh5jv_bh/mypy-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 0.31,
+  "log": "/tmp/skill-lens-herdr-formal-plan-20261017-sh5jv_bh/mypy.log"
+}

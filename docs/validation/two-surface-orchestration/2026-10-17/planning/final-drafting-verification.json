@@ -1,0 +1,62 @@
+{
+  "head": "2d9637054aea969fb2ec575cf28e48ed0ec1a800",
+  "head_unchanged": true,
+  "new_allowed_paths": 27,
+  "changed_preexisting_paths": [],
+  "unexpected_paths": [],
+  "missing_local_links": [],
+  "invalid_json": [],
+  "operative_content_unchanged_after_final_reviews": true,
+  "final_plan_sha256": "3544beb0f53e932986a73468c792a26c0c5c721b0d7db2271850680150f19d16",
+  "preexisting_dot_path_preserved": true,
+  "gates": {
+    "pytest": {
+      "gate": "pytest",
+      "command": [
+        ".venv/bin/pytest",
+        "--cov=skill_lens",
+        "-o",
+        "cache_dir=/tmp/skill-lens-herdr-formal-plan-20261017-sh5jv_bh/pytest-cache"
+      ],
+      "exit_code": 0,
+      "seconds": 54.29,
+      "log": "/tmp/skill-lens-herdr-formal-plan-20261017-sh5jv_bh/pytest.log"
+    },
+    "mypy": {
+      "gate": "mypy",
+      "command": [
+        ".venv/bin/mypy",
+        "--cache-dir",
+        "/tmp/skill-lens-herdr-formal-plan-20261017-sh5jv_bh/mypy-cache"
+      ],
+      "exit_code": 0,
+      "seconds": 0.31,
+      "log": "/tmp/skill-lens-herdr-formal-plan-20261017-sh5jv_bh/mypy.log"
+    },
+    "ruff-check": {
+      "gate": "ruff-check",
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        ".",
+        "--no-cache"
+      ],
+      "exit_code": 0,
+      "seconds": 0.09,
+      "log": "/tmp/skill-lens-herdr-formal-plan-20261017-sh5jv_bh/ruff-check.log"
+    },
+    "ruff-format": {
+      "gate": "ruff-format",
+      "command": [
+        ".venv/bin/ruff",
+        "format",
+        "--check",
+        ".",
+        "--no-cache"
+      ],
+      "exit_code": 0,
+      "seconds": 0.09,
+      "log": "/tmp/skill-lens-herdr-formal-plan-20261017-sh5jv_bh/ruff-format.log"
+    }
+  }
+}
