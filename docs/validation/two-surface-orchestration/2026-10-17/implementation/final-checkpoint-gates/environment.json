@@ -1,0 +1,11 @@
+{
+  "runner": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/final-checkpoint-gates/run_gate.py",
+  "workingDirectory": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+  "isolation": {
+    "HOME": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/final-checkpoint-gates/home",
+    "XDG_CONFIG_HOME": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/final-checkpoint-gates/xdg",
+    "COVERAGE_FILE": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/final-checkpoint-gates/.coverage",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "limits": "Source checks only; no Herdr runtime/pilot proof"
+}

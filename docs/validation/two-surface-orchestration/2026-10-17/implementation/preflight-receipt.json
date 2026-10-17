@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "scope": "Phase B read-only setup preflight proposal; no live pilot or process migration",
+  "frozenCommit": "58d48cea483804b22767b381c6edd8274fe6ad44",
+  "checkoutHead": "a0ffa9edee8226d7d8b981002b265510bced8a16",
+  "dispatch": {
+    "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-r1",
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "runtimeMode": "full-access",
+    "interactionMode": "default"
+  },
+  "effectiveModel": {
+    "provider": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "runtimeMode": "full-access",
+    "options": []
+  },
+  "clis": {
+    "hermes": {
+      "path": "/Users/corvette/.local/bin/hermes",
+      "version": "Hermes Agent v0.22.2 (2026.9.24)",
+      "status": "ready"
+    },
+    "agy": {
+      "path": "/Users/corvette/.local/bin/agy",
+      "version": "1.4.0",
+      "modelConfirmed": "gemini-3.8-flash-high",
+      "status": "ready"
+    },
+    "pi": {
+      "path": "/Users/corvette/.local/bin/pi",
+      "version": "1.3.0",
+      "providerConfirmed": "workbuddy",
+      "modelConfirmed": "deepseek-v4.1-flash",
+      "status": "ready"
+    },
+    "herdr": {
+      "path": "/Users/corvette/.local/bin/herdr",
+      "version": "0.9.5",
+      "supportedKindsCount": 24,
+      "status": "ready"
+    },
+    "cmux": {
+      "appPath": "/Applications/cmux.app",
+      "binaryPath": "/Applications/cmux.app/Contents/Resources/bin/cmux",
+      "version": "0.65.2 (111) [9d01f956c]",
+      "inPath": false,
+      "absolutePathVerified": true,
+      "status": "binary_available_absolute_path_verified"
+    },
+    "opencode": {
+      "path": "/Users/corvette/.opencode/bin/opencode",
+      "version": "v2.0.32",
+      "role": "optional",
+      "status": "untested_unavailable"
+    },
+    "mcode": {
+      "path": "/Users/corvette/.minimax-code/bin/mcode",
+      "version": "0.6.12",
+      "herdrKindSupported": false,
+      "status": "unsupported_in_herdr"
+    }
+  },
+  "solProxy": {
+    "endpoint": "http://127.0.0.1:8787/w/hermes/v1",
+    "port": 8787,
+    "tcpConnectSuccess": true,
+    "modelIdentity": "unverified"
+  },
+  "whitelistedConfiguration": {
+    "hermes": {
+      "sourcePath": "/Users/corvette/.hermes/config.yaml",
+      "modelDefault": "gpt-6.1-sol-900k",
+      "modelProvider": "custom",
+      "modelBaseUrl": "http://127.0.0.1:8787/w/hermes/v1",
+      "agentReasoningEffort": "high"
+    },
+    "pi": {
+      "sourcePath": "/Users/corvette/.pi/agent/models.json",
+      "workbuddyBaseUrl": "http://127.0.0.1:8788/v1",
+      "workbuddyModel": "deepseek-v4.1-flash"
+    },
+    "herdr": {
+      "sourcePath": "/Users/corvette/.config/herdr/config.toml",
+      "onboarding": false,
+      "themeName": "gruvbox",
+      "autoSwitch": false,
+      "statusIndicators": "symbols",
+      "toastDelivery": "system"
+    }
+  },
+  "baselineGates": {
+    "source": "coordinator_rerun",
+    "logDirectory": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/",
+    "pytest": {
+      "exitCode": 0,
+      "durationSeconds": 54.05,
+      "testsPassed": 1048,
+      "testsSkipped": 1,
+      "coveragePercent": 91.11
+    },
+    "mypy": {
+      "exitCode": 0,
+      "durationSeconds": 1.76,
+      "filesChecked": 37
+    },
+    "ruffCheck": {
+      "exitCode": 0,
+      "durationSeconds": 0.08
+    },
+    "ruffFormat": {
+      "exitCode": 0,
+      "durationSeconds": 0.08,
+      "filesFormatted": 187
+    }
+  },
+  "roleMappingProposal": {
+    "coordinator": {
+      "plannedRole": "Hermes (Sol)",
+      "herdrKind": "hermes",
+      "nativeArgs": [
+        "--cli",
+        "--ignore-rules",
+        "--in",
+        "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/synthetic-checkout",
+        "-m",
+        "gpt-6.1-sol-900k",
+        "--reasoning",
+        "high"
+      ],
+      "status": "proposed"
+    },
+    "implementer": {
+      "plannedRole": "agy (Gemini 3.8 Flash High)",
+      "herdrKind": "agy",
+      "nativeArgs": [
+        "--model",
+        "gemini-3.8-flash-high",
+        "--effort",
+        "high",
+        "--sandbox"
+      ],
+      "status": "proposed_untested",
+      "notes": "Advertised terminal restrictions; no filesystem sandbox guarantees"
+    },
+    "criticDeepSeek": {
+      "plannedRole": "Pi / WorkBuddy DeepSeek",
+      "herdrKind": "pi",
+      "nativeArgs": [
+        "--provider",
+        "workbuddy",
+        "--model",
+        "deepseek-v4.1-flash",
+        "--thinking",
+        "high",
+        "--tools",
+        "read,grep,find,ls",
+        "--no-mcp",
+        "--no-extensions",
+        "-e",
+        "/Users/corvette/.pi/agent/extensions/herdr-agent-state.ts",
+        "--no-skills",
+        "--no-context-files",
+        "--session-dir",
+        "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/pilot-artifacts/pi-sessions"
+      ],
+      "status": "proposed"
+    },
+    "criticMiniMax": {
+      "plannedRole": "MiniMax (mcode)",
+      "herdrKind": null,
+      "nativeArgs": null,
+      "status": "blocked_unsupported_herdr_kind",
+      "notes": "No supported Herdr launch proposed; mcode/minimax absent from Herdr 0.9.5 kind enum; native kind gap scoped to installed enum and inspected configs"
+    }
+  },
+  "sessionProposal": {
+    "projectSession": "skill-lens",
+    "pilotSession": "skill-lens-pilot-20261017",
+    "userApprovalStatus": "pending_approval"
+  },
+  "syntheticFixture": {
+    "path": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/synthetic-checkout",
+    "fixtureFile": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/synthetic-checkout/fixture.txt",
+    "fixtureSha256": "462b045a567486e8acd32f21f3861cb101a4b9c6ccbbb18613615c2ec707014e",
+    "fixtureHome": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/pilot-home",
+    "fixtureXdg": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/pilot-xdg",
+    "isolationMethod": "command_local_env",
+    "artifactsDirectory": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/pilot-artifacts",
+    "originalRepoReadOnly": true
+  },
+  "pilotCases": {
+    "p01": "PENDING",
+    "p02": "PENDING",
+    "p03": "PENDING",
+    "p04": "PENDING",
+    "p05": "PENDING",
+    "p06": "PENDING",
+    "p07": "PENDING",
+    "p08": "PENDING",
+    "p09": "PENDING"
+  },
+  "outcome": "succeeded"
+}

@@ -1,0 +1,12 @@
+{
+  "gate": "pytest",
+  "command": [
+    ".venv/bin/pytest",
+    "--cov=skill_lens",
+    "-o",
+    "cache_dir=/tmp/skill-lens-herdr-execution-20261017-cg7iv351/pytest-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 54.05,
+  "log": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/pytest.log"
+}

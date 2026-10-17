@@ -1,0 +1,13 @@
+{
+  "gate": "ruff-format",
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "--check",
+    ".",
+    "--no-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 0.1,
+  "log": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/final-checkpoint-gates/ruff-format.log"
+}

@@ -1,0 +1,205 @@
+{
+  "scope": "Preflight checkpoint only. All migration/runtime acceptance still pending.",
+  "actualExecutionLaunches": 8,
+  "breakdown": "4 Gemini tasks: preflight, route investigation, correction, handoff consistency. 4 critic tasks: two rounds of MiniMax and DeepSeek.",
+  "plannedMigrationChildTasks": 5,
+  "planningHistory": "Formal planning had5 tasks; proposal debate had4 tasks. Neither count is silently combined with the8 execution/preflight launches.",
+  "extraLaunchReasons": "Native kind gap investigation and correction batches; second independent review round resolved factual/handoff errors. No third broad review wave.",
+  "executionWallSpanSeconds": 1934,
+  "wallSpanDefinition": "Earliest execution/preflight task request through latest terminal review completion, including coordinator gaps; not summed model compute time.",
+  "tokenUsage": "Unavailable; task counts and prompt characters are not billed tokens. No quantified savings claim.",
+  "records": [
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-migration-20261017-gemini-preflight-r1:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-r1",
+      "status": "completed",
+      "workState": "result_available",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "antigravity",
+      "model": "gemini-3.8-flash-high",
+      "recentRuns": [
+        {
+          "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-migration-20261017-gemini-preflight-r1:ordinal:1",
+          "ordinal": 1,
+          "status": "completed",
+          "providerInstanceId": "antigravity",
+          "model": "gemini-3.8-flash-high",
+          "requestedAt": "2026-10-17T00:10:30.689Z",
+          "startedAt": "2026-10-17T00:10:34.427Z",
+          "completedAt": "2026-10-17T00:17:10.970Z"
+        }
+      ],
+      "pendingRequestCount": 0
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-native-route-research",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-migration-20261017-gemini-native-route-research:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-native-route-research",
+      "status": "completed",
+      "workState": "result_available",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "antigravity",
+      "model": "gemini-3.8-flash-high",
+      "recentRuns": [
+        {
+          "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-migration-20261017-gemini-native-route-research:ordinal:1",
+          "ordinal": 1,
+          "status": "completed",
+          "providerInstanceId": "antigravity",
+          "model": "gemini-3.8-flash-high",
+          "requestedAt": "2026-10-17T00:19:00.789Z",
+          "startedAt": "2026-10-17T00:19:03.449Z",
+          "completedAt": "2026-10-17T00:21:51.716Z"
+        }
+      ],
+      "pendingRequestCount": 0
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-preflight-20261017-minimax-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-preflight-20261017-minimax-r1:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-preflight-20261017-minimax-r1",
+      "status": "completed",
+      "workState": "result_available",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "mcode",
+      "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+      "recentRuns": [
+        {
+          "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-preflight-20261017-minimax-r1:ordinal:1",
+          "ordinal": 1,
+          "status": "completed",
+          "providerInstanceId": "mcode",
+          "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+          "requestedAt": "2026-10-17T00:18:14.654Z",
+          "startedAt": "2026-10-17T00:18:17.208Z",
+          "completedAt": "2026-10-17T00:22:35.912Z"
+        }
+      ],
+      "pendingRequestCount": 0
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-preflight-20261017-deepseek-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-preflight-20261017-deepseek-r1:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-preflight-20261017-deepseek-r1",
+      "status": "completed",
+      "workState": "result_available",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "pi",
+      "model": "workbuddy/deepseek-v4.1-flash",
+      "recentRuns": [
+        {
+          "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-preflight-20261017-deepseek-r1:ordinal:1",
+          "ordinal": 1,
+          "status": "completed",
+          "providerInstanceId": "pi",
+          "model": "workbuddy/deepseek-v4.1-flash",
+          "requestedAt": "2026-10-17T00:18:14.689Z",
+          "startedAt": "2026-10-17T00:18:15.087Z",
+          "completedAt": "2026-10-17T00:20:09.140Z"
+        }
+      ],
+      "pendingRequestCount": 0
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-correction-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-migration-20261017-gemini-preflight-correction-r1:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-correction-r1",
+      "status": "completed",
+      "workState": "result_available",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "antigravity",
+      "model": "gemini-3.8-flash-high",
+      "recentRuns": [
+        {
+          "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-migration-20261017-gemini-preflight-correction-r1:ordinal:1",
+          "ordinal": 1,
+          "status": "completed",
+          "providerInstanceId": "antigravity",
+          "model": "gemini-3.8-flash-high",
+          "requestedAt": "2026-10-17T00:24:09.185Z",
+          "startedAt": "2026-10-17T00:24:11.907Z",
+          "completedAt": "2026-10-17T00:28:59.390Z"
+        }
+      ],
+      "pendingRequestCount": 0
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-handoff-consistency-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-migration-20261017-gemini-handoff-consistency-r1:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-handoff-consistency-r1",
+      "status": "completed",
+      "workState": "result_available",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "antigravity",
+      "model": "gemini-3.8-flash-high",
+      "recentRuns": [
+        {
+          "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-migration-20261017-gemini-handoff-consistency-r1:ordinal:1",
+          "ordinal": 1,
+          "status": "completed",
+          "providerInstanceId": "antigravity",
+          "model": "gemini-3.8-flash-high",
+          "requestedAt": "2026-10-17T00:30:05.041Z",
+          "startedAt": "2026-10-17T00:30:07.761Z",
+          "completedAt": "2026-10-17T00:33:53.939Z"
+        }
+      ],
+      "pendingRequestCount": 0
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-preflight-20261017-minimax-r2",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-preflight-20261017-minimax-r2:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-preflight-20261017-minimax-r2",
+      "status": "completed",
+      "workState": "result_available",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "mcode",
+      "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+      "recentRuns": [
+        {
+          "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-preflight-20261017-minimax-r2:ordinal:1",
+          "ordinal": 1,
+          "status": "completed",
+          "providerInstanceId": "mcode",
+          "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+          "requestedAt": "2026-10-17T00:36:44.693Z",
+          "startedAt": "2026-10-17T00:36:46.797Z",
+          "completedAt": "2026-10-17T00:38:29.431Z"
+        }
+      ],
+      "pendingRequestCount": 0
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-preflight-20261017-deepseek-r2",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-preflight-20261017-deepseek-r2:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-preflight-20261017-deepseek-r2",
+      "status": "completed",
+      "workState": "result_available",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "pi",
+      "model": "workbuddy/deepseek-v4.1-flash",
+      "recentRuns": [
+        {
+          "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-preflight-20261017-deepseek-r2:ordinal:1",
+          "ordinal": 1,
+          "status": "completed",
+          "providerInstanceId": "pi",
+          "model": "workbuddy/deepseek-v4.1-flash",
+          "requestedAt": "2026-10-17T00:36:44.645Z",
+          "startedAt": "2026-10-17T00:36:45.134Z",
+          "completedAt": "2026-10-17T00:42:44.196Z"
+        }
+      ],
+      "pendingRequestCount": 0
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "checked_against": "before-implementation.json",
+  "changed_preexisting_paths": [],
+  "active_process_unchanged": true,
+  "new_surface_t3_exists": false,
+  "new_surface_herdr_exists": false,
+  "inside_real_herdr": false,
+  "dot_path_preserved": true,
+  "head": "a0ffa9edee8226d7d8b981002b265510bced8a16"
+}

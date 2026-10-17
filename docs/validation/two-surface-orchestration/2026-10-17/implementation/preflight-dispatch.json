@@ -1,0 +1,38 @@
+{
+  "scope": "Phase B read-only setup preflight proposal; no live pilot or process migration",
+  "frozenReference": "58d48cea483804b22767b381c6edd8274fe6ad44",
+  "referenceCommit": "a0ffa9edee8226d7d8b981002b265510bced8a16",
+  "dispatch": {
+    "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A6d4f8556-68fe-4c44-b77c-ca455c5fa288%253Adelegate-task%253Aherdr-migration-20261017-gemini-preflight-r1:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-r1",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "antigravity",
+    "model": "gemini-3.8-flash-high",
+    "summary": null,
+    "resultContextTransferId": null,
+    "hasPendingQuestion": false,
+    "waitTimedOut": false
+  },
+  "configuration": {
+    "threadId": "thread:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-r1",
+    "modelSelection": {
+      "instanceId": "antigravity",
+      "model": "gemini-3.8-flash-high",
+      "options": []
+    },
+    "runtimeMode": "full-access",
+    "interactionMode": "default"
+  },
+  "authorization": "User 2026-10-17 explicitly approved freeze/implementation, Gemini worker and retained reviewer pair",
+  "baselineEvidence": "baseline/",
+  "receiptType": "historical_dispatch_time_snapshot",
+  "terminalEvidence": "checkpoint-task-ledger.json; preflight-review-r2-receipts.json"
+}
