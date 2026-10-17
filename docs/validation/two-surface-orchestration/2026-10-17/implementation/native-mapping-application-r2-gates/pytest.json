@@ -1,0 +1,12 @@
+{
+  "gate": "pytest",
+  "command": [
+    ".venv/bin/pytest",
+    "--cov=skill_lens",
+    "-o",
+    "cache_dir=/tmp/skill-lens-herdr-native-mapping-implementation-20261017/final-r2-gates/pytest-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 55.95,
+  "log": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/final-r2-gates/pytest.log"
+}

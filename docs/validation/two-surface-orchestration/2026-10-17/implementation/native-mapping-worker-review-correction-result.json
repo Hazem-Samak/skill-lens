@@ -1,0 +1,18 @@
+{
+  "taskId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-mapping-20261017-gemini-review-correction-r1",
+  "childThreadId": "thread:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-mapping-20261017-gemini-review-correction-r1",
+  "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-mapping-20261017-gemini-review-correction-r1:ordinal:1",
+  "childNodeId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-mapping-20261017-gemini-review-correction-r1",
+  "status": "completed",
+  "workState": "result_available",
+  "hasPendingChildRuns": false,
+  "latestTerminalRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-mapping-20261017-gemini-review-correction-r1:ordinal:1",
+  "latestTerminalStatus": "completed",
+  "latestTerminalResultContextTransferId": "context-transfer:type:subagent_result:source-thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-mapping-20261017-gemini-review-correction-r1:target-thread:38dc5ec9-41d8-4ba2-9c7d-e71a8b4986f7:eea826a6-5968-4f04-ab5c-5ddd06d6fbfc",
+  "providerInstanceId": "antigravity",
+  "model": "gemini-3.8-flash-high",
+  "summary": "```text\nEFFECTIVE_MODEL:       [ antigravity/gemini-3.8-flash-high, thinking=high, runtimeMode=full-access, interactionMode=default | evidence: requested=gemini-3.8-flash-high, configured=gemini-3.8-flash-high, provider=antigravity confirmed via runtime_info, upstream model identity unverified ]\nOUTCOME:               succeeded\nFILES_CHANGED:         [ docs/validation/two-surface-orchestration/2026-10-17/setup.md, docs/validation/two-surface-orchestration/2026-10-17/pilot.md, docs/validation/two-surface-orchestration/2026-10-17/acceptance.md, docs/validation/two-surface-orchestration/2026-10-17/implementation/preflight-receipt.json, docs/validation/two-surface-orchestration/2026-10-17/implementation/human-pilot-brief.md, docs/validation/two-surface-orchestration/2026-10-17/implementation/native-mapping-application-report.md ]\nCHECKS:                json-validation=pass link-and-ref-audit=pass verbatim-critic-guard-audit=(4-occurrences-pass) name-regex-audit=(worker-19ch-pass, critic1-24ch-pass, critic2-28ch-pass) shell-snippet-ast-compile=pass git-diff-whitespace-check=pass scope-audit=pass freeze-verification=(base=58d48ce, amend=b99e212, sec1-7-byte-equality=11914chars) synthetic-fixture-hash=(462b045a...pass) inherited-baseline-gates=(pytest=1048p,1s,91.11%cov; mypy=37clean; ruff-check=clean; ruff-format=215clean) coordinator-run-gates=(pytest=1048p,1s,91.11%cov; mypy=37clean; ruff-check=clean; ruff-format=216clean)\nTESTS_ADDED:           [ none (documentation application checkpoint correction; no product code modified) ]\nDEVIATIONS_FROM_PLAN:  [ none ]\nBLOCKED_ON:            [ live pilot execution (P01\u2013P09) blocked on human operator starting session \"skill-lens-pilot-20261017\" outside Herdr; checkpoint review round 2 pending coordinator inspection and both fresh reviewer tasks ]\n```",
+  "resultContextTransferId": "context-transfer:type:subagent_result:source-thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-mapping-20261017-gemini-review-correction-r1:target-thread:38dc5ec9-41d8-4ba2-9c7d-e71a8b4986f7:eea826a6-5968-4f04-ab5c-5ddd06d6fbfc",
+  "hasPendingQuestion": false,
+  "waitTimedOut": false
+}

@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-17",
+  "surface": "t3",
+  "checkpoint": "native pilot mapping and human handoff",
+  "acceptedBy": "explicit_user_instruction",
+  "authorityRecord": "native-mapping-user-acceptance-20261017.md",
+  "basePlanFrozenCommit": "58d48cea483804b22767b381c6edd8274fe6ad44",
+  "amendmentFrozenCommit": "b99e212a55b20757eeda8605db4edcc59aad6107",
+  "inputHead": "0c9991439309b1ce819abc4eb007664b872cc45b",
+  "handoffSHA256": "27d7bc4ea3d04cdc90261e713bf49cf6240cfdbc477f040659668c61d82401af",
+  "handoffUnchangedSinceReviewRound2": true,
+  "reviewResults": {
+    "minimax": {
+      "provider": "mcode",
+      "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+      "thinkingEffort": "xhigh",
+      "runtimeMode": "full-access",
+      "interactionMode": "plan",
+      "verdict": "pass",
+      "evidence": "reviews/native-mapping-minimax-r2-artifact.md",
+      "artifactRecovery": true,
+      "upstreamIdentity": "unverified"
+    },
+    "deepseek": {
+      "provider": "pi",
+      "model": "workbuddy/deepseek-v4.1-flash",
+      "thinking": "high",
+      "runtimeMode": "full-access",
+      "interactionMode": "plan",
+      "verdict": "changes_required",
+      "evidence": "reviews/native-mapping-deepseek-r2.md",
+      "findingsDisposition": "waived_by_user_for_this_round",
+      "upstreamIdentity": "unverified"
+    }
+  },
+  "requiredAgreementException": "explicit_user_override_for_this_checkpoint_only",
+  "extraReviewWaveLaunched": false,
+  "proposedCorrectionsApplied": false,
+  "expectedTaskLaunchesBeforeCorrections": 3,
+  "actualTaskLaunches": 9,
+  "taskLedger": "native-mapping-task-terminality.json",
+  "aggregateElapsedSeconds": "unavailable",
+  "billedTokens": "unavailable",
+  "sourceGates": {
+    "pytest": {
+      "gate": "pytest",
+      "command": [
+        ".venv/bin/pytest",
+        "--cov=skill_lens",
+        "-o",
+        "cache_dir=/tmp/skill-lens-herdr-native-mapping-implementation-20261017/user-accepted-final-gates/pytest-cache"
+      ],
+      "exit_code": 0,
+      "seconds": 55.51,
+      "log": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/user-accepted-final-gates/pytest.log"
+    },
+    "mypy": {
+      "gate": "mypy",
+      "command": [
+        ".venv/bin/mypy",
+        "--cache-dir",
+        "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/user-accepted-final-gates/mypy-cache"
+      ],
+      "exit_code": 0,
+      "seconds": 1.76,
+      "log": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/user-accepted-final-gates/mypy.log"
+    },
+    "ruff-check": {
+      "gate": "ruff-check",
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        ".",
+        "--no-cache"
+      ],
+      "exit_code": 0,
+      "seconds": 0.08,
+      "log": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/user-accepted-final-gates/ruff-check.log"
+    },
+    "ruff-format": {
+      "gate": "ruff-format",
+      "command": [
+        ".venv/bin/ruff",
+        "format",
+        "--check",
+        ".",
+        "--no-cache"
+      ],
+      "exit_code": 0,
+      "seconds": 0.02,
+      "log": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/user-accepted-final-gates/ruff-format.log"
+    }
+  },
+  "staticChecks": [
+    "allowed scope",
+    "protected source/test/process fingerprints",
+    "reviewed handoff hash unchanged",
+    "exact critic guards",
+    "JSON including all nine pending pilot states",
+    "local file links",
+    "frozen references",
+    "unchanged synthetic fixture",
+    "pre-existing empty .path preserved"
+  ],
+  "gateCorrection": "Initial final-format check found a formatting issue in the retained unadopted proposal code example. Only that example was formatted; final check passed (221 files already formatted).",
+  "runtimePilotCases": "all_pending",
+  "phaseC": "not_started",
+  "fullMigrationAccepted": false,
+  "delivery": "Commit and push are authorized; final local/tracking/remote equality is reported by coordinator after delivery."
+}

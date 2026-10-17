@@ -1,0 +1,18 @@
+{
+  "taskId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-mapping-20261017-deepseek-r1",
+  "childThreadId": "thread:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-mapping-20261017-deepseek-r1",
+  "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-mapping-20261017-deepseek-r1:ordinal:1",
+  "childNodeId": "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-mapping-20261017-deepseek-r1",
+  "status": "completed",
+  "workState": "result_available",
+  "hasPendingChildRuns": false,
+  "latestTerminalRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-mapping-20261017-deepseek-r1:ordinal:1",
+  "latestTerminalStatus": "completed",
+  "latestTerminalResultContextTransferId": "context-transfer:type:subagent_result:source-thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-mapping-20261017-deepseek-r1:target-thread:38dc5ec9-41d8-4ba2-9c7d-e71a8b4986f7:3737a3e8-4c00-4182-a352-84771e694d1c",
+  "providerInstanceId": "pi",
+  "model": "workbuddy/deepseek-v4.1-flash",
+  "summary": "`--source recent-unwrapped` is a valid possible value. `herdr --skill` works and is a real command. Let me confirm `agent start` has `--kind`/`--pane` and `session stop`/`attach`, and check `agent send-keys` syntax used in P07 (`herdr agent send-keys <target> ctrl+c`).\n\n\n\n\n",
+  "resultContextTransferId": "context-transfer:type:subagent_result:source-thread:thread%3Adelegated-task%3Acommand%253Amcp%253Ad08dfeea-548e-4e27-8098-500ed2afe27e%253Adelegate-task%253Aherdr-native-mapping-20261017-deepseek-r1:target-thread:38dc5ec9-41d8-4ba2-9c7d-e71a8b4986f7:3737a3e8-4c00-4182-a352-84771e694d1c",
+  "hasPendingQuestion": false,
+  "waitTimedOut": false
+}

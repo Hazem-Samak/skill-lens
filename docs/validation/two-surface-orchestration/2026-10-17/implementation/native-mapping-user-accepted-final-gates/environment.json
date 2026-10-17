@@ -1,0 +1,7 @@
+{
+  "HOME": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/user-accepted-final-gates/home",
+  "XDG_CONFIG_HOME": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/user-accepted-final-gates/xdg",
+  "COVERAGE_FILE": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/user-accepted-final-gates/.coverage",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "scope": "Final coordinator source verification after explicit user acceptance; external runner/cache/coverage, no live pilot."
+}

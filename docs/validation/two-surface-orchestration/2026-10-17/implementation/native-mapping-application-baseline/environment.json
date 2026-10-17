@@ -1,0 +1,8 @@
+{
+  "checkedHead": "0c9991439309b1ce819abc4eb007664b872cc45b",
+  "HOME": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/baseline/home",
+  "XDG_CONFIG_HOME": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/baseline/xdg",
+  "COVERAGE_FILE": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/baseline/.coverage",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "scope": "Source baseline before mapping-document application; not Herdr runtime"
+}

@@ -1,0 +1,8 @@
+{
+  "HOME": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/final-gates/home",
+  "XDG_CONFIG_HOME": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/final-gates/xdg",
+  "COVERAGE_FILE": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/final-gates/.coverage",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "sourceUnchangedDuringRun": true,
+  "note": "Documentation examples were corrected while gates ran; no Python, tests or configuration changed. These are source-health checks, never live pilot outcomes."
+}

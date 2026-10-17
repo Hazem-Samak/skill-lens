@@ -1,20 +1,47 @@
 {
   "schemaVersion": 1,
-  "scope": "Phase B read-only setup preflight proposal; no live pilot or process migration",
-  "frozenCommit": "58d48cea483804b22767b381c6edd8274fe6ad44",
-  "checkoutHead": "a0ffa9edee8226d7d8b981002b265510bced8a16",
-  "dispatch": {
-    "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-r1",
-    "providerInstanceId": "antigravity",
-    "model": "gemini-3.8-flash-high",
-    "runtimeMode": "full-access",
-    "interactionMode": "default"
-  },
-  "effectiveModel": {
-    "provider": "antigravity",
-    "model": "gemini-3.8-flash-high",
-    "runtimeMode": "full-access",
-    "options": []
+  "scope": "Phase B read-only setup preflight proposal with native mapping application; no live pilot or process migration",
+  "historicalPreflightProvenance": {
+    "description": "Historical provenance from original preflight task; preserved to avoid implying later metadata was observed by the initial dispatch",
+    "checkoutHead": "a0ffa9edee8226d7d8b981002b265510bced8a16",
+    "dispatch": {
+      "taskId": "node:delegated-task:command%3Amcp%3A6d4f8556-68fe-4c44-b77c-ca455c5fa288%3Adelegate-task%3Aherdr-migration-20261017-gemini-preflight-r1",
+      "providerInstanceId": "antigravity",
+      "model": "gemini-3.8-flash-high",
+      "runtimeMode": "full-access",
+      "interactionMode": "default"
+    },
+    "effectiveModel": {
+      "provider": "antigravity",
+      "model": "gemini-3.8-flash-high",
+      "runtimeMode": "full-access",
+      "options": []
+    },
+    "baselineGates": {
+      "source": "coordinator_rerun",
+      "logDirectory": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/",
+      "pytest": {
+        "exitCode": 0,
+        "durationSeconds": 54.05,
+        "testsPassed": 1048,
+        "testsSkipped": 1,
+        "coveragePercent": 91.11
+      },
+      "mypy": {
+        "exitCode": 0,
+        "durationSeconds": 1.76,
+        "filesChecked": 37
+      },
+      "ruffCheck": {
+        "exitCode": 0,
+        "durationSeconds": 0.08
+      },
+      "ruffFormat": {
+        "exitCode": 0,
+        "durationSeconds": 0.08,
+        "filesFormatted": 187
+      }
+    }
   },
   "clis": {
     "hermes": {
@@ -33,6 +60,8 @@
       "version": "1.3.0",
       "providerConfirmed": "workbuddy",
       "modelConfirmed": "deepseek-v4.1-flash",
+      "anymodelProviderConfirmed": true,
+      "anymodelModelConfirmed": "qwen/qwen3.8-max",
       "status": "ready"
     },
     "herdr": {
@@ -79,7 +108,9 @@
     "pi": {
       "sourcePath": "/Users/corvette/.pi/agent/models.json",
       "workbuddyBaseUrl": "http://127.0.0.1:8788/v1",
-      "workbuddyModel": "deepseek-v4.1-flash"
+      "workbuddyModel": "deepseek-v4.1-flash",
+      "anymodelBaseUrl": "https://anymodel.org/v1",
+      "anymodelModel": "qwen/qwen3.8-max"
     },
     "herdr": {
       "sourcePath": "/Users/corvette/.config/herdr/config.toml",
@@ -90,46 +121,13 @@
       "toastDelivery": "system"
     }
   },
-  "baselineGates": {
-    "source": "coordinator_rerun",
-    "logDirectory": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/",
-    "pytest": {
-      "exitCode": 0,
-      "durationSeconds": 54.05,
-      "testsPassed": 1048,
-      "testsSkipped": 1,
-      "coveragePercent": 91.11
-    },
-    "mypy": {
-      "exitCode": 0,
-      "durationSeconds": 1.76,
-      "filesChecked": 37
-    },
-    "ruffCheck": {
-      "exitCode": 0,
-      "durationSeconds": 0.08
-    },
-    "ruffFormat": {
-      "exitCode": 0,
-      "durationSeconds": 0.08,
-      "filesFormatted": 187
-    }
-  },
   "roleMappingProposal": {
     "coordinator": {
       "plannedRole": "Hermes (Sol)",
       "herdrKind": "hermes",
-      "nativeArgs": [
-        "--cli",
-        "--ignore-rules",
-        "--in",
-        "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/synthetic-checkout",
-        "-m",
-        "gpt-6.1-sol-900k",
-        "--reasoning",
-        "high"
-      ],
-      "status": "proposed"
+      "executableStartup": "cd /tmp/skill-lens-herdr-execution-20261017-cg7iv351/synthetic-checkout && hermes --cli --ignore-rules --in /tmp/skill-lens-herdr-execution-20261017-cg7iv351/synthetic-checkout -m gpt-6.1-sol-900k --reasoning high",
+      "historicalAlternate": "herdr agent start coord --kind hermes --pane <pane-id> -- --cli --ignore-rules --in /tmp/skill-lens-herdr-execution-20261017-cg7iv351/synthetic-checkout -m gpt-6.1-sol-900k --reasoning high (nonexecutable in single pane without separate control pane)",
+      "status": "approved_direct_interactive_flow"
     },
     "implementer": {
       "plannedRole": "agy (Gemini 3.8 Flash High)",
@@ -141,13 +139,43 @@
         "high",
         "--sandbox"
       ],
-      "status": "proposed_untested",
-      "notes": "Advertised terminal restrictions; no filesystem sandbox guarantees"
+      "status": "approved_untested",
+      "notes": "Name regex ^[a-z][a-z0-9_-]{0,31}$; unique per-dispatch token; advertised terminal restrictions; no filesystem sandbox guarantees",
+      "nameRegex": "^[a-z][a-z0-9_-]{0,31}$",
+      "nameTemplate": "worker-<token>"
+    },
+    "criticQwen": {
+      "plannedRole": "Pi / AnyModel Qwen 3.8 Max",
+      "herdrKind": "pi",
+      "nameRegex": "^[a-z][a-z0-9_-]{0,31}$",
+      "nameTemplate": "critic-qwen-<token>",
+      "nativeArgsTemplate": [
+        "--provider",
+        "anymodel",
+        "--model",
+        "qwen/qwen3.8-max",
+        "--thinking",
+        "high",
+        "--tools",
+        "read,grep,find,ls",
+        "--no-mcp",
+        "--no-extensions",
+        "-e",
+        "/Users/corvette/.pi/agent/extensions/herdr-agent-state.ts",
+        "--no-skills",
+        "--no-context-files",
+        "--session-dir",
+        "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/pilot-artifacts/pi-critic-qwen-<token>-<dir>/sessions"
+      ],
+      "status": "approved_frozen_amendment_unrun",
+      "notes": "Approved and frozen under amendment commit b99e212a55b20757eeda8605db4edcc59aad6107; native provider=anymodel / model=qwen/qwen3.8-max; unrun; unverified upstream identity; read-only tools; no write fallback; exclusive directory creation without -p"
     },
     "criticDeepSeek": {
       "plannedRole": "Pi / WorkBuddy DeepSeek",
       "herdrKind": "pi",
-      "nativeArgs": [
+      "nameRegex": "^[a-z][a-z0-9_-]{0,31}$",
+      "nameTemplate": "critic-deepseek-<token>",
+      "nativeArgsTemplate": [
         "--provider",
         "workbuddy",
         "--model",
@@ -163,22 +191,23 @@
         "--no-skills",
         "--no-context-files",
         "--session-dir",
-        "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/pilot-artifacts/pi-sessions"
+        "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/pilot-artifacts/pi-critic-deepseek-<token>-<dir>/sessions"
       ],
-      "status": "proposed"
+      "status": "approved_frozen_amendment_unrun",
+      "notes": "Approved and frozen under amendment commit b99e212a55b20757eeda8605db4edcc59aad6107; native provider=workbuddy / model=deepseek-v4.1-flash; per-dispatch session dir updated; unrun; unverified upstream identity; read-only tools; no write fallback; exclusive directory creation without -p"
     },
     "criticMiniMax": {
-      "plannedRole": "MiniMax (mcode)",
+      "plannedRole": "MiniMax (mcode) [Historical Base Plan]",
       "herdrKind": null,
       "nativeArgs": null,
-      "status": "blocked_unsupported_herdr_kind",
-      "notes": "No supported Herdr launch proposed; mcode/minimax absent from Herdr 0.9.5 kind enum; native kind gap scoped to installed enum and inspected configs"
+      "status": "superseded_by_approved_amendment_critic_qwen",
+      "notes": "Historical base proposal superseded by approved and frozen amendment b99e212a55b20757eeda8605db4edcc59aad6107"
     }
   },
   "sessionProposal": {
     "projectSession": "skill-lens",
     "pilotSession": "skill-lens-pilot-20261017",
-    "userApprovalStatus": "approved_for_existing_session_lifecycle_and_hermes_gemini_deepseek_settings"
+    "userApprovalStatus": "approved_for_session_lifecycle_and_all_roles_including_critic1_amendment"
   },
   "syntheticFixture": {
     "path": "/tmp/skill-lens-herdr-execution-20261017-cg7iv351/synthetic-checkout",
@@ -201,8 +230,77 @@
     "p08": "PENDING",
     "p09": "PENDING"
   },
-  "outcome": "succeeded",
+  "mappingApplication": {
+    "status": "accepted_by_explicit_user_override_for_this_checkpoint",
+    "appliedHead": "0c9991439309b1ce819abc4eb007664b872cc45b",
+    "basePlanFrozenCommit": "58d48cea483804b22767b381c6edd8274fe6ad44",
+    "operativeAmendmentFrozenCommit": "b99e212a55b20757eeda8605db4edcc59aad6107",
+    "worker": {
+      "role": "sole implementer",
+      "model": "gemini-3.8-flash-high",
+      "provider": "antigravity",
+      "runtimeMode": "full-access",
+      "interactionMode": "default",
+      "upstreamIdentity": "unverified",
+      "taskRef": "native-mapping documentation application checkpoint after review round 1",
+      "taskIds": [
+        "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-mapping-20261017-gemini-application-r1",
+        "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-mapping-20261017-gemini-correction-r1",
+        "node:delegated-task:command%3Amcp%3Ad08dfeea-548e-4e27-8098-500ed2afe27e%3Adelegate-task%3Aherdr-native-mapping-20261017-gemini-correction-r2"
+      ]
+    },
+    "configuredRoutes": {
+      "coordinator": {
+        "route": "http://127.0.0.1:8787/w/hermes/v1",
+        "provider": "custom",
+        "model": "gpt-6.1-sol-900k",
+        "launchMethod": "direct_interactive_human_startup",
+        "upstreamIdentity": "unverified"
+      },
+      "implementer": {
+        "kind": "agy",
+        "model": "gemini-3.8-flash-high",
+        "effort": "high",
+        "sandbox": "terminal restrictions only",
+        "upstreamIdentity": "unverified"
+      },
+      "critic1": {
+        "kind": "pi",
+        "nativeRoute": "provider=anymodel, model=qwen/qwen3.8-max",
+        "thinking": "high",
+        "tools": "read,grep,find,ls",
+        "mcp": false,
+        "nameRegex": "^[a-z][a-z0-9_-]{0,31}$",
+        "nameTemplate": "critic-qwen-<token>",
+        "sessionDirMethod": "exclusive creation without -p",
+        "upstreamIdentity": "unverified"
+      },
+      "critic2": {
+        "kind": "pi",
+        "nativeRoute": "provider=workbuddy, model=deepseek-v4.1-flash",
+        "thinking": "high",
+        "tools": "read,grep,find,ls",
+        "mcp": false,
+        "nameRegex": "^[a-z][a-z0-9_-]{0,31}$",
+        "nameTemplate": "critic-deepseek-<token>",
+        "sessionDirMethod": "exclusive creation without -p",
+        "upstreamIdentity": "unverified"
+      }
+    },
+    "note": "Historical dispatch and baseline evidence are preserved under historicalPreflightProvenance. Current mappingApplication reflects repository HEAD 0c9991439309b1ce819abc4eb007664b872cc45b and both frozen commits (base 58d48cea483804b22767b381c6edd8274fe6ad44, amendment b99e212a55b20757eeda8605db4edcc59aad6107). Source health checked via native-mapping-application-gates (1048 passed, 1 skip, 91.11% coverage, mypy 37, ruff format 216 files formatted run by coordinator at 13:18). Final post-correction gates will be run by coordinator after inspection. Current application is pending coordinator inspection and independent critic review.",
+    "acceptance": {
+      "record": "native-mapping-user-acceptance-20261017.md",
+      "userInstruction": "no we are good, skip Deepseek findings for this round, proceed with the final drafted plan accepted",
+      "miniMaxVerdict": "pass_recovered_from_native_artifact",
+      "deepSeekVerdict": "changes_required_findings_waived_by_user_for_this_round",
+      "unanimousReviewerAgreement": false,
+      "thirdWaveAuthorizedOrLaunched": false,
+      "substantiveHandoffChangedAfterReview": false,
+      "livePilotVerified": false,
+      "fullMigrationAccepted": false
+    }
+  },
   "approvalRecord": "setup-approval-20261017.md",
-  "nativeCritic1AmendmentStatus": "coordinator_selected_anymodel_qwen_high_under_user_closed_list_authority_review_and_adoption_pending",
+  "nativeCritic1AmendmentStatus": "adopted_and_frozen_at_b99e212a55b20757eeda8605db4edcc59aad6107",
   "reliableModelAuthorization": "reliable-model-authorization-20261017.md"
 }

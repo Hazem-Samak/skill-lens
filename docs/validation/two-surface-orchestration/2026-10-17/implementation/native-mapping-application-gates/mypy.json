@@ -1,0 +1,11 @@
+{
+  "gate": "mypy",
+  "command": [
+    ".venv/bin/mypy",
+    "--cache-dir",
+    "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/final-gates/mypy-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 1.9,
+  "log": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/final-gates/mypy.log"
+}

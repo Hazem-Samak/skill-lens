@@ -1,0 +1,13 @@
+{
+  "gate": "ruff-format",
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "--check",
+    ".",
+    "--no-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 0.12,
+  "log": "/tmp/skill-lens-herdr-native-mapping-implementation-20261017/final-gates/ruff-format.log"
+}
