@@ -36,8 +36,11 @@ Then paste:
    SHA256 manifest of its tracked and nonignored untracked files (including
    pre-existing `.path`), and compare the same scope at exit. Preparation HEAD in
    preparation.json is historical; it is not the live baseline.
-3. Verify working directory is exactly
+3. Verify working directory is the same filesystem directory as
    `/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/synthetic-checkout`.
+   Compare resolved paths or use `Path.samefile()`: macOS reports `/private/tmp/`
+   for the `/tmp/` shortcut. Record both spellings; they must refer to the same
+   directory, and an unrelated directory must fail the check.
    The only fixture file is `fixture.txt`, bytes `pilot status: pending\n`,
    SHA256 `462b045a567486e8acd32f21f3861cb101a4b9c6ccbbb18613615c2ec707014e`.
    Preserve it unchanged throughout P01. Do not run the product, pytest, or any

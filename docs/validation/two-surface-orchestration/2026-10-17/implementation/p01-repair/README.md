@@ -68,3 +68,6 @@ See [execution receipt](./execution-receipt.json),
 [review fingerprint](./review-before.json), and
 [gate checkout binding](./gates/binding.json). Administrative retention suggestions
 were applied after review; no operative command or acceptance condition changed.
+The working-directory check also names macOS's `/tmp` → `/private/tmp` shortcut:
+the coordinator directly verified both paths identify the same fixture directory.
+Use filesystem identity rather than rejecting that equivalent spelling.
