@@ -14,7 +14,7 @@ Standing delivery source: the [U2 plan authorization](2026-10-12-tui-u2-controll
 recorded 2026-10-12, states: "Earlier instruction requires pushing every coordinator commit
 to GitHub." This governs delivery only after a commit/freeze is separately authorized;
 the current user instruction above now separately authorizes these migration commits/pushes.
-Reference: pending
+Reference: 58d48cea483804b22767b381c6edd8274fe6ad44
 Risk and review: High — changes orchestration, permissions, independent-review evidence,
 and the development execution contract. Two independent planning critics and two final
 implementation critics are required under the existing council rules.
