@@ -1,0 +1,20 @@
+{
+  "state": "preparation accepted; human trial pending",
+  "surface": "herdr",
+  "trial_root": "/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/simple-loop-trial-dkn9ufiu",
+  "checkout": "/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/simple-loop-trial-dkn9ufiu/checkout",
+  "evidence": "/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/simple-loop-trial-dkn9ufiu/evidence",
+  "frozen_plan": "docs/plans/2026-10-18-herdr-single-cycle-trial.md",
+  "frozen_plan_commit": "ad19c3115f518b8f10d1ab2ef23c04254196886b",
+  "provenance_commit": "1aab76b5d5e4af90c37ebf23d3341e7588ac9c27",
+  "fixture_bytes": "pilot status: pending\\n",
+  "fixture_sha256": "462b045a567486e8acd32f21f3861cb101a4b9c6ccbbb18613615c2ec707014e",
+  "fixture_baseline_head": "589537f2419fd455ae57ef720e5fcbf06fe04599",
+  "fixture_status": "",
+  "fixture_remote": "",
+  "implementation_precreated": false,
+  "observer_used": false,
+  "human_launch_only": true,
+  "original_repository_preparation_head": "1aab76b5d5e4af90c37ebf23d3341e7588ac9c27",
+  "brief_sha256": "8ed4ca436c5ce83ac5d8ba76dd04c9506413f1da574962c310faf302ad07789d"
+}

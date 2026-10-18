@@ -1,0 +1,128 @@
+{
+  "surface": "t3 preparation; herdr human trial pending",
+  "status": "coordinator accepts prepared handoff; live trial unrun",
+  "frozen_plan_commit": "ad19c3115f518b8f10d1ab2ef23c04254196886b",
+  "provenance_commit": "1aab76b5d5e4af90c37ebf23d3341e7588ac9c27",
+  "expected_t3_child_tasks": 4,
+  "actual_t3_child_tasks": 6,
+  "extra_launch_reasons": [
+    "DeepSeek first R1 ended without a verdict; one supplied-snapshot completion obtained the report.",
+    "MiniMax targeted R2 checked two reproduced preparation omissions: surface declaration and frozen-reference gate."
+  ],
+  "review_results": {
+    "plan_minimax": "R1 changes_required; R2 canonical report pass, retained verbatim",
+    "plan_deepseek": "initial incomplete; supplied-snapshot completion pass",
+    "final_deepseek": "pass, no blockers",
+    "final_minimax": "changes_required solely for stale snapshot hashes; contract and concrete preparation verified. Exact mechanical hash refresh completed and recomputed by coordinator; raw verdict retained without relabeling it pass."
+  },
+  "final_correction_scope": "Administrative final-state labels, full provenance hash, actual brief/plan hashes; no execution-contract or code change. No extra review wave for this metadata-only correction.",
+  "identity": "T3 requested/configured selections corroborated; upstream model identities unverified. DeepSeek R1 self-label error retained and not treated as configuration evidence.",
+  "gates": {
+    "pytest": {
+      "exit": 0,
+      "passed": 1048,
+      "skipped": 1,
+      "coverage_percent": 91.11
+    },
+    "mypy": {
+      "exit": 0,
+      "files": 37
+    },
+    "ruff_check": {
+      "exit": 0
+    },
+    "ruff_format": {
+      "exit": 0,
+      "files": 240
+    }
+  },
+  "gate_scope": "Product tests used command-local synthetic HOME/XDG with existing system-root guards and external caches. Source/config unchanged after these gates; later changes only Markdown/JSON evidence.",
+  "protected_original_files_unchanged": 1046,
+  "preexisting_path_preserved": true,
+  "no_product_source_tests_registry_process_changes": true,
+  "no_live_herdr_control": true,
+  "no_runtime_agent_or_worker_started": true,
+  "fixture": "fresh clean local Git repository at preparation.json checkout; fixture.txt only; no remotes; local fixture commits expressly exempt from pushing",
+  "fixture_task": "status_reader.py and test_status_reader.py to be written only by Gemini during human-started trial",
+  "human_instructions": "human-instructions.md; pasted inline in final chat",
+  "deferred": [
+    "observer investigation",
+    "P01 acceptance",
+    "P02-P09",
+    "restart/recovery/cancellation experiments",
+    "Phase C",
+    "full migration acceptance"
+  ],
+  "metrics": {
+    "tokens": "unavailable; no savings claim",
+    "elapsed": "not measured as one unified session duration; individual T3 task timestamps remain in native task storage"
+  },
+  "tasks": [
+    {
+      "clientRequestId": "herdr-single-cycle-20261018-plan-minimax-r1",
+      "taskId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-minimax-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-minimax-r1:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-minimax-r1",
+      "status": "completed",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "mcode",
+      "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking"
+    },
+    {
+      "clientRequestId": "herdr-single-cycle-20261018-plan-deepseek-r1",
+      "taskId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-deepseek-r1:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1",
+      "status": "completed",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "pi",
+      "model": "workbuddy/deepseek-v4.1-flash"
+    },
+    {
+      "clientRequestId": "herdr-single-cycle-20261018-plan-deepseek-r1-completion",
+      "taskId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1-completion",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-deepseek-r1-completion:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1-completion",
+      "status": "completed",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "pi",
+      "model": "workbuddy/deepseek-v4.1-flash"
+    },
+    {
+      "clientRequestId": "herdr-single-cycle-20261018-plan-minimax-r2",
+      "taskId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-minimax-r2",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-minimax-r2:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-minimax-r2",
+      "status": "completed",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "mcode",
+      "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking"
+    },
+    {
+      "clientRequestId": "herdr-single-cycle-20261018-final-minimax-r1",
+      "taskId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-final-minimax-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-final-minimax-r1:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-final-minimax-r1",
+      "status": "completed",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "mcode",
+      "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking"
+    },
+    {
+      "clientRequestId": "herdr-single-cycle-20261018-final-deepseek-r1",
+      "taskId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-final-deepseek-r1",
+      "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-final-deepseek-r1:ordinal:1",
+      "childThreadId": "thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-final-deepseek-r1",
+      "status": "completed",
+      "hasPendingChildRuns": false,
+      "hasPendingQuestion": false,
+      "providerInstanceId": "pi",
+      "model": "workbuddy/deepseek-v4.1-flash"
+    }
+  ]
+}

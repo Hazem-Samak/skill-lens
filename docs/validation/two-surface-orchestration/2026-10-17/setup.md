@@ -1,5 +1,11 @@
 # Two-Surface Orchestration: Herdr + cmux Setup Proposal
 
+> Current direction (2026-10-18): the user approved one small disposable
+> [planning/implementation cycle](./implementation/single-cycle/README.md).
+> Further observer work is stopped. P01 remains unverified and P02-P09 are
+> paused. Use only the new accepted inline launch instructions when ready;
+> the earlier startup commands below are historical.
+
 > Latest P01 capture checkpoint (2026-10-18): the repaired live retry proved
 > fresh context and current registration but lacked correlated actual API-mode
 > and HTTP request-URL proof. P01 remains unverified. The temporary observer and

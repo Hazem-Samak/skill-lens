@@ -1,0 +1,94 @@
+{
+  "configuration": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"threadId\":\"ff0eb366-e2ff-436e-ae4b-d9a0ea809bcb\",\"modelSelection\":{\"instanceId\":\"codex\",\"model\":\"gpt-6.1-sol\",\"options\":[{\"id\":\"reasoningEffort\",\"value\":\"high\"},{\"id\":\"serviceTier\",\"value\":\"default\"}]},\"runtimeMode\":\"full-access\",\"interactionMode\":\"default\"}"
+      }
+    ],
+    "structuredContent": {
+      "threadId": "ff0eb366-e2ff-436e-ae4b-d9a0ea809bcb",
+      "modelSelection": {
+        "instanceId": "codex",
+        "model": "gpt-6.1-sol",
+        "options": [
+          {
+            "id": "reasoningEffort",
+            "value": "high"
+          },
+          {
+            "id": "serviceTier",
+            "value": "default"
+          }
+        ]
+      },
+      "runtimeMode": "full-access",
+      "interactionMode": "default"
+    },
+    "isError": false
+  },
+  "tasks": [
+    {
+      "clientRequestId": "herdr-single-cycle-20261018-plan-minimax-r1",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"taskId\":\"node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-minimax-r1\",\"childThreadId\":\"thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-minimax-r1\",\"childRunId\":\"run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-minimax-r1:ordinal:1\",\"childNodeId\":\"node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-minimax-r1\",\"status\":\"running\",\"workState\":\"working\",\"hasPendingChildRuns\":false,\"latestTerminalRunId\":null,\"latestTerminalStatus\":null,\"latestTerminalSummary\":null,\"latestTerminalResultContextTransferId\":null,\"providerInstanceId\":\"mcode\",\"model\":\"m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking\",\"summary\":null,\"resultContextTransferId\":null,\"hasPendingQuestion\":false,\"waitTimedOut\":false}"
+          }
+        ],
+        "structuredContent": {
+          "taskId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-minimax-r1",
+          "childThreadId": "thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-minimax-r1",
+          "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-minimax-r1:ordinal:1",
+          "childNodeId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-minimax-r1",
+          "status": "running",
+          "workState": "working",
+          "hasPendingChildRuns": false,
+          "latestTerminalRunId": null,
+          "latestTerminalStatus": null,
+          "latestTerminalSummary": null,
+          "latestTerminalResultContextTransferId": null,
+          "providerInstanceId": "mcode",
+          "model": "m:minimax:MiniMax-M3.1-Flash-Preview:v:thinking",
+          "summary": null,
+          "resultContextTransferId": null,
+          "hasPendingQuestion": false,
+          "waitTimedOut": false
+        },
+        "isError": false
+      }
+    },
+    {
+      "clientRequestId": "herdr-single-cycle-20261018-plan-deepseek-r1",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"taskId\":\"node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1\",\"childThreadId\":\"thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1\",\"childRunId\":\"run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-deepseek-r1:ordinal:1\",\"childNodeId\":\"node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1\",\"status\":\"running\",\"workState\":\"working\",\"hasPendingChildRuns\":false,\"latestTerminalRunId\":null,\"latestTerminalStatus\":null,\"latestTerminalSummary\":null,\"latestTerminalResultContextTransferId\":null,\"providerInstanceId\":\"pi\",\"model\":\"workbuddy/deepseek-v4.1-flash\",\"summary\":null,\"resultContextTransferId\":null,\"hasPendingQuestion\":false,\"waitTimedOut\":false}"
+          }
+        ],
+        "structuredContent": {
+          "taskId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1",
+          "childThreadId": "thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1",
+          "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-deepseek-r1:ordinal:1",
+          "childNodeId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1",
+          "status": "running",
+          "workState": "working",
+          "hasPendingChildRuns": false,
+          "latestTerminalRunId": null,
+          "latestTerminalStatus": null,
+          "latestTerminalSummary": null,
+          "latestTerminalResultContextTransferId": null,
+          "providerInstanceId": "pi",
+          "model": "workbuddy/deepseek-v4.1-flash",
+          "summary": null,
+          "resultContextTransferId": null,
+          "hasPendingQuestion": false,
+          "waitTimedOut": false
+        },
+        "isError": false
+      }
+    }
+  ]
+}

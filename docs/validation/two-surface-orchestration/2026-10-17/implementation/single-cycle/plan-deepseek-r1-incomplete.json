@@ -1,0 +1,19 @@
+{
+  "taskId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1",
+  "childThreadId": "thread:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1",
+  "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-deepseek-r1:ordinal:1",
+  "childNodeId": "node:delegated-task:command%3Amcp%3A44582f52-dfe6-4614-be8e-9aceb31c3503%3Adelegate-task%3Aherdr-single-cycle-20261018-plan-deepseek-r1",
+  "status": "completed",
+  "workState": "result_available",
+  "hasPendingChildRuns": false,
+  "latestTerminalRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-deepseek-r1:ordinal:1",
+  "latestTerminalStatus": "completed",
+  "latestTerminalSummary": "<call_mveah9q0n8mz>\n{\"recovery_handle\":\"ccr://ccr_obj_61d16ff4c187ff171387b486c585567e\",\"query\":\"council.md lines 40 to 175 verbatim guard text and critic report format schema and implementer report and full access preflight and section 5 risk table\"}\n</call_mveah9q0n8mz>",
+  "latestTerminalResultContextTransferId": "context-transfer:type:subagent_result:source-thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-deepseek-r1:target-thread:ff0eb366-e2ff-436e-ae4b-d9a0ea809bcb:ed89952d-895b-4f37-9d75-68faf3043963",
+  "providerInstanceId": "pi",
+  "model": "workbuddy/deepseek-v4.1-flash",
+  "summary": "<call_mveah9q0n8mz>\n{\"recovery_handle\":\"ccr://ccr_obj_61d16ff4c187ff171387b486c585567e\",\"query\":\"council.md lines 40 to 175 verbatim guard text and critic report format schema and implementer report and full access preflight and section 5 risk table\"}\n</call_mveah9q0n8mz>",
+  "resultContextTransferId": "context-transfer:type:subagent_result:source-thread:thread%3Adelegated-task%3Acommand%253Amcp%253A44582f52-dfe6-4614-be8e-9aceb31c3503%253Adelegate-task%253Aherdr-single-cycle-20261018-plan-deepseek-r1:target-thread:ff0eb366-e2ff-436e-ae4b-d9a0ea809bcb:ed89952d-895b-4f37-9d75-68faf3043963",
+  "hasPendingQuestion": false,
+  "waitTimedOut": false
+}

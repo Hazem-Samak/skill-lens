@@ -1,0 +1,23 @@
+{
+  "surface": "t3 preparation; herdr live trial",
+  "status": "current final-delivery file hashes; preparation accepted, human run pending",
+  "files": {
+    "docs/plans/2026-10-18-herdr-single-cycle-trial.md": "d8b2d24c5f959f488ca9fcfe4a3eeeb7d6c633629b6c012c01b4b37d7dc26027",
+    "docs/validation/two-surface-orchestration/2026-10-17/implementation/single-cycle/coordinator-brief.md": "8ed4ca436c5ce83ac5d8ba76dd04c9506413f1da574962c310faf302ad07789d"
+  },
+  "minimax_r2_source_sha256": "0a3a03ebfa56d7093596979cea6dc079e644a9886341a2895d4fd2006295f776",
+  "prior_snapshot": "Original preparation agreement preserved externally in simple-loop-trial-dkn9ufiu/preparation-agreed-snapshot.json; files now refreshed from actual final files after mandatory reference substitution.",
+  "gates": {
+    "pytest": "1048 passed, 1 expected skip, 91.11% coverage, exit0",
+    "mypy": "37 files clean, exit0",
+    "ruff_check": "exit0",
+    "ruff_format": "240 files formatted, exit0"
+  },
+  "reviewer_repository_writes": "none; setup/pilot/README additions are coordinator-owned",
+  "path_bytes": 0,
+  "historical_pre_freeze_hashes": {
+    "docs/plans/2026-10-18-herdr-single-cycle-trial.md": "9ae3fcd1bee80343f8493e4c10a2ef1a2527d38b7a83d4d9d5796115ab8e813f",
+    "docs/validation/two-surface-orchestration/2026-10-17/implementation/single-cycle/coordinator-brief.md": "214e390abe1d036b63f1dbc2dd420c1744a9b7b3d682cbbc73eb9d298366404b"
+  },
+  "final_review_disposition": "DeepSeek final pass. MiniMax final found only stale metadata hashes; exact requested mechanical refresh completed and independently recomputed by coordinator. No execution-contract change; no extra review wave."
+}

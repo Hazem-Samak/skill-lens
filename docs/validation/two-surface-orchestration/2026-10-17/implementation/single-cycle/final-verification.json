@@ -1,0 +1,10 @@
+{
+  "scope_verified": true,
+  "protected_baseline_files": 1046,
+  "unexpected_changes": [],
+  "snapshot_hashes_current": true,
+  "fixture_clean_only_initial_file": true,
+  "evidence_unused": true,
+  "no_observer_or_live_controls": true,
+  "preexisting_path_preserved": true
+}
