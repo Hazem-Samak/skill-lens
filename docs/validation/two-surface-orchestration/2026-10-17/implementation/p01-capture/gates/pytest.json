@@ -1,0 +1,12 @@
+{
+  "gate": "pytest",
+  "argv": [
+    ".venv/bin/pytest",
+    "--cov=skill_lens",
+    "-o",
+    "cache_dir=/private/tmp/skill-lens-p01-capture-20261018-qurnpsjs/pytest-cache"
+  ],
+  "exit_code": 0,
+  "seconds": 56.5,
+  "log": "/private/tmp/skill-lens-p01-capture-20261018-qurnpsjs/pytest.log"
+}

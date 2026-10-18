@@ -1,0 +1,11 @@
+{
+  "gate": "ruff-check",
+  "argv": [
+    ".venv/bin/ruff",
+    "check",
+    "."
+  ],
+  "exit_code": 0,
+  "seconds": 0.09,
+  "log": "/private/tmp/skill-lens-p01-capture-20261018-qurnpsjs/ruff-check.log"
+}

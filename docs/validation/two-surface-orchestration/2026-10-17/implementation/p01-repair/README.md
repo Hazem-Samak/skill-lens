@@ -1,5 +1,11 @@
 # P01 repair: prepared, awaiting human restart
 
+> Latest P01 capture checkpoint (2026-10-18): the repaired live retry proved
+> fresh context and current registration but lacked correlated actual API-mode
+> and HTTP request-URL proof. P01 remains unverified. The temporary observer and
+> new fixture passed offline checks and both final reviews. Use [the new P01-only brief](../p01-capture/P01-only-brief.md).
+> The earlier startup commands below are historical and must not be repeated.
+
 The corrected coordinator route was checked successfully through the existing
 Caveman proxy using the existing Hermes login. Live P01 has not run.
 

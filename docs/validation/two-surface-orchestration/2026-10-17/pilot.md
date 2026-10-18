@@ -1,5 +1,11 @@
 # Two-Surface Orchestration: Pilot Evidence & Status (Phase B)
 
+> Latest P01 capture checkpoint (2026-10-18): the repaired live retry proved
+> fresh context and current registration but lacked correlated actual API-mode
+> and HTTP request-URL proof. P01 remains unverified. The temporary observer and
+> new fixture passed offline checks and both final reviews. Use [the new P01-only brief](./implementation/p01-capture/P01-only-brief.md).
+> The earlier startup commands below are historical and must not be repeated.
+
 > Current status (2026-10-17): the human reported P01 failure, then a diagnostic
 > retry that passed fresh-context checks but failed the approved route and left
 > session registration unverified. P02–P09 were not run. The original temporary

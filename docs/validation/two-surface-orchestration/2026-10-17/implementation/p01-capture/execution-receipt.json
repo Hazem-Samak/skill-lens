@@ -1,0 +1,26 @@
+{
+  "expected_child_tasks_before_corrections": 5,
+  "actual_child_tasks": 14,
+  "planning_tasks": 5,
+  "implementation_tasks": 5,
+  "final_review_tasks": 4,
+  "extra_task_reasons": [
+    "planning bootstrap/context defects and source-verification completion",
+    "coordinator reproduced launcher/test/privacy/context/fallback/initial-root-ancestor defects; batched corrections",
+    "second final-review wave after correction; first DeepSeek report incomplete"
+  ],
+  "first_started_at": "2026-10-17T18:17:50.684000+00:00",
+  "last_completed_at": "2026-10-18T14:52:44.312000+00:00",
+  "elapsed_wall_seconds": 74093.63,
+  "summed_child_turn_wall_seconds": 6281.43,
+  "timing_limits": "wall time includes overlapping tasks, provider waits, questions, and overnight gap; not active compute or billed tokens",
+  "token_usage": "unavailable",
+  "token_savings_claim": false,
+  "all_tasks_terminal_no_pending": true,
+  "read_only_review_fingerprint": "unchanged across R2; administrative acceptance files added afterward",
+  "native_minimax_question": "answered remain read-only, no implementation permission",
+  "selected_reviewer_settings": "mcode MiniMax thinking xhigh; Pi WorkBuddy DeepSeek high; verified by live T3 configuration",
+  "upstream_identities": "unverified; accepted named-pair policy; reviewer self-label errors do not override task/config receipts",
+  "live_P01": "unverified; human-only retry pending",
+  "P02_P09": "not run; paused"
+}

@@ -1,0 +1,49 @@
+{
+  "tests_run": 58,
+  "errors": 0,
+  "failures": 0,
+  "skipped": 0,
+  "was_successful": true,
+  "duration_seconds": 2.294,
+  "capture_tests_count": 52,
+  "mutation_tests_count": 6,
+  "mutation_records": [
+    {
+      "mutation_id": "M1",
+      "guard": "ContextVar request correlation",
+      "target_test": "test_direct_request_correlation_and_actual_api_mode",
+      "status": "KILLED",
+      "failing_assertion": "AssertionError: None != 'test-session-123'"
+    },
+    {
+      "mutation_id": "M2",
+      "guard": "Secrets exclusion from observer bytes",
+      "target_test": "test_secrets_exclusion_from_all_observer_bytes",
+      "status": "KILLED",
+      "failing_assertion": "AssertionError: b'SECRET_BEARER_AUTH_TOKEN_XYZZY' unexpectedly found in b'{\"api_mode\": \"codex_responses\", \"api_request_id\": \"req-privacy\", \"base_url\": \"http://127.0.0.1:8787/chatgpt\", \"event\": \"codex_stream_call_enter\", \"leaked_header\": \"SECRET_BEARER_AUTH_TOKEN_XYZZY\", \"model\": \"gpt-6.1-sol\", \"provider\": \"openai-codex\", \"reasoning_effort\": null, \"session_id\": \"privacy-test-session\"}\\n{\"api_mode\": \"codex_responses\", \"api_request_id\": \"req-privacy\", \"base_url\": \"http://127.0.0.1:8787/chatgpt\", \"correlated\": true, \"event\": \"http_request\", \"exchange_id\": 1, \"leaked_header\": \"SECRET_BEARER_AUTH_TOKEN_XYZZY\", \"method\": \"POST\", \"model\": \"gpt-6.1-sol\", \"provider\": \"openai-codex\", \"reasoning_effort\": null, \"route_approved\": true, \"session_id\": \"privacy-test-session\", \"url\": \"http://127.0.0.1:8787/chatgpt/responses\"}\\n{\"api_mode\": \"codex_responses\", \"api_request_id\": \"req-privacy\", \"base_url\": \"http://127.0.0.1:8787/chatgpt\", \"correlated\": true, \"event\": \"http_response\", \"exchange_id\": 1, \"leaked_header\": \"SECRET_BEARER_AUTH_TOKEN_XYZZY\", \"method\": \"POST\", \"model\": \"gpt-6.1-sol\", \"provider\": \"openai-codex\", \"reasoning_effort\": null, \"route_approved\": true, \"session_id\": \"privacy-test-session\", \"status_code\": 200, \"url\": \"http://127.0.0.1:8787/chatgpt/responses\"}\\n{\"api_request_id\": \"req-privacy\", \"event\": \"codex_stream_call_exit\", \"leaked_header\": \"SECRET_BEARER_AUTH_TOKEN_XYZZY\", \"session_id\": \"privacy-test-session\"}\\n'"
+    },
+    {
+      "mutation_id": "M3",
+      "guard": "Loopback URL and route sanitization guard",
+      "target_test": "test_unapproved_url_sanitized_to_safe_marker",
+      "status": "KILLED",
+      "failing_assertion": "+ <unapproved_route_mismatch>"
+    },
+    {
+      "mutation_id": "M4",
+      "guard": "Sink exclusive mode 0600 permissions",
+      "target_test": "test_mode_0600_and_exclusive_creation",
+      "status": "KILLED",
+      "failing_assertion": "AssertionError: 438 != 384"
+    },
+    {
+      "mutation_id": "M5",
+      "guard": "Dynamic agent.api_mode extraction (not assumed constant)",
+      "target_test": "test_actual_mode_read_dynamically_not_assumed_constant",
+      "status": "KILLED",
+      "failing_assertion": "AssertionError: 'custom_chat' not found in ['codex_responses', 'codex_responses', 'codex_responses']"
+    }
+  ],
+  "error_details": [],
+  "failure_details": []
+}

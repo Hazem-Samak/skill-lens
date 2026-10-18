@@ -1,5 +1,11 @@
 # Two-Surface Orchestration: Herdr + cmux Setup Proposal
 
+> Latest P01 capture checkpoint (2026-10-18): the repaired live retry proved
+> fresh context and current registration but lacked correlated actual API-mode
+> and HTTP request-URL proof. P01 remains unverified. The temporary observer and
+> new fixture passed offline checks and both final reviews. Use [the new P01-only brief](./implementation/p01-capture/P01-only-brief.md).
+> The earlier startup commands below are historical and must not be repeated.
+
 > Current P01 repair handoff (2026-10-17): the human reported two stopped P01
 > attempts. The corrected subscription route and fresh fixture are prepared under
 > [the frozen repair amendment](../../../plans/2026-10-17-herdr-p01-route-repair.md).

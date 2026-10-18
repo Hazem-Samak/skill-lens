@@ -1,0 +1,28 @@
+{
+  "status": "accepted offline preparation; both finalR2 pass; liveP01 unverified",
+  "date": "2026-10-18",
+  "frozen_plan": "a9bcda8b6f1e2ac7de15b13eefbdfa299adb830f",
+  "focused_tests": 58,
+  "capture_test_methods": 52,
+  "mutation_test_methods": 6,
+  "mutation_guards": 5,
+  "mutation_survivors": 0,
+  "project_tests_passed": 1048,
+  "project_tests_skipped": 1,
+  "coverage_percent": 91.11,
+  "mypy_source_files": 37,
+  "all_four_project_gates": "exit0",
+  "deployed_tests_and_help": "exit0",
+  "root_ancestor_retest": "swap injected; rejected; external file absent",
+  "historical_external_artifacts": "expired/missing on resume; fresh logs replace them for current acceptance only",
+  "minimax_r1_configuration": "mcode xhigh full-access plan verified by T3; contradictory self-report is not evidence of a roster substitution",
+  "deepseek_r1": "incomplete no verdict; not approval",
+  "live_herdr_control": false,
+  "workers_launched_in_pilot": false,
+  "P02_P09_run": false,
+  "reviewers_finalR2": {
+    "MiniMax": "pass no blockers",
+    "DeepSeek": "pass no blockers"
+  },
+  "reviewer_provenance": "T3 task/config receipts authoritative for requested/configured roles; erroneous self-identification retained transparently in raw reports; upstream identity unverified"
+}

@@ -1,5 +1,11 @@
 # Fresh P01-only repair retry
 
+> Latest P01 capture checkpoint (2026-10-18): the repaired live retry proved
+> fresh context and current registration but lacked correlated actual API-mode
+> and HTTP request-URL proof. P01 remains unverified. The temporary observer and
+> new fixture passed offline checks and both final reviews. Use [the new P01-only brief](../p01-capture/P01-only-brief.md).
+> The earlier startup commands below are historical and must not be repeated.
+
 Status: prepared; live execution not yet run.
 Repair plan: `docs/plans/2026-10-17-herdr-p01-route-repair.md`
 @ `6a038523e57c217b2b1a3afa64713da6a4ff2d17`.

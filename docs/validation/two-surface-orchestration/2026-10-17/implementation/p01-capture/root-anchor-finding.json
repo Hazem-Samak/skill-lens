@@ -1,0 +1,9 @@
+{
+  "status": "reproduced",
+  "root_ancestor_swap_injected": true,
+  "outcome": "created",
+  "capture_written_outside_allowed_root": true,
+  "scope": "synthetic TemporaryDirectory only",
+  "cause": "full-path root os.stat/open follows an ancestor symlink after raw validation",
+  "old_external_evidence": "missing after date rollover; not recreated as historical evidence"
+}

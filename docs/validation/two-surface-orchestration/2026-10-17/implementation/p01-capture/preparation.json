@@ -1,0 +1,20 @@
+{
+  "state": "offline observer and handoff accepted by Sol and both final reviewers; live P01 pending",
+  "prepared_date": "2026-10-18",
+  "attempt_directory": "/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x",
+  "deployment_directory": "/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/observer",
+  "synthetic_checkout": "/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/synthetic-checkout",
+  "fixture_sha256": "462b045a567486e8acd32f21f3861cb101a4b9c6ccbbb18613615c2ec707014e",
+  "output_path": "/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/capture.jsonl",
+  "deployed_sha256": {
+    "observer.py": "5a6c560a2c8f7340e3c4d451795845793162ba5e349145c2ead62aad2da0dd13",
+    "run_offline_tests.py": "7783bbfae439be3f285c3d646073ed523ac8ab101f311115ebe03f3ae0a32256",
+    "mutation_tests.py": "7079033a4a5c96faabadf2a2fc2015e3788e630262934fa42410ee52e9520c96",
+    "test_capture_offline.py": "fafb508f261990d9c65ae490c429426a2eb2d4dae0a1ffbd31775eff357c5b28",
+    "launcher.py": "417ed405a4c8a2792b6222fa4ed0bdce87155422a5d25154f7cd0e31cb500aad"
+  },
+  "frozen_capture_plan": "a9bcda8b6f1e2ac7de15b13eefbdfa299adb830f",
+  "preparation_head": "46be718cb7991e3914f6feef6e716f3d0c772cb8",
+  "human_launch_only": true,
+  "prior_temporary_evidence": "missing on 2026-10-18; historical artifacts not recreated"
+}

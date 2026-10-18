@@ -1,0 +1,12 @@
+{
+  "gate": "native-help",
+  "argv": [
+    "/Users/corvette/.hermes/tools/python-3.14.7+20260901-darwin-arm64/bin/python3",
+    "-B",
+    "/Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/two-surface-orchestration/2026-10-17/implementation/p01-capture/launcher.py",
+    "--help"
+  ],
+  "exit_code": 0,
+  "seconds": 0.81,
+  "log": "/private/tmp/skill-lens-p01-capture-20261018-qurnpsjs/native-help.log"
+}

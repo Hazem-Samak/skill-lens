@@ -1,0 +1,13 @@
+{
+  "gate": "focused",
+  "argv": [
+    "/Users/corvette/.hermes/tools/python-3.14.7+20260901-darwin-arm64/bin/python3",
+    "-B",
+    "/Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/two-surface-orchestration/2026-10-17/implementation/p01-capture/run_offline_tests.py",
+    "--output",
+    "/private/tmp/skill-lens-p01-capture-20261018-qurnpsjs/coordinator-focused-results.json"
+  ],
+  "exit_code": 0,
+  "seconds": 3.71,
+  "log": "/private/tmp/skill-lens-p01-capture-20261018-qurnpsjs/focused.log"
+}
