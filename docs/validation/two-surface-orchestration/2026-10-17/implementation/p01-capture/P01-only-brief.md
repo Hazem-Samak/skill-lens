@@ -22,20 +22,20 @@ critic amendment too. No change to model, route, roles, context isolation, or st
 
 ```bash
 test "${HERDR_ENV:-}" = 1 &&
-cd /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/observer &&
+cd /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/observer &&
 shasum -a 256 -c SHA256SUMS &&
-test -f /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/synthetic-checkout/fixture.txt &&
-test ! -e /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/capture.jsonl &&
-test ! -L /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/capture.jsonl &&
-test ! -e /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/capture.jsonl.invalid &&
-test ! -L /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/capture.jsonl.invalid &&
+test -f /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/synthetic-checkout/fixture.txt &&
+test ! -e /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/capture.jsonl &&
+test ! -L /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/capture.jsonl &&
+test ! -e /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/capture.jsonl.invalid &&
+test ! -L /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/capture.jsonl.invalid &&
 HERMES_CODEX_BASE_URL=http://127.0.0.1:8787/chatgpt \
-HERDR_OBSERVER_OUTPUT_PATH=/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/capture.jsonl \
+HERDR_OBSERVER_OUTPUT_PATH=/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/capture.jsonl \
 /Users/corvette/.hermes/tools/python-3.14.7+20260901-darwin-arm64/bin/python3 -B \
-  /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/observer/launcher.py \
+  /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/observer/launcher.py \
   --cli --ignore-rules --toolsets terminal,file \
   --provider openai-codex --pass-session-id \
-  --in /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/synthetic-checkout \
+  --in /private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/synthetic-checkout \
   -m gpt-6.1-sol --reasoning high
 ```
 
@@ -61,7 +61,7 @@ capture, delete old evidence, fabricate the environment, or substitute a checkou
    nonignored untracked files, including pre-existing `.path`. Compare the same
    scope. Preparation HEAD is historical, never the live baseline.
 3. Require your working directory to be the same physical directory as
-   `/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/synthetic-checkout`.
+   `/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/synthetic-checkout`.
    Resolve macOS /tmp aliases or use Path.samefile(); unrelated directories fail.
    Preserve fixture.txt, exactly `pilot status: pending\n`, SHA256
    `462b045a567486e8acd32f21f3861cb101a4b9c6ccbbb18613615c2ec707014e`.
@@ -72,7 +72,7 @@ capture, delete old evidence, fabricate the environment, or substitute a checkou
    persistent memory/profile blocks, repository rules, or automatically
    discovered/preloaded skills. Record booleans/provenance, never private content.
    A missing ID or uncertain fresh origin stops the attempt.
-5. Read only the metadata capture at `/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x/capture.jsonl`.
+5. Read only the metadata capture at `/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/capture.jsonl`.
    It is written by the pinned observer; never modify it. The records for your
    exact system-prompt session ID must show one unambiguous request ID with
    actual `api_mode=codex_responses`, provider `openai-codex`, model
@@ -99,7 +99,7 @@ capture, delete old evidence, fabricate the environment, or substitute a checkou
    Query the same pane once more and require exact ID equality. Record whether
    automatic match or manual repair occurred. This proves no restart reliability.
 8. Create a fresh exclusive result subdirectory inside
-   `/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-s_61cs4x`. Write result.json, sanitized correlated route evidence,
+   `/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo`. Write result.json, sanitized correlated route evidence,
    context/registration provenance, and repository/fixture entry/exit comparisons.
    Preserve capture and all historical evidence. Do not retain headers, bodies,
    prompts, credentials, profile contents, or arbitrary exception messages.

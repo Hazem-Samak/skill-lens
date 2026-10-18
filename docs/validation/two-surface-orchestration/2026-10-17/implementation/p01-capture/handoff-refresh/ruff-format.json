@@ -1,0 +1,6 @@
+{
+  "gate": "ruff-format",
+  "exit_code": 0,
+  "seconds": 0.13,
+  "log": "/private/tmp/skill-lens-handoff-20261018-m_wi5_su/ruff-format.log"
+}

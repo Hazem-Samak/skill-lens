@@ -1,0 +1,6 @@
+{
+  "gate": "pytest",
+  "exit_code": 0,
+  "seconds": 56.6,
+  "log": "/private/tmp/skill-lens-handoff-20261018-m_wi5_su/pytest.log"
+}

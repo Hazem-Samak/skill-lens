@@ -1,0 +1,134 @@
+test_approved_human_route_arguments (test_capture_offline.TestLauncherOfflineAndValidation.test_approved_human_route_arguments)
+Prove approved human route flags pass validation without error. ... ok
+test_genuine_herdr_env_enforcement (test_capture_offline.TestLauncherOfflineAndValidation.test_genuine_herdr_env_enforcement)
+Prove real launch refuses execution if HERDR_ENV != '1'. ... ok
+test_help_bypass_strictly_for_help_alone (test_capture_offline.TestLauncherOfflineAndValidation.test_help_bypass_strictly_for_help_alone)
+Prove help flag combined with any other argument is rejected by launcher. ... ok
+test_injection_flags_rejected (test_capture_offline.TestLauncherOfflineAndValidation.test_injection_flags_rejected)
+Prove arbitrary prompt injection or non-whitelisted flags are rejected. ... ok
+test_is_actual_route_compliance (test_capture_offline.TestLauncherOfflineAndValidation.test_is_actual_route_compliance)
+Prove is_actual_route guard accepts openai-codex loopback and rejects actual. ... ok
+test_launcher_secret_uri_and_unknown_flags_exclusion_from_all_output (test_capture_offline.TestLauncherOfflineAndValidation.test_launcher_secret_uri_and_unknown_flags_exclusion_from_all_output)
+Prove secret URI credentials and unknown flags are NEVER echoed to stdout/stderr. ... ok
+test_observer_main_rejects_unapproved_repo_and_artifacts_overrides (test_capture_offline.TestLauncherOfflineAndValidation.test_observer_main_rejects_unapproved_repo_and_artifacts_overrides)
+Defect D: observer.main rejects arbitrary repo and artifacts overrides. ... ok
+test_observer_startup_override_secrets_exclusion (test_capture_offline.TestLauncherOfflineAndValidation.test_observer_startup_override_secrets_exclusion)
+Prove observer startup rejects root overrides without echoing secret path tokens. ... ok
+test_offline_help_subprocess_execution (test_capture_offline.TestLauncherOfflineAndValidation.test_offline_help_subprocess_execution)
+EXECUTE exact subprocess managed Python -B launcher.py --help with HERDR_ENV unset. ... ok
+test_startup_observer_install_before_cli_entry_and_argv_retention (test_capture_offline.TestLauncherOfflineAndValidation.test_startup_observer_install_before_cli_entry_and_argv_retention)
+Defect C: OFFLINE subprocess through ACTUAL installed runtime_command + run_path. ... ok
+test_actual_mode_read_dynamically_not_assumed_constant (test_capture_offline.TestObserverCapture.test_actual_mode_read_dynamically_not_assumed_constant)
+Prove agent.api_mode is extracted dynamically from agent instance. ... ok
+test_context_var_no_leak_on_enter_write_failure_initial_none (test_capture_offline.TestObserverCapture.test_context_var_no_leak_on_enter_write_failure_initial_none)
+Defect B probe: enter write failure does NOT leak ContextVar when initial is None. ... ok
+test_context_var_restored_on_enter_write_failure_nested_prior_context (test_capture_offline.TestObserverCapture.test_context_var_restored_on_enter_write_failure_nested_prior_context)
+Defect B probe: enter write failure restores nested prior context cleanly. ... ok
+test_direct_request_correlation_and_actual_api_mode (test_capture_offline.TestObserverCapture.test_direct_request_correlation_and_actual_api_mode)
+Prove agent.api_mode and loopback HTTP request are correlated under same session. ... ok
+test_enter_invalidation_failure_resilient_and_preserves_identities (test_capture_offline.TestObserverCapture.test_enter_invalidation_failure_resilient_and_preserves_identities)
+Defect B: Even if invalidate itself fails on enter error, original runs and returns. ... ok
+test_hook_fault_preserves_request_execution (test_capture_offline.TestObserverCapture.test_hook_fault_preserves_request_execution)
+Prove observer hook failure invalidates proof safely without disrupting the request. ... ok
+test_http_redirect_per_exchange_tracking (test_capture_offline.TestObserverCapture.test_http_redirect_per_exchange_tracking)
+Prove physical HTTP redirects are captured as separate exchanges under same session. ... ok
+test_interleaved_concurrent_requests_zero_crosstalk (test_capture_offline.TestObserverCapture.test_interleaved_concurrent_requests_zero_crosstalk)
+Prove concurrent requests across multiple threads maintain separate correlation. ... ok
+test_metadata_extraction_fault_preserves_request_execution (test_capture_offline.TestObserverCapture.test_metadata_extraction_fault_preserves_request_execution)
+Prove extraction fault invalidates proof safely while original function runs once. ... ok
+test_missing_ids_never_record_correlated_true (test_capture_offline.TestObserverCapture.test_missing_ids_never_record_correlated_true)
+Prove missing session_id or api_request_id strictly records correlated=False. ... ok
+test_no_fabricated_correlation_on_out_of_band_http_after_failed_enter (test_capture_offline.TestObserverCapture.test_no_fabricated_correlation_on_out_of_band_http_after_failed_enter)
+Defect B: After failed enter, subsequent out-of-band HTTP has correlated=False. ... ok
+test_original_function_exception_and_return_identity (test_capture_offline.TestObserverCapture.test_original_function_exception_and_return_identity)
+Prove return object identity, custom exception identity, and BaseException reset. ... ok
+test_preexisting_client_hook_order_retained (test_capture_offline.TestObserverCapture.test_preexisting_client_hook_order_retained)
+Prove existing client event hooks run in their original order. ... ok
+test_reasoning_effort_whitelist_and_nested_dict_extraction (test_capture_offline.TestObserverCapture.test_reasoning_effort_whitelist_and_nested_dict_extraction)
+Prove reasoning_effort extracts scalar string and rejects arbitrary dict str. ... ok
+test_relay_copied_context_callback_correlation (test_capture_offline.TestObserverCapture.test_relay_copied_context_callback_correlation)
+Prove Relay's explicit context copying preserves correlation in async callback. ... ok
+test_sanitizer_exact_raw_http_path_and_encoded_mismatch (test_capture_offline.TestObserverCapture.test_sanitizer_exact_raw_http_path_and_encoded_mismatch)
+Prove sanitizer verifies exact raw HTTP request path and rejects encoded variants. ... ok
+test_sdk_500_retry_per_exchange (test_capture_offline.TestObserverCapture.test_sdk_500_retry_per_exchange)
+Prove actual SDK retry (500 -> 200) records physical exchanges under same session. ... ok
+test_secrets_exclusion_from_all_observer_bytes (test_capture_offline.TestObserverCapture.test_secrets_exclusion_from_all_observer_bytes)
+Prove Authorization tokens, prompts, cookies, headers, and exceptions are excluded. ... ok
+test_strict_no_body_and_no_stream_read (test_capture_offline.TestObserverCapture.test_strict_no_body_and_no_stream_read)
+Prove observer hooks never read or buffer request/response body stream. ... ok
+test_unapproved_url_sanitized_to_safe_marker (test_capture_offline.TestObserverCapture.test_unapproved_url_sanitized_to_safe_marker)
+Prove unapproved URLs, credentials, and queries are replaced by safe mismatch marker. ... ok
+test_uncorrelated_request_captured_without_fabricated_proof (test_capture_offline.TestObserverCapture.test_uncorrelated_request_captured_without_fabricated_proof)
+Prove request without active ContextVar records correlated=False and None IDs. ... ok
+test_clean_fd_rollback_on_rejection (test_capture_offline.TestSinkSecurityAndBounding.test_clean_fd_rollback_on_rejection)
+Prove clean descriptor rollback on any failure with zero fd leak. ... ok
+test_closed_sink_durable_visible_invalidation (test_capture_offline.TestSinkSecurityAndBounding.test_closed_sink_durable_visible_invalidation)
+Prove writing to a closed sink records durable invalidation on disk via fallback. ... ok
+test_fallback_marker_symlink_and_preexisting_marker_protects_sentinel (test_capture_offline.TestSinkSecurityAndBounding.test_fallback_marker_symlink_and_preexisting_marker_protects_sentinel)
+Defect A probe: marker symlink or preexisting file does NOT overwrite target. ... HERDR_OBSERVER_ALERT: capture_invalidated storage failure
+HERDR_OBSERVER_ALERT: capture_invalidated storage failure
+ok
+test_flush_failure_durable_visible_invalidation (test_capture_offline.TestSinkSecurityAndBounding.test_flush_failure_durable_visible_invalidation)
+Probe flush failure: _file.flush raising OSError produces on-disk invalidation. ... ok
+test_invalidation_fallback_file_replaced_by_symlink_does_not_modify_target (test_capture_offline.TestSinkSecurityAndBounding.test_invalidation_fallback_file_replaced_by_symlink_does_not_modify_target)
+Defect A probe: file replaced by symlink does NOT modify outside target. ... ok
+test_invalidation_repeated_calls_do_not_append_unboundedly (test_capture_offline.TestSinkSecurityAndBounding.test_invalidation_repeated_calls_do_not_append_unboundedly)
+Defect A: Repeated invalidation calls do not append duplicate invalidation records. ... ok
+test_mode_0600_and_exclusive_creation (test_capture_offline.TestSinkSecurityAndBounding.test_mode_0600_and_exclusive_creation)
+Prove sink creates file with mode 0600 and rejects overwrite. ... ok
+test_parent_and_root_symlink_substitution_rejected (test_capture_offline.TestSinkSecurityAndBounding.test_parent_and_root_symlink_substitution_rejected)
+Defect A: Symlinks in parent hierarchy or root itself are strictly rejected. ... ok
+test_path_escape_rejected (test_capture_offline.TestSinkSecurityAndBounding.test_path_escape_rejected)
+Prove path escaping outside allowed_root is rejected. ... ok
+test_positive_canonical_and_macos_system_alias_paths (test_capture_offline.TestSinkSecurityAndBounding.test_positive_canonical_and_macos_system_alias_paths)
+Prove positive path safety for both canonical /private/tmp and macOS /tmp alias. ... ok
+test_record_limit_bounding_and_invalidation (test_capture_offline.TestSinkSecurityAndBounding.test_record_limit_bounding_and_invalidation)
+Prove exceeding max_events invalidates proof safely without unbounded growth. ... ok
+test_swapped_ancestor_above_allowed_root_during_open_rejected (test_capture_offline.TestSinkSecurityAndBounding.test_swapped_ancestor_above_allowed_root_during_open_rejected)
+Prove ancestor directory swap ABOVE allowed_root during open is strictly rejected. ... ok
+test_swapped_ancestor_and_root_during_first_open_rejected (test_capture_offline.TestSinkSecurityAndBounding.test_swapped_ancestor_and_root_during_first_open_rejected)
+Prove ancestor directory and root swaps during first open are strictly rejected. ... ok
+test_swapped_immediate_parent_during_first_open_rejected (test_capture_offline.TestSinkSecurityAndBounding.test_swapped_immediate_parent_during_first_open_rejected)
+Prove immediate parent directory swap to symlink during first open is strictly rejected. ... ok
+test_swapped_root_ancestor_between_validation_and_anchor_open_rejected (test_capture_offline.TestSinkSecurityAndBounding.test_swapped_root_ancestor_between_validation_and_anchor_open_rejected)
+Prove swap between validate_path_safety and descriptor acquisition is rejected. ... ok
+test_symlink_rejected (test_capture_offline.TestSinkSecurityAndBounding.test_symlink_rejected)
+Prove symlinks in path are rejected. ... ok
+test_visible_fallback_alert_on_storage_failure_without_secrets (test_capture_offline.TestSinkSecurityAndBounding.test_visible_fallback_alert_on_storage_failure_without_secrets)
+Defect A: Stderr alert is emitted without secrets when all storage fallbacks fail. ... ok
+test_write_failure_durable_visible_invalidation (test_capture_offline.TestSinkSecurityAndBounding.test_write_failure_durable_visible_invalidation)
+Probe write failure: replaced _file raising OSError produces on-disk invalidation. ... ok
+test_all_source_pins_match (test_capture_offline.TestSourceVerificationAndBinding.test_all_source_pins_match)
+Prove installed Hermes sources match all frozen SHA-256 pins. ... ok
+test_dynamic_forwarder_binding_resolution (test_capture_offline.TestSourceVerificationAndBinding.test_dynamic_forwarder_binding_resolution)
+Prove ClientLifecycleMixin resolves run_codex_stream via lazy forwarder. ... ok
+test_source_pin_mismatch_detected (test_capture_offline.TestSourceVerificationAndBinding.test_source_pin_mismatch_detected)
+Prove modified source file is rejected with SourceVerificationError. ... ok
+test_m1_break_correlation_guard_causes_normal_test_failure (mutation_tests.MutationTests.test_m1_break_correlation_guard_causes_normal_test_failure)
+M1: Breaking correlation causes unchanged test_direct_request_correlation to fail. ... ok
+test_m2_break_privacy_guard_causes_normal_test_failure (mutation_tests.MutationTests.test_m2_break_privacy_guard_causes_normal_test_failure)
+M2: Leaking Authorization header causes unchanged test_secrets_exclusion to fail. ... ok
+test_m3_break_route_guard_causes_normal_test_failure (mutation_tests.MutationTests.test_m3_break_route_guard_causes_normal_test_failure)
+M3: Accepting unapproved URL causes unchanged test_unapproved_url_sanitized to fail. ... ok
+test_m4_break_sink_mode_guard_causes_normal_test_failure (mutation_tests.MutationTests.test_m4_break_sink_mode_guard_causes_normal_test_failure)
+M4: Setting mode 0666 causes unchanged test_mode_0600_and_exclusive_creation to fail. ... ok
+test_m5_break_dynamic_api_mode_guard_causes_normal_test_failure (mutation_tests.MutationTests.test_m5_break_dynamic_api_mode_guard_causes_normal_test_failure)
+M5: Hardcoding api_mode causes test_actual_mode_read_dynamically to fail. ... ok
+test_z_all_mutations_killed_with_zero_survivors (mutation_tests.MutationTests.test_z_all_mutations_killed_with_zero_survivors)
+Ensure all 5 mutations were registered and killed with zero survivors. ... ok
+
+----------------------------------------------------------------------
+Ran 58 tests in 2.374s
+
+OK
+
+============================================================
+P01 CAPTURE OFFLINE VERIFICATION SUMMARY
+Total Tests Run: 58
+  - Focused Capture Tests: 52
+  - Mutation Tests: 6
+Failures: 0
+Errors: 0
+Duration: 2.374s
+Status: PASSED
+============================================================

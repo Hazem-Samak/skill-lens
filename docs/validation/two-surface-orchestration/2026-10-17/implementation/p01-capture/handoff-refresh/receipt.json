@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-18",
+  "reason": "human requested complete inline instructions and durable new-chat handoff; prior temporary copy absent",
+  "source_commit": "f15384ea34f7ac2bebd9fa412ff9bcf9d53f6c9e",
+  "python_source_changed": false,
+  "deployed_sha256_unchanged": true,
+  "deployment_directory": "/private/tmp/skill-lens-herdr-p01-repair-20261017-arflso4p/pilot-artifacts/p01-capture-prepared-izqwkulo/observer",
+  "fixture_sha256": "462b045a567486e8acd32f21f3861cb101a4b9c6ccbbb18613615c2ec707014e",
+  "focused_tests": 58,
+  "five_mutation_guards": "all caught; zero survivors",
+  "native_bootstrap_and_help": "pass",
+  "four_project_gates": "exit0",
+  "live_P01": "unverified; human retry pending",
+  "human_files_to_open": "none; complete instructions pasted in chat",
+  "new_chat_entry": "NEW-CHAT-HANDOFF.md"
+}

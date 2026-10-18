@@ -22,3 +22,8 @@ Live P01 remains unverified. See [acceptance.md](./acceptance.md) and the retain
 [execution receipt](./execution-receipt.json).
 Preparing this handoff does not accept live routing, upstream model identity,
 restart behavior, P02–P09, Phase C or the overall migration.
+
+For a new T3 chat, the assistant should read [NEW-CHAT-HANDOFF.md](./NEW-CHAT-HANDOFF.md).
+The human need not open files. A byte-identical deployment was refreshed again
+after temporary-file expiry; see [the refresh receipt](./handoff-refresh/receipt.json)
+and the current preparation paths. Live P01 remains unverified.
