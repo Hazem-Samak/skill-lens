@@ -5,7 +5,7 @@ Surface: t3 (preparation and evidence review); herdr (the disposable live trial)
 Authorization: The user agreed to simplify the remaining work to one small,
 disposable end-to-end task using the chosen roles/models: "I agree with this,
 let's start, how we can do it ?" (2026-10-18).
-Reference: Pending two-commit freeze.
+Reference: ad19c3115f518b8f10d1ab2ef23c04254196886b
 Risk and review: High because this replaces pilot entry/acceptance requirements.
 T3 preparation reviewers remain MiniMax/mcode xhigh and Pi/WorkBuddy DeepSeek high;
 the previously accepted unverified-upstream-identity limitation remains explicit.
