@@ -58,15 +58,15 @@ and the build proceeds by phase:
   managed-skills folder was ranked **above** the folders that should win. All 10
   agents now cite a source, and an enforced invariant guarantees it.
 - [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope, partially
-  implemented through U2; U3–U9 planned.* An optional, additive, read-only
+  implemented through U3; U4–U9 planned.* An optional, additive, read-only
   browsing layer built on the existing frozen models, shipped as the opt-in
   `[tui]` extra so the base install gains nothing. Overturns the v1 "no
   full-screen TUI" rule for 0.2. The complete plan — vision, screens, phasing
   and gates — is [`FULL_SCREEN_TUI.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/FULL_SCREEN_TUI.md).
   **Status:** C1–C5 (byte/hash helpers, captured engine inputs, capture and
-  cancellation, presentation extraction, Step 0 audit) and U1–U2 (optional
-  install, worker controller and skeleton placeholder screen) are complete as
-  development work on the current branch. U3–U9 browsing screens and 0.2
+  cancellation, presentation extraction, Step 0 audit) and U1–U3 (optional
+  install, worker controller and Home browsing screen) are complete as
+  development work on the current branch. U4–U9 screens and 0.2
   publishing remain future work. The 2026-10-04 readiness review recorded two
   engine fixes required before Step 0: P1 (non-object settings robustness) and
   P2 (lock decoding robustness). Both have been implemented and verified with
@@ -89,30 +89,33 @@ and the build proceeds by phase:
   [`TUI_PLAN_REVIEWS.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/TUI_PLAN_REVIEWS.md).
   The 2026-10-04 readiness review (P1/P2/P3) is recorded in
   `FULL_SCREEN_TUI.md` §20 as a historical readiness finding.
-  C1–C5 / U1–U2 plan links (dated, existing docs/plans files; no C1 plan file
+  C1–C5 / U1–U3 plan links (dated, existing docs/plans files; no C1 plan file
   exists — not invented here):
   [`2026-10-06-tui-c2-captured-engine-inputs.md`](docs/plans/2026-10-06-tui-c2-captured-engine-inputs.md),
   [`2026-10-07-tui-c3-capture-and-cancellation.md`](docs/plans/2026-10-07-tui-c3-capture-and-cancellation.md),
   [`2026-10-11-tui-c4-presentation-extraction.md`](docs/plans/2026-10-11-tui-c4-presentation-extraction.md),
   [`2026-10-11-tui-c5-step0-audit.md`](docs/plans/2026-10-11-tui-c5-step0-audit.md),
   [`2026-10-11-tui-u1-optional-install.md`](docs/plans/2026-10-11-tui-u1-optional-install.md),
-  [`2026-10-12-tui-u2-controller-skeleton.md`](docs/plans/2026-10-12-tui-u2-controller-skeleton.md).
+  [`2026-10-12-tui-u2-controller-skeleton.md`](docs/plans/2026-10-12-tui-u2-controller-skeleton.md),
+  [`2026-10-19-tui-u3-home.md`](docs/plans/2026-10-19-tui-u3-home.md).
 
-  **Stage H reconciliation (2026-10-16):** this plan correctly describes C1–C5
-  and U1–U2 as shipped development work (TUI entrypoint/controller/skeleton),
+  **Historical Stage H reconciliation (2026-10-16):** at that date, C1–C5
+  and U1–U2 were shipped development work (TUI entrypoint/controller/skeleton),
   with U3–U9 screens and 0.2 publishing remaining future work. Published PyPI
   0.1.1 has no TUI extra; do not recommend released `skill-lens-cli[tui]`.
 
-Latest dated verification: [Stage H acceptance, 16 October 2026](docs/validation/assessment-repairs/h/acceptance.md).
-It records the four local gates and their limits; coverage is the combined score
+Latest dated verification: [U3 acceptance, 19 October 2026](docs/validation/u3/acceptance.md).
+It records Home browsing, independent review and the four local gates; coverage is the combined score
 with branch measurement enabled, not the branch-only percentage. Earlier
 [Stage G acceptance](docs/validation/assessment-repairs/g/acceptance.md) retains
 its packaging and installed-wheel evidence. Unexecuted CI lanes are not claimed.
 
-Stage H closes the assessment repairs with current-status documentation and
+Historical Stage H closed the assessment repairs with status documentation and
 [synthetic byte-heavy capture/refresh measurements](docs/validation/assessment-repairs/h/resource-risk.md).
-Snapshot memory remains unbounded by bytes; no resource policy was added.
-U3–U9 and 0.2 publishing remain a separate feature/release campaign.
+Stage H itself added no resource policy. Later R01 added the default 256 MiB
+captured skill-payload budget; discovery still parses source files before that
+measurement. U3 now supplies the Home table, filters and metadata preview.
+U4–U9 and 0.2 publishing remain a separate feature/release campaign.
 
 > The Phase 6 plan is
 > [`PHASE6_PLAN.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_PLAN.md);

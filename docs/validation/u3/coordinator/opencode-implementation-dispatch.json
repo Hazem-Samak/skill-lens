@@ -1,0 +1,18 @@
+{
+  "authorization": "Owner selected DeepSeek V4.1 Flash Free via OpenCode, High; Sol and MiniMax roles unchanged.",
+  "roster_commit": "b250576de87820762289b6a6bf9100ce54d6e4be",
+  "frozen_commit": "ce86db945fc44569f3a5cd4f0fb66a111a5d00f2",
+  "taskId": "node:delegated-task:command%3Amcp%3Aea69502e-1a8b-4fec-be43-a59fadd655bf%3Adelegate-task%3Askill-lens-u3-20261019-implement-deepseek-opencode-r1",
+  "childThreadId": "thread:delegated-task:command%3Amcp%3Aea69502e-1a8b-4fec-be43-a59fadd655bf%3Adelegate-task%3Askill-lens-u3-20261019-implement-deepseek-opencode-r1",
+  "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Aea69502e-1a8b-4fec-be43-a59fadd655bf%253Adelegate-task%253Askill-lens-u3-20261019-implement-deepseek-opencode-r1:ordinal:1",
+  "providerInstanceId": "opencode",
+  "model": "opencode/deepseek-v4.1-flash-free",
+  "options": {
+    "variant": "high"
+  },
+  "runtimeMode": "full-access",
+  "interactionMode": "default",
+  "status": "running",
+  "hasPendingChildRuns": false,
+  "hasPendingQuestion": false
+}

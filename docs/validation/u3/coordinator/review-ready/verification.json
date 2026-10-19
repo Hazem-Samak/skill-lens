@@ -1,0 +1,33 @@
+{
+  "base": "b250576de87820762289b6a6bf9100ce54d6e4be",
+  "frozen_plan": "ce86db945fc44569f3a5cd4f0fb66a111a5d00f2",
+  "pytest": {
+    "passed": 1081,
+    "skipped": 1,
+    "combined_coverage_percent": 91.08,
+    "home_module_percent": 90
+  },
+  "mypy": "passed,38 files",
+  "ruff_check": "passed",
+  "ruff_format": "passed,258 files at gate execution",
+  "benchmark": "3x600 skills plus active-work and injected-delay probes; independent manifest preserved and exact600 Why groups/calls",
+  "mutation_controls": "5 mutants detected; all restored controls pass; source hash preserved",
+  "source_sha256": {
+    "skill_lens/tui/home.py": "36acf73aa416f7cefa1ae00dff1c9d4e297677a76becb6344e8dae4381393652",
+    "skill_lens/tui/app.py": "cb790ad1c5381a8a4f75869c2c07b6960c43ad0430057c7543edd5850be6c411",
+    "tests/test_tui_home.py": "bc7f416ab237581e8220743aecad25a30e6bc8fecddf1000147fc28a439ffa59",
+    "tests/test_tui_app.py": "364c35e84c50d7405c6217d308bc364ed71c9bed2fab8a1ff122cb228ecd19b1",
+    "tests/test_tui_read_only.py": "008d3cc5529df11c3c785d9604e550d82894e2abe24d2f1f32fa541dac79ad5a",
+    "docs/validation/u3/benchmark_home.py": "eda15271400ffa61d6f840a28835ad545e236565dce9a6df4c7b193b9739b35f",
+    "docs/validation/u3/implementation/mutation_gate.py": "97e9549dca6b44853a483176c60e254b8a5aeda2794e490f0dce7ce7195c7e22",
+    "README.md": "69b2dcc2f270784c8227a537258531a74e2d44826fe3ce783b1aaeb986f1c0d7",
+    "docs/TUI_U3_WALKTHROUGH.md": "e042512a9374d0da513e08b684e18ee431f355709968307d4690a9ec4c1c2ffc"
+  },
+  "scope_preserved": true,
+  "preexisting_path_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "notes": [
+    "U3 technical candidate only; independent final review and Sol acceptance pending.",
+    "Active-filter probe uses Input.Changed, not a physical key-to-paint measurement.",
+    "Pilot navigation round trips under active queue include event-drain overhead; no invented latency threshold or upstream model identity claim."
+  ]
+}

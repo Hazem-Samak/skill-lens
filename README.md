@@ -169,21 +169,26 @@ fault.
 Early development, and honest about it: the agent registry tags every precedence
 rule `documented`, `empirical`, or `inferred`, and says `ambiguous` rather than
 guessing. Original development Phases 0–6 are complete and reviewed; the separate
-assessment-repair stages A–H are accepted. Stage H documents the remaining
-snapshot memory risk; no byte limit has been introduced.
+assessment-repair stages A–H are accepted. Stage H documented the snapshot memory
+risk, and the TUI now enforces a **256 MiB** capture budget by default: the total
+skill payload is measured before the capture phase reads it, `skill-lens tui
+--max-snapshot-bytes <bytes>` overrides the budget, and `0` disables it. Discovery
+still parses each skill source document before that measurement, so that read is a
+recorded residual rather than a bounded one.
 
 **Published (PyPI `skill-lens-cli` 0.1.1):** six line-oriented CLI commands
 (`scan`, `why`, `agents`, `diff`, `compare`, `doctor`), no TUI extra. No `pip`
 release ships a TUI.
 
 **Current development branch:** the same six line-oriented commands plus an
-optional, additive, read-only TUI entrypoint/controller/skeleton through U2
-(C1–C5 and U1–U2 complete). U3–U9 browsing screens and 0.2 publishing remain
+optional, additive, read-only TUI through U3 Home browsing: a skill table,
+metadata preview, text and agent filters, and per-agent resolution states
+(C1–C5 and U1–U3 complete). U4–U9 screens and 0.2 publishing remain
 separate future work. Do not install released `skill-lens-cli[tui]` expecting a
 browsing UI — the published 0.1.1 has no TUI extra at all.
 
-The dated local verification result (2026-10-16) is recorded in the
-[Stage H acceptance record](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/validation/assessment-repairs/h/acceptance.md).
+The latest local verification result (2026-10-19) is recorded in the
+[U3 acceptance record](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/validation/u3/acceptance.md).
 See [`DEVELOPMENT.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/DEVELOPMENT.md)
 for the full build record, including dated historical measurements, and the
 resource-risk evidence under

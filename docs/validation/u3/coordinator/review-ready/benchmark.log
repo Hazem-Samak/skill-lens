@@ -1,0 +1,197 @@
+
+wrote /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u3-review-ready-s2ryx8jx/benchmark.json
+{
+  "environment": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "python": "3.11.16",
+    "textual": "8.2.8"
+  },
+  "isolation": {
+    "directory_guard": "every concrete discovery directory must stay under synthetic HOME",
+    "fail_closed_absolute_roots_allowed": false,
+    "fixture_entries": 1203,
+    "fixture_manifest_preserved": true,
+    "home_and_xdg_set_per_run": true,
+    "restored_on_success_and_failure": true,
+    "sandbox_set_per_run": true,
+    "skill_count": 600
+  },
+  "limitations": [
+    "Single machine, single Python/Textual build; numbers are not a portable release target.",
+    "capture_ms measures the capture worker only (wrapped capture_session); mount/compose overhead is excluded from it but included in both startup_to_* figures.",
+    "publication_to_rows_populated_ms spans accepted capture on the UI thread to the end of the instrumented Home rebuild that first carries every row, before Textual lays out and paints. publication_to_first_usable_ms spans the same start to a benchmark-only callback scheduled with call_after_refresh, which runs after the screen has been refreshed; that is the figure to read as time-until-usable. Both are wall-clock on the shared event loop and include worker/message scheduling.",
+    "The injected-delay run demonstrates the publication-to-first-usable interval tracks real work; the requested delay is 50.0 ms.",
+    "per_cell_update_ms is the real cost of one Home state-cell update. amortized_queue_ms_per_resolved_row is the whole serial queue wall time divided by resolved rows: it folds together snapshot_why worker execution, worker/message scheduling, the per-group Home cell updates and their redraws. The harness does not attribute the total to any one of those components.",
+    "active_navigation_ms/active_filter_ms/active_quit_ms are measured while hundreds of resolutions are still pending (the probe records pending_at_start and pending_before_quit). Navigation and quit use real Pilot key presses; the filter is driven through the Input's Changed event because Pilot's press waits for the app to drain and would outlast the queue. That Input.Changed path is not a physical key press, so no physical key-to-paint latency is claimed for the filter figure. Navigating, filtering and the queued re-drive all leave that probe unsuitable for the why_call/group equality assertion.",
+    "The superseded schema-2 receipt docs/validation/u3/implementation/historical/benchmark-home-r2.json labelled its row-population boundary 'publication_to_first_list_ms' and described it as laid out/paint; that wording was too strong. It is preserved as history, not relabelled valid, and is superseded by this schema-3 receipt, which separates row population from post-refresh usability.",
+    "The superseded receipt docs/validation/u3/implementation/historical/benchmark-home-r1.json is invalid and unsafe (its sandbox was cleared after run 1, so later runs allowed absolute system roots, and its publication boundary measured a near-zero predicate check). It is preserved as history and is not relabelled valid."
+  ],
+  "parameters": {
+    "injected_delay_ms": 50.0,
+    "runs": 3,
+    "skills": 600
+  },
+  "runs": [
+    {
+      "agent_filter_ms": 7997.77470799927,
+      "amortized_queue_ms_per_resolved_row": 13.329624513332115,
+      "capture_ms": 813.5681670009944,
+      "distinct_lookup_groups": 600,
+      "kind": "clean",
+      "navigation_ms": [
+        63.86266600020463,
+        62.87933400017209,
+        83.88191700032621,
+        84.88045800004329,
+        99.07220899913227
+      ],
+      "per_cell_update_ms": 0.01849999989644857,
+      "publication_to_first_usable_ms": 22.447625000495464,
+      "publication_to_rows_populated_ms": 7.09025000105612,
+      "resolved_cells": 600,
+      "return_code": 0,
+      "run": 1,
+      "slow_capture_quit_ms": 42.77166599968041,
+      "startup_to_first_usable_ms": 841.4752909993695,
+      "startup_to_rows_populated_ms": 826.1179159999301,
+      "text_filter_ms": 641.0478750003676,
+      "why_calls": 600
+    },
+    {
+      "agent_filter_ms": 7970.059917000981,
+      "amortized_queue_ms_per_resolved_row": 13.283433195001635,
+      "capture_ms": 1371.558750000986,
+      "distinct_lookup_groups": 600,
+      "kind": "clean",
+      "navigation_ms": [
+        63.60708400097792,
+        84.73408300051233,
+        85.27375000085158,
+        104.66875000020082,
+        103.3101249995525
+      ],
+      "per_cell_update_ms": 0.01791649901861092,
+      "publication_to_first_usable_ms": 23.58999999887601,
+      "publication_to_rows_populated_ms": 6.808374999309308,
+      "resolved_cells": 600,
+      "return_code": 0,
+      "run": 2,
+      "slow_capture_quit_ms": 42.87641699920641,
+      "startup_to_first_usable_ms": 1400.5652079995343,
+      "startup_to_rows_populated_ms": 1383.7835829999676,
+      "text_filter_ms": 673.1202499995561,
+      "why_calls": 600
+    },
+    {
+      "agent_filter_ms": 7947.452583000995,
+      "amortized_queue_ms_per_resolved_row": 13.24575430500166,
+      "capture_ms": 891.6272499991464,
+      "distinct_lookup_groups": 600,
+      "kind": "clean",
+      "navigation_ms": [
+        63.107291998676374,
+        63.205959000697476,
+        107.15804200117418,
+        112.20574999970268,
+        89.6467919992574
+      ],
+      "per_cell_update_ms": 0.018040999748336617,
+      "publication_to_first_usable_ms": 21.272375000989996,
+      "publication_to_rows_populated_ms": 6.407291000869009,
+      "resolved_cells": 600,
+      "return_code": 0,
+      "run": 3,
+      "slow_capture_quit_ms": 42.98083399953612,
+      "startup_to_first_usable_ms": 918.3121670012042,
+      "startup_to_rows_populated_ms": 903.4470830010832,
+      "text_filter_ms": 696.657291999145,
+      "why_calls": 600
+    },
+    {
+      "active_filter_ms": [
+        69.97133400000166
+      ],
+      "active_navigation_ms": [
+        2044.5955830000457
+      ],
+      "active_quit_ms": 63.06154199955927,
+      "kind": "active-resolution-probe",
+      "pending_at_start": 432,
+      "pending_before_quit": 133,
+      "return_code": 0,
+      "run": 4
+    },
+    {
+      "kind": "injected-delay",
+      "publication_to_first_usable_ms": 94.83887500027777,
+      "publication_to_rows_populated_ms": 62.75708300017868,
+      "rebuild_delay_ms": 50.0,
+      "return_code": 0,
+      "run": 5,
+      "startup_to_first_usable_ms": 961.4236669985985
+    }
+  ],
+  "schema": "skill-lens/u3-benchmark-home/3",
+  "summary": {
+    "active_filter_ms": {
+      "max": 69.971,
+      "median": 69.971
+    },
+    "active_navigation_ms": {
+      "max": 2044.596,
+      "median": 2044.596
+    },
+    "active_quit_ms": 63.062,
+    "agent_filter_ms": {
+      "max": 7997.775,
+      "median": 7970.06
+    },
+    "amortized_queue_ms_per_resolved_row": {
+      "max": 13.33,
+      "median": 13.283
+    },
+    "capture_ms": {
+      "max": 1371.559,
+      "median": 891.627
+    },
+    "distinct_lookup_groups": [
+      600
+    ],
+    "injected_delay_publication_to_usable_ms": 94.839,
+    "navigation_ms": {
+      "max": 112.206,
+      "median": 84.88
+    },
+    "per_cell_update_ms": {
+      "max": 0.018,
+      "median": 0.018
+    },
+    "publication_to_first_usable_ms": {
+      "max": 23.59,
+      "median": 22.448
+    },
+    "publication_to_rows_populated_ms": {
+      "max": 7.09,
+      "median": 6.808
+    },
+    "slow_capture_quit_ms": {
+      "max": 42.981,
+      "median": 42.876
+    },
+    "startup_to_first_usable_ms": {
+      "max": 1400.565,
+      "median": 918.312
+    },
+    "startup_to_rows_populated_ms": {
+      "max": 1383.784,
+      "median": 903.447
+    },
+    "text_filter_ms": {
+      "max": 696.657,
+      "median": 673.12
+    },
+    "why_calls": [
+      600
+    ]
+  }
+}

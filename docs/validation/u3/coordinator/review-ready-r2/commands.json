@@ -1,0 +1,46 @@
+{
+  "mutations": {
+    "command": [
+      ".venv/bin/python",
+      "docs/validation/u3/implementation/mutation_gate.py",
+      "--out",
+      "docs/validation/u3/coordinator/review-ready-r2/mutations.json"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 23.46
+  },
+  "pytest": {
+    "command": [
+      ".venv/bin/pytest",
+      "--cov=skill_lens"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 78.96
+  },
+  "mypy": {
+    "command": [
+      ".venv/bin/mypy"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.18
+  },
+  "ruff": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.05
+  },
+  "ruff-format": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.01
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "skill_lens/tui/home.py": "36acf73aa416f7cefa1ae00dff1c9d4e297677a76becb6344e8dae4381393652",
+  "skill_lens/tui/app.py": "cb790ad1c5381a8a4f75869c2c07b6960c43ad0430057c7543edd5850be6c411",
+  "tests/test_tui_home.py": "50651480d73c67a821083b1a9e40c8f5d0825296c32eab27acdb8961febb8115",
+  "tests/test_tui_app.py": "364c35e84c50d7405c6217d308bc364ed71c9bed2fab8a1ff122cb228ecd19b1",
+  "tests/test_tui_read_only.py": "008d3cc5529df11c3c785d9604e550d82894e2abe24d2f1f32fa541dac79ad5a",
+  "docs/validation/u3/benchmark_home.py": "eda15271400ffa61d6f840a28835ad545e236565dce9a6df4c7b193b9739b35f",
+  "docs/validation/u3/implementation/mutation_gate.py": "e91bb428c0408cf30797f7f36ab89308d0f5493aad13b12ddb6258aaffedde32",
+  "README.md": "248a9480a6afe7be9238db04722990fcf64f075c970e40d53c5d9bfa97ab9091",
+  "DEVELOPMENT.md": "a3f3073e7f435016776c0d05ce6363aca2aac94cb639c777adc8d3e068de159f",
+  "CHANGELOG.md": "12222dea71b788967fdd0abbab564163ecf1edacb3f4adc99f9919cf825a5ad4",
+  "FULL_SCREEN_TUI.md": "f3d03d110890e8b14eb18e2f4f39b87716bc3dae11ab9164eb43e29e1fc17df3",
+  "docs/TUI_U3_WALKTHROUGH.md": "e3d5c1073e43069c17d3be3938b9f28cc744e9231207cc6eea7d2f762a16baa8",
+  "docs/validation/u3/acceptance.md": "dcdc19dc4d476789f8f04c07b690e145681c85a0b3f6f5fbb575a9d444979779",
+  "docs/plans/2026-10-19-tui-u3-home.md": "d0ca105670c9c87e9e8d92948f1bd77ed105df1af87fc4b30d76d4bc0fea61c4"
+}

@@ -1,0 +1,21 @@
+{
+  "reviews": [
+    {
+      "manifest": "planning-before.json",
+      "protected_files": 1070,
+      "reviewer_changes": [],
+      "status_unchanged": true
+    },
+    {
+      "manifest": "planning-r2-before.json",
+      "protected_files": 1071,
+      "reviewer_changes": [],
+      "status_unchanged": true
+    }
+  ],
+  "r1_runtime_correction": "T3 configuration confirmed full-access runtime and plan interaction, variant high; raw report retained",
+  "frozen_commit": "ce86db945fc44569f3a5cd4f0fb66a111a5d00f2",
+  "provenance_commit": "051fa529d73282604daf625cd03ccc47ffd751c2",
+  "baseline_head": "0d08e746384bce28d6f19aadda90dcf042214743",
+  "product_test_environment_unchanged_for_baseline_reuse": true
+}

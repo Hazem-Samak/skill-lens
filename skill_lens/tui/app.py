@@ -1,8 +1,8 @@
-"""Skill Lens Textual Application and Placeholder Home Screen (Assignment U2).
+"""Skill Lens Textual Application and Home integration (Assignments U2-U3).
 
-Specification reference: FULL_SCREEN_TUI.md §9.1, §10, Step 2, and §21.7.
+Specification reference: FULL_SCREEN_TUI.md §9.1, §10, Step 2-3, §21.7 and §22.
 Provides:
-- SkillLensApp(App[int]) with placeholder screen and q/r bindings
+- SkillLensApp(App[int]) with the U3 Home screen and q/r bindings
 - Textual thread workers with exit_on_error=False passing explicit home/cwd/event
 - Report adapter for Why, Diff, and Compare using snapshot services
 - Thread-safe message marshalling to UI thread
@@ -19,12 +19,12 @@ from pathlib import Path
 from typing import Any, ClassVar
 
 from textual import work
-from textual.app import App, ComposeResult
+from textual.app import App, ScreenStackError, UnknownModeError
 from textual.binding import Binding, BindingType
 from textual.css.query import NoMatches
 from textual.message import Message
 from textual.screen import Screen
-from textual.widgets import Footer, Header, Static
+from textual.widgets import Static
 
 from skill_lens import __version__
 from skill_lens.core.cancellation import CaptureCancelled
@@ -38,6 +38,7 @@ from skill_lens.core.snapshot import (
 )
 from skill_lens.core.snapshot_models import SessionSnapshot
 from skill_lens.tui._textual_compat import record_unhandled_fault
+from skill_lens.tui.home import HomeScreen
 from skill_lens.tui.session import (
     ReportValue,
     SessionController,
@@ -101,20 +102,13 @@ class ViewReportFailed(Message):
         self.error = error
 
 
-class PlaceholderHomeScreen(Screen[None]):
-    """Placeholder Home screen displaying session status and error details."""
+class PlaceholderHomeScreen(HomeScreen):
+    """Compatibility alias for the former U2 placeholder screen.
 
-    def compose(self) -> ComposeResult:
-        yield Header()
-        yield Static(f"Skill Lens {__version__} (Placeholder)", id="title")
-        yield Static("Initializing...", id="status-text", markup=False)
-        yield Static("", id="error-details", markup=False)
-        yield Static("q: Quit   r: Refresh", id="footer-help")
-        yield Footer()
-
-    def on_mount(self) -> None:
-        if isinstance(self.app, SkillLensApp):
-            self.app._update_ui()
+    U3 replaced the placeholder with the real Home screen.  Keeping this name
+    as a subclass preserves existing ``isinstance`` checks without a second,
+    divergent screen implementation.
+    """
 
 
 class SkillLensApp(App[int]):
@@ -127,7 +121,7 @@ class SkillLensApp(App[int]):
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("q", "quit", "Quit", show=True),
         Binding("r", "refresh", "Refresh", show=True),
-        Binding("ctrl+c", "quit", "Quit", show=False),
+        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
     ]
 
     def action_command_palette(self) -> None:
@@ -192,7 +186,7 @@ class SkillLensApp(App[int]):
         )
 
     def get_default_screen(self) -> Screen[None]:
-        """Return the placeholder Home screen as the default root screen."""
+        """Return the Home screen as the default root screen."""
         return PlaceholderHomeScreen()
 
     def on_mount(self) -> None:
@@ -314,6 +308,16 @@ class SkillLensApp(App[int]):
             message.arguments,
             message.report,
         )
+        home = self._home_screen()
+        if home is not None:
+            home.note_report_outcome(
+                message.view,
+                message.request_id,
+                message.generation,
+                message.arguments,
+                accepted=accepted,
+                report=message.report if accepted else None,
+            )
         if accepted:
             self._update_ui()
 
@@ -328,8 +332,28 @@ class SkillLensApp(App[int]):
             message.arguments,
             message.error,
         )
+        home = self._home_screen()
+        if home is not None:
+            home.note_report_outcome(
+                message.view,
+                message.request_id,
+                message.generation,
+                message.arguments,
+                accepted=accepted,
+                error=message.error,
+            )
         if accepted:
             self._update_ui()
+
+    def _home_screen(self) -> HomeScreen | None:
+        """Return the mounted Home screen, if it is the current screen."""
+        try:
+            screen = self.screen
+        except (ScreenStackError, UnknownModeError):
+            # Expected only while the app is tearing down; any other failure
+            # must reach the app's containment path rather than be hidden.
+            return None
+        return screen if isinstance(screen, HomeScreen) else None
 
     def _handle_exception(self, error: Exception) -> None:
         """Contain unhandled UI/worker exceptions without terminal tracebacks.
@@ -377,6 +401,10 @@ class SkillLensApp(App[int]):
         else:
             status_widget.update("Idle")
             details_widget.update("")
+
+        home = self._home_screen()
+        if home is not None:
+            home.sync_from_controller()
 
 
 __all__ = [

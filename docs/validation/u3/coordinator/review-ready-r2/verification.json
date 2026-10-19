@@ -1,0 +1,34 @@
+{
+  "base": "b250576de87820762289b6a6bf9100ce54d6e4be",
+  "frozen_plan": "ce86db945fc44569f3a5cd4f0fb66a111a5d00f2",
+  "pytest": {
+    "passed": 1082,
+    "skipped": 1,
+    "combined_coverage_percent": 91.16,
+    "home_module_percent": 91
+  },
+  "mypy": "passed,38 files",
+  "ruff_check": "passed",
+  "ruff_format": "passed; formatter inventory count omitted from summary",
+  "source_sha256": {
+    "README.md": "69b2dcc2f270784c8227a537258531a74e2d44826fe3ce783b1aaeb986f1c0d7",
+    "skill_lens/tui/app.py": "cb790ad1c5381a8a4f75869c2c07b6960c43ad0430057c7543edd5850be6c411",
+    "tests/test_tui_app.py": "364c35e84c50d7405c6217d308bc364ed71c9bed2fab8a1ff122cb228ecd19b1",
+    "tests/test_tui_read_only.py": "008d3cc5529df11c3c785d9604e550d82894e2abe24d2f1f32fa541dac79ad5a",
+    "skill_lens/tui/home.py": "36acf73aa416f7cefa1ae00dff1c9d4e297677a76becb6344e8dae4381393652",
+    "tests/test_tui_home.py": "50651480d73c67a821083b1a9e40c8f5d0825296c32eab27acdb8961febb8115",
+    "docs/validation/u3/benchmark_home.py": "eda15271400ffa61d6f840a28835ad545e236565dce9a6df4c7b193b9739b35f",
+    "docs/validation/u3/implementation/mutation_gate.py": "e91bb428c0408cf30797f7f36ab89308d0f5493aad13b12ddb6258aaffedde32",
+    "docs/TUI_U3_WALKTHROUGH.md": "da0157110d7b3f89b0ece48e662079d1d3b2a55de22d42d3194fc99d19088c7b"
+  },
+  "full_diff_sha256": "eb0284124192a80a7fd1cb851c20ff8c1e0cdfa40432a2cbf5fbb0f2d37c3241",
+  "mutation_controls": "6 mutants detected on intended assertions; all unmodified and restored controls pass",
+  "benchmark": "Unchanged product and benchmark; independently verified R1 schema-3 evidence remains valid under ../review-ready/benchmark.json",
+  "scope_preserved": true,
+  "preexisting_path_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "notes": [
+    "R1 review-ready is immutable historical gate-execution evidence. Later Markdown evidence changes formatter inventory.",
+    "Only regression test, mutation harness/receipts, and evidence/docs changed after R1.",
+    "Targeted independent MiniMax R2 and Sol acceptance pending."
+  ]
+}

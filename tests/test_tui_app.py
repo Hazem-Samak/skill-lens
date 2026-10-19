@@ -25,7 +25,7 @@ from typing import Any, ClassVar
 import pytest
 from textual.app import App
 from textual.pilot import Pilot
-from textual.widgets import Static
+from textual.widgets import DataTable, Static
 from typer.testing import CliRunner
 
 import skill_lens.tui as tui
@@ -57,6 +57,34 @@ def test_headless_open_and_quit_returns_zero(
         async with app.run_test() as pilot:
             # Let mount and initial capture settle
             await pilot.pause()
+            await pilot.press("q")
+            assert app.return_code == int(ExitCode.OK)
+
+    asyncio.run(_run())
+
+
+def test_headless_home_screen_reflects_capture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The default screen is the U3 Home: captured rows, preview and status agree."""
+    monkeypatch.setattr(paths, "home", lambda: tmp_path)
+    build_scenario("claude_personal_beats_project", tmp_path)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=tmp_path, cwd=tmp_path)
+        async with app.run_test() as pilot:
+            for _ in range(50):
+                if app.controller.current is not None and app.controller.status == "ready":
+                    break
+                await pilot.pause(0.02)
+
+            assert isinstance(app.screen, PlaceholderHomeScreen)
+            assert app.query_one("#skill-table", DataTable).row_count == 1
+            status_widget = app.query_one("#status-text", Static)
+            assert "Ready: 1 skills discovered" in str(status_widget.content)
+            preview = app.query_one("#preview-pane", Static)
+            assert "Name: deploy" in str(preview.content)
+
             await pilot.press("q")
             assert app.return_code == int(ExitCode.OK)
 

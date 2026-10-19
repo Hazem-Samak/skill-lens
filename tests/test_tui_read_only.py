@@ -821,9 +821,24 @@ def test_synthetic_target_preservation_across_lifecycle(mock_home: Path) -> None
     assert any(s[2] is not None for s in before.values()), "Target must include synthetic symlinks"
 
     async def full_lifecycle(pilot: Pilot) -> None:
+        app = pilot.app
+        assert isinstance(app, tui.SkillLensApp)
         # 1. Initial capture
-        await pilot.pause()
-        # 2. Placeholder key navigation
+        for _ in range(50):
+            if app.controller.current is not None:
+                break
+            await pilot.pause(0.02)
+        assert app.controller.current is not None, "Current snapshot must be available"
+        # 2. Home text filter, agent filter (queues Why work) and navigation
+        await pilot.press("slash")
+        await pilot.press(*"deploy")
+        await pilot.press("enter")
+        await pilot.press("a")
+        for _ in range(50):
+            if app.controller.active_requests.get("why") is None:
+                break
+            await pilot.pause(0.02)
+        await pilot.press("escape")
         await pilot.press("down")
         await pilot.press("up")
         await pilot.pause()
@@ -831,8 +846,6 @@ def test_synthetic_target_preservation_across_lifecycle(mock_home: Path) -> None
         await pilot.press("r")
         await pilot.pause()
         # 4. Report query
-        app = pilot.app
-        assert isinstance(app, tui.SkillLensApp)
         if app.controller.selected_key:
             app.request_report("why", (app.controller.selected_key, "claude"))
             await pilot.pause()

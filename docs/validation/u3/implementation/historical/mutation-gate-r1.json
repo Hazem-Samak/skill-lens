@@ -1,0 +1,59 @@
+{
+  "cases": [
+    {
+      "mutant_detected_pattern": "rich",
+      "mutant_failing_assertion": "E       AssertionError: Shipped tui/ code contains prohibited operations:",
+      "mutant_rc": 1,
+      "name": "read_only_guard_detects_rich_import_in_home",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_read_only.py::test_shipped_tui_code_has_zero_read_only_violations"
+    },
+    {
+      "mutant_detected_pattern": "Forbidden live filesystem probe",
+      "mutant_failing_assertion": "E       AssertionError: Forbidden live filesystem probe during browsing",
+      "mutant_rc": 1,
+      "name": "no_live_read_gate_detects_paths_home_probe",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_home.py::test_home_navigation_and_filtering_never_read_live_filesystem"
+    },
+    {
+      "mutant_detected_pattern": "Forbidden synthetic-target filesystem read",
+      "mutant_failing_assertion": "E           AssertionError: Forbidden synthetic-target filesystem read: Path.read_text /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-93/test_home_navigation_and_fi",
+      "mutant_rc": 1,
+      "name": "target_read_sentinel_detects_direct_path_read",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_home.py::test_home_navigation_and_filtering_never_read_live_filesystem"
+    },
+    {
+      "mutant_detected_pattern": "timed out waiting for second group and re-driven first group",
+      "mutant_failing_assertion": "E       AssertionError: timed out waiting for second group and re-driven first group",
+      "mutant_rc": 1,
+      "name": "queue_liveness_detects_suppressed_redrive",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_home.py::test_home_selection_change_redrives_and_rejects_late_result"
+    },
+    {
+      "mutant_detected_pattern": "timed out waiting for contained fault",
+      "mutant_failing_assertion": "E       AssertionError: timed out waiting for contained fault",
+      "mutant_rc": 1,
+      "name": "cell_update_containment_detects_swallowed_fault",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_home.py::test_home_unexpected_cell_update_fault_routes_to_containment_and_exit3"
+    }
+  ],
+  "control": {
+    "containment": 0,
+    "live_read": 0,
+    "liveness": 0,
+    "read_only": 0
+  },
+  "preservation": {
+    "repo_home_sha256_after": "36acf73aa416f7cefa1ae00dff1c9d4e297677a76becb6344e8dae4381393652",
+    "repo_home_sha256_before": "36acf73aa416f7cefa1ae00dff1c9d4e297677a76becb6344e8dae4381393652",
+    "restored_identical": true,
+    "work_home_sha256": "36acf73aa416f7cefa1ae00dff1c9d4e297677a76becb6344e8dae4381393652",
+    "work_home_sha256_after_restore": "36acf73aa416f7cefa1ae00dff1c9d4e297677a76becb6344e8dae4381393652"
+  },
+  "schema": "skill-lens/u3-mutation-gate/3",
+  "work_copy": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u3-mutation-tsm2nxrz"
+}

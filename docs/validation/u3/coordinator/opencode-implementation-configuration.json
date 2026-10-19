@@ -1,0 +1,15 @@
+{
+  "threadId": "thread:delegated-task:command%3Amcp%3Aea69502e-1a8b-4fec-be43-a59fadd655bf%3Adelegate-task%3Askill-lens-u3-20261019-implement-deepseek-opencode-r1",
+  "modelSelection": {
+    "instanceId": "opencode",
+    "model": "opencode/deepseek-v4.1-flash-free",
+    "options": [
+      {
+        "id": "variant",
+        "value": "high"
+      }
+    ]
+  },
+  "runtimeMode": "full-access",
+  "interactionMode": "default"
+}

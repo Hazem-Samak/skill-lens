@@ -1,0 +1,25 @@
+--- shipped source ---
+rc = 0
+.                                                                        [100%]
+1 passed in 1.40s
+--- mutant: rejected outcome clears the owned token ---
+rc = 1
+                await pilot.press("a")
+                await _wait_until(pilot, alpha_started.is_set, "alpha start")
+                # Move to the other row: R1(alpha) is cancelled, R2(beta) is dispatched.
+                await pilot.press("down")
+                await _wait_until(pilot, beta_started.is_set, "beta start")
+                # R1(alpha) now finishes WHILE R2(beta) is still in flight.
+                release_alpha.set()
+                await pilot.pause(0.4)
+                # The newer owned token must still be there.
+                owned = app.screen._inflight
+>               assert owned is not None, "the newer owned Why token was cleared by a rejected outcome"
+E               AssertionError: the newer owned Why token was cleared by a rejected outcome
+E               assert None is not None
+
+tests/test_reviewer_probe.py:72: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reviewer_probe.py::test_probe_rejected_outcome_preserves_newer_owned_token
+1 failed in 1.29s
+repo unchanged: 36acf73aa416f7cefa1ae00dff1c9d4e297677a76becb6344e8dae4381393652

@@ -1,0 +1,179 @@
+{
+  "environment": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "python": "3.11.16",
+    "textual": "8.2.8"
+  },
+  "isolation": {
+    "directory_guard": "every concrete discovery directory must stay under synthetic HOME",
+    "fail_closed_absolute_roots_allowed": false,
+    "fixture_entries": 1203,
+    "fixture_manifest_preserved": true,
+    "home_and_xdg_set_per_run": true,
+    "restored_on_success_and_failure": true,
+    "sandbox_set_per_run": true,
+    "skill_count": 600
+  },
+  "limitations": [
+    "Single machine, single Python/Textual build; numbers are not a portable release target.",
+    "capture_ms measures the capture worker only (wrapped capture_session); mount/compose overhead is excluded from it but included in startup_to_first_list_ms.",
+    "publication_to_first_list_ms spans accepted capture on the UI thread to the instrumented Home rebuild that first carries every row; it is wall-clock on the shared event loop and includes worker/message scheduling.",
+    "The injected-delay run demonstrates the publication-to-list interval tracks real work; the requested delay is 50.0 ms.",
+    "per_cell_update_ms is the real cost of one Home state-cell update; amortized_queue_ms_per_resolved_row is the whole serial queue divided by resolved rows and is dominated by real resolution work, not a single cell update.",
+    "active_navigation_ms/active_filter_ms/active_quit_ms are measured while hundreds of resolutions are still pending (the probe records pending_at_start and pending_before_quit). Navigation and quit use real Pilot key presses; the filter is driven through the Input's Changed event because Pilot's press waits for the app to drain and would outlast the queue. Navigating, filtering and the queued re-drive all leave that probe unsuitable for the why_call/group equality assertion.",
+    "The superseded receipt docs/validation/u3/implementation/historical/benchmark-home-r1.json is invalid and unsafe (its sandbox was cleared after run 1, so later runs allowed absolute system roots, and its publication boundary measured a near-zero predicate check). It is preserved as history and is not relabelled valid."
+  ],
+  "parameters": {
+    "injected_delay_ms": 50.0,
+    "runs": 3,
+    "skills": 600
+  },
+  "runs": [
+    {
+      "agent_filter_ms": 7938.1801250001445,
+      "amortized_queue_ms_per_resolved_row": 13.230300208333574,
+      "capture_ms": 838.1987499997194,
+      "distinct_lookup_groups": 600,
+      "kind": "clean",
+      "navigation_ms": [
+        107.71154100075364,
+        84.44887499899778,
+        108.14458300046681,
+        87.7301250002347,
+        111.15049999898474
+      ],
+      "per_cell_update_ms": 0.01808399974834174,
+      "publication_to_first_list_ms": 8.021333000215236,
+      "resolved_cells": 600,
+      "return_code": 0,
+      "run": 1,
+      "slow_capture_quit_ms": 42.904124999040505,
+      "startup_to_first_list_ms": 851.6385000002629,
+      "text_filter_ms": 701.1368330004188,
+      "why_calls": 600
+    },
+    {
+      "agent_filter_ms": 7634.935832998963,
+      "amortized_queue_ms_per_resolved_row": 12.72489305499827,
+      "capture_ms": 869.5241660007014,
+      "distinct_lookup_groups": 600,
+      "kind": "clean",
+      "navigation_ms": [
+        101.49187499882828,
+        63.845708000371815,
+        86.10583399968164,
+        107.28512499917997,
+        113.05412499859813
+      ],
+      "per_cell_update_ms": 0.016874999346327968,
+      "publication_to_first_list_ms": 6.2549159993068315,
+      "resolved_cells": 600,
+      "return_code": 0,
+      "run": 2,
+      "slow_capture_quit_ms": 42.92445900136954,
+      "startup_to_first_list_ms": 881.4110830007849,
+      "text_filter_ms": 648.6849579996488,
+      "why_calls": 600
+    },
+    {
+      "agent_filter_ms": 7837.771209000493,
+      "amortized_queue_ms_per_resolved_row": 13.062952015000823,
+      "capture_ms": 897.02354200017,
+      "distinct_lookup_groups": 600,
+      "kind": "clean",
+      "navigation_ms": [
+        105.0884579999547,
+        85.72108299995307,
+        106.25970799992501,
+        112.41091600095388,
+        88.78816700052994
+      ],
+      "per_cell_update_ms": 0.01720850013953168,
+      "publication_to_first_list_ms": 6.055416999515728,
+      "resolved_cells": 600,
+      "return_code": 0,
+      "run": 3,
+      "slow_capture_quit_ms": 42.9480410002725,
+      "startup_to_first_list_ms": 908.7653329988825,
+      "text_filter_ms": 594.524125001044,
+      "why_calls": 600
+    },
+    {
+      "active_filter_ms": [
+        38.2032090001303
+      ],
+      "active_navigation_ms": [
+        2049.216208000871
+      ],
+      "active_quit_ms": 63.540874998579966,
+      "kind": "active-resolution-probe",
+      "pending_at_start": 434,
+      "pending_before_quit": 134,
+      "return_code": 0,
+      "run": 4
+    },
+    {
+      "kind": "injected-delay",
+      "publication_to_first_list_ms": 62.69191599858459,
+      "rebuild_delay_ms": 50.0,
+      "return_code": 0,
+      "run": 5,
+      "startup_to_first_list_ms": 991.5921659994638
+    }
+  ],
+  "schema": "skill-lens/u3-benchmark-home/2",
+  "summary": {
+    "active_filter_ms": {
+      "max": 38.203,
+      "median": 38.203
+    },
+    "active_navigation_ms": {
+      "max": 2049.216,
+      "median": 2049.216
+    },
+    "active_quit_ms": 63.541,
+    "agent_filter_ms": {
+      "max": 7938.18,
+      "median": 7837.771
+    },
+    "amortized_queue_ms_per_resolved_row": {
+      "max": 13.23,
+      "median": 13.063
+    },
+    "capture_ms": {
+      "max": 897.024,
+      "median": 869.524
+    },
+    "distinct_lookup_groups": [
+      600
+    ],
+    "injected_delay_publication_to_list_ms": 62.692,
+    "navigation_ms": {
+      "max": 113.054,
+      "median": 105.088
+    },
+    "per_cell_update_ms": {
+      "max": 0.018,
+      "median": 0.017
+    },
+    "publication_to_first_list_ms": {
+      "max": 8.021,
+      "median": 6.255
+    },
+    "slow_capture_quit_ms": {
+      "max": 42.948,
+      "median": 42.924
+    },
+    "startup_to_first_list_ms": {
+      "max": 908.765,
+      "median": 881.411
+    },
+    "text_filter_ms": {
+      "max": 701.137,
+      "median": 648.685
+    },
+    "why_calls": [
+      600
+    ]
+  }
+}

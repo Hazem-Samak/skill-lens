@@ -1,0 +1,36 @@
+{
+  "pytest": {
+    "command": [
+      ".venv/bin/pytest",
+      "--cov=skill_lens"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 78.84
+  },
+  "mypy": {
+    "command": [
+      ".venv/bin/mypy"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.16
+  },
+  "ruff": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.04
+  },
+  "ruff-format": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.02
+  }
+}

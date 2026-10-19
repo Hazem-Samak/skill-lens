@@ -23,11 +23,11 @@ release (the optional `[tui]` browsing layer), not 0.1.2 — do not rename this
 heading to 0.1.2.
 
 The current development branch ships six line-oriented CLI commands plus an
-optional, additive, read-only TUI entrypoint/controller/skeleton through U2
-(C1–C5 and U1–U2 complete). U3–U9 browsing screens and 0.2 publishing remain
+optional, additive, read-only TUI through U3 Home browsing
+(C1–C5 and U1–U3 complete). U4–U9 screens and 0.2 publishing remain
 separate future work. No unreleased work in this section claims to have executed
 all CI lanes; local gate evidence is recorded under
-`docs/validation/assessment-repairs/h/`.
+`docs/validation/assessment-repairs/h/` and `docs/validation/u3/`.
 
 ### Planned
 
@@ -40,9 +40,9 @@ all CI lanes; local gate evidence is recorded under
   codes are unchanged; the line-oriented CLI remains the primary interface.
   This overturns the v1 "no full-screen TUI" rule for 0.2. **Partial status:**
   C1–C5 (byte/hash helpers, captured engine inputs, capture and cancellation,
-  presentation extraction, Step 0 audit) and U1–U2 (optional install, worker
-  controller and skeleton placeholder screen) are complete as development work
-  on the current branch; U3–U9 browsing screens remain future work. The full
+  presentation extraction, Step 0 audit) and U1–U3 (optional install, worker
+  controller and Home browsing screen) are complete as development work
+  on the current branch; U4–U9 screens remain future work. The full
   design lives in
   [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
 
@@ -71,6 +71,15 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
   unbounded by bytes.
 
 ### Added
+
+- **Home browsing screen (U3).** The development TUI now shows a skill table,
+  scrollable metadata preview, text and agent filters, and optional per-agent
+  resolution states. Selection, refresh and late worker results preserve the
+  frozen session contract; browsing stays read-only. Local checks, a synthetic
+  600-skill benchmark and six mutation checks were independently reviewed.
+  See the [U3 walkthrough](docs/TUI_U3_WALKTHROUGH.md) and
+  [acceptance record](docs/validation/u3/acceptance.md). Human visual approval
+  and 0.2 publishing are separate; neither is claimed here.
 
 - **Bounded TUI snapshot capture (R01).** The TUI now refuses to open a home
   whose captured skill payload exceeds a byte budget, instead of reading an

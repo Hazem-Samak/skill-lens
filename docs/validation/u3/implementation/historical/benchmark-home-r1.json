@@ -1,0 +1,110 @@
+{
+  "environment": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "python": "3.11.16",
+    "textual": "8.2.8"
+  },
+  "limitations": [
+    "Single machine, single Python/Textual build; numbers are not a portable release target.",
+    "capture_ms measures the capture worker only (wrapped capture_session); mount/compose overhead is excluded.",
+    "publication_to_first_list_ms is wall-clock on the shared event loop and includes worker/message scheduling.",
+    "slow_capture_quit_ms proves prompt quit under a deliberately blocked refresh; it is not a scan-time benchmark."
+  ],
+  "parameters": {
+    "runs": 3,
+    "skills": 600
+  },
+  "runs": [
+    {
+      "agent_filter_ms": 10503.09012499929,
+      "capture_ms": 789.3631249999089,
+      "navigation_ms": [
+        63.87499999982538,
+        63.75233300059335,
+        85.81304099971021,
+        105.6693330001508,
+        85.79562500017346
+      ],
+      "per_cell_resolution_ms": 17.50515020833215,
+      "publication_to_first_list_ms": 0.0030829996831016615,
+      "resolved_cells": 600,
+      "return_code": 0,
+      "run": 1,
+      "slow_capture_quit_ms": 42.95866600023146,
+      "text_filter_ms": 715.6159999994998,
+      "why_calls": 600
+    },
+    {
+      "agent_filter_ms": 10448.745874999986,
+      "capture_ms": 887.5484170002892,
+      "navigation_ms": [
+        104.69862499940064,
+        85.08808399983536,
+        108.6795829996845,
+        113.48337500021444,
+        87.66116700007842
+      ],
+      "per_cell_resolution_ms": 17.41457645833331,
+      "publication_to_first_list_ms": 0.00254199949267786,
+      "resolved_cells": 600,
+      "return_code": 0,
+      "run": 2,
+      "slow_capture_quit_ms": 43.04379199948016,
+      "text_filter_ms": 665.9406250000757,
+      "why_calls": 600
+    },
+    {
+      "agent_filter_ms": 10428.234291999615,
+      "capture_ms": 911.6611660001581,
+      "navigation_ms": [
+        105.02625000026455,
+        85.37487499961571,
+        108.17137499998353,
+        85.3281669997159,
+        86.44112499951007
+      ],
+      "per_cell_resolution_ms": 17.380390486666027,
+      "publication_to_first_list_ms": 0.0023749998945277184,
+      "resolved_cells": 600,
+      "return_code": 0,
+      "run": 3,
+      "slow_capture_quit_ms": 42.79979199964146,
+      "text_filter_ms": 585.873250000077,
+      "why_calls": 600
+    }
+  ],
+  "schema": "skill-lens/u3-benchmark-home/1",
+  "summary": {
+    "agent_filter_ms": {
+      "max": 10503.09,
+      "median": 10448.746
+    },
+    "capture_ms": {
+      "max": 911.661,
+      "median": 887.548
+    },
+    "navigation_ms": {
+      "max": 113.483,
+      "median": 86.441
+    },
+    "per_cell_resolution_ms": {
+      "max": 17.505,
+      "median": 17.415
+    },
+    "publication_to_first_list_ms": {
+      "max": 0.003,
+      "median": 0.003
+    },
+    "slow_capture_quit_ms": {
+      "max": 43.044,
+      "median": 42.959
+    },
+    "text_filter_ms": {
+      "max": 715.616,
+      "median": 665.941
+    },
+    "why_calls": [
+      600
+    ]
+  }
+}
