@@ -1,0 +1,22 @@
+{
+  "status": "completed",
+  "exitCode": 0,
+  "model": "opencode/minimax-m3.1-flash-free",
+  "agent": "plan",
+  "sessionId": "ses_ea9c98be2ffe4xFREzSFsThQeL",
+  "cost": 0,
+  "startedAt": "2026-10-19T22:09:31.585Z",
+  "finishedAt": "2026-10-19T22:10:54.834Z"
+}
+
+I'll read the specified files and the diff to conduct this review.**EFFECTIVE_MODEL** — requested `opencode/minimax-m3.1-flash-free` (migration's one-reviewer exception, default settings); configured minimax-m3.1-flash-free, default settings, fresh session; upstream unverified. Standalone OpenCode relay, not Herdr-dispatched.
+
+**VERDICT** — pass.
+
+**BLOCKERS** — none. Routes integrate into README's Herdr section, planning-loop §3 and implementation-loop §2 under one consistent outside-Herdr rule (stop and ask; no silent substitution). Caller validation is `test "${HERDR_ENV:-}" = 1` plus `--current` readback, with explicit bans on fabricating context or targeting the focused session. Completion semantics reject submission, settled idle/done, badge or exit-only as acceptance, requiring matching report, owned turn completion, no active child work, and readback before any retry. Model selection reuses session-authorized kind/provider/model/settings, verifies kinds via `herdr agent` and native arguments via installed help, invents no MiniMax startup command, and asks on unsupported kinds. T3 preserved: only `docs/process/omp/*` plus new docs changed; T3's own loops untouched.
+
+**SUGGESTIONS** — (1) Gate/smoke evidence in the validation record has no tree hash or timestamp, so "ran on the final tree" is not machine-checkable. (2) herdr.md omits the agent-name regex and the coordinator's `thinking high` setting.
+
+**FILES_AT_RISK** — docs/process/omp/herdr.md (new); docs/process/omp/{README,planning-loop,implementation-loop}.md; docs/validation/omp-coordinator/2026-10-20/herdr-dispatch.md; docs/plans/2026-10-20-omp-herdr-dispatch.md. Untouched: `.path`, 2026-10-19 draft, T3, product files.
+
+**CONCEDED** — Live dispatch stays unverified by design: caller is outside Herdr, so no live command ran and no success is claimed; the exact human launch step is recorded.

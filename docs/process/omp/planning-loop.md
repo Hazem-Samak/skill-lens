@@ -51,6 +51,8 @@ Use the [OMP risk policy](./README.md#review-policy): Normal one reviewer, High 
 
 First inspect draft fields, relative links, allowed paths, and source-backed claims. Prepare compact evidence-first briefs using the README's exact guard and report schema. Include one clear question per critic, relevant named sources, draft revision/fingerprint, and review criteria. Verify configured runtime/model/settings match authorization; disclose upstream identity limits.
 
+Select the dispatch route before starting any critic: inside a genuine Herdr-managed OMP pane, follow the [Herdr adapter](./herdr.md) for worker startup, prompts, waits and report readback. Do not silently replace Herdr dispatch with native tasks or standalone relays. Outside Herdr, use the standalone route unless Herdr was requested; then ask for a genuine Herdr-pane continuation, without fabricating caller context.
+
 Capture status/fingerprints, dispatch all required reviewers before waiting, and retain the README lifecycle ledger. Each round uses a fresh independent session, not a resumed author conversation. Inspect the complete reports and post-review fingerprints. Require a substantive verdict, not idle/exit-only success; unexpected edits trigger preserve/inspect/stop. Low risk needs no critic dispatch.
 
 ## 4. Resolve before freezing

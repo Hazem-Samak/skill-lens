@@ -12,6 +12,10 @@ omp --model openai-codex/gpt-6.1-sol --thinking high --no-prewalk @docs/process/
 
 Before planning or dispatch, inspect the active runtime's model/settings readback or session evidence: coordinator must be `openai-codex/gpt-6.1-sol`, thinking `high` unless explicitly authorized otherwise. Record requested and effective configured identity separately; a catalog entry or launch argument alone does not prove execution or upstream identity. Stop if Sol is unavailable or readback disagrees; never silently switch. This entry does not resume a session, invent a goal, run plan-yolo, invoke an advisor, or automatically transition to implementation. Take the user's concrete request into the [planning loop](./planning-loop.md), then the [implementation loop](./implementation-loop.md) only after authorization and freeze.
 
+### When running inside Herdr
+
+When inherited `HERDR_ENV=1` identifies a genuine Herdr-managed OMP pane, use the [Herdr worker dispatch adapter](./herdr.md) for both planning reviewers and implementation workers. Sol and these OMP loops stay in charge; Herdr supplies worker panes, startup, prompts, waits and readback. Do not silently use native tasks or standalone relays instead. Outside Herdr, retain the standalone routes below; if the user requests Herdr, stop Herdr operations and ask them to launch OMP there. Current Herdr dispatch is documented but **not yet live-verified**.
+
 ## Roles and session choices
 
 - **Sol coordinates:** inspect sources, plan, dispatch, verify, judge, accept, commit, and deliver. Delegate product code and tests; Sol may make administrative documentation corrections. The current documentation migration explicitly authorizes Sol to author its process documents.
