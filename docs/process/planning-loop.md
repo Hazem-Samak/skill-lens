@@ -1,5 +1,7 @@
 # The Planning Loop
 
+> **Surface: T3 Code (active).** This T3 workflow remains unchanged. In OMP / Oh My Pi, use the separate [OMP entry](./omp/README.md) and [OMP planning loop](./omp/planning-loop.md). OMP policy takes precedence only on OMP.
+
 How a request becomes a reviewed, frozen plan before implementation. Sol coordinates; review roles and risk levels are defined in [council.md](./council.md).
 
 Read [project-profile.md](./profiles/project-profile.md) for correctness, gates, and sensitive areas. Before dispatch, read council §§1–4 for model choices, Full access preflight, the exact critic guard, reports, and task lifecycle. Consult [machine-profile.md](./profiles/machine-profile.md) when provider or workspace facts need checking.

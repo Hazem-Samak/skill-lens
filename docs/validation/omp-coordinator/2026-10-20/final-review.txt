@@ -1,0 +1,38 @@
+{
+  "status": "completed",
+  "exitCode": 0,
+  "model": "opencode/minimax-m3.1-flash-free",
+  "agent": "plan",
+  "sessionId": "ses_ea9deef00ffei77VWFgstG6wHN",
+  "cost": 0,
+  "startedAt": "2026-10-19T21:46:09.963Z",
+  "finishedAt": "2026-10-19T21:50:25.486Z"
+}
+
+I'll read the specified documents and inspect the exact diff before forming a verdict.**EFFECTIVE_MODEL:** requested `opencode/minimax-m3.1-flash-free`; configured/catalog-listed under the same alias; upstream-unverified (no provider banner or upstream proof observed); default settings; agent `plan`. Read-only restraint is instruction-based, not a sandbox.
+
+**VERDICT:** pass
+
+**BLOCKERS:** none. Basis (directly observed, read-only; no gates/tests/model commands re-run):
+
+- **T3 unaltered, scope clean:** `git diff ff58deab --` the four named paths = 8 insertions / 0 deletions — one additive blockquote each, no original line changed. No diff in `skill_lens/`, `tests/`, `AGENTS.md`, `pyproject.toml`, `registry/`. `.path` (`e3b0c442…`) and the 2026-10-19 draft (`7eb7720a…`) remain untracked, hashes matching `acceptance.md:46-47`. The T3 blockquotes route OMP users to `docs/process/omp/*`, so the unmodified AGENTS.md pointer still lands on a doc that redirects them.
+- **Safeguards not weakened:** `docs/process/omp/README.md:27` mirrors `council.md:166-178` risk policy (High = two reviewers; explicit exception only; "not a future default or waiver"). `omp/implementation-loop.md:28-32,48,74-78` keeps baseline + final four gates, synthetic HOME/isolated fixtures, "no check is waived merely because the edit is documentation", sole-Sol commit with three-ref push equality. `omp/README.md:47` and `omp/implementation-loop.md:54` keep "not a sandbox guarantee", preserve/inspect/stop, never blind-restore. The council, OMP README, and this brief's guard are byte-identical (verified).
+- **Separate workflow achieved:** no T3-only API prerequisite (`omp/README.md:3,51`); session-selected workers, ask-once, no silent substitute (`:19-21`); family-diversity/unverified-pair disclosure preserved (`:27`, `council.md:29-32`).
+- **Freeze/provenance:** `216cea3` shows `Reference: pending`; `3edd82a` changes only that line; HEAD = origin/main = `ls-remote` = `3edd82a`.
+- **Links/tools:** 34 relative links/anchors across the seven workflow/notice files resolve (39 including `acceptance.md`); every relay flag used at `omp/README.md:60-64` exists in the installed relay.
+
+**SUGGESTIONS** (non-blocking):
+
+1. `omp/README.md:17`, `omp/implementation-loop.md:3` — mark the Sol process-document authorship authorization as scoped to this migration, not a standing waiver (mirroring `:27`).
+2. `omp/README.md:66` — `--auto` and `--pure` are both real relay flags; `--pure` is what OpenCode 2.0.32 rejects. State that precisely and retain the failed launch's CLI stderr (its receipt shows `error: null`) so `acceptance.md:39`'s grounding claim is checkable.
+3. `omp/planning-loop.md:3` — narrow the machine-profile pointer; its §5 is T3-API-only (`t3_worktree_handoff`), or say "plain git checkouts only".
+
+**FILES_AT_RISK:** `docs/process/omp/{README,planning-loop,implementation-loop}.md`; `docs/process/{planning-loop,implementation-loop,council}.md`; `docs/validation/two-surface-orchestration/2026-10-17/implementation/single-cycle/README.md`; `docs/validation/omp-coordinator/2026-10-20/{acceptance.md,plan-review.txt,final-review.txt}`; `docs/plans/2026-10-20-omp-side-by-side-coordinator.md`
+
+**CONCEDED:** none
+
+Initial failed launch stderr (retained, not a successful review):
+[
+  "ERROR",
+  "  Unrecognized flag: --pure in command opencode run"
+]

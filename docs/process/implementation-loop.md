@@ -1,5 +1,7 @@
 # The Implementation Loop
 
+> **Surface: T3 Code (active).** This T3 workflow remains unchanged. In OMP / Oh My Pi, use the separate [OMP entry](./omp/README.md) and [OMP implementation loop](./omp/implementation-loop.md). OMP policy takes precedence only on OMP.
+
 How a frozen plan becomes verified, committed work, one phase at a time. Antigravity writes product code and tests. Sol inspects, verifies, obtains independent review, accepts, and commits; small administrative corrections follow [council §6](./council.md#6-review-efficiency-without-weaker-acceptance).
 
 Read [project-profile.md](./profiles/project-profile.md) for project constraints and gates, council §§1–4 before dispatch, and [machine-profile.md §5](./profiles/machine-profile.md#5-workspace-and-worktree-handling) before workspace preparation. Council §6 defines compact briefs, batched corrections, and execution receipts.

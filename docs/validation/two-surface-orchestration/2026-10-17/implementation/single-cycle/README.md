@@ -1,5 +1,7 @@
 # One ordinary Herdr development cycle
 
+> **Status — 2026-10-20:** This Hermes/Herdr trial record is historical, not the current setup or a prerequisite. Use the [current OMP / Oh My Pi entry](../../../../../process/omp/README.md); T3 Code remains active with its own workflow. This notice does not establish that the trial passed.
+
 State: preparation accepted; human run pending. Use T3's delivered launch instructions.
 Surface: t3 prepares; herdr executes; t3 inspects the actual result.
 

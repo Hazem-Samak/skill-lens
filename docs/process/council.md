@@ -1,5 +1,7 @@
 # The Critic Council
 
+> **Surface: T3 Code (active).** This T3 council and workflow remain unchanged. In OMP / Oh My Pi, use the [OMP entry and separate roles/review policy](./omp/README.md). OMP policy takes precedence only on OMP.
+
 **What this is.** The council is the independent review system in T3 Code for Skill Lens. Other AI models check plans and code diffs before work is frozen or accepted. They read and report; they never edit the project.
 
 - A **critic** (or reviewer) is an agent dispatched with read-only instructions to inspect a plan or diff.

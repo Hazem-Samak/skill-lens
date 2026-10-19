@@ -1,0 +1,75 @@
+## failed-launch
+{
+  "status": "failed",
+  "exitCode": 1,
+  "model": "opencode/minimax-m3.1-flash-free",
+  "agent": "plan",
+  "sessionId": null,
+  "cost": null,
+  "startedAt": "2026-10-19T21:36:42.352Z",
+  "finishedAt": "2026-10-19T21:36:42.451Z",
+  "error": null
+}
+
+
+## plan-r1
+{
+  "status": "completed",
+  "exitCode": 0,
+  "model": "opencode/minimax-m3.1-flash-free",
+  "agent": "plan",
+  "sessionId": "ses_ea9e75705ffereynf38WdA27Ul",
+  "cost": 0,
+  "startedAt": "2026-10-19T21:36:59.045Z",
+  "finishedAt": "2026-10-19T21:39:52.831Z",
+  "error": null
+}
+I'll review the plan document and compare against the process docs.EFFECTIVE_MODEL: requested `opencode/minimax-m3.1-flash-free`; configured `opencode/minimax-m3.1-flash-free`, default settings, agent `plan`; upstream identity **unverified** — the only evidence is the catalog alias (`opencode models` lists `opencode/minimax-m3.1-flash-free`); no provider banner or upstream confirmation was observed. No T3 `runtimeMode`/`interactionMode` on this surface; read-only is instruction-based, not a sandbox.
+
+VERDICT: changes_required
+
+BLOCKERS:
+
+1. `docs/plans/2026-10-20-omp-side-by-side-coordinator.md:19,38,44` — the "real read-only worker route" is never pinned, and the natural reading of it is impossible.
+   - Problem: the plan's only proof of the worker route (step 5, "Exercise a real OMP-to-OpenCode review request") and its identity claim (acceptance line 44, "the exact discovered free model") do not say which mechanism is used. OMP's `task` tool ("Launch sub-agents for parallel tasks", `omp --help`) launches sub-agents from **OMP's own catalog**, and that catalog has no OpenCode provider. The exact user-named alias `opencode/minimax-m3.1-flash-free` exists only in the OpenCode CLI, so it is reachable from OMP only via a bash/tool call to `opencode run --model opencode/minimax-m3.1-flash-free --agent plan --format json` — which is OMP-orchestrated but not OMP-native delegation.
+   - Evidence: `omp models find opencode` → "No models matching 'opencode'"; `omp models` providers = anymodel, kiosapi, local-qwen, nine-router, openai-codex, openrouter-free, orcarouter, river, tokenharbor, workbuddy, xkiro; `omp models find minimax` → `openrouter-free/minimax/minimax-m3.1-flash:free`; `opencode models` → `opencode/minimax-m3.1-flash-free`; `opencode run --help` shows `--model provider/model#variant`, `--agent`, `--format`.
+   - Required fix: state the route explicitly — (a) OMP-native `task` delegation to `openrouter-free/minimax/minimax-m3.1-flash:free`, or (b) OMP tool call to the `opencode run` CLI with the exact alias — naming the flags, the read-only agent, a timeout (a wrong agent means a non-interactive run blocks on approval), the evidence file to inspect, and how the requested identity is reported for each route (the two aliases are different provider routes for the same family, so "the exact discovered free model" is ambiguous). Also state the remedy if the route needs an OMP setting change, because line 30 forbids provider/authentication settings changes.
+
+2. `docs/plans/2026-10-20-omp-side-by-side-coordinator.md:16,28,49` — an untracked 174-line draft is inside the allowed-edit and commit set while the plan also says to preserve it as untracked.
+   - Problem: `git status --porcelain` shows `?? docs/plans/2026-10-19-herdr-omp-coordinator.md`. Line 16 says preserve it as pre-existing untracked work; line 28 puts it in the allowed edit set; line 49 requires focused commits. implementation-loop §7 says "Stage only allowed paths", so staging that path commits the entire superseded draft — including its "Replacement contract" (lines 77–99) that rewrites shared T3 role policy, the very policy this plan keeps unchanged. The two instructions cannot both hold.
+   - Required fix: say whether that file stays untracked (and the notice is therefore unrecorded in git) or is committed in full as a superseded draft, with the notice marking its whole "Replacement contract" section as superseded; give the exact `git add` list; state that `.path` and every other untracked path are never staged.
+
+3. `docs/plans/2026-10-20-omp-side-by-side-coordinator.md:34,49` — the push step points at an instruction that does not exist in the repository.
+   - Problem: step 1 requires pushing "under the existing standing delivery instruction" and acceptance requires "focused commits pushed and verified", but nothing resolvable in the repo defines that instruction, so the delivery step is unimplementable without inventing it.
+   - Evidence: `grep -rn "standing delivery" --include="*.md" .` matches only the plan's own line 34; AGENTS.md has no push rule ("Commit only when all tests pass cleanly"); DEVELOPMENT.md's only push is `git push origin v0.1.1` (DEVELOPMENT.md:196), a release tag.
+   - Required fix: cite where the standing instruction lives (name it precisely if it is outside the repo) or replace it with the procedure this repo's own plans already use — push `main`, then verify local/tracking/remote equality — and name the branch and remote.
+
+SUGGESTIONS (non-blocking):
+- Add the implementation-loop Step 1 baseline gate run before the author tasks, with the rule that pre-existing failures are reported, not fixed. Without it, a red baseline at `ff58deab` can be misattributed to the doc change or trigger scope creep.
+- Enumerate the per-child file ownership table for the two author tasks. "Disjoint" is asserted (line 8) but the notice set spans 5 existing files plus 3 new ones, and one notice target is untracked.
+- Record the council §1.2 named-pair acceptance in "Review decisions": coordinator family OpenAI vs reviewer family MiniMax, upstream identity behind the `opencode/minimax-m3.1-flash-free` alias unverified, user acceptance of that pair for this migration. This makes the one-reviewer High-risk exception auditable without reinstating the replaced two-reviewer contract.
+- State Sol's OMP startup identity in the plan's Current state: `openai-codex/gpt-6.1-sol` (confirmed by `omp models find gpt-6.1-sol`) and the reasoning level (`--thinking high`, council §1 default), so the README's startup command is reproducible rather than approximated.
+- State the author children's model/route and require effective-model evidence for them, as the plan already does for reviewers.
+
+FILES_AT_RISK: `docs/plans/2026-10-20-omp-side-by-side-coordinator.md`; `docs/plans/2026-10-19-herdr-omp-coordinator.md` (untracked, 174 lines, superseded contract); `docs/process/council.md`; `docs/process/planning-loop.md`; `docs/process/implementation-loop.md`; `docs/validation/two-surface-orchestration/2026-10-17/implementation/single-cycle/README.md`; `.path` (must remain untracked)
+
+CONCEDED: none
+
+## plan-r2
+{
+  "status": "completed",
+  "exitCode": 0,
+  "model": "opencode/minimax-m3.1-flash-free",
+  "agent": "plan",
+  "sessionId": "ses_ea9e43356ffeIkWeErXWRZnaha",
+  "cost": 0,
+  "startedAt": "2026-10-19T21:40:24.776Z",
+  "finishedAt": "2026-10-19T21:41:04.036Z",
+  "error": null
+}
+I'll read the specified plan file and the referenced source lines.EFFECTIVE_MODEL: requested opencode/minimax-m3.1-flash-free; configured/confirmed (OpenCode 2.0.32 lists it, line 20) but upstream-unverified; default settings, agent plan (line 38 pins `--agent plan`, line 7 default settings)
+VERDICT: pass
+BLOCKERS: none — (1) line 38 pins the route: OMP bash tool → installed OpenCode CLI relay → `opencode run --model opencode/minimax-m3.1-flash-free --agent plan --format json`, 10-minute relay timeout, no `--auto`/`--pure`, external result.json plus complete finalMessage, exit 0 and an actual verdict required; explicitly not OMP-native task delegation and not the OpenRouter MiniMax route; any needed settings change → stop and ask. (2) line 28 leaves the old 2026-10-19 draft byte-for-byte unchanged and untracked; line 35 bars staging it, `.path`, or any other untracked work. (3) line 34 states `git push origin main` per authorized commit plus three-ref equality (`git rev-parse HEAD`, `git rev-parse origin/main`, `git ls-remote origin refs/heads/main`), with the standing source cited at lines 13–16 of the 2026-10-17 plan.
+SUGGESTIONS: Line 38's negative claim that `--pure` is unsupported in OpenCode 2.0.32 could be re-confirmed against `opencode run --help`; harmless either way, since the flag is simply not passed.
+FILES_AT_RISK: docs/plans/2026-10-20-omp-side-by-side-coordinator.md; docs/process/{planning-loop,implementation-loop,council}.md; docs/validation/two-surface-orchestration/2026-10-17/implementation/single-cycle/README.md; new docs/process/omp/*; docs/validation/omp-coordinator/2026-10-20/*
+CONCEDED: prior finding 3 source existed; procedure clarified. Baseline as stated.
