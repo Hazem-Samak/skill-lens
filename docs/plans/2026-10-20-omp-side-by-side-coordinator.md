@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: User, 2026-10-20, explicitly requests completing the coordinator migration quickly: OMP replaces Hermes, Sol 6.1 coordinates implementers/reviewers, OMP has its own planning and implementation loops, and T3 Code remains active, not archived. Sol drafts, creates and checks this documentation migration, helped by one reviewer: OpenCode MiniMax M3.1 Flash Free. This explicitly replaces the old two-critic/Antigravity execution requirement for this migration only.
-Reference: pending
+Reference: 216cea31cc0ac1c0ad8b1557441bf59aec141031
 Surface: omp; t3 remains independently active.
 Risk and review: High (workflow contract), with the user's explicit one-reviewer exception for this bounded migration. Use opencode/minimax-m3.1-flash-free, default model settings, fresh read-only plan and final review sessions. Requested/configured model identity is evidence, not independent upstream identity proof. No substitute without asking.
 Expected child tasks: two Sol documentation-author tasks for disjoint files, one OpenCode plan review, one fresh OpenCode final review; corrections only if needed. Sol owns verification and commits.
