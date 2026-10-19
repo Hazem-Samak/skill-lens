@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: User, 2026-10-20: “ok do this remaining small change”, accepting the proposed Herdr dispatch section plus a live check inside Herdr. Reuse this coordinator migration's explicit Sol documentation authorship and single OpenCode MiniMax reviewer selection.
-Reference: pending
+Reference: 2656a6a1efb687b0d23c9679fdc2222cc18c07b0
 Surface: omp; optional Herdr-managed execution; T3 remains active and unchanged.
 Risk and review: High workflow amendment; existing user-authorized one-reviewer exception for this migration. Reviewer opencode/minimax-m3.1-flash-free, default settings, fresh plan/final sessions. Upstream identity remains unverified.
 Expected child tasks: one plan review and one final review; Sol makes these small process-document edits directly. Native agent startup for the live smoke requires an inherited Herdr context.
