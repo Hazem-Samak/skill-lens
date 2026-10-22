@@ -1,0 +1,2 @@
+Transcript: the words "esc stop" are quoted, not a live control.
+Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode

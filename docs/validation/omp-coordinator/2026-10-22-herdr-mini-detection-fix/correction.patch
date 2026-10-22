@@ -1,0 +1,156 @@
+--- a/src/detect/manifests/opencode.toml
++++ b/src/detect/manifests/opencode.toml
+@@ -1,7 +1,7 @@
+ id = "opencode"
+-version = "2026.06.10.1"
++version = "2026.10.22.1"
+ min_engine_version = 1
+-updated_at = "2026-06-10T00:00:00Z"
++updated_at = "2026-10-22T00:00:00Z"
+ aliases = ["open-code", "herdr:opencode"]
+ 
+ [[rules]]
+@@ -29,6 +29,14 @@
+ ]
+ 
+ [[rules]]
++id = "status_footer_esc_stop_working"
++state = "working"
++priority = 105
++region = "bottom_non_empty_lines(1)"
++visible_working = true
++line_regex = ['^\s*(?:🯧\s*)?esc stop · [^·\n]+ · [^·\n]+ · [^·/\n]+ / [^·/\n]+$']
++
++[[rules]]
+ id = "progress_bar_working"
+ state = "working"
+ priority = 100
+--- a/distribution/agent-detection/opencode.toml
++++ b/distribution/agent-detection/opencode.toml
+@@ -1,7 +1,7 @@
+ id = "opencode"
+-version = "2026.06.10.1"
++version = "2026.10.22.1"
+ min_engine_version = 1
+-updated_at = "2026-06-10T00:00:00Z"
++updated_at = "2026-10-22T00:00:00Z"
+ aliases = ["open-code", "herdr:opencode"]
+ 
+ [[rules]]
+@@ -29,6 +29,14 @@
+ ]
+ 
+ [[rules]]
++id = "status_footer_esc_stop_working"
++state = "working"
++priority = 105
++region = "bottom_non_empty_lines(1)"
++visible_working = true
++line_regex = ['^\s*(?:🯧\s*)?esc stop · [^·\n]+ · [^·\n]+ · [^·/\n]+ / [^·/\n]+$']
++
++[[rules]]
+ id = "progress_bar_working"
+ state = "working"
+ priority = 100
+--- a/src/detect/manifest/tests.rs
++++ b/src/detect/manifest/tests.rs
+@@ -677,6 +677,88 @@
+     }
+ }
+ 
++// Literal footer observed on an active OpenCode Mini task. The bundled
++// OpenCode rules must classify this screen as working, not idle.
++#[test]
++fn opencode_busy_footer_is_working_under_bundled_manifest() {
++    with_manifest_dirs("opencode-busy-footer", || {
++        let screen = "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode";
++        assert_eq!(explain(Agent::OpenCode, screen).state, AgentState::Working);
++    });
++}
++
++// The bundled OpenCode status footer is live only as the bottom non-empty
++// line: idle footers, transcript quotes of it, a quote above a newer idle
++// footer, approval UI and unrelated screens must not report activity.
++#[test]
++fn opencode_status_footer_boundaries_under_bundled_manifest() {
++    with_manifest_dirs("opencode-footer-boundaries", || {
++        let busy = "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode";
++        let idle = "Default / OpenCode";
++        let undecorated = "esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode";
++        let ideographic = "　esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode";
++
++        for screen in [
++            format!("response text\n{idle}"),
++            format!("output line\nthe screen showed `{busy}`\nready"),
++            format!("quoted earlier:\n{busy}\n{idle}"),
++            format!("log: {busy}"),
++            format!("\"{busy}\""),
++            format!("`{busy}`"),
++        ] {
++            let result = explain(Agent::OpenCode, &screen);
++            assert_eq!(result.state, AgentState::Idle, "screen={screen}")
++        }
++
++        for incomplete in [
++            "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max]",
++            "🯧 esc stop · Plan · Default / OpenCode",
++            "🯧 esc stop · · Default / OpenCode",
++            "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default",
++        ] {
++            assert_eq!(
++                explain(Agent::OpenCode, incomplete).state,
++                AgentState::Idle,
++                "screen={incomplete}"
++            );
++        }
++
++        let blocked = format!("△ Permission required\n{busy}");
++        assert_eq!(
++            explain(Agent::OpenCode, &blocked).state,
++            AgentState::Blocked
++        );
++
++        for relabeled in [
++            "🯧 esc stop · Build · Some Other Model [high] · Work / Upstream",
++            "esc stop · Plan · Fast Model · acct / provider",
++            undecorated,
++            ideographic,
++        ] {
++            assert_eq!(
++                explain(Agent::OpenCode, relabeled).state,
++                AgentState::Working,
++                "screen={relabeled}"
++            );
++        }
++
++        let padded = format!("output\n{busy}\n   \n\t\n");
++        assert_eq!(explain(Agent::OpenCode, &padded).state, AgentState::Working);
++
++        for hint in [
++            "esc to interrupt",
++            "opencode busy, esc again to interrupt",
++            "■■■■■■",
++        ] {
++            assert_eq!(
++                explain(Agent::OpenCode, hint).state,
++                AgentState::Working,
++                "screen={hint}"
++            );
++        }
++    });
++}
++
+ #[test]
+ fn all_bundled_manifests_parse_and_validate() {
+     for agent in Agent::SCREEN_MANIFEST_AGENTS {
+--- a/docs/next/website/src/content/docs/agents.mdx
++++ b/docs/next/website/src/content/docs/agents.mdx
+@@ -76,6 +76,8 @@
+ Blocked detection is deliberately strict for screen-manifest agents. Herdr only marks `blocked` when the live bottom-buffer snapshot matches known visible approval, question, or permission UI. If no manifest rule matches for a known agent, Herdr falls back to `idle` and labels that fallback as `default_known_agent_idle_fallback` in explain output.
+ 
+ Unusual new agent prompts may initially show as `idle` instead of `blocked` until Herdr learns that screen shape. Detection itself does not send input, but automation that trusts a mistaken idle state can type into an approval dialog. Inspect unexpected prompts before sending more input; idle status is not authorization to approve an action.
++
++For OpenCode Mini, an active stop control in its status footer (`esc stop`, followed by the mode, model, and account/provider fields) counts as `working` only when that footer is the bottom non-empty row of the live buffer. The same text appearing earlier as quoted, prefixed, or otherwise embedded transcript content is not working evidence, and approval UI still wins over a visible busy footer. A bare line that is byte-identical to a real footer and sits at the bottom of the buffer cannot be told apart from the live footer; because this is a screen-shape rule, not a request-completion protocol, it does not change `agent wait`'s lifecycle-state checks or fix the separate full-TUI premature-completion problem.
+ 
+ Antigravity and Grok count as idle once they return to their prompt, even if background tasks, monitors, or subagents are still running. `agent wait` and `agent prompt --wait` observe the agent's state, not completion of those jobs.
+ 

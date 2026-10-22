@@ -1,0 +1,33 @@
+**EFFECTIVE IDENTITY**
+- Requested/configured: `workbuddy/deepseek-v4.1-flash`, thinking high, no fallback/prewalk. Tools: native `read`/`edit` only.
+- Upstream weights/family identity: **unverified**; no catalog/argv/UI evidence available in this offline lane. Not claimed.
+
+**DOCS CHANGE**
+`docs/next/website/src/content/docs/agents.mdx`, one paragraph appended to the existing *Blocked state* screen-detection discussion (after the "unusual new agent prompts" paragraph, before the Antigravity/Grok paragraph): OpenCode `esc stop` status footer counts as `working` only as the bottom non-empty row; quoted/prefixed/embedded transcript copies are not working evidence; approval UI still wins over a visible busy footer. Explicitly bounded: no request-completion protocol behind it, prompt-return still reads `idle`, and `agent wait` completion semantics unchanged. No root README/CHANGELOG, release history, or other docs touched.
+
+**TEST CHANGES** (`src/detect/manifest/tests.rs`, `opencode_status_footer_boundaries_under_bundled_manifest` only)
+1. Blocked fixture: `format!("│△ Permission required\n│{busy}\n\n  ")` → `format!("△ Permission required\n{busy}")`. The old fixture had two Other_Symbol cells (`│` plus `🯧`), so the busy rule could not match and the assertion proved nothing about priority. Now `permission_required` (300) and `status_footer_esc_stop_working` (105) both match and priority decides; expectation remains `Blocked`. Matcher and priorities untouched.
+2. Padded loop → single named screen: `let padded = format!("output\n{busy}\n   \n\t\n");` with one `Working` assertion. Same mixed body + blank/space/tab trailing input preserved.
+
+Manifests and production code unmodified in this slice.
+
+**FINAL FOUR MODIFIED SOURCE-COPY PATHS**
+1. `src/detect/manifests/opencode.toml`
+2. `distribution/agent-detection/opencode.toml`
+3. `src/detect/manifest/tests.rs`
+4. `docs/next/website/src/content/docs/agents.mdx`
+
+**CHECKS_NOT_RUN**
+All. No cargo/test/build/smoke/format/lint, no shell, no checksum, no git, no network, no settings/services, no delegation, no background work. Formatting/lint left to Sol.
+
+**SCOPE / EVIDENCE LIMITS**
+- Offline, synthetic-HOME proof only. No installed binary, live manifest cache, or live OpenCode Mini session was exercised or changed.
+- The fix is a screen-shape rule. Full-TUI waiting behavior and request-bound completion remain unresolved and are explicitly not claimed in the docs note.
+- Residual ambiguity: a bottom-most line that is byte-identical to a valid live footer, with no quote/prefix/wrapper, is indistinguishable from the live footer by this engine. Quoted, prefixed, and incomplete-field forms are rejected structurally.
+- Detection remains heuristic: no rule match for a known agent still falls back to `idle` with `default_known_agent_idle_fallback`.
+
+**BLOCKERS**
+None.
+
+**COMPLETION**
+Complete. No background work, no descendants.

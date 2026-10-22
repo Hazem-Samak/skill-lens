@@ -1,0 +1,69 @@
+{
+  "source_release": "Herdr v0.9.5",
+  "source_commit": "2ecf19a92fc3a7fff75b6ce3655ef04f4625ec01",
+  "source_archive": "../2026-10-22-herdr-investigation/source/herdr-v0.9.5.tar.gz",
+  "source_archive_sha256": "5c745bf712aee3320ed88a665c39a9143cbd6b7ce4376e0ae0f0c07988576c13",
+  "frozen_plan_reference": "cb5a4c2355befa552ee816a7f2327efaacfbcf6d",
+  "implementer": {
+    "runtime": "OMP 18.12.6",
+    "model": "workbuddy/deepseek-v4.1-flash",
+    "thinking": "high",
+    "session": "01a1653f-ac5c-747a-b0c4-ca1f4f3ae55a",
+    "resolved_model_is_fallback": false,
+    "upstream_identity_verified": false,
+    "pricing_status": "unknown"
+  },
+  "source_original_sha256": {
+    "src/detect/manifests/opencode.toml": "faa82aed2d76ad856528caae04232894594b74cc903aed3e522b3e725c5f2c95",
+    "distribution/agent-detection/opencode.toml": "faa82aed2d76ad856528caae04232894594b74cc903aed3e522b3e725c5f2c95",
+    "src/detect/manifest/tests.rs": "5551cd6aacf6a1924613e4fc4b00e8aedeb21b6ef4990fb169bf008f42c9896d",
+    "docs/next/website/src/content/docs/agents.mdx": "c119ece87db6dc2520204583723f6b655b13810bbea4a179c1a803a0b87b0f3c"
+  },
+  "source_corrected_sha256": {
+    "src/detect/manifests/opencode.toml": "0ca38512344b12dd0317e0ffb457dd5ebb2615e27852607cc938a4d5590bb9a8",
+    "distribution/agent-detection/opencode.toml": "0ca38512344b12dd0317e0ffb457dd5ebb2615e27852607cc938a4d5590bb9a8",
+    "src/detect/manifest/tests.rs": "1de610d83bbfbc94bad1d12f3d696c2d08c76636cac690cdb60503d79d20e9ca",
+    "docs/next/website/src/content/docs/agents.mdx": "1788d7d95dc6a4f714f8116d61f7a52f73a62c11b2cc8b4b89e61bb9517f7fe5"
+  },
+  "patch_sha256": "216b1167eb22135f66b3b2e478bf5cc79d9673eeac53f680e02e04a9b501e3ef",
+  "toolchain_packages": {
+    "cargo": {
+      "url": "https://static.rust-lang.org/dist/2026-06-30/cargo-1.96.1-aarch64-apple-darwin.tar.xz",
+      "sha256": "2f43d75e9ad3febae5022c6f295cf93b74131cfdb1293a83e291f878ea9585a0",
+      "path": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/tools/cargo-1.96.1-aarch64-apple-darwin.tar.xz"
+    },
+    "clippy-preview": {
+      "url": "https://static.rust-lang.org/dist/2026-06-30/clippy-1.96.1-aarch64-apple-darwin.tar.xz",
+      "sha256": "538299b07171a8110a1beedcaf26aac6292e4e032a399639e1959f0c405a67fe",
+      "path": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/tools/clippy-1.96.1-aarch64-apple-darwin.tar.xz"
+    },
+    "rust-std": {
+      "url": "https://static.rust-lang.org/dist/2026-06-30/rust-std-1.96.1-aarch64-apple-darwin.tar.xz",
+      "sha256": "0d433a74c303febc915f8fa1091ef166445706461d0c96984ecb7303aa8208f5",
+      "path": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/tools/rust-std-1.96.1-aarch64-apple-darwin.tar.xz"
+    },
+    "rustc": {
+      "url": "https://static.rust-lang.org/dist/2026-06-30/rustc-1.96.1-aarch64-apple-darwin.tar.xz",
+      "sha256": "9b548f0665f85f3c7fd45165611e3dea79f048c69d163be193986310d204fc2c",
+      "path": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/tools/rustc-1.96.1-aarch64-apple-darwin.tar.xz"
+    },
+    "rustfmt-preview": {
+      "url": "https://static.rust-lang.org/dist/2026-06-30/rustfmt-1.96.1-aarch64-apple-darwin.tar.xz",
+      "sha256": "ed0cc9d72c04e7c3c4b7a82ab7f1ce5e33132017d062d8f9be6adf6472e8f165",
+      "path": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/tools/rustfmt-1.96.1-aarch64-apple-darwin.tar.xz"
+    },
+    "zig": {
+      "url": "https://ziglang.org/download/0.16.0/zig-aarch64-macos-0.16.0.tar.xz",
+      "sha256": "b23d70deaa879b5c2d486ed3316f7eaa53e84acf6fc9cc747de152450d401489",
+      "path": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/tools/zig-aarch64-macos-0.16.0.tar.xz"
+    }
+  },
+  "toolchain_executable_versions": {
+    "rustc": "1.96.1 (31fca3adb 2026-06-26)",
+    "cargo": "1.96.1 (356927216 2026-06-26)",
+    "zig": "0.16.0"
+  },
+  "distribution_manifest_scope": "local-only release-consistency artifact, not an upstream publication",
+  "installed_Herdr_replaced": false,
+  "post_final_review_corrections_incorporated": true
+}

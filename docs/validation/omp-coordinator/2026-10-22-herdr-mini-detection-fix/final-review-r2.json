@@ -1,0 +1,23 @@
+{
+  "review_round": "targeted second round on corrected patch 216b1167eb22135f66b3b2e478bf5cc79d9673eeac53f680e02e04a9b501e3ef",
+  "agy": {
+    "verdict": "pass",
+    "blockers": "none",
+    "session": "5fa949b9-e438-43d7-8150-85a912ce9d9d",
+    "configured_model": "gemini-3.8-flash-high",
+    "mode": "plan",
+    "suggestions": "refresh stale secondary receipt hashes (non-blocking; production/tests unaffected)"
+  },
+  "opencode": {
+    "verdict": "unverified",
+    "reason": "final assistant text truncated in native export and terminal scrollback; result not accepted as a pass",
+    "first_round_verdict": "pass both plans (preserved)",
+    "session": "ses_e9a8e5268ffeKfbuZybixtYvJ9"
+  },
+  "privacy_incident": {
+    "what": "Sol searched the raw native OpenCode session to recover its truncated final text; the file also contained Skill Lens source excerpts/briefs and some content became visible in the transcript.",
+    "remediation": "Deleted the private raw export copy from the receipt directory; did not copy the raw transcript or session file into the repository; no credentials or user data were written to repo artifacts.",
+    "lesson": "Do not grep raw agent transcripts; request file-based reports outside the checkout instead."
+  },
+  "owned_cleanup": "Both reviewer processes exited; only their owned panes wG:p2/wG:p3 closed; base wG:p1 remains focused in the repository at 148x55 with no splits."
+}

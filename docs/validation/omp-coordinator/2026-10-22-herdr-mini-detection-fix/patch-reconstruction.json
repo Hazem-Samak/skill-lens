@@ -1,0 +1,14 @@
+{
+  "git_apply_check": true,
+  "git_apply_actual": true,
+  "input": "four exact pristine files read from pinned immutable source archive",
+  "output_hashes_match_reviewed_corrected_files": true,
+  "corrected_sha256": {
+    "src/detect/manifests/opencode.toml": "0ca38512344b12dd0317e0ffb457dd5ebb2615e27852607cc938a4d5590bb9a8",
+    "distribution/agent-detection/opencode.toml": "0ca38512344b12dd0317e0ffb457dd5ebb2615e27852607cc938a4d5590bb9a8",
+    "src/detect/manifest/tests.rs": "1de610d83bbfbc94bad1d12f3d696c2d08c76636cac690cdb60503d79d20e9ca",
+    "docs/next/website/src/content/docs/agents.mdx": "1788d7d95dc6a4f714f8116d61f7a52f73a62c11b2cc8b4b89e61bb9517f7fe5"
+  },
+  "no_live_install_or_original_source_change": true,
+  "obsolete_first_round_hashes_note": "Earlier 7148ca\u2026 / fdc7c2\u2026 / cc4026\u2026 values were the first-round corrected files before final-review glyph narrowing; the current exercised correction hashes above supersede them."
+}

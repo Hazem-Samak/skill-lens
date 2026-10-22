@@ -1,0 +1,62 @@
+{
+  "captured-busy": {
+    "expected": "working",
+    "origin": "Original captured footer from source_line 76",
+    "sha256": "cf0e2871d08389320356579984da9739eb04df6a8176ccded62824801578cf79"
+  },
+  "idle-footer": {
+    "expected": "idle",
+    "origin": "Derived negative: active marker/stop control removed",
+    "sha256": "b8d8df9af679ff80fe081a2f5fdd5e0ce84a5e021b1a6a2f13e2e2bc59deb33d"
+  },
+  "quoted-stop": {
+    "expected": "idle",
+    "origin": "Synthetic transcript-quote boundary",
+    "sha256": "ae3cd366d8f25db70b597fffc92f7a987815f5fb3ee0a5eda6e60a19b226c301"
+  },
+  "quoted-busy-above-idle": {
+    "expected": "idle",
+    "origin": "Synthetic exact historical-footer quote above current idle footer",
+    "sha256": "67a6cf432cb6829a780ed8a4782ec09c296d684089b2746dd7b8595054081151"
+  },
+  "approval-over-busy": {
+    "expected": "blocked",
+    "origin": "Existing permission marker with busy footer still visible",
+    "sha256": "b0e3d3ed2ef63d711e9276b0260238cfad984adbf223433e74229f7af57b6cd7"
+  },
+  "trailing-padding": {
+    "expected": "working",
+    "origin": "Captured footer with trailing blank/padding rows",
+    "sha256": "dcdf993626da5346afdc89d89d0aefa43d4d9489f048ab829cde1125bf0177f4"
+  },
+  "full-tui-interrupt": {
+    "expected": "working",
+    "origin": "Existing supported full-TUI hint",
+    "sha256": "c0b859b00dae144b1ab50ef01aee8279dfc2544fbc69b1a70aa550219b6a8b46"
+  },
+  "full-tui-progress": {
+    "expected": "working",
+    "origin": "Existing supported progress hint",
+    "sha256": "8e7d04d8d7d74b70cfc995ba3e1b210909057bede5dabf56618fb005b574e9b6"
+  },
+  "unmatched": {
+    "expected": "idle",
+    "origin": "Known-agent no-match behavior",
+    "sha256": "30d491fc70fc984b43a85c75fdb6f3b753f0b018865a3ff37054af21ec09ae61"
+  },
+  "alternate-metadata": {
+    "expected": "working",
+    "origin": "Synthetic non-branding boundary, not a claimed live capture",
+    "sha256": "2c358c946d8d9cde151f568411a8d89e08fd4af79f4c0d087bf19fac5570b6d5"
+  },
+  "quoted-full-footer": {
+    "expected": "idle",
+    "origin": "Synthetic explicitly quoted complete footer as transcript text, not an observed live screen",
+    "sha256": "d748e7ec96e0fec9de082ee0ba7f7f645c67e6288c0300985588120965f6c12a"
+  },
+  "backtick-quoted-footer": {
+    "expected": "idle",
+    "origin": "Synthetic backtick-quoted complete footer as transcript text",
+    "sha256": "5a3024185ab7ec330c6d51c415e135d02f681bf7e78d107881d9a47b537c4213"
+  }
+}

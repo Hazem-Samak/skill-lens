@@ -1,0 +1,108 @@
+{
+  "kind": "throwaway isolated real-CLI priority mutation, not source edit or deployment",
+  "changed_only": "new working-rule priority 105 -> 350 in temporary local override",
+  "guard_expected": "blocked",
+  "mutant_observed": "working",
+  "guard_rejects_mutant": true,
+  "non_mutant_same_input": "blocked in the passing 13-case CLI matrix",
+  "scope_limit": "This exercises the real CLI/evaluator assertion boundary; the permanent Rust test is not claimed to have been rebuilt with a source mutation. Its final input is aligned with this same competing-rule case.",
+  "result": {
+    "agent": "opencode",
+    "cached_remote_version": null,
+    "evaluated_rules": [
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 2,
+          "contains": [],
+          "line_regex": [],
+          "not_count": 0,
+          "regex": [],
+          "region_bytes": 102,
+          "region_preview": "△ Permission required\n\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+        },
+        "id": "permission_required",
+        "matched": true,
+        "priority": 300,
+        "region": "whole_recent",
+        "state": "blocked"
+      },
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 4,
+          "contains": [],
+          "line_regex": [],
+          "not_count": 0,
+          "regex": [],
+          "region_bytes": 102,
+          "region_preview": "△ Permission required\n\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+        },
+        "id": "interrupt_hint_working",
+        "matched": false,
+        "priority": 110,
+        "region": "whole_recent",
+        "state": "working"
+      },
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 0,
+          "contains": [],
+          "line_regex": [
+            "^\\s*\\p{So}?\\s*esc stop · [^·\\n]+ · [^·\\n]+ · [^·/\\n]+ / [^·/\\n]+$"
+          ],
+          "not_count": 0,
+          "regex": [],
+          "region_bytes": 77,
+          "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+        },
+        "id": "status_footer_esc_stop_working",
+        "matched": true,
+        "priority": 350,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 0,
+          "contains": [],
+          "line_regex": [],
+          "not_count": 0,
+          "regex": [
+            "(■|⬝){4,}"
+          ],
+          "region_bytes": 102,
+          "region_preview": "△ Permission required\n\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+        },
+        "id": "progress_bar_working",
+        "matched": false,
+        "priority": 100,
+        "region": "whole_recent",
+        "state": "working"
+      }
+    ],
+    "fallback_reason": null,
+    "local_override_shadowing_remote": false,
+    "manifest_source": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/config-priority-mutation/herdr-dev/agent-detection/opencode.toml",
+    "manifest_version": "2026.10.22.1",
+    "matched_rule": {
+      "id": "status_footer_esc_stop_working",
+      "priority": 350,
+      "region": "bottom_non_empty_lines(1)",
+      "state": "working"
+    },
+    "remote_update_error": null,
+    "remote_update_status": null,
+    "screen_detection_skipped": false,
+    "skip_state_update": false,
+    "skipped_update_reason": null,
+    "state": "working",
+    "visible_blocker": false,
+    "visible_idle": false,
+    "visible_working": true,
+    "warning": null
+  },
+  "obsolete_pattern_preview_note": "The earlier \\p{So}? preview was the first-round matcher; current exercised matcher is ^\\s*(?:🯧\\s*)?esc stop · … . Mutation priority behavior unchanged."
+}

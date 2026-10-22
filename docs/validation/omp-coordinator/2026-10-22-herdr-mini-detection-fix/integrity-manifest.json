@@ -1,0 +1,31 @@
+{
+  "excludes_self": true,
+  "files": {
+    "cli-results.json": "f6ffdf58032d335cf3a676cc7b20f71f2629c75083422c63ee5296e6e11a6f7f",
+    "correction.patch": "216b1167eb22135f66b3b2e478bf5cc79d9673eeac53f680e02e04a9b501e3ef",
+    "final-review-r2.json": "13fc2acfc3e66d85cf4e0336074fd23df8df1d5e90f7531069caf08ae31a1e2e",
+    "implementer-report.txt": "94b656c8bd6f1e2bb612dded815079205ba5561811c9c8b46833dcaebbeba8c0",
+    "patch-reconstruction.json": "d259de4e82b0d668364760cbb1a45307179a792edf9202b4f36f32d18428378c",
+    "priority-mutation.json": "f6f978ff2317890e1d3abcf7fcf147b386f7bdc18aae851d5c2029daeb2762e5",
+    "provenance.json": "bc4adc70f2a953198cff2f7ee9358713397227422b02fe282ee8ea8ddcfd712c",
+    "red-result.txt": "717927162794c7b446d2967869ab769033bcbc10d154406e81c152dc3f245ff5",
+    "source-quality.txt": "9538aa1213cfe4b583be71cdafb7910092eb88ceb1ed55a27a947e15b78dc53f",
+    "verification.json": "512376345e9c3dc1543bcc8765647fc18efdad7025b4e1e4e04ac847bcfbab99"
+  },
+  "fixtures": {
+    "alternate-metadata.txt": "2c358c946d8d9cde151f568411a8d89e08fd4af79f4c0d087bf19fac5570b6d5",
+    "approval-over-busy.txt": "b0e3d3ed2ef63d711e9276b0260238cfad984adbf223433e74229f7af57b6cd7",
+    "backtick-quoted-footer.txt": "5a3024185ab7ec330c6d51c415e135d02f681bf7e78d107881d9a47b537c4213",
+    "captured-busy.txt": "cf0e2871d08389320356579984da9739eb04df6a8176ccded62824801578cf79",
+    "expectations.json": "0ba923995dae83700a286aecd3acd44d7543f5a50457e5d0a3592be6af51ead4",
+    "full-tui-interrupt.txt": "c0b859b00dae144b1ab50ef01aee8279dfc2544fbc69b1a70aa550219b6a8b46",
+    "full-tui-progress.txt": "8e7d04d8d7d74b70cfc995ba3e1b210909057bede5dabf56618fb005b574e9b6",
+    "idle-footer.txt": "b8d8df9af679ff80fe081a2f5fdd5e0ce84a5e021b1a6a2f13e2e2bc59deb33d",
+    "older-remote-opencode.toml": "faa82aed2d76ad856528caae04232894594b74cc903aed3e522b3e725c5f2c95",
+    "quoted-busy-above-idle.txt": "67a6cf432cb6829a780ed8a4782ec09c296d684089b2746dd7b8595054081151",
+    "quoted-full-footer.txt": "d748e7ec96e0fec9de082ee0ba7f7f645c67e6288c0300985588120965f6c12a",
+    "quoted-stop.txt": "ae3cd366d8f25db70b597fffc92f7a987815f5fb3ee0a5eda6e60a19b226c301",
+    "trailing-padding.txt": "dcdf993626da5346afdc89d89d0aefa43d4d9489f048ab829cde1125bf0177f4",
+    "unmatched.txt": "30d491fc70fc984b43a85c75fdb6f3b753f0b018865a3ff37054af21ec09ae61"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "status": "behavior verified; independent final reviews pending",
+  "frozen_plan_reference": "cb5a4c2355befa552ee816a7f2327efaacfbcf6d",
+  "checks": {
+    "red_regression": {
+      "passed": 0,
+      "failed": 1,
+      "expected_failure": true,
+      "state_actual": "Idle",
+      "state_expected": "Working",
+      "exit_code": 101
+    },
+    "final_detector_tests": {
+      "filter": "detect::",
+      "passed": 100,
+      "failed": 0,
+      "filtered_out": 3546,
+      "seconds": 11.22,
+      "scope": "post-final-review glyph narrowing"
+    },
+    "final_clippy": {
+      "scope": "herdr binary and test targets",
+      "warnings_denied": true,
+      "passed": true,
+      "seconds": 10.25
+    },
+    "final_cargo_fmt_check": {
+      "scope": "workspace all",
+      "passed": true
+    },
+    "combined_quality_elapsed_seconds": 34.26,
+    "cargo_policy_warning": "Build script repeats upstream external-contributor policy; not a Rust/Clippy diagnostic. No upstream PR was opened.",
+    "real_cli": {
+      "passed": 13,
+      "failed": 0,
+      "cases": "12 distinct synthetic/captured behavior fixtures plus one real older cached-remote precedence case",
+      "binary_kind": "rebuilt debug CLI",
+      "binary_sha256": "934dc20c73d12f63af009cbb9aed214573b3528996ac9a96fb4faa85b463fb5e"
+    },
+    "priority_guard_mutation": {
+      "source_mutation": false,
+      "mutant_fixture_override_only": true,
+      "non_mutant": "blocked",
+      "mutant": "working",
+      "guard_rejects_mutant": true,
+      "permanent_test_mutation_run_claimed": false
+    },
+    "skill_lens_health": {
+      "baseline_reused": true,
+      "passed": 1082,
+      "skipped": 1,
+      "coverage_percent": 91.16,
+      "mypy_source_files": 38,
+      "ruff_lint": "passed",
+      "ruff_format_check": "passed",
+      "reason": "No Skill Lens Python, checker configuration, tests or fixtures changed; previous coordinator evidence remains valid under OMP implementation-loop \u00a71. No duplicate gate rerun."
+    }
+  },
+  "source_changed_paths": [
+    "src/detect/manifests/opencode.toml",
+    "distribution/agent-detection/opencode.toml",
+    "src/detect/manifest/tests.rs",
+    "docs/next/website/src/content/docs/agents.mdx"
+  ],
+  "coordinator_doc_clarification": "Unreleased docs wording changed to explicitly retain lifecycle-state wait semantics and the unresolved full-TUI defect; no production behavior change.",
+  "residual_limits": [
+    "Only the observed footer layout and explicit derived boundaries were proved offline; no live Mini trial.",
+    "A byte-identical unquoted complete footer in the last nonempty row cannot be distinguished from a real live footer by this screen-shape engine.",
+    "The separate full-TUI integration/wait defect remains unresolved.",
+    "The distributed manifest is a local-only release-consistency artifact; no upstream publication or acceptance claimed."
+  ],
+  "installed_Herdr_changed": false,
+  "live_cache_changed": false,
+  "live_trial": false,
+  "formal_smoke": false,
+  "full_tui_trace": false,
+  "temporary_tools": "Only owned temporary prefix, official archive checksums verified; no persistent PATH/settings/system install.",
+  "post_final_review_corrections": [
+    "Footer rule accepts only optional exact captured \ud83e\udfe7 glyph plus whitespace, not arbitrary non-word decoration, quotes, backticks or ideographic padding.",
+    "Added undecorated positive and ideographic-space padding positive; retained quoted/text-prefix negatives.",
+    "Documented the byte-identical bottom-line ambiguity explicitly.",
+    "Re-ran all 100 detector tests, Clippy with denied warnings, cargo format check, rebuild and the 13-case actual CLI matrix; all pass."
+  ]
+}

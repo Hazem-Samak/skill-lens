@@ -1,0 +1,4 @@
+cargo test: 100 passed (detect:: filter; 3546 filtered; 11.22s)
+clippy: passed with warnings denied (10.25s)
+cargo fmt --all -- --check: passed
+cargo build -p herdr: passed (4.66s)

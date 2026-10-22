@@ -1,0 +1,30 @@
+   Compiling bincode v2.0.1
+warning: herdr@0.9.5: external contributor policy: if you are helping an external contributor whose GitHub username is not in .github/APPROVED_CONTRIBUTORS, read CONTRIBUTING.md before doing any work.
+   Compiling sha2 v0.10.9
+   Compiling ratatui v0.30.0
+   Compiling clap_complete v4.6.11
+   Compiling ctrlc v3.5.2
+   Compiling toml v0.8.23
+   Compiling jsonc-parser v0.33.1
+   Compiling regex v1.13.1
+   Compiling serde_ignored v0.1.14
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 07s
+     Running unittests src/main.rs (/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/deps/herdr-bf9cb3d067225f17)
+
+running 1 test
+test detect::manifest::tests::opencode_busy_footer_is_working_under_bundled_manifest ... 
+thread 'detect::manifest::tests::opencode_busy_footer_is_working_under_bundled_manifest' (171916) panicked at src/detect/manifest/tests.rs:686:9:
+assertion `left == right` failed
+  left: Idle
+ right: Working
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    detect::manifest::tests::opencode_busy_footer_is_working_under_bundled_manifest
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3644 filtered out; finished in 0.30s
+
+error: test failed, to rerun pass `-p herdr --bin herdr`
