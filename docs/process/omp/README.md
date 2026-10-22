@@ -12,9 +12,11 @@ omp --model openai-codex/gpt-6.1-sol --thinking high --no-prewalk @docs/process/
 
 Before planning or dispatch, inspect the active runtime's model/settings readback or session evidence: coordinator must be `openai-codex/gpt-6.1-sol`, thinking `high` unless explicitly authorized otherwise. Record requested and effective configured identity separately; a catalog entry or launch argument alone does not prove execution or upstream identity. Stop if Sol is unavailable or readback disagrees; never silently switch. This entry does not resume a session, invent a goal, run plan-yolo, invoke an advisor, or automatically transition to implementation. Take the user's concrete request into the [planning loop](./planning-loop.md), then the [implementation loop](./implementation-loop.md) only after authorization and freeze.
 
-### When running inside Herdr
+### Herdr workers from native Tern
 
-When inherited `HERDR_ENV=1` identifies a genuine Herdr-managed OMP pane, use the [Herdr worker dispatch adapter](./herdr.md) for both planning reviewers and implementation workers. Sol and these OMP loops stay in charge; Herdr supplies worker panes, startup, prompts, waits and readback. Do not silently use native tasks or standalone relays instead. Outside Herdr, retain the standalone routes below; if the user requests Herdr, stop Herdr operations and ask them to launch OMP there. Current Herdr dispatch is documented but **not yet live-verified**.
+When the user requests Herdr dispatch, keep Sol/OMP native in Tern and use the [Herdr worker adapter](./herdr.md) for planning reviewers, implementers and final reviewers. Sol and these loops stay in charge; Herdr supplies worker panes, startup, prompts, waits and readback. Verify an authorized named session and its socket before worker operations; missing or ambiguous connection stops this route, not running outside Herdr. The adapter records the user-approved narrow exception to the installed skill's inside-Herdr gate; no installed skill/settings change is needed. Use explicit pane IDs, bounded waits and inspect-before-resend. Never silently substitute native tasks or standalone relays for requested Herdr dispatch. When Herdr is not requested, retain the standalone routes below.
+
+**Status:** external dispatch documented/unverified; end-to-end acceptance is unsatisfied. Prior trials established Mini busy-detection failure and a full-TUI wait returning about 6.91 seconds before actual completion; both remain unresolved in the [historical evidence](../../validation/omp-coordinator/2026-10-20/herdr-dispatch.md). Native Tern placement fixes neither. A live smoke requires separate authorization.
 
 ## Roles and session choices
 
