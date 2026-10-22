@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: User, 2026-10-22: “ok go on with the recommended procedures,” following the investigation handoff. Proceed with planning and required review/freeze; do not treat this as approval to install, change settings, start/restart services, run a Mini trial or run a formal smoke. Implementation follows a reviewed freeze and concrete implementation authorization under the OMP loop.
-Reference: pending
+Reference: cb5a4c2355befa552ee816a7f2327efaacfbcf6d
 Surface: omp; Sol stays native in Tern; requested worker transport is Herdr.
 Risk and review: High: changes lifecycle detection consumed by automation. Two fresh independent reviewers at planning and final review, with distinct model families or explicit acceptance of the named pair's unverified upstream identities. The earlier documentation migration's one-reviewer exception is not reused.
 Roster: Coordinator requested/configured `openai-codex/gpt-6.1-sol`, thinking `high`, no fallback, OMP 18.12.6, session `01a164fa-42dc-7045-ade8-6dc9090ac15b`; configured identity read from this session's model/thinking records. User selected Antigravity “Gemini 3.8 Flash High” and OpenCode “Deepseek V4.1 F Max” after disclosure of upstream identity limits. Antigravity 1.4.5 catalog, actual launch argv and UI confirm `gemini-3.8-flash-high`, Plan mode, displayed high, no extra effort override. OpenCode 2.0.32 catalog/UI confirm `opencode/deepseek-v4.1-flash-free`, displayed `max`, Plan mode selected with the UI's advertised shift+tab control before task submission. Upstream weights/family identity remain independently unverified. No fallback or persistent settings edit.
