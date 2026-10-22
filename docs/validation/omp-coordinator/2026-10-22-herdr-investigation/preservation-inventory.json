@@ -1,0 +1,90 @@
+{
+  "authorization": "investigation and evidence preservation only; no fixes/freeze/implementation/commit/live trials",
+  "latest_incident_copied_files": [
+    {
+      "path": "baseline-text.json",
+      "bytes": 65726,
+      "sha256": "f4dd2ab2b1f30e30d668264ddb137c31f2e70bf18027cea12eda47867bdee83a"
+    },
+    {
+      "path": "baseline.json",
+      "bytes": 171062,
+      "sha256": "fd5c616fb1b9ea66eb363c73a6e0d9ac86c221ea47a9c1c780cd8c7410f3ce6b"
+    },
+    {
+      "path": "delivery.json",
+      "bytes": 789,
+      "sha256": "70f91f50e36384aff9941bdd08008cc99127f76ae74acb71853a6d9cf118d96c"
+    },
+    {
+      "path": "document-validation.json",
+      "bytes": 638,
+      "sha256": "53d6baa757e6d0d77ba06634ef122e26032a544f1e8023ac1a34852a37f6d0ac"
+    },
+    {
+      "path": "final-report.txt",
+      "bytes": 16293,
+      "sha256": "c67a1291c5850be5dd43cafddff14c00f59984a2c8b5a4dfc394b9af3d0a99be"
+    },
+    {
+      "path": "final-review-brief.txt",
+      "bytes": 3375,
+      "sha256": "b9200ba87b66889221c07a45743f305e6ea60729d2a276fea20aa9a0005b8b51"
+    },
+    {
+      "path": "gates.txt",
+      "bytes": 9084,
+      "sha256": "49dfe65ea21a905c5aa09ee235c5fba3c2e7e0752423a905c153638835377ea5"
+    },
+    {
+      "path": "implementation.diff",
+      "bytes": 25611,
+      "sha256": "b9159fe2a0ffe7edd6ee50d4fd56d22fadb4fd1ab7cb61c4082b7d656ca78924"
+    },
+    {
+      "path": "ledger.json",
+      "bytes": 3776,
+      "sha256": "bfce4d503c3ae7b5520a5933c39a03a0e23253b97b3b8a3da311b3647c4a1f80"
+    },
+    {
+      "path": "post-final-review.json",
+      "bytes": 171253,
+      "sha256": "20d5e970f13c2d759be04ad36ac088fbd26533e89692d53ec7b6dcf362c1256c"
+    },
+    {
+      "path": "pre-final-review.json",
+      "bytes": 171253,
+      "sha256": "20d5e970f13c2d759be04ad36ac088fbd26533e89692d53ec7b6dcf362c1256c"
+    },
+    {
+      "path": "premature-wait.json",
+      "bytes": 960,
+      "sha256": "7455973f5e64ddb345ff6b22709d735813cf13dbf3fcf81cf27b65ce948dd042"
+    },
+    {
+      "path": "session-evidence.json",
+      "bytes": 1881,
+      "sha256": "aac030efd723fd37eab0b9f219c9051cf17d5af7b5ac65c4e90488bfff2d7b49"
+    },
+    {
+      "path": "session-export-sanitized.json",
+      "bytes": 23950,
+      "sha256": "99f6477a86092e034573fde66a59a857235471d2c71c005d1bd07204436ac561"
+    }
+  ],
+  "missing_original_directories": {
+    "mini": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/omp-herdr-smoke-20261020-rknrggrh",
+    "full-tui": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/omp-herdr-full-tui-20261020-v7s2oo1j"
+  },
+  "alternate_temp_prefix_search": "Only latest planning and implementation directories survived; original two prefixes absent",
+  "shared_snapshots": [
+    "shared/herdr-dispatch-original.md",
+    "shared/handoff-original.md"
+  ],
+  "installed_binary": {
+    "path": "/Users/corvette/.local/bin/herdr",
+    "sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2",
+    "expected_official_macos_aarch64_sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2",
+    "matches_official_release": true
+  }
+}

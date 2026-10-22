@@ -1,0 +1,316 @@
+{
+  "algorithm": "sha256",
+  "self_excluded": true,
+  "files": [
+    {
+      "path": "audited-wait-returns.json",
+      "bytes": 1542,
+      "sha256": "8f36cbc2eb8b92dca355aeb17ba340d3bc3b64ebedcc9137bd273bda525b4bcc"
+    },
+    {
+      "path": "diagnosis.md",
+      "bytes": 22448,
+      "sha256": "418b795efea225b3ff7ef5fc12e010af1d8eb41b60a66d97b2746a8a717f2a00"
+    },
+    {
+      "path": "handoff.md",
+      "bytes": 9577,
+      "sha256": "22df726c45d64d0857fc6223f7c57fc8904a542c121d5d1b2403f30aede0c196"
+    },
+    {
+      "path": "incident-signals.json",
+      "bytes": 2579,
+      "sha256": "738a9b1bcacc2781bda0bd9e313069b2e1daa105282076f9decdce72d7d7c68f"
+    },
+    {
+      "path": "incidents/final-review/baseline-text.json",
+      "bytes": 65726,
+      "sha256": "f4dd2ab2b1f30e30d668264ddb137c31f2e70bf18027cea12eda47867bdee83a"
+    },
+    {
+      "path": "incidents/final-review/baseline.json",
+      "bytes": 171062,
+      "sha256": "fd5c616fb1b9ea66eb363c73a6e0d9ac86c221ea47a9c1c780cd8c7410f3ce6b"
+    },
+    {
+      "path": "incidents/final-review/delivery.json",
+      "bytes": 789,
+      "sha256": "70f91f50e36384aff9941bdd08008cc99127f76ae74acb71853a6d9cf118d96c"
+    },
+    {
+      "path": "incidents/final-review/document-validation.json",
+      "bytes": 638,
+      "sha256": "53d6baa757e6d0d77ba06634ef122e26032a544f1e8023ac1a34852a37f6d0ac"
+    },
+    {
+      "path": "incidents/final-review/final-report.txt",
+      "bytes": 16293,
+      "sha256": "c67a1291c5850be5dd43cafddff14c00f59984a2c8b5a4dfc394b9af3d0a99be"
+    },
+    {
+      "path": "incidents/final-review/final-review-brief.txt",
+      "bytes": 3375,
+      "sha256": "b9200ba87b66889221c07a45743f305e6ea60729d2a276fea20aa9a0005b8b51"
+    },
+    {
+      "path": "incidents/final-review/gates.txt",
+      "bytes": 9084,
+      "sha256": "49dfe65ea21a905c5aa09ee235c5fba3c2e7e0752423a905c153638835377ea5"
+    },
+    {
+      "path": "incidents/final-review/herdr-client-window.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "incidents/final-review/herdr-server-window.log",
+      "bytes": 4792,
+      "sha256": "330b1b98d0a5455713a9df39a13914a372877d7066bf32aa00963b0d6bb481be"
+    },
+    {
+      "path": "incidents/final-review/implementation.diff",
+      "bytes": 25611,
+      "sha256": "b9159fe2a0ffe7edd6ee50d4fd56d22fadb4fd1ab7cb61c4082b7d656ca78924"
+    },
+    {
+      "path": "incidents/final-review/ledger.json",
+      "bytes": 3776,
+      "sha256": "bfce4d503c3ae7b5520a5933c39a03a0e23253b97b3b8a3da311b3647c4a1f80"
+    },
+    {
+      "path": "incidents/final-review/post-final-review.json",
+      "bytes": 171253,
+      "sha256": "20d5e970f13c2d759be04ad36ac088fbd26533e89692d53ec7b6dcf362c1256c"
+    },
+    {
+      "path": "incidents/final-review/pre-final-review.json",
+      "bytes": 171253,
+      "sha256": "20d5e970f13c2d759be04ad36ac088fbd26533e89692d53ec7b6dcf362c1256c"
+    },
+    {
+      "path": "incidents/final-review/premature-wait.json",
+      "bytes": 960,
+      "sha256": "7455973f5e64ddb345ff6b22709d735813cf13dbf3fcf81cf27b65ce948dd042"
+    },
+    {
+      "path": "incidents/final-review/recovered-async-results.jsonl",
+      "bytes": 1260,
+      "sha256": "2f646cb29ecd52412419e7d2f2c7c73dfb231513b942287cbb99ef2637a2d2b2"
+    },
+    {
+      "path": "incidents/final-review/recovered-coordinator-receipts.jsonl",
+      "bytes": 250027,
+      "sha256": "419708086168125f4873286215bdd9f2b480d791e6a3ca73a823d950518d9dec"
+    },
+    {
+      "path": "incidents/final-review/session-evidence.json",
+      "bytes": 1881,
+      "sha256": "aac030efd723fd37eab0b9f219c9051cf17d5af7b5ac65c4e90488bfff2d7b49"
+    },
+    {
+      "path": "incidents/final-review/session-export-sanitized.json",
+      "bytes": 23950,
+      "sha256": "99f6477a86092e034573fde66a59a857235471d2c71c005d1bd07204436ac561"
+    },
+    {
+      "path": "incidents/full-tui/herdr-client-window.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "incidents/full-tui/herdr-server-window.log",
+      "bytes": 5579,
+      "sha256": "c3bdebfd9ca225253662a6c38113bfabe2b82c770be6347dc9376fb247f61fe7"
+    },
+    {
+      "path": "incidents/full-tui/recovered-async-results.jsonl",
+      "bytes": 1259,
+      "sha256": "ccbf0f706f5f624dbd27dbb8035d5111189931e8bb768c9a245ae8621434eeed"
+    },
+    {
+      "path": "incidents/full-tui/recovered-coordinator-receipts.jsonl",
+      "bytes": 330025,
+      "sha256": "e8f26615902399c4c59fecd7b028e004eb0a8ed50d9a07cdfdde919038ffbc85"
+    },
+    {
+      "path": "incidents/mini/herdr-client-window.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "incidents/mini/herdr-server-window.log",
+      "bytes": 6774,
+      "sha256": "c9e9074a8dc20d09a5171817e66e8207cf527ff8abd1c725f88a754affaacb7a"
+    },
+    {
+      "path": "incidents/mini/recovered-async-results.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "incidents/mini/recovered-coordinator-receipts.jsonl",
+      "bytes": 514287,
+      "sha256": "5bfd6d0c1ee4886143fe66fd205b7276ef2560b935e7ea7c9370f2dcf4264990"
+    },
+    {
+      "path": "preservation-inventory.json",
+      "bytes": 3099,
+      "sha256": "df0f1ae0f51b069edb1fcca278c7db95e9fd275f1a7d6d61e6dc0a7eb09e2523"
+    },
+    {
+      "path": "recovery-provenance.json",
+      "bytes": 3683,
+      "sha256": "3df6c5ddefcf829cef9da9c7922d92946edfe6f0b5655d7fa012d88f77494be9"
+    },
+    {
+      "path": "shared/handoff-original.md",
+      "bytes": 45551,
+      "sha256": "62680c066b31dfb2d2b508d915b4b41dc025421df5c23287d232a2bed3fa7796"
+    },
+    {
+      "path": "shared/herdr-dispatch-original.md",
+      "bytes": 30487,
+      "sha256": "09899b046779e614fa8cd071d5b2bfa2f58fc158dc4c958eca8f27a900018aee"
+    },
+    {
+      "path": "source/files/distribution/agent-detection/opencode.toml",
+      "bytes": 1008,
+      "sha256": "faa82aed2d76ad856528caae04232894594b74cc903aed3e522b3e725c5f2c95"
+    },
+    {
+      "path": "source/files/docs/next/website/src/content/docs/agents.mdx",
+      "bytes": 11690,
+      "sha256": "c119ece87db6dc2520204583723f6b655b13810bbea4a179c1a803a0b87b0f3c"
+    },
+    {
+      "path": "source/files/docs/next/website/src/content/docs/integrations.mdx",
+      "bytes": 21274,
+      "sha256": "90378dc6e53c9b1f8c23456c285d6e9f210ae2aeb6578c77a9f72b3b3c2889ed"
+    },
+    {
+      "path": "source/files/src/api/wait.rs",
+      "bytes": 29725,
+      "sha256": "9110fa66622b3ccdb98c206204db3509364092135dab0ff903c96b8f8acf93c7"
+    },
+    {
+      "path": "source/files/src/app/actions.rs",
+      "bytes": 168652,
+      "sha256": "7d2f05e18514fb2528ce21c92f413172c96d1b54a6003003431510fb52b4a5b7"
+    },
+    {
+      "path": "source/files/src/app/agents.rs",
+      "bytes": 19474,
+      "sha256": "ca3098441379df882c94681f795dd8b22bb30efcda19f8c1524e4463a03015a7"
+    },
+    {
+      "path": "source/files/src/app/api/agents.rs",
+      "bytes": 36956,
+      "sha256": "3d1d53596bd6b0d414bd665817b6db7cc3152f1e1d25aac7fa5abe5987105cd1"
+    },
+    {
+      "path": "source/files/src/app/api_helpers.rs",
+      "bytes": 10934,
+      "sha256": "fe80fccf99e4cce641bbcb9ebfb84458d0bb1f367a2a904e91eb8a5e3b88473a"
+    },
+    {
+      "path": "source/files/src/detect/manifest.rs",
+      "bytes": 49028,
+      "sha256": "40323d77ef508376fac4bee840b987009a2e4305416ded37c6b570690895a1fc"
+    },
+    {
+      "path": "source/files/src/detect/manifests/opencode.toml",
+      "bytes": 1008,
+      "sha256": "faa82aed2d76ad856528caae04232894594b74cc903aed3e522b3e725c5f2c95"
+    },
+    {
+      "path": "source/files/src/detect/mod.rs",
+      "bytes": 75155,
+      "sha256": "2594e99fd886cf65cb1fb4ba19993bd54e731a21c9f0f64c564c009ab858d06f"
+    },
+    {
+      "path": "source/files/src/integration/assets/opencode/herdr-agent-state.js",
+      "bytes": 6520,
+      "sha256": "f70a7d2193f4a9409838b078acee5a35f72f0925af08f63c142ec9cbf0ba5fcd"
+    },
+    {
+      "path": "source/files/src/integration/assets/opencode/herdr-tui-session.js",
+      "bytes": 21240,
+      "sha256": "50659d47db3cf4e7de3028e56f2666a656efaaddc24711b72f5b6baa9f99c5d3"
+    },
+    {
+      "path": "source/files/src/integration/assets/opencode/herdr-tui-session.test.ts",
+      "bytes": 26644,
+      "sha256": "d076bfadcf1e8c9009099ae509a68060e4ba0366b1666a67d44dc0e0d7190ae7"
+    },
+    {
+      "path": "source/files/src/terminal/state.rs",
+      "bytes": 230776,
+      "sha256": "5d7ca5737f4b4fcdf7d74d7733889e3b7caf7ed00606ffe1c576ad1877e0ff3c"
+    },
+    {
+      "path": "source/files/tests/cli/agents.rs",
+      "bytes": 45455,
+      "sha256": "11aa7018db03b0aa73dd0f136becbee221b3ca693f0f026a2872dc081995b16c"
+    },
+    {
+      "path": "source/herdr-v0.9.5.tar.gz",
+      "bytes": 10977766,
+      "sha256": "5c745bf712aee3320ed88a665c39a9143cbd6b7ce4376e0ae0f0c07988576c13"
+    },
+    {
+      "path": "source/installed-integration-provenance.json",
+      "bytes": 616,
+      "sha256": "b729f1b6a70f640a1e5d06cd252c4c773c7a82594b77fbe12a313267f229eedd"
+    },
+    {
+      "path": "source/installed/herdr-agent-state.js",
+      "bytes": 6520,
+      "sha256": "f70a7d2193f4a9409838b078acee5a35f72f0925af08f63c142ec9cbf0ba5fcd"
+    },
+    {
+      "path": "source/installed/herdr-opencode-tui.js",
+      "bytes": 219,
+      "sha256": "a70a9d9de68d24e92e68ceb658e535b59ac55eddbef711888e02c2773c0f9cce"
+    },
+    {
+      "path": "source/installed/herdr-tui-session.js",
+      "bytes": 21240,
+      "sha256": "50659d47db3cf4e7de3028e56f2666a656efaaddc24711b72f5b6baa9f99c5d3"
+    },
+    {
+      "path": "source/installed/opencode-remote-manifest.toml",
+      "bytes": 1008,
+      "sha256": "faa82aed2d76ad856528caae04232894594b74cc903aed3e522b3e725c5f2c95"
+    },
+    {
+      "path": "source/provenance.json",
+      "bytes": 1472,
+      "sha256": "8f2d3e8bae596d0f916099ac35597821495f71f420b6529f65bb02a353106abe"
+    },
+    {
+      "path": "source/release-v0.9.5.json",
+      "bytes": 13311,
+      "sha256": "8fa0018f4058ceb3b01ca1327bd936152f65dc692bea468b62b16bd4e0e33e0b"
+    },
+    {
+      "path": "source/source-files-manifest.json",
+      "bytes": 2938,
+      "sha256": "f827d64ae7e4239fc515e22953c47a5955685072a3f14455bb456dd7d9674362"
+    },
+    {
+      "path": "source/tag-object-v0.9.5.json",
+      "bytes": 834,
+      "sha256": "2f3b6b2543767facfdc12482c0aa23e591b02f1ec28a7f6a87245e612726543b"
+    },
+    {
+      "path": "source/tag-ref-v0.9.5.json",
+      "bytes": 362,
+      "sha256": "9d88685c36c962398f18b2893b10015ee700785cb7f2ab15cead9b9fc5c64646"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 1039,
+      "sha256": "aa639079657f1d5835238db5d05e4751edbdc86c935facd3442124ac9d06b349"
+    }
+  ]
+}

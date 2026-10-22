@@ -1,0 +1,74 @@
+{
+  "info": {
+    "id": "ses_e9eed0f4cffeHzBBvmwAQ9bfXS",
+    "projectID": "e1c91a63a963b34d1e9600fb48d32bc0a6f848c7",
+    "agent": "plan",
+    "model": {
+      "id": "minimax-m3.1-flash-free",
+      "providerID": "opencode",
+      "variant": "max"
+    },
+    "cost": 0,
+    "tokens": {
+      "input": 81662,
+      "output": 4436,
+      "reasoning": 18551,
+      "cache": {
+        "read": 436023,
+        "write": 0
+      }
+    },
+    "outcome": "succeeded",
+    "time": {
+      "created": 1792629993692,
+      "updated": 1792630241778,
+      "idle": 1792630241781
+    },
+    "title": "[redacted:session-title:ses_e9eed0f4cffeHzBBvmwAQ9bfXS]",
+    "location": {
+      "directory": "/[redacted:session-directory:ses_e9eed0f4cffeHzBBvmwAQ9bfXS]"
+    }
+  },
+  "final_message": {
+    "id": "msg_1611582f6001gnkKRBff5WHquC",
+    "time": {
+      "created": 1792630162171,
+      "streamed": 1792630241747,
+      "completed": 1792630241778
+    },
+    "agent": "plan",
+    "model": {
+      "id": "minimax-m3.1-flash-free",
+      "providerID": "opencode",
+      "variant": "max"
+    },
+    "finish": "stop",
+    "rawFinish": "stop",
+    "cost": 0,
+    "tokens": {
+      "input": 2050,
+      "output": 3458,
+      "reasoning": 3494,
+      "cache": {
+        "read": 111616,
+        "write": 0
+      }
+    },
+    "snapshot": {
+      "start": "ee9b6ed7b99beab622960c2fc59f789def4561d6",
+      "end": "ee9b6ed7b99beab622960c2fc59f789def4561d6",
+      "files": []
+    }
+  },
+  "tool_names": [
+    "grep",
+    "read"
+  ],
+  "user_messages": 1,
+  "attached_agents": [
+    []
+  ],
+  "final_report_path": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-herdr-external-impl-20261022-7zkv9s3m/final-report.txt",
+  "reasoning_content_retained": false,
+  "reviewer_transport_claim": "incorrect: claimed relay based on token; coordinator directly launched/prompted/read this Herdr worker"
+}

@@ -1,0 +1,14 @@
+{
+  "tui": {
+    "installed_path": "/Users/corvette/.config/opencode/herdr-tui-session.js",
+    "installed_sha256": "50659d47db3cf4e7de3028e56f2666a656efaaddc24711b72f5b6baa9f99c5d3",
+    "bundled_sha256": "50659d47db3cf4e7de3028e56f2666a656efaaddc24711b72f5b6baa9f99c5d3",
+    "exact_match": true
+  },
+  "server": {
+    "installed_path": "/Users/corvette/.config/opencode/plugins/herdr-agent-state.js",
+    "installed_sha256": "f70a7d2193f4a9409838b078acee5a35f72f0925af08f63c142ec9cbf0ba5fcd",
+    "bundled_sha256": "f70a7d2193f4a9409838b078acee5a35f72f0925af08f63c142ec9cbf0ba5fcd",
+    "exact_match": true
+  }
+}

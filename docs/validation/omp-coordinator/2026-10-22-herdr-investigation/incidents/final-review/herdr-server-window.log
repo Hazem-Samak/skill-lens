@@ -1,0 +1,27 @@
+2026-10-22T00:45:10.518769Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:pane:split" method="pane.split" changes_ui=true
+2026-10-22T00:45:10.519285Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=2 rows=53 cols=71 scrollback_limit_bytes=10000000
+2026-10-22T00:45:10.521446Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=2 pid=15276
+2026-10-22T00:45:10.521687Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:pane:split" method="pane.split"
+2026-10-22T00:45:15.545608Z  INFO herdr::persist::writer: preserved session recovery copy event="persist.backup" subsystem="persist" outcome="ok" path=/Users/corvette/.config/herdr/session.json backup_path=/Users/corvette/.config/herdr/session-snapshots/session-000000000000000000001792629915537231000-9156-0.json
+2026-10-22T00:45:15.545769Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/corvette/.config/herdr/session.json workspaces=1
+2026-10-22T00:45:18.185944Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:agent:start" method="agent.start" changes_ui=true
+2026-10-22T00:45:18.186507Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:agent:start" method="agent.start"
+2026-10-22T00:45:18.606637Z  INFO herdr::pane: agent changed pane=2 previous_agent=None agent=Some(OpenCode) process=opencode pgid=Some(15328)
+2026-10-22T00:45:26.947350Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/corvette/.config/herdr/session.json workspaces=1
+2026-10-22T00:45:30.039451Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:agent:send-keys" method="agent.send_keys" changes_ui=true
+2026-10-22T00:45:30.039897Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:agent:send-keys" method="agent.send_keys"
+2026-10-22T00:46:33.328364Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:agent:prompt" method="agent.prompt" changes_ui=true
+2026-10-22T00:46:33.890916Z  INFO herdr::pane: agent changed pane=2 previous_agent=None agent=Some(OpenCode) process=opencode pgid=Some(15328)
+2026-10-22T00:46:33.941543Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:agent:prompt" method="agent.prompt"
+2026-10-22T00:46:38.798749Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/corvette/.config/herdr/session.json workspaces=1
+2026-10-22T00:47:02.701844Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="error" request_id="cli:agent:read" method="agent.read"
+2026-10-22T00:52:18.048166Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:agent:send-keys" method="agent.send_keys" changes_ui=true
+2026-10-22T00:52:18.048474Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:agent:send-keys" method="agent.send_keys"
+2026-10-22T00:52:18.623599Z  INFO herdr::pane: agent changed pane=2 previous_agent=Some(OpenCode) agent=None pgid=Some(15276)
+2026-10-22T00:52:23.638332Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/corvette/.config/herdr/session.json workspaces=1
+2026-10-22T00:52:35.628269Z  INFO herdr::logging: api request received event="api.request.start" subsystem="api" outcome="started" request_id="cli:pane:close" method="pane.close" changes_ui=true
+2026-10-22T00:52:35.630699Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=2 status="ExitStatus { code: 1, signal: None }"
+2026-10-22T00:52:35.650412Z  INFO herdr::pane: pane session terminated pane=2 pid=15276 signal=Hangup
+2026-10-22T00:52:35.650595Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="ok" request_id="cli:pane:close" method="pane.close"
+2026-10-22T00:52:35.650846Z  WARN herdr::app::actions: PaneDied for unknown pane pane=2
+2026-10-22T00:52:40.664355Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/Users/corvette/.config/herdr/session.json workspaces=1

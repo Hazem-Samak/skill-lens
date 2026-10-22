@@ -1,0 +1,21 @@
+READ-ONLY CRITIC TASK. You are reviewing, not implementing.
+
+Do NOT create, edit, move, delete or rename any file in the repository. Do NOT run
+any command that writes: no formatters, no linters with --fix, no install, no
+git commit/checkout/stash, no snapshot or golden regeneration, no test runs that
+write into the checkout. Test output, if you need it, goes only to a temporary
+directory outside the repository.
+
+If you believe a change is required, do not make it. Report it instead.
+
+Return only the report format below. Nothing else.
+
+REQUEST_TOKEN: omp-external-doc-final-20261022T004510Z
+Fresh independent FINAL documentation review, not implementation or a smoke. Risk High; this migration's authorized one-MiniMax-reviewer exception. Requested opencode/minimax-m3.1-flash-free, default settings, Plan mode. UI showed that model and variant max before submission; upstream identity remains unverified.
+QUESTION: Do these five documentation changes fully implement the authorized frozen amendment without changing protected policy or pretending live acceptance?
+Frozen contract: docs/plans/2026-10-22-omp-herdr-external-control.md @ 988d3917890ddf56b48b950afa2c162dd84c8c4e. Inspect its operative contract. Diff base/HEAD: 321e5693f9d8e528bb350e465fab80655d3d1922. Current tracked/untracked manifest SHA-256: c67fbb01e50b31d1a854891d60aed3cb72ca6a1791d6ff57c7a2116ee28e6eae.
+Read sources: docs/process/omp/herdr.md, README.md in that same directory, both planning-loop.md and implementation-loop.md there, and docs/plans/2026-10-20-omp-herdr-dispatch.md. Exact diff, original texts and verification: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-herdr-external-impl-20261022-7zkv9s3m/implementation.diff, baseline-text.json, document-validation.json, gates.txt, pre-final-review.json. Read that evidence bundle with read-only tools; no shell commands.
+Required: native Tern coordinator; named existing session/socket verification (missing/ambiguous stops); explicit pane IDs; timeout on every wait; inspect-before-resend; narrow user-approved repo exception to installed skill without skill/settings edits; consistent route across four docs; dated append preserving the old smoke-plan history and full reference. Guard, ledger, roles, review and acceptance rules unchanged. Historical Mini/full-TUI failures stay unresolved. No live smoke authorized; this real document review is not lifecycle certification.
+Coordinator checks passed: 33 links/anchors, protected policy unchanged, original smoke-plan text preserved; pytest 1082 passed, 1 skipped, 91.16%, mypy clean (38 files), Ruff lint and format clean (278 files). Read logs, do not run gates/checks.
+No repository writes, tests, linters, formatters, runtime checks, Herdr commands, settings changes, delegation or background tasks. Use read-only file tools only. Judge current implementation, not preserved historical instructions as if they were current. Pre-existing evidence edit, .path and old 2026-10-19 draft are user work to preserve.
+Return REQUEST_TOKEN, EFFECTIVE_MODEL (requested/configured/settings/mode/evidence/upstream limits), VERDICT pass|changes_required|unverified, BLOCKERS (location/problem/expected/evidence), SUGGESTIONS, FILES_AT_RISK, CONCEDED (limits, no writes/delegation/background work). End with COMPLETION: complete. Report in the terminal; no file-output request.

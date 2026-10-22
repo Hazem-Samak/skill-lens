@@ -1,0 +1,27 @@
+{
+  "scope": "investigation only; uncommitted dated evidence folder",
+  "existing_repo_files_unchanged": true,
+  "existing_file_count_outside_folder": 1165,
+  "head_unchanged": "34966b39f815d2f6b8d530bc46b4f2febc3ecdae",
+  "latest_exact_copies_verified": 14,
+  "upstream_source_snapshots_verified": 16,
+  "installed_binary_unchanged_and_official_release_match": true,
+  "installed_reporter_code_unchanged": true,
+  "original_async_wait_returns_audited": {
+    "full-tui": "idle/completion 18/hook authority",
+    "final-review": "done/completion 5/hook authority"
+  },
+  "mini_original_failure_and_saved_control_present": true,
+  "new_workers": 0,
+  "new_live_trials": 0,
+  "builds": 0,
+  "test_suites": 0,
+  "source_patches": 0,
+  "settings_edits": 0,
+  "service_operations": 0,
+  "freezes": 0,
+  "commits": 0,
+  "pushes": 0,
+  "diagnosis_status": "Mini compatibility gap demonstrated; full-TUI premature authority boundary established with exact callback/event evidence missing",
+  "evidence_audit_only_not_runtime_reproduction": true
+}

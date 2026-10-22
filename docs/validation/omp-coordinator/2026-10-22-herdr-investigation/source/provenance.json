@@ -1,0 +1,32 @@
+{
+  "installed_binary": {
+    "path": "/Users/corvette/.local/bin/herdr",
+    "sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2",
+    "expected_official_macos_aarch64_sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2",
+    "matches_official_release": true
+  },
+  "official_release_metadata": "source/release-v0.9.5.json",
+  "tag_ref": "source/tag-ref-v0.9.5.json",
+  "tag_object": "source/tag-object-v0.9.5.json",
+  "source_commit": "2ecf19a92fc3a7fff75b6ce3655ef04f4625ec01",
+  "tag_object_sha": "7573e821895d32c8d1f78b3f6c9a2f85a46df4ac",
+  "archive_sha256": "5c745bf712aee3320ed88a665c39a9143cbd6b7ce4376e0ae0f0c07988576c13",
+  "source_snapshot_count": 16,
+  "installed_reporter_matches": {
+    "tui": {
+      "installed_path": "/Users/corvette/.config/opencode/herdr-tui-session.js",
+      "installed_sha256": "50659d47db3cf4e7de3028e56f2666a656efaaddc24711b72f5b6baa9f99c5d3",
+      "bundled_sha256": "50659d47db3cf4e7de3028e56f2666a656efaaddc24711b72f5b6baa9f99c5d3",
+      "exact_match": true
+    },
+    "server": {
+      "installed_path": "/Users/corvette/.config/opencode/plugins/herdr-agent-state.js",
+      "installed_sha256": "f70a7d2193f4a9409838b078acee5a35f72f0925af08f63c142ec9cbf0ba5fcd",
+      "bundled_sha256": "f70a7d2193f4a9409838b078acee5a35f72f0925af08f63c142ec9cbf0ba5fcd",
+      "exact_match": true
+    }
+  },
+  "reproducible_build_verified": false,
+  "builds_run": 0,
+  "installed_changes": 0
+}

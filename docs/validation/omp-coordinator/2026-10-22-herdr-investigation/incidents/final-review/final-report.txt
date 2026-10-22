@@ -1,0 +1,270 @@
+REQUEST_TOKEN: omp-external-doc-final-20261022T004510Z
+
+     EFFECTIVE_MODEL:
+
+     - Requested: opencode/minimax-m3.1-flash-free, default settings,
+       Plan mode (per the review request and the migration's one-
+       reviewer exception in docs/process/omp/README.md:33).
+     - Configured: harness-declared "MiniMax M3.1 Flash Free", variant
+       max (as displayed in the submission UI); Plan/read-only critic
+       mode, no tools that write.
+     - Evidence: harness/system declaration only. Upstream served-
+       model identity is unverified — no provider handshake, no
+       independent confirmation. Consistent with docs/plans/2026-10-
+       22-omp-herdr-external-control.md:8,99,128.
+     - Transport: this review runs through the migration's external
+       OpenCode document-review relay (request token prefix omp-
+       external-doc-final), not through a Herdr worker. See SUGGESTION
+       1 — the frozen contract distinguishes "the separately
+       authorized review transport" from the "bootstrap relay" and
+       asks that any fallback not be silent.
+     - Mode: Plan mode; no repository writes, no delegation, no
+       background tasks, no Herdr commands, no installed skill/
+       settings changes.
+
+     VERDICT: pass
+
+     Review basis: frozen contract docs/plans/2026-10-22-omp-herdr-
+     external-control.md @ 988d3917890ddf56b48b950afa2c162dd84c8c4e (
+     read in full, §"Implementation contract" §1–§4, §"Verification
+     and acceptance"), the coordinator-supplied diff base
+     321e5693f9d8e528bb350e465fab80655d3d1922 → working tree, the
+     evidence bundle (implementation.diff, baseline-text.json,
+     document-validation.json, gates.txt, pre-final-review.json), and
+     the current on-disk contents of all five changed files plus the
+     historical evidence record. Gates were read, not run.
+
+     BLOCKERS: none.
+
+     What I verified as conforming (each traced to a contract clause):
+
+      1. Native Tern coordinator, retained identity check — docs/
+         process/omp/herdr.md:9 keeps the README "Start directly"
+         openai-codex/gpt-6.1-sol check; no silent fallback (contract
+         §1 opening). The route is Sol-native-in-Tern with Herdr
+         hosting only workers (herdr.md:3,40; README.md:17; planning-
+         loop.md:54; implementation-loop.md:40).
+      2. Named existing session/socket verification; missing/ambiguous
+         stops — herdr.md:13-32: herdr session list --json
+         enumeration, select an authorized existing named session (
+         recording default explicitly), require running + socket_path,
+         test -S Unix-socket check, herdr --session <verified> status
+         server --json cross-match, session:null/default normalization
+         only when the discovery row has name:"default", default:true
+         and the identical socket, and an explicit stop on missing/
+         stale/incompatible/ambiguous identity. Root --session can
+         create, so discovery must prove an existing running entry
+         first; no create/attach/repair/fabricated context/historical
+         IDs. Same --session prefix pinned on every later command.
+      3. Narrow, user-approved skill exception with no skill/settings
+         edits — herdr.md:11 names the conflict (inside-Herdr/
+         HERDR_ENV gate, caller-relative defaults), names the
+         amendment + adapter as authority, keeps all non-conflicting
+         skill safety rules, and disclaims system/runtime overrides,
+         approval widening, installed-skill/settings edits and other
+         projects; README.md:17 mirrors it. Matches contract §1.1
+         verbatim in substance.
+      4. Explicit pane IDs throughout — herdr.md:34 (no --current,
+         inherited HERDR_PANE_ID, focus, sidebar order or agent-name
+         substitutes), base-pane inspection templates with explicit
+         IDs (:42-45), split with --pane <base> … --no-focus (:50),
+         returned .result.pane.pane_id recorded with ownership before
+         startup (:53), explicit IDs in prompt/get/read/wait (:56-59,
+         65-66), and cleanup "explicit pane IDs and the same verified
+         session prefix" (:81).
+      5. Timeout on every wait — startup --timeout 30000, prompt --
+         wait --timeout 120000, agent wait --timeout, pane wait-output
+         --timeout, plus the blanket rule "Every wait must have an
+         explicit positive finite --timeout in milliseconds … do not
+         invent undocumented maxima, wait indefinitely or increase
+         timeouts to disguise the known defects" (herdr.md:62).
+      6. Inspect-before-resend — herdr.md:77 covers timeout,
+         agent_prompt_stalled, blocked/unknown, connection loss; no
+         blind resend or duplicate worker; timeout ≠ cancellation/non-
+         delivery; agent_not_idle = incomplete readback, not resend
+         authority. Report-file fallback rules retained (:79).
+      7. Guard, ledger, roles, review and acceptance rules unchanged —
+         the diff touches only the routing sentence in each of the
+         three route docs and only the Herdr section + status sentence
+         in the README; README's guard block, review policy, roles,
+         ledger and completion-evidence sections are byte-for-byte
+         untouched (independently confirmed against the diff hunks and
+         the current file; the guard text also matches the guard in
+         this very request). No new permanent tests, no product/source
+         changes.
+      8. Consistent route across four docs — README §"Herdr workers
+         from native Tern", planning-loop.md:54, implementation-loop.
+         md:40 all state: Sol native in Tern, external connection
+         gate, missing/ambiguous connection stops that route (not
+         merely being outside Herdr), standalone routes retained when
+         Herdr is not requested, never a silent switch to native
+         tasks/relays. No relaunch-inside-Herdr instruction remains in
+         executable guidance in the four documents (verified by
+         reading each file and grepping the tree; no stale #when-
+         running-inside-herdr / #establish-the-real-caller / #live-
+         check-still-required anchor is referenced anywhere).
+      9. Dated append preserving history and full reference — docs/
+         plans/2026-10-20-omp-herdr-dispatch.md:38-46: original text,
+         authorization, review history and Reference:
+         2656a6a1efb687b0d23c9679fdc2222cc18c07b0 preserved verbatim;
+         the append cites the amendment's full hash
+         988d3917890ddf56b48b950afa2c162dd84c8c4e, limits supersession
+         to the inside-Herdr caller/launch/targeting setup, and states
+         the amended procedure (native Tern start, named session/
+         socket verification, explicitly authorized base pane, one
+         owned worker pane, explicit IDs, bounded waits) while
+         retaining the original acceptance bar.
+     10. Failures stay unresolved; no live acceptance claimed —
+         adapter and README status sentences both read "external
+         dispatch documented/unverified; end-to-end acceptance is
+         unsatisfied" and cite the Mini busy-detection failure and the
+         ~6.91 s early full-TUI waiter return. I checked both claims
+         against the historical evidence record docs/validation/omp-
+         coordinator/2026-10-20/herdr-dispatch.md (:320 for the 6.91 s
+         early return; :225-233 for the esc stop/screen-rule mismatch)
+         — both are accurate. herdr.md:83-89 and the append state that
+         documentation implementation does not authorize a smoke, that
+         a report recovered after a premature waiter return does not
+         pass wait-correctness, and that a reviewer-only smoke cannot
+         establish implementation-worker capability. The historical
+         evidence file was not rewritten (still contains "Human step
+         needed for live acceptance") and is superseded by reference,
+         not edit.
+     11. Scope discipline — exactly five paths changed (document-
+         validation.json changed_paths; diff hunk headers); the pre-
+         existing evidence edit, .path and the 2026-10-19 draft appear
+         only as preserved (pre-final-review.json status  M …/herdr-
+         dispatch.md, ?? .path, ?? docs/plans/2026-10-19-herdr-omp-
+         coordinator.md) and are absent from the diff. Gates log: 1082
+         passed / 1 skipped / 91.16% coverage, mypy clean (38 files),
+         ruff check clean, ruff format clean (278 files) — read, not
+         rerun.
+
+     SUGGESTIONS (non-blocking; none requires a protected-policy
+     change):
+
+     1. Name the final-review transport in the implementation receipt.
+        The frozen contract's post-implementation acceptance says "Use
+        the separately authorized review transport; if Herdr is
+        unavailable or cannot meet completion requirements, stop
+        rather than silently use the bootstrap relay" (docs/plans/
+        2026-10-22-omp-herdr-external-control.md:92), while herdr.md
+        and the contract bar any live smoke. This review therefore ran
+        on the external document-review relay, not a Herdr worker.
+        Expected: one receipt line naming the transport, requested
+        model, session id, exit status, that Herdr transport was not
+        exercised, and why (no smoke authorized). This closes the
+        "silently" condition without changing any rule.
+     2. The implementation execution receipt is still owed. docs/
+        plans/2026-10-22-omp-herdr-external-control.md currently ends
+        with the planning/freeze receipt (line 133) and has no
+        implementation receipt, while docs/process/omp/implementation-
+        loop.md:82 requires one in the dated plan/execution record (
+        expected vs actual launches, corrections and reasons,
+        requested/configured identities and settings with upstream
+        limits, report/log paths, elapsed time/tokens if exposed).
+        Frozen-plan scope item 5 permits appending it "if needed"
+        without changing the operative contract. Suggested location: a
+        new dated section appended at the end of that plan; do not
+        touch the operative contract or Reference:, and record the
+        resulting new file digest.
+     3. Cite the baseline in the validation receipt. document-
+        validation.json asserts "protected_policy": "unchanged" and
+        "original_smoke_plan": "preserved exactly" but does not record
+        the baseline commit it compared against (the contract names
+        6b77388003ca8c411b19452d94528344bb8e1007), the diff base (
+        321e5693f9d8e528bb350e465fab80655d3d1922), or the manifest
+        digest (
+        c67fbb01e50b31d1a854891d60aed3cb72ca6a1791d6ff57c7a2116ee28e6e
+        ae). Recording all three makes the claim independently
+        auditable. (I verified the protected sections myself from the
+        supplied diff and current file contents; this is a receipt-
+        completeness point, not a defect.)
+     4. One residual reading ambiguity in the 2026-10-20 plan (worth
+        one clarifying clause). The append states "Only the caller/
+        launch/targeting setup changes … The exact reviewer guard,
+        ledger, independent-review and acceptance rules stay
+        unchanged", while the preserved plan body still contains the
+        pre-amendment route condition "Herdr-backed dispatch is
+        selected … whenever OMP is run inside Herdr" (:29) and the
+        inside-Herdr caller/setup steps (:21,22,25). The contract
+        required that body to be preserved and limited the
+        supersession to "caller/launch/targeting setup", so nothing is
+        wrong as written — but a reader could take "acceptance rules
+        stay unchanged" to keep the old route-selection condition
+        alive, which conflicts with the amended rule (route keys on
+        the user requesting Herdr, not on being inside Herdr).
+        Suggested: one added clause in the append noting that the
+        route-selection condition in the preserved acceptance bullet
+        reads as "when Herdr dispatch is requested" for this OMP
+        route. This is additive text in the new append, not a rewrite
+        of the preserved history.
+     5. Optional pane-discovery template. herdr.md:40-45 requires an
+        explicitly authorized base pane ID and then inspects it, but
+        gives no session-scoped command for discovering a pane ID (the
+        old --current route is correctly banned). Consider adding a
+        pane-listing template taken verbatim from installed herdr pane
+        --help so an operator can obtain a base pane ID without
+        relying on focus. Non-blocking: the current wording is fail-
+        safe (explicitly authorized ID required, ask when ambiguous).
+     6. Optional, later-authorized only. The README's "Tested external
+        OpenCode review route" section is correctly untouched (it was
+        outside the amendment's allowed edit scope), but it still
+        reads as a generally available route, whereas contract §3 asks
+        that bootstrap review evidence remain "explicitly historical/
+        transitional". If a later authorized edit touches the README,
+        one clause marking that route as the migration's document-
+        review bootstrap and not the Herdr worker route would close
+        the gap. Do not change it under this amendment.
+
+     FILES_AT_RISK:
+
+     - Changed by this implementation (reviewed, conformant): docs/
+       process/omp/herdr.md, docs/process/omp/README.md, docs/process/
+       omp/planning-loop.md, docs/process/omp/implementation-loop.md,
+       docs/plans/2026-10-20-omp-herdr-dispatch.md (append-only).
+     - Expected next touch, append-only, must not alter the operative
+       contract: docs/plans/2026-10-22-omp-herdr-external-control.md (
+       implementation execution receipt).
+     - Preserved user work, must not be staged, reverted or rewritten:
+       docs/validation/omp-coordinator/2026-10-20/herdr-dispatch.md (
+       pre-existing modification), .path (untracked), docs/plans/2026-
+       10-19-herdr-omp-coordinator.md (untracked).
+     - Untouched by design: README guard/review/ledger sections, docs/
+       process/omp/* non-routing rules, T3 workflow, installed herdr
+       skill and settings, product source/tests.
+
+     CONCEDED (limits of this review):
+
+     - I reviewed the coordinator-supplied diff (
+       321e5693f9d8e528bb350e465fab80655d3d1922 → working tree) plus
+       the current on-disk contents of the five changed files. I did
+       not run git, so I could not independently recompute the
+       manifest SHA-256
+       c67fbb01e50b31d1a854891d60aed3cb72ca6a1791d6ff57c7a2116ee28e6ea
+       e, the per-file digests in pre-final-review.json, or confirm
+       that the tree still matches them at review time; that evidence
+       is coordinator-asserted.
+     - No gates, tests, linters, formatters, link-checkers or runtime
+       commands were executed; gate outcomes are read from gates.txt
+       only. I did not re-derive the "33 links/anchors" count by
+       machine; I verified the anchors used in the five documents by
+       hand (all resolve to existing headings/files).
+     - No Herdr commands, no session/socket discovery, no worker
+       launch, no live smoke — none is authorized, and none was
+       attempted. Historical Mini and full-TUI failures remain
+       unresolved by this review.
+     - I did not verify the protected-text comparison against baseline
+       commit 6b77388003ca8c411b19452d94528344bb8e1007 by hashing; I
+       verified it structurally from the diff and the current files (
+       only routing sentences changed in the three route docs; only
+       the Herdr section and status sentence in the README).
+     - Upstream model identity remains unverified (harness declaration
+       only). This real document review is not Herdr lifecycle
+       certification, not end-to-end acceptance, and not a smoke.
+     - No files were created, edited, moved, deleted or renamed; no
+       repository write of any kind occurred (read-only file tools
+       only); no delegation, no subagents, no background tasks, no
+       Herdr operations, no settings changes.
+
+     COMPLETION: complete.

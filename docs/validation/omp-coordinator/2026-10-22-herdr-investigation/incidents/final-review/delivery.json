@@ -1,0 +1,21 @@
+{
+  "commit": "34966b39f815d2f6b8d530bc46b4f2febc3ecdae",
+  "branch": "main",
+  "pushed_to": "origin/main",
+  "local_tracking_remote_equal": true,
+  "files_committed": [
+    "docs/plans/2026-10-20-omp-herdr-dispatch.md",
+    "docs/plans/2026-10-22-omp-herdr-external-control.md",
+    "docs/process/omp/README.md",
+    "docs/process/omp/herdr.md",
+    "docs/process/omp/implementation-loop.md",
+    "docs/process/omp/planning-loop.md"
+  ],
+  "final_review": "pass, no blockers",
+  "actual_review_transport": "Herdr worker controlled externally by native Tern OMP",
+  "review_worker_removed": true,
+  "live_smoke_run": false,
+  "lifecycle_reliability_claimed": false,
+  "user_work_preserved": true,
+  "final_plan_sha256": "24237fc5c9474f353828fbea6174e57a40b7936d42366dc2d8cfc210d6c694aa"
+}

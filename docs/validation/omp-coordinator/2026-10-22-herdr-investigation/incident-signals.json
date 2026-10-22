@@ -1,0 +1,46 @@
+{
+  "mini": {
+    "date_label": "2026-10-20 record; actual UTC trial 2026-10-19",
+    "misreported_signal": "agent get idle while visibly busy; agent prompt --wait returned agent_prompt_stalled, not a false successful completion",
+    "return_utc": "2026-10-19T22:16:53.918711Z",
+    "error": "agent_prompt_stalled",
+    "activity_gate_ms": 5000,
+    "idle_sequence": 8,
+    "worker_side_completion_report": "not captured; V2 Mini does not run pane-local TUI lifecycle plugin",
+    "demonstrated_cause": "captured esc stop busy footer misses manifest 2026.06.10.1 and falls back to idle; earlier one-phrase offline control selected working",
+    "raw_temp_receipts_missing": true
+  },
+  "full-tui": {
+    "date_label": "2026-10-20 record; actual UTC trial 2026-10-19",
+    "misreported_signal": "agent prompt --wait returned idle with completion_seq 18 before actual assistant completion",
+    "prompt_received_utc": "2026-10-19T22:29:28.478226Z",
+    "prompt_returned_utc": "2026-10-19T22:29:29.093933+00:00",
+    "return_status": "idle",
+    "completion_seq": 18,
+    "screen_detection_skipped": true,
+    "later_working_sequence": 19,
+    "actual_completion_utc": "2026-10-19T22:29:36.003000+00:00",
+    "actual_settled_sequence": 20,
+    "seconds_early": 6.909067,
+    "worker_side_completion_report": "Source-derived inference: accepted hook idle authority already existed at return. Raw report/callback is absent; execution-completion event not proved.",
+    "exact_event_cause": "missing raw pane.report_agent frames and matching OpenCode lifecycle/cache event trace",
+    "raw_temp_receipts_missing": true
+  },
+  "final-review": {
+    "date_label": "2026-10-22",
+    "misreported_signal": "agent prompt --wait returned done with completion_seq 5, followed by agent get working sequence 6",
+    "prompt_received_utc": "2026-10-22T00:46:33.328364Z",
+    "prompt_returned_utc": "2026-10-22T00:46:33.941543+00:00",
+    "return_status": "done",
+    "completion_seq": 5,
+    "screen_detection_skipped": true,
+    "later_working_sequence": 6,
+    "actual_completion_utc": "2026-10-22T00:50:41.778000+00:00",
+    "actual_settled_sequence": 7,
+    "seconds_early": 247.836457,
+    "worker_side_completion_report": "Source-derived inference: accepted hook idle authority already existed; done is public unseen-idle presentation. No raw reporter terminal event captured.",
+    "exact_event_cause": "missing raw pane.report_agent frames and matching OpenCode lifecycle/cache event trace",
+    "raw_temp_receipts_missing": false,
+    "saved_native_session_outcome": "succeeded"
+  }
+}

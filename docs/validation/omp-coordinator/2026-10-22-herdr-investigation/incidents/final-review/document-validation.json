@@ -1,0 +1,17 @@
+{
+  "result": "pass",
+  "relative_links_and_anchors": 33,
+  "protected_policy": "unchanged",
+  "original_smoke_plan": "preserved exactly",
+  "changed_paths": [
+    "docs/process/omp/herdr.md",
+    "docs/process/omp/README.md",
+    "docs/process/omp/planning-loop.md",
+    "docs/process/omp/implementation-loop.md",
+    "docs/plans/2026-10-20-omp-herdr-dispatch.md"
+  ],
+  "live_smoke": "not run",
+  "protected_text_baseline_commit": "6b77388003ca8c411b19452d94528344bb8e1007",
+  "diff_base": "321e5693f9d8e528bb350e465fab80655d3d1922",
+  "review_tree_manifest_sha256": "c67fbb01e50b31d1a854891d60aed3cb72ca6a1791d6ff57c7a2116ee28e6eae"
+}

@@ -1,0 +1,24 @@
+{
+  "node_id": "TA_kwDORymbOtoAKDc1NzNlODIxODk1ZDMyYzhkMWY3OGIzZjZjOWEyZjg1YTQ2ZGY0YWM",
+  "sha": "7573e821895d32c8d1f78b3f6c9a2f85a46df4ac",
+  "url": "https://api.github.com/repos/herdrdev/herdr/git/tags/7573e821895d32c8d1f78b3f6c9a2f85a46df4ac",
+  "tagger": {
+    "name": "Ogulcan Celik",
+    "email": "ogulcancelik@gmail.com",
+    "date": "2026-10-14T15:56:50Z"
+  },
+  "object": {
+    "sha": "2ecf19a92fc3a7fff75b6ce3655ef04f4625ec01",
+    "type": "commit",
+    "url": "https://api.github.com/repos/herdrdev/herdr/git/commits/2ecf19a92fc3a7fff75b6ce3655ef04f4625ec01"
+  },
+  "tag": "v0.9.5",
+  "message": "v0.9.5\n\nPreview: preview-2026-10-14-fbd2ae23927f\n\nPrevious-Stable: v0.9.4\n",
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

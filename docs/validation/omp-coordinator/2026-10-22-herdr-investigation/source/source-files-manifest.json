@@ -1,0 +1,88 @@
+{
+  "release": "v0.9.5",
+  "source_commit": "2ecf19a92fc3a7fff75b6ce3655ef04f4625ec01",
+  "tag_object": "7573e821895d32c8d1f78b3f6c9a2f85a46df4ac",
+  "archive_sha256": "5c745bf712aee3320ed88a665c39a9143cbd6b7ce4376e0ae0f0c07988576c13",
+  "snapshots": [
+    {
+      "path": "src/api/wait.rs",
+      "sha256": "9110fa66622b3ccdb98c206204db3509364092135dab0ff903c96b8f8acf93c7",
+      "bytes": 29725
+    },
+    {
+      "path": "src/app/api/agents.rs",
+      "sha256": "3d1d53596bd6b0d414bd665817b6db7cc3152f1e1d25aac7fa5abe5987105cd1",
+      "bytes": 36956
+    },
+    {
+      "path": "src/app/agents.rs",
+      "sha256": "ca3098441379df882c94681f795dd8b22bb30efcda19f8c1524e4463a03015a7",
+      "bytes": 19474
+    },
+    {
+      "path": "src/app/actions.rs",
+      "sha256": "7d2f05e18514fb2528ce21c92f413172c96d1b54a6003003431510fb52b4a5b7",
+      "bytes": 168652
+    },
+    {
+      "path": "src/terminal/state.rs",
+      "sha256": "5d7ca5737f4b4fcdf7d74d7733889e3b7caf7ed00606ffe1c576ad1877e0ff3c",
+      "bytes": 230776
+    },
+    {
+      "path": "src/detect/mod.rs",
+      "sha256": "2594e99fd886cf65cb1fb4ba19993bd54e731a21c9f0f64c564c009ab858d06f",
+      "bytes": 75155
+    },
+    {
+      "path": "src/detect/manifest.rs",
+      "sha256": "40323d77ef508376fac4bee840b987009a2e4305416ded37c6b570690895a1fc",
+      "bytes": 49028
+    },
+    {
+      "path": "src/detect/manifests/opencode.toml",
+      "sha256": "faa82aed2d76ad856528caae04232894594b74cc903aed3e522b3e725c5f2c95",
+      "bytes": 1008
+    },
+    {
+      "path": "distribution/agent-detection/opencode.toml",
+      "sha256": "faa82aed2d76ad856528caae04232894594b74cc903aed3e522b3e725c5f2c95",
+      "bytes": 1008
+    },
+    {
+      "path": "src/integration/assets/opencode/herdr-tui-session.js",
+      "sha256": "50659d47db3cf4e7de3028e56f2666a656efaaddc24711b72f5b6baa9f99c5d3",
+      "bytes": 21240
+    },
+    {
+      "path": "src/integration/assets/opencode/herdr-agent-state.js",
+      "sha256": "f70a7d2193f4a9409838b078acee5a35f72f0925af08f63c142ec9cbf0ba5fcd",
+      "bytes": 6520
+    },
+    {
+      "path": "src/integration/assets/opencode/herdr-tui-session.test.ts",
+      "sha256": "d076bfadcf1e8c9009099ae509a68060e4ba0366b1666a67d44dc0e0d7190ae7",
+      "bytes": 26644
+    },
+    {
+      "path": "tests/cli/agents.rs",
+      "sha256": "11aa7018db03b0aa73dd0f136becbee221b3ca693f0f026a2872dc081995b16c",
+      "bytes": 45455
+    },
+    {
+      "path": "docs/next/website/src/content/docs/integrations.mdx",
+      "sha256": "90378dc6e53c9b1f8c23456c285d6e9f210ae2aeb6578c77a9f72b3b3c2889ed",
+      "bytes": 21274
+    },
+    {
+      "path": "docs/next/website/src/content/docs/agents.mdx",
+      "sha256": "c119ece87db6dc2520204583723f6b655b13810bbea4a179c1a803a0b87b0f3c",
+      "bytes": 11690
+    },
+    {
+      "path": "src/app/api_helpers.rs",
+      "sha256": "fe80fccf99e4cce641bbcb9ebfb84458d0bb1f367a2a904e91eb8a5e3b88473a",
+      "bytes": 10934
+    }
+  ]
+}

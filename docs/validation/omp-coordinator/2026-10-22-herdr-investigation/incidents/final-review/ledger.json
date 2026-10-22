@@ -1,0 +1,98 @@
+{
+  "frozen_reference": "988d3917890ddf56b48b950afa2c162dd84c8c4e",
+  "base_head": "321e5693f9d8e528bb350e465fab80655d3d1922",
+  "coordinator": {
+    "requested": "openai-codex/gpt-6.1-sol",
+    "configured": "openai-codex/gpt-6.1-sol",
+    "thinking": "high",
+    "fallback": false,
+    "upstream_identity": "unverified",
+    "session": "01a160ed-ffb0-7299-9a63-b2a4d40eabce"
+  },
+  "review_authorization": "User approved running default session and selecting an unambiguous available shell in this checkout plus one owned sibling; no focus change",
+  "connection": {
+    "session": "default",
+    "socket": "/Users/corvette/.config/herdr/herdr.sock",
+    "socket_type": "Unix-domain socket verified by test -S",
+    "server_version": "0.9.5",
+    "protocol": 22,
+    "compatible": true,
+    "status_session": null,
+    "default_identity_correlated_with_discovery": true
+  },
+  "worker": {
+    "name": "omp-ext-final-004510",
+    "pane": "wF:p4",
+    "base_pane": "wF:p1",
+    "tab": "wF:t1",
+    "shell_pid": 15276,
+    "pid": 15328,
+    "kind": "opencode",
+    "argv": [
+      "opencode"
+    ],
+    "requested_model": "opencode/minimax-m3.1-flash-free",
+    "configured_ui": "Plan \u00b7 MiniMax M3.1 Flash Free Default / OpenCode \u00b7 max",
+    "variant_selection": "inherited effective max, not separately requested",
+    "upstream_identity": "unverified",
+    "startup_timeout_ms": 30000
+  },
+  "request": {
+    "token": "omp-external-doc-final-20261022T004510Z",
+    "brief_path": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-herdr-external-impl-20261022-7zkv9s3m/final-review-brief.txt",
+    "manifest_sha256": "c67fbb01e50b31d1a854891d60aed3cb72ca6a1791d6ff57c7a2116ee28e6eae",
+    "job": "bg_13",
+    "timeout_ms": 600000,
+    "submitted_at_epoch": 1792629993.295276
+  },
+  "scope": {
+    "allowed_edit_paths": [
+      "docs/process/omp/herdr.md",
+      "docs/process/omp/README.md",
+      "docs/process/omp/planning-loop.md",
+      "docs/process/omp/implementation-loop.md",
+      "docs/plans/2026-10-20-omp-herdr-dispatch.md",
+      "docs/plans/2026-10-22-omp-herdr-external-control.md"
+    ],
+    "reviewer_repository_write_permission": false,
+    "live_smoke_authorized": false,
+    "implementation_author": "Sol; process documentation only"
+  },
+  "status": "documentation accepted; initial prompt-wait correctness rejected",
+  "review": {
+    "verdict": "pass",
+    "blockers": 0,
+    "session": "ses_e9eed0f4cffeHzBBvmwAQ9bfXS",
+    "complete_report": "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-herdr-external-impl-20261022-7zkv9s3m/final-report.txt",
+    "actual_transport": "Herdr, not reviewer-inferred relay",
+    "native_final_finish": "stop",
+    "elapsed_seconds": 248.086,
+    "initial_prompt_wait_failed_completion_ordering": true,
+    "standalone_wait_timeout_ms": 600000,
+    "duplicate_submissions": 0
+  },
+  "cleanup": {
+    "worker_pid_15328_absent": true,
+    "worker_process_group_empty": true,
+    "worker_shell_no_children": true,
+    "only_owned_pane_wF_p4_closed": true,
+    "original_focused_pane_preserved": "wF:p1",
+    "active_owned_background_work": false
+  },
+  "delivery": {
+    "allowed_changed_paths": [
+      "docs/plans/2026-10-20-omp-herdr-dispatch.md",
+      "docs/plans/2026-10-22-omp-herdr-external-control.md",
+      "docs/process/omp/README.md",
+      "docs/process/omp/herdr.md",
+      "docs/process/omp/implementation-loop.md",
+      "docs/process/omp/planning-loop.md"
+    ],
+    "source_and_route_evidence_still_valid": true,
+    "plan_append_only": true,
+    "smoke_plan_append_only": true,
+    "installed_skill_unchanged": true,
+    "final_plan_sha256": "24237fc5c9474f353828fbea6174e57a40b7936d42366dc2d8cfc210d6c694aa",
+    "commit": "pending actual commit, not invented"
+  }
+}

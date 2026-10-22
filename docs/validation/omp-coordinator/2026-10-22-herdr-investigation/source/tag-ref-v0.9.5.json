@@ -1,0 +1,10 @@
+{
+  "ref": "refs/tags/v0.9.5",
+  "node_id": "REF_kwDORymbOrByZWZzL3RhZ3MvdjAuOS41",
+  "url": "https://api.github.com/repos/herdrdev/herdr/git/refs/tags/v0.9.5",
+  "object": {
+    "sha": "7573e821895d32c8d1f78b3f6c9a2f85a46df4ac",
+    "type": "tag",
+    "url": "https://api.github.com/repos/herdrdev/herdr/git/tags/7573e821895d32c8d1f78b3f6c9a2f85a46df4ac"
+  }
+}

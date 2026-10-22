@@ -1,0 +1,29 @@
+{
+  "request_token": "omp-external-doc-final-20261022T004510Z",
+  "worker_pane": "wF:p4",
+  "session": "default",
+  "agent_session": "ses_e9eed0f4cffeHzBBvmwAQ9bfXS",
+  "first_prompt_wait_result": {
+    "agent_status": "done",
+    "completion_seq": 5,
+    "state_change_seq": 5
+  },
+  "immediate_same_worker_inspection": {
+    "agent_status": "working",
+    "state_change_seq": 6
+  },
+  "recent_unwrapped_read": {
+    "result": "agent_not_idle",
+    "accepted_as_completion": false
+  },
+  "native_session_metadata": {
+    "agent": "plan",
+    "providerID": "opencode",
+    "model": "minimax-m3.1-flash-free",
+    "variant": "max",
+    "attached_agents_in_user_message": []
+  },
+  "action": "single bounded standalone wait on original pane; no resend, duplicate, timeout increase, smoke or fallback",
+  "first_prompt_wait_correctness": "not accepted",
+  "documentation_review_acceptance": "pending complete matching report and real terminal/owned-work proof"
+}
