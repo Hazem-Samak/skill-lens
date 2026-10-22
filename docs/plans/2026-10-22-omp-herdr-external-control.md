@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: User, 2026-10-22: “My call is final: Sol/OMP stays native in Tern; Herdr only hosts and controls implementation/review workers.” The four enumerated changes and “Follow docs/process/omp/planning-loop.md, freeze, then stop for my separate implementation authorization” authorize this plan, independent planning review and two-commit freeze only. No route-document implementation or live smoke is authorized now.
-Reference: pending until freeze
+Reference: 988d3917890ddf56b48b950afa2c162dd84c8c4e
 Surface: omp, native in Tern; Herdr is the external worker-control layer; T3 remains unchanged.
 Base operative plan: [2026-10-20 Herdr dispatch](2026-10-20-omp-herdr-dispatch.md) @ `2656a6a1efb687b0d23c9679fdc2222cc18c07b0`.
 Risk and review: High workflow/authority amendment. Retain this same coordinator migration's explicit one-reviewer exception and selected OpenCode `opencode/minimax-m3.1-flash-free`, default settings, fresh Plan/read-only sessions; this does not waive future High-risk policy. Sol authors process documentation under the existing migration authorization. Requested/configured identity is distinct from independently unverified upstream identity.
