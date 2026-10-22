@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: User, 2026-10-22: “ok go on with the recommended procedures.” Prepare the bounded diagnostic design and required review/freeze. This draft does not authorize instrumentation code, a rebuild, installation, settings edits, a service start/restart, a worker trial or formal smoke. Those actions need concrete approval after their method and target are settled.
-Reference: pending
+Reference: 01922495b5d94ae5ecc40fe5d6faae5b5828236a
 Surface: omp; native Tern coordinator, external Herdr workers, no silent transport fallback.
 Risk and review: High: observes lifecycle authority, session ownership and completion timing. Two independent fresh planning critics; final review also requires two if instrumentation is later implemented. Distinct families need evidence or explicit acceptance of the named pair's unverified upstream identity.
 Roster: Sol requested/configured `openai-codex/gpt-6.1-sol`, thinking `high`, OMP 18.12.6, no fallback, active session `01a164fa-42dc-7045-ade8-6dc9090ac15b`. User selected Antigravity “Gemini 3.8 Flash High” and OpenCode “Deepseek V4.1 F Max.” Fresh Antigravity 1.4.5 launch argv/catalog/UI confirm `gemini-3.8-flash-high`, Plan, displayed high, no extra effort override. Fresh OpenCode 2.0.32 catalog/UI confirm `opencode/deepseek-v4.1-flash-free`, displayed `max`, switched from Build to Plan using advertised shift+tab before submission. User-started Herdr `default` is verified. Upstream identity remains independently unverified. Diagnostic-worker selection is separate; no automatic inheritance or fallback.
