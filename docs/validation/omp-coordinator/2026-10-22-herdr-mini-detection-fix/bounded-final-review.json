@@ -1,0 +1,167 @@
+{
+  "status": "accepted offline",
+  "patch_sha256": "f22d2d7edf26dd8e308394de143b015b37cf58f17148a45ca3c12889b8c6efe8",
+  "frozen_plan": "cb5a4c2355befa552ee816a7f2327efaacfbcf6d",
+  "reviewers": {
+    "gemini": {
+      "agent": {
+        "agent": "agy",
+        "agent_session": {
+          "agent": "agy",
+          "kind": "id",
+          "source": "herdr:antigravity_cli",
+          "value": "ab9e96cd-fde8-4b78-941e-47210ee080d2"
+        },
+        "agent_status": "idle",
+        "completion_seq": 87,
+        "cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+        "focused": false,
+        "foreground_cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+        "interactive_ready": true,
+        "name": "sol-bounded-final-agy",
+        "pane_id": "wG:p9",
+        "revision": 0,
+        "state_change_seq": 87,
+        "tab_id": "wG:t1",
+        "terminal_id": "term_65e7eb35238de9",
+        "workspace_id": "wG"
+      },
+      "process_info": {
+        "foreground_process_group_id": 49769,
+        "foreground_processes": [
+          {
+            "argv": [
+              "agy",
+              "--model",
+              "gemini-3.8-flash-high",
+              "--mode",
+              "plan"
+            ],
+            "argv0": "agy",
+            "cmdline": "agy --model gemini-3.8-flash-high --mode plan",
+            "cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+            "name": "agy",
+            "pid": 49769
+          }
+        ],
+        "pane_id": "wG:p9",
+        "shell_pid": 49608
+      },
+      "request_token": "sol-bounded-final-gemini-20261023",
+      "report_sha256": "5e35606a9da3a2995a64b9f358a555db59a39c98b328c0c704d735843b02730e",
+      "verdict": "pass",
+      "report": "bounded-final-gemini-report.txt",
+      "upstream_identity_verified": false,
+      "fresh_session": true,
+      "matching_report_complete": true,
+      "configured_model": "gemini-3.8-flash-high",
+      "configured_effort": "high",
+      "configured_mode": "Plan",
+      "wait_seconds": 198.37,
+      "runtime_pid_absent_after_exit": true
+    },
+    "opencode": {
+      "agent": {
+        "agent": "opencode",
+        "agent_session": {
+          "agent": "opencode",
+          "kind": "id",
+          "source": "herdr:opencode",
+          "value": "ses_e97e0f6caffeyfjgII1jFk0keJ"
+        },
+        "agent_status": "idle",
+        "completion_seq": 88,
+        "cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+        "focused": false,
+        "foreground_cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+        "interactive_ready": true,
+        "name": "sol-bounded-final-oc",
+        "pane_id": "wG:p8",
+        "revision": 1,
+        "screen_detection_skipped": true,
+        "state_change_seq": 88,
+        "tab_id": "wG:t1",
+        "terminal_id": "term_65e7eb35202ae8",
+        "terminal_title": "OpenCode",
+        "terminal_title_stripped": "OpenCode",
+        "workspace_id": "wG"
+      },
+      "process_info": {
+        "foreground_process_group_id": 49770,
+        "foreground_processes": [
+          {
+            "argv": [
+              "opencode"
+            ],
+            "argv0": "opencode",
+            "cmdline": "opencode",
+            "cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+            "name": "opencode",
+            "pid": 49770
+          }
+        ],
+        "pane_id": "wG:p8",
+        "shell_pid": 49604
+      },
+      "request_token": "sol-bounded-final-opencode-20261023",
+      "report_sha256": "7489ffaec51ad5b212d2171d4fd93d3d337e88e7cf9e3a5dac8e387100b62956",
+      "verdict": "pass",
+      "report": "bounded-final-opencode-report.txt",
+      "upstream_identity_verified": false,
+      "fresh_session": true,
+      "matching_report_complete": true,
+      "configured_model": "opencode/deepseek-v4.1-flash-free",
+      "configured_effort": "max",
+      "configured_mode": "Plan",
+      "wait_seconds": 352.29,
+      "runtime_pid_absent_after_exit": true
+    }
+  },
+  "same_patch_both_reviewers": true,
+  "checkout_source_and_package_preservation": true,
+  "all_in_scope_blockers_resolved": true,
+  "suggestion_disposition": {
+    "gemini_version_note": "Already preserved in provenance.json: observed native/UI2.1.3 overrides stale implementer2.0.32 assertion",
+    "gemini_upstream_release_coordination": "No upstream publication authorized; unreleased docs retained in patch only",
+    "opencode": "None required"
+  },
+  "current_continuation_launches": {
+    "expected": "One bounded implementer plus two fresh critics",
+    "actual_resumed_workbuddy_quota_failure": 1,
+    "actual_explicit_replacement_opencode_implementer": 1,
+    "actual_fresh_critics": 2,
+    "aggregate_earlier_phase_total": "Not reconstructed; earlier review/implementation history remains separately recorded"
+  },
+  "token_totals": "unavailable",
+  "cleanup": {
+    "closed_owned_panes": [
+      "wG:p6",
+      "wG:p7",
+      "wG:p8",
+      "wG:p9"
+    ],
+    "reviewers_and_implementers_returned_to_shell_before_close": true,
+    "known_owned_pids_absent": [
+      46499,
+      46665,
+      47836,
+      49604,
+      49608,
+      49769,
+      49770
+    ],
+    "remaining_base_pane": "wG:p1",
+    "base_shell_pid": 45632,
+    "base_shell_preserved": true,
+    "focused": true,
+    "viewport_rows": 55
+  },
+  "not_claimed": [
+    "live Mini behavior",
+    "installation/deployment",
+    "full-TUI fix/trace",
+    "formal smoke",
+    "verified upstream model identities",
+    "general Herdr wait correctness"
+  ]
+}

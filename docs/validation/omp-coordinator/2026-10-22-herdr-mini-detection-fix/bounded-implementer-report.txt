@@ -1,0 +1,93 @@
+     REQUEST_TOKEN: sol-mini-bounded-opencode-20261023
+
+     EFFECTIVE_MODEL
+
+     - Requested: opencode/deepseek-v4.1-flash-free, max effort, Build
+       mode
+     - Configured: opencode/deepseek-v4.1-flash-free, max, Build
+     - Evidence: OpenCode 2.0.32 session model/effort/mode as
+       presented to this agent
+     - Upstream identity: unverified
+
+     OUTCOME
+
+     Both authorized corrections are applied. The four weak OpenCode
+     footer negatives now use a single non-spinner symbol followed
+     directly by the undecorated footer and are expected to remain
+     Idle through the real bundled loader. The agents.mdx
+     qualification now states that ASCII/mini.mono frames do not match
+     the new footer rule on their own while other existing rules can
+     still classify a screen as working.
+
+     No matcher, manifest, loader, helper, protocol, configuration, or
+     unrelated test changes were made.
+
+     CHANGED_PATHS
+
+     - /tmp/skill-lens-herdr-mini-20261022-o1x7n059/source/src/detect/
+       manifest/tests.rs
+     - /tmp/skill-lens-herdr-mini-20261022-o1x7n059/source/docs/next/
+       website/src/content/docs/agents.mdx
+
+     Both src/detect/manifests/opencode.toml and distribution/agent-
+     detection/opencode.toml were left untouched.
+
+     TESTS_CHANGED
+
+     Only opencode_status_footer_boundaries_under_bundled_manifest in
+     tests.rs:
+
+     - Replaced the four weak fixtures:
+       - format!("▸ {busy}") → format!("▸ {undecorated}")
+       - format!("● {busy}") → format!("● {undecorated}")
+       - format!("► {busy}") → format!("► {undecorated}")
+       - format!("│🯧 {busy}") → format!("│ {undecorated}")
+     - Expected state remains AgentState::Idle through the existing
+       real bundled loader path (with_manifest_dirs + explain).
+     - Preserved the captured busy footer Working case, all three real
+       spinner-frame checks, blocked-over-busy priority, legacy
+       interrupt/progress hints, incomplete-footer cases, relabeled
+       cases, padded-footer case, and every unrelated test.
+     - Added no tests, duplicate rows, copied regex assertions, or
+       source-text/copy tests.
+
+     Documentation change only in the existing OpenCode Mini
+     paragraph: replaced the absolute “ASCII spinner … pane reads
+     idle” sentence with a qualified statement that the footer rule
+     does not match those frames on its own, other rules may still
+     classify the screen as working, and no-match still reads idle.
+     Offline-only limits, the byte-identical bottom-row ambiguity, the
+     no-completion-protocol statement, the unresolved full-TUI defect,
+     and the branding-neutral wording were retained.
+
+     CHECKS_NOT_RUN
+
+     Per the receipt, none of the following were run:
+
+     - Rust tests, just recipes, builds, CLIs, or runtime/offline
+       checks
+     - Formatters, linters, or type checks
+     - Shell commands/scripts, including checksum recomputation
+     - Git operations
+     - Network access, settings changes, installations
+     - Delegation or subagents
+
+     Manifest hash preservation is based on not editing those files;
+     no shell-based hashing was performed.
+
+     DEVIATIONS
+
+     None. The only accompanying change is the local comment above the
+     four replaced fixtures, updated to describe single-cell
+     decoration rather than the prior multi-cell forms. No report file
+     was written; this report is terminal-only.
+
+     BLOCKERS
+
+     None. Coordinator checks and the two fresh named reviews remain
+     pending by design. Upstream model identity remains unverified.
+
+     COMPLETION
+
+     Complete. Zero delegates and zero background work. Work stopped
+     after this report.

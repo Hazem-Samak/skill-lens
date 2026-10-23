@@ -1,5 +1,5 @@
 {
-  "status": "behavior verified; independent final reviews pending",
+  "status": "accepted offline: approved bounded correction, passing affected checks, two fresh independent final passes, preserved checkout/source and completed owned-worker cleanup",
   "frozen_plan_reference": "cb5a4c2355befa552ee816a7f2327efaacfbcf6d",
   "checks": {
     "red_regression": {
@@ -10,50 +10,61 @@
       "state_expected": "Working",
       "exit_code": 101
     },
-    "final_detector_tests": {
+    "detector_tests": {
       "filter": "detect::",
       "passed": 100,
       "failed": 0,
       "filtered_out": 3546,
-      "seconds": 11.22,
-      "scope": "post-final-review glyph narrowing"
+      "seconds": 10.92,
+      "scope_detail": "88 detector-module tests plus 12 server autodetection tests selected by detect::; not the full upstream suite"
     },
-    "final_clippy": {
+    "clippy": {
       "scope": "herdr binary and test targets",
       "warnings_denied": true,
       "passed": true,
-      "seconds": 10.25
+      "seconds": 10.20
     },
-    "final_cargo_fmt_check": {
+    "cargo_fmt_check": {
       "scope": "workspace all",
       "passed": true
     },
-    "combined_quality_elapsed_seconds": 34.26,
-    "cargo_policy_warning": "Build script repeats upstream external-contributor policy; not a Rust/Clippy diagnostic. No upstream PR was opened.",
     "real_cli": {
-      "passed": 13,
+      "passed": 29,
       "failed": 0,
-      "cases": "12 distinct synthetic/captured behavior fixtures plus one real older cached-remote precedence case",
-      "binary_kind": "rebuilt debug CLI",
-      "binary_sha256": "934dc20c73d12f63af009cbb9aed214573b3528996ac9a96fb4faa85b463fb5e"
+      "cases": "29 complete real-CLI results including corrected single-symbol and box-prefix negatives",
+      "binary_kind": "rebuilt debug CLI; production matcher unchanged by bounded test/docs correction",
+      "input_receipt": "final-cli-proof.json",
+      "raw_process_output_retained": true
     },
     "priority_guard_mutation": {
       "source_mutation": false,
       "mutant_fixture_override_only": true,
       "non_mutant": "blocked",
       "mutant": "working",
-      "guard_rejects_mutant": true,
-      "permanent_test_mutation_run_claimed": false
+      "guard_rejects_mutant": true
+    },
+    "patch_reconstruction": {
+      "git_apply_check": true,
+      "output_hashes_match_reviewed_files": true,
+      "receipt": "bounded-reconstruction.json"
+    },
+    "current_stale_cache": {
+      "passed": true,
+      "receipt": "current-stale-cache-proof.json",
+      "observed": "Current rebuilt CLI selected bundled 2026.10.22.1 over isolated cached remote 2026.06.10.1 and classified the captured footer as working"
+    },
+    "symbol_boundary_mutation": {
+      "passed": true,
+      "receipt": "symbol-boundary-mutation.json",
+      "executions": 16,
+      "observed": "All four current weak fixtures remain idle under a broad-symbol mutant; single-symbol regression inputs instead flip from idle to working"
     },
     "skill_lens_health": {
       "baseline_reused": true,
       "passed": 1082,
       "skipped": 1,
       "coverage_percent": 91.16,
-      "mypy_source_files": 38,
-      "ruff_lint": "passed",
-      "ruff_format_check": "passed",
-      "reason": "No Skill Lens Python, checker configuration, tests or fixtures changed; previous coordinator evidence remains valid under OMP implementation-loop \u00a71. No duplicate gate rerun."
+      "reason": "No Skill Lens Python, checker config, tests or fixtures changed."
     }
   },
   "source_changed_paths": [
@@ -64,10 +75,10 @@
   ],
   "coordinator_doc_clarification": "Unreleased docs wording changed to explicitly retain lifecycle-state wait semantics and the unresolved full-TUI defect; no production behavior change.",
   "residual_limits": [
-    "Only the observed footer layout and explicit derived boundaries were proved offline; no live Mini trial.",
-    "A byte-identical unquoted complete footer in the last nonempty row cannot be distinguished from a real live footer by this screen-shape engine.",
-    "The separate full-TUI integration/wait defect remains unresolved.",
-    "The distributed manifest is a local-only release-consistency artifact; no upstream publication or acceptance claimed."
+    "Offline proof only; no live Mini trial, installation or deployment.",
+    "A byte-identical unquoted footer-shaped last non-empty line is indistinguishable from a live footer.",
+    "ASCII (mini.mono) spinner frames do not match the new rule; other existing rules may still classify a screen as working. Upstream documentation now qualifies this correctly.",
+    "The separate full-TUI premature-completion defect is unresolved."
   ],
   "installed_Herdr_changed": false,
   "live_cache_changed": false,
@@ -75,10 +86,48 @@
   "formal_smoke": false,
   "full_tui_trace": false,
   "temporary_tools": "Only owned temporary prefix, official archive checksums verified; no persistent PATH/settings/system install.",
-  "post_final_review_corrections": [
-    "Footer rule accepts only optional exact captured \ud83e\udfe7 glyph plus whitespace, not arbitrary non-word decoration, quotes, backticks or ideographic padding.",
-    "Added undecorated positive and ideographic-space padding positive; retained quoted/text-prefix negatives.",
-    "Documented the byte-identical bottom-line ambiguity explicitly.",
-    "Re-ran all 100 detector tests, Clippy with denied warnings, cargo format check, rebuild and the 13-case actual CLI matrix; all pass."
-  ]
+  "superseded_checkpoint": {
+    "scope": "Historical pre-spinner correction, not the current matcher or acceptance",
+    "matcher": "Optional single captured glyph",
+    "cli_cases": 13,
+    "status": "Superseded by the block-spinner-range matcher and the current 29-case receipt"
+  },
+  "spinner_frame_correction": "Spinner frames are animated; rule no longer pins the single captured glyph. Negative cases (quoted/backtick/prefixed/embedded/incomplete) verified Idle via rebuilt CLI.",
+  "allowed_limitation": "Ideographic-space-padded footers are no longer positively asserted; such padding is treated like indentation/transcript text and reads Idle.",
+  "rule": "line_regex = ['''^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$''']",
+  "review_history": [
+    "R1 final (pre-spinner): Gemini pass, OpenCode pass.",
+    "R2 targeted: Gemini pass; OpenCode text truncated -> unverified.",
+    "R3 fresh OpenCode: changes_required (spinner frame; quotes/bullets/suffixes) -> corrected.",
+    "R4 fresh both: Gemini pass; OpenCode changes_required (symbol bullets, box-drawing prefix, no-space suffixes, stale evidence artifact) -> attempted correction.",
+    "R5 reused R4 sessions: Gemini pass; OpenCode changes_required (weak regression inputs and evidence overclaims). Freshness requirement not met; no accepted final pair.",
+    "Owner-authorized bounded closeout: replacement OpenCode implementer corrected tests/docs; fresh Gemini ab9e96cd-fde8-4b78-941e-47210ee080d2 and OpenCode ses_e97e0f6caffeyfjgII1jFk0keJ both passed the exact current patch."
+  ],
+  "superseded": [
+    "Earlier exact-glyph matcher and the 13-case matrix are superseded by the current block-spinner-range matcher and 29-case matrix.",
+    "The earlier streamed second-round OpenCode report was truncated; it is not counted as a pass."
+  ],
+  "remaining_blockers": [],
+  "review_reports": {
+    "opencode": "bounded-final-opencode-report.txt",
+    "gemini": "bounded-final-gemini-report.txt"
+  },
+  "process_deviations": [
+    "Coordinator directly changed product source/tests after the initial WorkBuddy implementation.",
+    "Historical R4/R5 Gemini reports isolated test execution despite the reviewer skip-all-checks guard; those passes do not erase the deviation. Fresh bounded Gemini used native file reads only.",
+    "Historical R5 resumed R4 conversations rather than starting fresh sessions; replaced by two fresh bounded-review sessions."
+  ],
+  "historical_workbuddy_provider_block": "bounded-closeout-provider-block.json",
+  "bounded_correction": {
+    "implemented": true,
+    "source_manifest_changed": false,
+    "fixed": ["Four permanent negative fixtures now use a single forbidden symbol directly before the undecorated footer", "ASCII-spinner documentation qualified", "Provenance suffix claims narrowed to observed punctuation"],
+    "checks": "bounded-checks.json",
+    "reconstruction": "bounded-reconstruction.json",
+    "patch_sha256": "f22d2d7edf26dd8e308394de143b015b37cf58f17148a45ca3c12889b8c6efe8",
+    "superseded_cli_receipts": ["cli-results.json", "current-cli-inputs.json"],
+    "superseded_reconstruction": "patch-reconstruction.json"
+  },
+  "accepted_final_review_record": "bounded-final-review.json",
+  "preservation_proof": "bounded-review-preservation.json"
 }

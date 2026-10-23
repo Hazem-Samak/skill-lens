@@ -1,0 +1,204 @@
+### EFFECTIVE_MODEL
+
+  • Requested: Gemini 3.8 Flash (High)
+  • Configured: Gemini 3.8 Flash (High)
+  • Settings: Model Selection set to
+  Gemini 3.8 Flash (High)
+  • Mode: Plan Mode (/plan), read-only
+  critic
+  • Evidence: Session logs and environment
+  verify execution under Gemini 3.8 Flash
+  (High). Read-only inspections and
+  isolated tests conducted strictly
+  outside the repository in temporary
+  directories; zero repository
+  modifications, zero git modifications,
+  zero delegates or background tasks.
+  • Upstream limits: Upstream served model
+  weights/family identity remain
+  independently unverified beyond platform
+  API disclosure.
+  ──────
+  ### VERDICT
+
+  pass
+  ──────
+  ### BLOCKERS
+
+  None
+  ──────
+  ### INDEPENDENT TARGETED RE-VERIFICATION
+  & EVIDENCE ASSESSMENT
+
+  1. Rejection of Bullets, Box-Drawing,
+  and No-Space Suffixes; Acceptance of
+  Real Block Frames:
+      • Leading Glyphs Restricted to
+      Legacy Computing Blocks: The rule
+      uses ^(?:[\x{1CD00}-
+      \x{1CEBF}\x{1FB00}-\x{1FBFF}]\s+
+      )?esc stop · .... Real OpenCode
+      block-spinner frames (🯦 U+1FBE6, 🯧
+      U+1FBE7, 🯨 U+1FBE8) fall in
+      \x{1FB00}-\x{1FBFF} and match
+      cleanly. Undecorated footers (esc
+      stop · ...) also match via the
+      optional group.
+      • Bullets & Box-Drawing Rejected:
+      Triangular bullet (▸ U+25B8), round
+      bullet (● U+25CF), arrow pointer (►
+      U+25BA), and box-drawing vertical
+      bar (│ U+2502) lie outside the
+      Legacy Computing code-point ranges.
+      Because no leading whitespace or
+      unlisted punctuation is permitted
+      before esc stop, lines prefixed with
+      these glyphs fail anchor matching
+      and evaluate to Idle.
+      • No-Space Suffixes Rejected: The
+      terminal provider token is strictly
+      constrained to identifier
+      characters: [\w.\-]+$. No-space
+      trailing suffixes such as brackets
+      ([copied]), parentheses ((copied)),
+      or punctuation/guillemets (» U+00BB)
+      cannot be absorbed by the provider
+      token and fail to match the terminal
+      anchor $, correctly evaluating to
+      Idle.
+  2. Priority Resolution
+  (permission_required 300 vs
+  status_footer_esc_stop_working 105):
+      • In approval-over-busy (△
+      Permission required\n{busy}), both
+      permission_required (priority 300,
+      whole_recent) and
+      status_footer_esc_stop_working
+      (priority 105,
+      bottom_non_empty_lines(1)) match.
+      Priority 300 wins, yielding state
+      Blocked.
+      • In priority-mutation.json,
+      mutating rule 105 to priority 350
+      under the current matcher flipped
+      the observed state to Working with
+      guard_detects_regression: true,
+      verifying that the priority boundary
+      is active, tested, and load-bearing.
+  3. Internal Evidence Consistency:
+      • Matcher Alignment: The exact
+      pattern line_regex =
+      ['''^(?:[\x{1CD00}-
+      \x{1CEBF}\x{1FB00}-\x{1FBFF}]\s+
+      )?esc stop · [^·/\n"'“”‘’]+ ·
+      [^·/\n"'“”‘’]+ · [^·/\n"'“”‘’]+ /
+      [\w.-]+$''']` is identical across
+      opencode.toml:22,
+      distribution opencode.toml,
+      priority-mutation.json:4,
+      provenance.json:70, and
+      verification.json:83.
+      • Matrix & Quality: cli-results.json
+      records all 29 cases with ok: true,
+      matched rule IDs, and origin
+      descriptions. verification.json and
+      source-quality.txt record 100 passed
+      detector tests, clean Clippy
+      (warnings denied), and clean cargo
+      fmt --check, explicitly noting that
+      the earlier 13-case matrix and
+      exact-glyph matchers are superseded.
+      • Patch & Hashes: correction.patch
+      matches SHA-256
+      2567a9fee5b36f0fa6f3cf92f40cc33c9a73
+      473dfa90d2184ab68948fd0469b0. Clean
+      application to pristine files
+      extracted from herdr-v0.9.5.tar.gz
+      reproduces the exact SHA-256 hashes
+      for all 4 files matching baseline.
+      json, patch-reconstruction.json, and
+      final-review-checkout-r5:
+          • src/detect/manifests/opencode.
+          toml:
+          95a282e0376b2cc1f21600fae79b52ec
+          04e6927aab985fd24c5e9ba2e75e838f
+          • distribution/agent-
+          detection/opencode.toml:
+          95a282e0376b2cc1f21600fae79b52ec
+          04e6927aab985fd24c5e9ba2e75e838f
+          • src/detect/manifest/tests.rs:
+          f9914be529ba9d7a4280954054f0a473
+          5e8b5b8713e1db0a5f6550505e9f6937
+          •
+          docs/next/website/src/content/do
+          cs/agents.mdx:
+          3114e638f419fc1438a2a9c2c25faa0d
+          a3bc6a156d4a91c1d91e81bbe7383e68
+
+  4. Honesty of Disclosed mini.mono
+  Limitation:
+      • agents.mdx:180 explicitly states:
+      "The rule recognizes the default
+      block-spinner frames; if the Mini
+      footer uses an ASCII spinner instead,
+      it is not treated as working and the
+      pane reads idle, which is the pre-
+      existing behavior for that
+      configuration."
+      • It also preserves honest
+      disclaimers that a byte-identical
+      bottom row cannot be distinguished
+      from a running footer, that screen-
+      shape rules do not change agent wait
+      lifecycle semantics, and that the
+      separate full-TUI premature-
+      completion issue remains unresolved.
+      No claims are overstated.
+
+  ──────
+  ### SUGGESTIONS
+
+  • Upstream PR Documentation: Retain the
+  explicit disclosure in PR documentation
+  that OpenCode ASCII-spinner
+  configurations (mini.mono) continue to
+  report idle as before. Should upstream
+  OpenCode change its default spinner away
+  from Legacy Computing blocks, or should
+  Herdr adopt a semantic IPC/OSC escape
+  sequence, detection can transition from
+  line-oriented regex scraping to
+  protocol-level status.
+  ──────
+  ### FILES_AT_RISK
+
+  None
+
+  • Zero files created, modified, moved,
+  or deleted in the repository checkout.
+  • All upstream changes remain strictly
+  isolated to the four authorized paths in
+  the /tmp/skill-lens-herdr-mini-20261022-
+  o1x7n059 scratch tree.
+  ──────
+  ### CONCEDED
+
+  • A literal, unadorned status footer
+  printed as the terminal's bottom-most
+  non-empty line remains indistinguishable
+  from an active footer under passive
+  screen-shape regex scraping.
+  • ASCII/mono spinner frames are
+  intentionally excluded, falling back to
+  idle.
+  • Verification is strictly offline; no
+  live OpenCode Mini session, installed
+  Herdr binary modification, or service
+  restart was performed.
+  • The separate full-TUI premature-
+  completion defect remains unresolved by
+  design.
+  ──────
+  ### COMPLETION
+
+  complete/no delegates/background work`

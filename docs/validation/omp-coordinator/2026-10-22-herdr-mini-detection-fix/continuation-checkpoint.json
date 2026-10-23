@@ -1,0 +1,70 @@
+{
+  "status": "owner escalation pending; current correction not accepted",
+  "head": "c7da85a414c4e95521004c88026bae781adc8e49",
+  "patch_sha256": "2567a9fee5b36f0fa6f3cf92f40cc33c9a73473dfa90d2184ab68948fd0469b0",
+  "preserved_user_files": {
+    ".path": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/plans/2026-10-19-herdr-omp-coordinator.md": "7eb7720a8b2d4531b04b284bf7ac677787561e2d36dd6c7db10055fecf178f11",
+    "docs/validation/omp-coordinator/2026-10-20/herdr-dispatch.md": "09899b046779e614fa8cd071d5b2bfa2f58fc158dc4c958eca8f27a900018aee"
+  },
+  "changed_original_checkout_paths_at_reconciliation": [
+    "docs/plans/2026-10-22-herdr-mini-detection-fix.md"
+  ],
+  "new_paths_outside_allowed_evidence": [],
+  "changed_baseline_source_paths": [
+    "distribution/agent-detection/opencode.toml",
+    "docs/next/website/src/content/docs/agents.mdx",
+    "src/detect/manifest/tests.rs",
+    "src/detect/manifests/opencode.toml"
+  ],
+  "source_sha256": {
+    "distribution/agent-detection/opencode.toml": "95a282e0376b2cc1f21600fae79b52ec04e6927aab985fd24c5e9ba2e75e838f",
+    "docs/next/website/src/content/docs/agents.mdx": "3114e638f419fc1438a2a9c2c25faa0da3bc6a156d4a91c1d91e81bbe7383e68",
+    "src/detect/manifest/tests.rs": "f9914be529ba9d7a4280954054f0a4735e8b5b8713e1db0a5f6550505e9f6937",
+    "src/detect/manifests/opencode.toml": "95a282e0376b2cc1f21600fae79b52ec04e6927aab985fd24c5e9ba2e75e838f"
+  },
+  "installed_binary_sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2",
+  "reviews": {
+    "opencode": {
+      "session": "ses_e9a57cd05ffek7x4Z8A2cY2uXW",
+      "verdict": "changes_required",
+      "fresh_for_r5": false,
+      "report": "review-r5-opencode.txt"
+    },
+    "gemini": {
+      "session": "5cdeafe8-40eb-4964-9d15-e58bfc2b49b6",
+      "verdict": "pass",
+      "fresh_for_r5": false,
+      "report": "review-r5-gemini.txt",
+      "guard_deviation": "reports isolated test execution"
+    }
+  },
+  "cleanup": {
+    "closed_owned_panes": [
+      "wG:p4",
+      "wG:p5"
+    ],
+    "returned_to_shell_before_close": true,
+    "base_pane": "wG:p1",
+    "base_shell_pid": 45632,
+    "base_shell_alive": true,
+    "owned_shell_pids_absent": [
+      49953,
+      59396
+    ],
+    "gemini_pid_absent": 59452,
+    "remaining_panes": [
+      "wG:p1"
+    ],
+    "no_server_stop": true
+  },
+  "temporary_environment": {
+    "path": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059",
+    "retained_reason": "needed for owner-approved correction or later explicit abandonment; current patch/evidence preserved"
+  },
+  "no_new_source_edit_this_reconciliation": true,
+  "no_commit_or_push_this_reconciliation": true,
+  "deployment": false,
+  "live_trial": false,
+  "full_tui_trace": false
+}

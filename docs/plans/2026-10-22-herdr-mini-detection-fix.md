@@ -145,3 +145,141 @@ Authorization: the owner selected OMP WorkBuddy DeepSeek V4.1 Flash Free, then e
 - Targeted second round on the corrected patch: Antigravity **pass, no blockers** (session `5fa949b9-e438-43d7-8150-85a912ce9d9d`). OpenCode's final text was truncated in both terminal scrollback and its native export, so its second-round result is recorded as **unverified**, not a pass. Attempting recovery by searching the raw session was a privacy mistake: it exposed transcript/brief excerpts in the Sol conversation. The private raw export copy was deleted, no raw transcript or session file was written into the repository, and no credentials or other user data entered committed artifacts.
 - Durable deliverable: [correction.patch](correction.patch) (SHA-256 `216b1167eb22135f66b3b2e478bf5cc79d9673eeac53f680e02e04a9b501e3ef`) applies cleanly to the preserved pristine archive and reproduces the exact exercised corrected hashes for all four source-copy files: OpenCode bundled manifest `0ca38512…`, distribution manifest `0ca38512…` (identical local-only artifact), tests `1de610d8…`, unreleased docs `1788d7d9…`. Evidence, provenance, CLI matrix, failing-first result, mutation check, reconstruction proof, and the honest targeted-review record are preserved beside it.
 - Not done: installation/deployment, live Mini trial, full-TUI instrumentation/trace, formal smoke or upstream publication. The known screen-shape ambiguity and the separate full-TUI completion defect remain unresolved. The correction is proved offline only.
+
+## Continuation checkpoint — owner escalation required
+
+This receipt supersedes the earlier acceptance/readiness wording, not the frozen
+operative contract. The pushed commit `c7da85a414c4e95521004c88026bae781adc8e49`
+contains an older revision. The latest correction and reconciled evidence remain
+uncommitted and **are not accepted**.
+
+- Current [patch](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/correction.patch)
+  SHA-256: `2567a9fee5b36f0fa6f3cf92f40cc33c9a73473dfa90d2184ab68948fd0469b0`.
+  It changes only the four authorized maintained source-copy paths. Unlike the
+  earlier single-glyph matcher, it supports a range of animated block-spinner
+  cells. WorkBuddy authored the initial correction; later coordinator edits to
+  source/tests violated the assigned implementer-only rule and are disclosed,
+  not attributed entirely to WorkBuddy.
+- Existing current-source evidence: `detect::` selected **100 passing tests**
+  (88 detector-module plus 12 server-autodetection tests), Clippy with warnings
+  denied passed, format check passed, and **29/29** recorded real-CLI cases
+  matched. Those checks were not repeated merely to confirm them. Exact saved
+  matrix inputs and fixture checksums are now retained in
+  [current-cli-inputs.json](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/current-cli-inputs.json);
+  the original 29 raw process outputs were not retained.
+- One new actual offline CLI check with the current binary and synthetic HOME
+  selected **bundled 2026.10.22.1** over **cached remote 2026.06.10.1** and reported
+  working for the captured footer. Full output and binary/input/cache checksums
+  are in [current-stale-cache-proof.json](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/current-stale-cache-proof.json).
+- R5 complete reports were recovered from the terminal without exporting raw
+  agent transcripts:
+  [OpenCode](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/review-r5-opencode.txt)
+  **changes_required**;
+  [Gemini](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/review-r5-gemini.txt)
+  **pass**. These reused their R4 conversations, so neither counts as a fresh R5
+  review. Gemini also reports isolated test execution, contrary to the
+  reviewer skip-all-checks guard. Its pass does not erase that deviation.
+- The remaining concrete test defect: symbol/box negatives prefix an already
+  spinner-prefixed footer, so they do not catch an incorrectly accepted single
+  leading symbol before `esc stop`. Evidence wording also overstated suffix
+  rejection. Provenance now names the actual tested punctuation and allows
+  legitimate periods/hyphens in identifiers; permanent tests and upstream
+  documentation still need the assigned implementer's correction and review.
+- More than two non-convergent rounds have occurred. Stop affected implementation
+  and new review dispatch pending the owner's escalation decision; do not launch
+  another broad wave automatically or silently waive freshness.
+- Both owned reviewers exited to their shells and only `wG:p4` and `wG:p5` were
+  closed. Base `wG:p1` remains in the repository, its original shell PID `45632`
+  preserved; it is again the sole pane, focused, with 55 viewport rows. No server
+  or session restart/stop. All three original user-file checksums match their
+  saved baseline. The temporary source/tools are retained for the pending
+  decision rather than destroyed before the correction can be completed.
+- No new product-code edit, commit/push, deployment, live Mini trial, full-TUI
+  capture or formal smoke occurred during this reconciliation. The separate
+  full-TUI defect remains unresolved.
+
+## Bounded closeout authorized; provider prerequisite unavailable
+
+The owner selected **“Authorize bounded closeout”**: WorkBuddy high corrects only
+the weak tests and documentation, Sol verifies, then fresh Gemini High and
+OpenCode DeepSeek Max sessions review. Commit/push remains conditional on
+acceptance. This is an explicit extra-round exception, not deployment, live
+trial, full-TUI work, or permission to bypass the selected implementer.
+
+Resumed the assigned native OMP WorkBuddy session in owned pane `wG:p6`, with
+the exact selected model/high and only file read/search/edit tools. The request
+failed before any edit: **HTTP 429, provider code 6004, usage frequency limit**.
+The provider reported reset **2026-10-24 04:16:34 UTC+8**
+(`2026-10-23T20:16:34Z`). OMP rejected the requested 67,883,250 ms delay because
+it exceeds its 300,000 ms retry ceiling. No retry, fallback, settings change,
+source edit or new reviewer launch followed.
+
+Sol completed reachable offline verification without source edits:
+[symbol-boundary-mutation.json](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/symbol-boundary-mutation.json)
+retains **16 actual CLI executions**. For all four symbols, current weak fixtures
+stay idle under an isolated broad-symbol matcher mutation, while the correct
+single-symbol regression inputs flip from idle to working. This demonstrates
+the remaining test gap rather than merely asserting it.
+
+All four maintained source-copy hashes remain unchanged. The exact blocker is
+saved in
+[bounded-closeout-provider-block.json](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/bounded-closeout-provider-block.json).
+Next prerequisite: the selected provider's quota reset or explicit owner approval
+of a replacement implementer. Do not silently substitute the coordinator or a
+different model.
+
+## Accepted bounded closeout
+
+The owner explicitly selected **“Use OpenCode DeepSeek Max”** after WorkBuddy's
+quota rejection. This authorized a replacement implementer for the bounded
+two-file correction only; it did not substitute a model silently or widen the
+production matcher, deployment, trial or full-TUI scope.
+
+- Replacement session `ses_e97e73137ffeJLXJd7dinDIRtc`,
+  `opencode/deepseek-v4.1-flash-free`, **max / Build**, changed only
+  `src/detect/manifest/tests.rs` and the existing unreleased `agents.mdx`
+  paragraph. Four negatives now use one forbidden symbol immediately before
+  the undecorated footer. ASCII-spinner wording now allows other existing rules
+  to classify a screen as working. Both manifests remain unchanged.
+- Native OpenCode version/UI are **2.1.3**. The implementer report's **2.0.32**
+  assertion is stale and rejected; exact configured model/effort/mode were
+  observed independently. Upstream served identities remain unverified.
+- Current [patch](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/correction.patch)
+  SHA-256: `f22d2d7edf26dd8e308394de143b015b37cf58f17148a45ca3c12889b8c6efe8`.
+  Pristine-archive reconstruction reproduces all four current source hashes;
+  only the four frozen allowed maintained paths differ from the archive.
+- Final coordinator checks: **100 passed, 0 failed**, 3,546 filtered,
+  **10.92 s** test runtime (88 detector-module plus 12 server-autodetection
+  tests); Clippy with warnings denied passed (**10.20 s** wall time); format
+  check passed; **29/29 actual CLI cases passed** with full inputs/outputs in
+  [final-cli-proof.json](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/final-cli-proof.json).
+  The current binary equals the one used for the real stale-cache proof;
+  unchanged manifests preserve that evidence. Permission and symbol-boundary
+  mutation proofs are retained. Existing Skill Lens health gates remain valid
+  on unchanged product/checker/test inputs; no redundant rerun.
+- Both **fresh** independent final critics passed with no blockers:
+  Gemini High / Plan session `ab9e96cd-fde8-4b78-941e-47210ee080d2`
+  (**198.37 s** bounded wait), and OpenCode DeepSeek Max / Plan session
+  `ses_e97e0f6caffeyfjgII1jFk0keJ` (**352.29 s**). Neither is the implementer
+  or an earlier review conversation. Complete matching reports, effective
+  settings, suggestions and disposition are preserved in
+  [bounded-final-review.json](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/bounded-final-review.json).
+  No new shell/check/delegation guard deviation was observed in this fresh pair.
+- Pre/post full checkout status/HEAD/file fingerprints, all **2,956**
+  maintained source hashes, and the complete review-package hashes match.
+  No source additions outside the baseline/known ignored dependency cache.
+  The three original user files remain unchanged and excluded from delivery.
+- This continuation launched one resumed WorkBuddy attempt (quota failure,
+  zero edits), one explicitly approved replacement implementer, and two fresh
+  final critics. Earlier failed/reused rounds remain historical evidence, not
+  relabelled compliant. Aggregate earlier launch/token totals are not inferred;
+  token totals are unavailable.
+- All continuation workers returned to their shells before owned panes
+  `wG:p6`–`wG:p9` were closed. Known owned runtime/shell PIDs are absent.
+  Base `wG:p1`, shell PID `45632`, remains the sole focused pane with
+  55 viewport rows. No server/session stop or restart.
+- **Accepted offline only.** No installed binary/cache/settings change,
+  live Mini trial, full-TUI capture/fix, formal smoke or upstream publication.
+  Temporary source/tools remain owned and isolated until verified durable
+  commit/push, then can be removed without losing the patch or evidence.
+

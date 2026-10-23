@@ -1,0 +1,31 @@
+--- r5/docs/next/website/src/content/docs/agents.mdx
++++ bounded/docs/next/website/src/content/docs/agents.mdx
+@@ -77,7 +77,7 @@
+ 
+ Unusual new agent prompts may initially show as `idle` instead of `blocked` until Herdr learns that screen shape. Detection itself does not send input, but automation that trusts a mistaken idle state can type into an approval dialog. Inspect unexpected prompts before sending more input; idle status is not authorization to approve an action.
+ 
+-For OpenCode Mini, an active stop control in its status footer (`esc stop`, followed by the mode, model, and account/provider fields) counts as `working` only when that footer is the bottom non-empty row of the live buffer. The same text appearing earlier as quoted, prefixed, or otherwise embedded transcript content is not working evidence, and approval UI still wins over a visible busy footer. A bare line that is byte-identical to a real footer and sits at the bottom of the buffer cannot be told apart from the live footer. The rule recognizes the default block-spinner frames; if the Mini footer uses an ASCII spinner instead, it is not treated as working and the pane reads `idle`, which is the pre-existing behavior for that configuration. Because this is a screen-shape rule, not a request-completion protocol, it does not change `agent wait`'s lifecycle-state checks or fix the separate full-TUI premature-completion problem.
++For OpenCode Mini, an active stop control in its status footer (`esc stop`, followed by the mode, model, and account/provider fields) counts as `working` only when that footer is the bottom non-empty row of the live buffer. The same text appearing earlier as quoted, prefixed, or otherwise embedded transcript content is not working evidence, and approval UI still wins over a visible busy footer. A bare line that is byte-identical to a real footer and sits at the bottom of the buffer cannot be told apart from the live footer. The rule recognizes the default block-spinner frames. An ASCII or mini.mono spinner frame does not match this footer rule; that footer alone is not treated as working, although other existing rules can still classify a screen as `working`. If no rule matches, the pane reads `idle`, which is the pre-existing behavior for that configuration. Because this is a screen-shape rule, not a request-completion protocol, it does not change `agent wait`'s lifecycle-state checks or fix the separate full-TUI premature-completion problem.
+ 
+ Antigravity and Grok count as idle once they return to their prompt, even if background tasks, monitors, or subagents are still running. `agent wait` and `agent prompt --wait` observe the agent's state, not completion of those jobs.
+ 
+--- r5/src/detect/manifest/tests.rs
++++ bounded/src/detect/manifest/tests.rs
+@@ -713,11 +713,12 @@
+             format!("> {busy}"),
+             format!("{busy}\""),
+             format!("{busy} (copied)"),
+-            // Symbol bullets and box-drawing must not impersonate a spinner.
+-            format!("▸ {busy}"),
+-            format!("● {busy}"),
+-            format!("► {busy}"),
+-            format!("│🯧 {busy}"),
++            // A single symbol or box-drawing cell before an otherwise valid
++            // footer must not impersonate a spinner.
++            format!("▸ {undecorated}"),
++            format!("● {undecorated}"),
++            format!("► {undecorated}"),
++            format!("│ {undecorated}"),
+             // No-space suffixes must not be absorbed by the provider token.
+             format!("{busy}[copied]"),
+             format!("{busy}(copied)"),

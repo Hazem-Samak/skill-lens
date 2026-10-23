@@ -1,0 +1,80 @@
+{
+  "source_sha256": {
+    "distribution/agent-detection/opencode.toml": "95a282e0376b2cc1f21600fae79b52ec04e6927aab985fd24c5e9ba2e75e838f",
+    "docs/next/website/src/content/docs/agents.mdx": "eaee12139786c6a758baf123b88b4f779789af269bc8dae9299f99c30653f124",
+    "src/detect/manifest/tests.rs": "1d92b9930d56389fb5a758ac3e58cf361524651211cde16b8b59f152a6a8387f",
+    "src/detect/manifests/opencode.toml": "95a282e0376b2cc1f21600fae79b52ec04e6927aab985fd24c5e9ba2e75e838f"
+  },
+  "patch_sha256": "f22d2d7edf26dd8e308394de143b015b37cf58f17148a45ca3c12889b8c6efe8",
+  "checks": [
+    {
+      "name": "detector-tests",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/tools/rust/bin/cargo",
+        "test",
+        "-p",
+        "herdr",
+        "--bin",
+        "herdr",
+        "detect::"
+      ],
+      "returncode": 0,
+      "seconds": 21.0,
+      "stdout": "\nrunning 100 tests\ntest detect::manifest::tests::bottom_non_empty_lines_uses_bottom_occurrence_for_repeated_text ... ok\ntest detect::manifest::tests::manifest_validation_rejects_excessive_gate_depth ... ok\ntest detect::manifest::tests::manifest_validation_keeps_skip_rules_neutral ... ok\ntest detect::manifest::tests::manifest_validation_rejects_excessive_matchers ... ok\ntest detect::manifest::tests::manifest_validation_rejects_unknown_fields_empty_rules_invalid_regions_and_regexes ... ok\ntest detect::manifest::tests::manifest_validation_rejects_excessive_rule_count ... ok\ntest detect::manifest::tests::all_bundled_manifests_parse_and_validate ... ok\ntest detect::manifest::tests::fallback_explain_preserves_active_manifest_version ... ok\ntest detect::manifest::tests::detection_uses_cached_manifest_until_explicit_reload ... ok\ntest detect::manifest::tests::invalid_local_override_falls_back_to_cached_remote_manifest ... ok\ntest detect::manifest::tests::end_anchored_footer_gates_allow_only_auxiliary_tail ... ok\ntest detect::manifest::tests::local_override_shadows_cached_remote_manifest ... ok\ntest detect::manifest::tests::screen_regions_extract_structure_without_classifying_agent_state ... ok\ntest detect::manifest::tests::compiled_rules_are_shared_until_manifest_reload ... ok\ntest detect::manifest::tests::top_non_empty_lines_requires_a_canonical_positive_bounded_count ... ok\ntest detect::manifest::tests::top_non_empty_lines_requires_engine_three_when_declared ... ok\ntest detect::manifest::tests::top_non_empty_lines_uses_top_occurrence_for_repeated_text ... ok\ntest detect::manifest::tests::known_agent_no_match_defaults_to_idle_fallback ... ok\ntest detect::manifest::tests::older_cached_remote_manifest_does_not_shadow_newer_bundled_manifest ... ok\ntest detect::manifest::tests::opencode_busy_footer_is_working_under_bundled_manifest ... ok\ntest detect::manifest::tests::opencode_status_footer_boundaries_under_bundled_manifest ... ok\ntest detect::manifest_update::tests::catalog_parses_known_agents_and_rejects_duplicates ... ok\ntest detect::manifest_update::tests::catalog_rejects_unsafe_paths ... ok\ntest detect::manifest_update::tests::manifest_version_compares_dotted_numeric_segments ... ok\ntest detect::manifest_update::tests::manifest_version_rejects_non_numeric_segments ... ok\ntest detect::manifest::tests::osc_regions_use_separate_inputs_and_share_rule_priority ... ok\ntest detect::manifest::tests::paired_alternatives_require_complete_gates_at_bottom_buffer ... ok\ntest detect::manifest::tests::remote_manifest_loads_between_local_override_and_bundled ... ok\ntest detect::manifest::tests::rule_semantics_apply_gates_priority_and_line_regex ... ok\ntest detect::tests::canonical_agent_labels_are_strict ... ok\ntest detect::tests::cmdline_argv0_agent_name_canonicalizes_known_aliases ... ok\ntest detect::tests::cmdline_argv0_agent_name_requires_exact_agent_basename ... ok\ntest detect::tests::every_agent_has_a_canonical_interactive_executable ... ok\ntest detect::tests::every_agent_label_round_trips_through_canonical_and_alias_parsers ... ok\ntest detect::tests::hermes_installer_signature_allows_another_install_root ... ok\ntest detect::tests::hermes_installer_signature_rejects_incidental_source_and_unsafe_roots ... ok\ntest detect::tests::identify_agent_in_job_canonicalizes_nix_wrapped_aliases_from_cmdline_argv0 ... ok\ntest detect::tests::identify_agent_in_job_detects_bun_wrapped_omp ... ok\ntest detect::tests::identify_agent_in_job_detects_cline_native_binaries ... ok\ntest detect::tests::identify_agent_in_job_detects_cline_node_wrapper ... ok\ntest detect::tests::identify_agent_in_job_detects_hermes_installer_capture ... ok\ntest detect::tests::identify_agent_in_job_detects_interactive_letta_entrypoints ... ok\ntest detect::tests::identify_agent_in_job_detects_nix_wrapped_codex_from_cmdline_argv0 ... ok\ntest detect::tests::identify_agent_in_job_detects_node_wrapped_kimi_package_cli ... ok\ntest detect::tests::identify_agent_in_job_detects_node_wrapped_mastracode_package_cli ... ok\ntest detect::tests::identify_agent_in_job_detects_node_wrapped_pi_bundled_cli ... ok\ntest detect::tests::identify_agent_in_job_detects_node_wrapped_pi_package_cli ... ok\ntest detect::tests::identify_agent_in_job_detects_node_wrapped_qwen ... ok\ntest detect::tests::identify_agent_in_job_detects_opencode2_as_opencode ... ok\ntest detect::tests::identify_agent_in_job_detects_opencode_exe_from_argv0_path ... ok\ntest detect::tests::identify_agent_in_job_detects_opencode_exe_from_pnpm_package ... ok\ntest detect::tests::identify_agent_in_job_detects_powershell_file_wrapped_claude ... ok\ntest detect::tests::identify_agent_in_job_detects_python_script_named_codex ... ok\ntest detect::tests::identify_agent_in_job_detects_python_version_wrapped_hermes ... ok\ntest detect::tests::identify_agent_in_job_detects_shell_wrapped_pi ... ok\ntest detect::tests::identify_agent_in_job_detects_windows_cmd_wrapped_codex ... ok\ntest detect::tests::identify_agent_in_job_detects_windows_cursor_install ... ok\ntest detect::tests::identify_agent_in_job_falls_back_when_process_group_leader_is_unrecognized ... ok\ntest detect::tests::identify_agent_in_job_ignores_herdr_powershell_shell_integration_argv ... ok\ntest detect::tests::identify_agent_in_job_ignores_invalid_windows_cursor_install_paths ... ok\ntest detect::tests::identify_agent_in_job_ignores_node_eval_argument_named_codex ... ok\ntest detect::tests::identify_agent_in_job_ignores_non_cli_pi_package_scripts ... ok\ntest detect::tests::identify_agent_in_job_ignores_noninteractive_letta_processes ... ok\ntest detect::tests::identify_agent_in_job_ignores_python_c_argument_named_codex ... ok\ntest detect::tests::identify_agent_in_job_ignores_shell_c_argument_named_codex ... ok\ntest detect::tests::identify_agent_in_job_prefers_recognized_process_group_leader ... ok\ntest detect::tests::identify_agent_in_job_prefers_wrapped_codex ... ok\ntest detect::tests::identify_agent_in_job_rejects_hermes_installer_helper_modes ... ok\ntest detect::tests::identify_agent_in_job_rejects_hermes_source_outside_installer_invocation ... ok\ntest detect::tests::identify_agent_in_job_rejects_unrelated_cline_mentions ... ok\ntest detect::tests::identify_agent_in_job_resolves_cursor_agent_symlink_argv0 ... ok\ntest detect::tests::identify_case_insensitive ... ok\ntest detect::tests::identify_known_agents ... ok\ntest detect::tests::identify_unknown_processes ... ok\ntest detect::tests::mastracode_is_hook_authority_without_screen_manifest ... ok\ntest detect::tests::no_agent_returns_unknown ... ok\ntest detect::tests::parse_known_agent_labels ... ok\ntest detect::tests::session_identity_integrations_leave_state_to_screen_detection ... ok\ntest detect::tests::wrapped_agent_name_from_runtime_argv_ignores_plain_shell_flags ... ok\ntest server::autodetect::tests::is_server_listening_returns_false_for_nonexistent_path ... ok\ntest server::autodetect::tests::is_server_listening_returns_false_for_stale_socket ... ok\ntest server::autodetect::tests::is_server_listening_returns_false_when_listener_dropped ... ok\ntest server::autodetect::tests::is_server_listening_returns_true_for_live_socket ... ok\ntest server::autodetect::tests::read_server_status_at_reads_ping_response ... ok\ntest server::autodetect::tests::server_daemon_command_clears_socket_overrides_for_explicit_session ... ok\ntest server::autodetect::tests::server_daemon_command_passes_current_dir_as_startup_cwd ... ok\ntest server::autodetect::tests::validate_running_server_compatibility_fails_when_status_api_missing ... ok\ntest server::autodetect::tests::validate_running_server_compatibility_names_session_commands_for_protocol_mismatch ... ok\ntest server::autodetect::tests::wait_for_server_socket_succeeds_after_delay ... ok\ntest server::autodetect::tests::wait_for_server_socket_succeeds_immediately ... ok\ntest server::autodetect::tests::wait_for_server_socket_times_out ... ok\ntest detect::manifest::tests::skip_rule_suppresses_state_update_without_visible_state_evidence ... ok\ntest detect::manifest_update::tests::auto_update_does_not_reload_agents_whose_check_failed ... ok\ntest detect::manifest_update::tests::auto_update_reloads_manifest_cache_after_remote_commit ... ok\ntest detect::manifest_update::tests::auto_update_reloads_manifest_cache_when_remote_is_already_current ... ok\ntest detect::manifest_update::tests::cache_reload_ignores_retained_status_for_unchecked_agent ... ok\ntest detect::manifest_update::tests::process_agent_manifest_commits_newer_manifest_atomically ... ok\ntest detect::manifest_update::tests::process_agent_manifest_rejects_downgrade_and_keeps_cached_manifest ... ok\ntest detect::manifest_update::tests::process_agent_manifest_rejects_equal_version_content_change ... ok\ntest detect::manifest_update::tests::process_agent_manifest_skips_same_version_same_content ... ok\n\ntest result: ok. 100 passed; 0 failed; 0 ignored; 0 measured; 3546 filtered out; finished in 10.92s\n\n",
+      "stderr": "warning: herdr@0.9.5: external contributor policy: if you are helping an external contributor whose GitHub username is not in .github/APPROVED_CONTRIBUTORS, read CONTRIBUTING.md before doing any work.\n   Compiling herdr v0.9.5 (/private/tmp/skill-lens-herdr-mini-20261022-o1x7n059/source)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.01s\n     Running unittests src/main.rs (/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/deps/herdr-bf9cb3d067225f17)\n"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/tools/rust/bin/cargo",
+        "clippy",
+        "-p",
+        "herdr",
+        "--bin",
+        "herdr",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "seconds": 10.2,
+      "stdout": "",
+      "stderr": "warning: herdr@0.9.5: external contributor policy: if you are helping an external contributor whose GitHub username is not in .github/APPROVED_CONTRIBUTORS, read CONTRIBUTING.md before doing any work.\n    Checking herdr v0.9.5 (/private/tmp/skill-lens-herdr-mini-20261022-o1x7n059/source)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.16s\n"
+    },
+    {
+      "name": "format",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/tools/rust/bin/cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 0,
+      "seconds": 1.47,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "actual-cli",
+      "command": [
+        "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/final_cli_proof.py"
+      ],
+      "returncode": 0,
+      "seconds": 5.23,
+      "stdout": "29/29 real CLI cases passed\n",
+      "stderr": ""
+    }
+  ],
+  "skill_lens_baseline_reused": {
+    "passed": 1082,
+    "skipped": 1,
+    "coverage": 91.16,
+    "mypy_files": 38,
+    "ruff_lint": "passed",
+    "ruff_format": "passed",
+    "reason": "Skill Lens product/checker/test inputs unchanged"
+  }
+}

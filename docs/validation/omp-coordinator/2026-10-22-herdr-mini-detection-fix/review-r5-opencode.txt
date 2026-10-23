@@ -1,0 +1,81 @@
+     EFFECTIVE_MODEL: opencode/deepseek-v4.1-flash-free (this review);
+     implementer lane was workbuddy/deepseek-v4.1-flash, thinking high, no
+     fallback; upstream identity/pricing unverified; offline synthetic evidence
+     only.
+
+     VERDICT: changes_required
+
+     BLOCKERS:
+
+     - src/detect/manifest/tests.rs:696,717-720 — the symbol/box negatives do not
+       test the actual regression shapes. busy already starts with 🯧, so lines
+       717–719 produce ▸ 🯧 esc stop..., ● 🯧..., ► 🯧..., and line 720 produces │🯧
+       🯧 esc stop.... The old general \p{So} leading cell would still return Idle
+       for these strings because the symbol is followed by a valid spinner, not
+       esc; the assertions would still pass. The false-positive shapes (▸ esc
+       stop..., │ esc stop..., or a one-spinner border shape) are absent.
+       implementer-report.txt:9 itself identifies the two-So-cell problem but the
+       new negatives repeat it. cli-results.json:83-112 records only case names/
+       origins, not raw inputs, so it cannot close the gap. The shipped regex
+       correctly excludes U+25B8/U+25CF/U+25BA/U+2502; the permanent test
+       evidence is the problem.
+     - final-review-bundle-r5/provenance.json:72 contradicts src/detect/
+       manifests/opencode.toml:37. The provenance says the account field excludes
+       dot/slash and that no-space suffixes cannot be absorbed, but the third
+       field [^·/\n"'“”‘’]+ excludes slash, quotes and backticks only; dot,
+       brackets, parentheses and » remain. Consequently ... · Default.foo /
+       OpenCode and ... · Defaultcopied / OpenCode still match. The tests at
+       tests.rs:721-724 only append suffixes after the provider. The provider
+       token \w.\-+ also accepts OpenCode.copied, OpenCode-copied or
+       OpenCodecopied`, so the no-space-suffix claim is broader than the shipped
+       matcher. Either tighten the fields or correct the evidence; as written,
+       the hardening claims are not internally consistent.
+
+     SUGGESTIONS:
+
+     - Replace the weak symbol/box fixtures with the actual shapes and add a
+       mutation check under the old \p{So} rule so the test demonstrably fails on
+       the regression.
+     - If no-space suffixes are meant to cover every metadata field, add field-
+       level negatives using Default[copied] / OpenCode and «Default» / OpenCode;
+       otherwise narrow the provenance/docs wording to provider-trailing suffixes
+       and name the tested punctuation.
+     - docs/next/website/src/content/docs/agents.mdx:80 and verification.json:66
+       say “the pane reads idle” absolutely. Qualify this to “this footer alone
+       does not match; other working rules may still apply” if that is the
+       intended limitation.
+     - The old exact-glyph and 13-case statements at verification.json:76,79 are
+       marked superseded at lines 90–91, but they remain in present tense; moving
+       them under an explicit history object would prevent misreading.
+     - Record the raw input strings in cli-results.json; the current 29-case
+       receipt is not independently reusable.
+
+     FILES_AT_RISK:
+
+     - src/detect/manifests/opencode.toml (line 37)
+     - distribution/agent-detection/opencode.toml (mirror of the same rule)
+     - src/detect/manifest/tests.rs (lines 696, 717–724)
+     - docs/next/website/src/content/docs/agents.mdx (line 80)
+     - final-review-bundle-r5/provenance.json (line 72)
+     - final-review-bundle-r5/cli-results.json and verification.json (evidence
+       inputs/history)
+
+     CONCEDED:
+
+     - Real block frames are accepted: the range includes U+1FB00–U+1FBFF, and
+       tests at tests.rs:701,761-770 cover 🯦/🯧/🯨.
+     - Trailing provider suffixes are rejected: tests.rs:721-724 and the CLI
+       suffix cases cover [copied], (copied), », quotes and whitespace.
+     - Blocked priority still wins: manifest priorities are 300 vs 105, the
+       boundary test at tests.rs:743-747 expects Blocked, and priority-mutation.
+       json:5-11 records the 105→350 flip to working with matched-rule changes.
+     - The mono limitation is explicitly disclosed at agents.mdx:80; I found no
+       claim that ASCII mini.mono spinners are supported. The absolute “pane
+       reads idle” wording is the only caveat.
+     - Manifest/mirror, tests, docs and patch hashes match the stated values;
+       verification.json:90-91 marks the old exact-glyph/13-case claims
+       superseded. The 100 detector tests, Clippy, fmt and 29 CLI runs were not
+       re-executed under the read-only rule; outcomes are accepted from the
+       receipts.
+
+     COMPLETION: complete; no delegates; no background work.

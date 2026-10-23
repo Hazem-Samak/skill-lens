@@ -1,0 +1,32 @@
+{
+  "cargo": {
+    "sha256": "2f43d75e9ad3febae5022c6f295cf93b74131cfdb1293a83e291f878ea9585a0",
+    "bytes": 8861400,
+    "official_match": true
+  },
+  "clippy-preview": {
+    "sha256": "538299b07171a8110a1beedcaf26aac6292e4e032a399639e1959f0c405a67fe",
+    "bytes": 3032284,
+    "official_match": true
+  },
+  "rust-std": {
+    "sha256": "0d433a74c303febc915f8fa1091ef166445706461d0c96984ecb7303aa8208f5",
+    "bytes": 27462304,
+    "official_match": true
+  },
+  "rustc": {
+    "sha256": "9b548f0665f85f3c7fd45165611e3dea79f048c69d163be193986310d204fc2c",
+    "bytes": 67753464,
+    "official_match": true
+  },
+  "rustfmt-preview": {
+    "sha256": "ed0cc9d72c04e7c3c4b7a82ab7f1ce5e33132017d062d8f9be6adf6472e8f165",
+    "bytes": 1505952,
+    "official_match": true
+  },
+  "zig": {
+    "sha256": "b23d70deaa879b5c2d486ed3316f7eaa53e84acf6fc9cc747de152450d401489",
+    "bytes": 52238004,
+    "official_match": true
+  }
+}

@@ -1,4 +1,4 @@
-cargo test: 100 passed (detect:: filter; 3546 filtered; 11.22s)
-clippy: passed with warnings denied (10.25s)
+cargo test -p herdr --bin herdr detect::: 100 passed, 0 failed (3546 filtered, 10.92s; 88 detector-module plus 12 server autodetection tests)
+cargo clippy -p herdr --bin herdr --tests -- -D warnings: passed (10.20s wall time)
 cargo fmt --all -- --check: passed
-cargo build -p herdr: passed (4.66s)
+real rebuilt CLI matrix: 29/29 cases matched expected states, including corrected single-symbol/box negatives; full inputs/outputs in final-cli-proof.json

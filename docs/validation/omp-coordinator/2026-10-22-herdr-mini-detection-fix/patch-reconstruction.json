@@ -4,11 +4,14 @@
   "input": "four exact pristine files read from pinned immutable source archive",
   "output_hashes_match_reviewed_corrected_files": true,
   "corrected_sha256": {
-    "src/detect/manifests/opencode.toml": "0ca38512344b12dd0317e0ffb457dd5ebb2615e27852607cc938a4d5590bb9a8",
-    "distribution/agent-detection/opencode.toml": "0ca38512344b12dd0317e0ffb457dd5ebb2615e27852607cc938a4d5590bb9a8",
-    "src/detect/manifest/tests.rs": "1de610d83bbfbc94bad1d12f3d696c2d08c76636cac690cdb60503d79d20e9ca",
-    "docs/next/website/src/content/docs/agents.mdx": "1788d7d95dc6a4f714f8116d61f7a52f73a62c11b2cc8b4b89e61bb9517f7fe5"
+    "src/detect/manifests/opencode.toml": "95a282e0376b2cc1f21600fae79b52ec04e6927aab985fd24c5e9ba2e75e838f",
+    "distribution/agent-detection/opencode.toml": "95a282e0376b2cc1f21600fae79b52ec04e6927aab985fd24c5e9ba2e75e838f",
+    "src/detect/manifest/tests.rs": "f9914be529ba9d7a4280954054f0a4735e8b5b8713e1db0a5f6550505e9f6937",
+    "docs/next/website/src/content/docs/agents.mdx": "3114e638f419fc1438a2a9c2c25faa0da3bc6a156d4a91c1d91e81bbe7383e68"
   },
   "no_live_install_or_original_source_change": true,
-  "obsolete_first_round_hashes_note": "Earlier 7148ca\u2026 / fdc7c2\u2026 / cc4026\u2026 values were the first-round corrected files before final-review glyph narrowing; the current exercised correction hashes above supersede them."
+  "obsolete_first_round_hashes_note": "Earlier 7148ca\u2026 / fdc7c2\u2026 / cc4026\u2026 values were the first-round corrected files before final-review glyph narrowing; the current exercised correction hashes above supersede them.",
+  "patch_sha256": "2567a9fee5b36f0fa6f3cf92f40cc33c9a73473dfa90d2184ab68948fd0469b0",
+  "applies_cleanly": true,
+  "reconstruction_tree": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/final-review-checkout-r5"
 }

@@ -1,0 +1,3337 @@
+{
+  "binary_sha256": "e8e11f5ed5058711a454609a46001c15fe269540cdabe541226d0c34d046bf6c",
+  "manifest_sha256": "95a282e0376b2cc1f21600fae79b52ec04e6927aab985fd24c5e9ba2e75e838f",
+  "environment": {
+    "HOME": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/home",
+    "XDG_CONFIG_HOME": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/config",
+    "XDG_STATE_HOME": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/state",
+    "XDG_CACHE_HOME": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/cache"
+  },
+  "cases": [
+    {
+      "case": "captured-plain",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "input_sha256": "cf0e2871d08389320356579984da9739eb04df6a8176ccded62824801578cf79",
+      "expected": "working",
+      "actual": "working",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-captured-plain.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 77,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 77,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 77,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": true,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 77,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": null,
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": {
+          "id": "status_footer_esc_stop_working",
+          "priority": 105,
+          "region": "bottom_non_empty_lines(1)",
+          "state": "working"
+        },
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "working",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": true,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "undecorated",
+      "input": "esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "input_sha256": "71d54a73c7d575b8ad31d36f13fe1637aa4a4d5216a8e9d3c22f1f302494b982",
+      "expected": "working",
+      "actual": "working",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-undecorated.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 72,
+              "region_preview": "esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 72,
+              "region_preview": "esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 72,
+              "region_preview": "esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": true,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 72,
+              "region_preview": "esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": null,
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": {
+          "id": "status_footer_esc_stop_working",
+          "priority": 105,
+          "region": "bottom_non_empty_lines(1)",
+          "state": "working"
+        },
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "working",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": true,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "spinner-u1fbe6",
+      "input": "🯦 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "input_sha256": "a0a1d1b090098d71004ff44ac90c4ab699a64e0ac8b7029e19d9b0df418b871f",
+      "expected": "working",
+      "actual": "working",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-spinner-u1fbe6.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 77,
+              "region_preview": "🯦 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 77,
+              "region_preview": "🯦 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 77,
+              "region_preview": "🯦 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": true,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 77,
+              "region_preview": "🯦 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": null,
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": {
+          "id": "status_footer_esc_stop_working",
+          "priority": 105,
+          "region": "bottom_non_empty_lines(1)",
+          "state": "working"
+        },
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "working",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": true,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "spinner-u1fbe8",
+      "input": "🯨 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "input_sha256": "877b580d71c42a52fa7ca1ff78fb74a035934164c7b7d9049b189eec115138c6",
+      "expected": "working",
+      "actual": "working",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-spinner-u1fbe8.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 77,
+              "region_preview": "🯨 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 77,
+              "region_preview": "🯨 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 77,
+              "region_preview": "🯨 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": true,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 77,
+              "region_preview": "🯨 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": null,
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": {
+          "id": "status_footer_esc_stop_working",
+          "priority": 105,
+          "region": "bottom_non_empty_lines(1)",
+          "state": "working"
+        },
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "working",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": true,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "relabeled",
+      "input": "🯧 esc stop · Build · Some Other Model [high] · Work / Upstream\n",
+      "input_sha256": "7c1b64e45b72f35a6ee184848308ee4483bec26f58717d86e9662759a4ab2cf0",
+      "expected": "working",
+      "actual": "working",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-relabeled.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 69,
+              "region_preview": "🯧 esc stop · Build · Some Other Model [high] · Work / Upstream\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 69,
+              "region_preview": "🯧 esc stop · Build · Some Other Model [high] · Work / Upstream\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 69,
+              "region_preview": "🯧 esc stop · Build · Some Other Model [high] · Work / Upstream\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": true,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 69,
+              "region_preview": "🯧 esc stop · Build · Some Other Model [high] · Work / Upstream\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": null,
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": {
+          "id": "status_footer_esc_stop_working",
+          "priority": 105,
+          "region": "bottom_non_empty_lines(1)",
+          "state": "working"
+        },
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "working",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": true,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "padded",
+      "input": "output\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n   \n\t\n\n",
+      "input_sha256": "e5098123a61d0d3576dc356f1a39a05f458447a8c3bb1ba64005fb7183c63325",
+      "expected": "working",
+      "actual": "working",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-padded.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 91,
+              "region_preview": "output\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n   \n\t\n\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 91,
+              "region_preview": "output\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n   \n\t\n\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 84,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n   \n\t\n\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": true,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 91,
+              "region_preview": "output\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n   \n\t\n\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": null,
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": {
+          "id": "status_footer_esc_stop_working",
+          "priority": 105,
+          "region": "bottom_non_empty_lines(1)",
+          "state": "working"
+        },
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "working",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": true,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "dq",
+      "input": "\"🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n",
+      "input_sha256": "d748e7ec96e0fec9de082ee0ba7f7f645c67e6288c0300985588120965f6c12a",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-dq.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 79,
+              "region_preview": "\"🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 79,
+              "region_preview": "\"🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 79,
+              "region_preview": "\"🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 79,
+              "region_preview": "\"🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "bt",
+      "input": "`🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\n",
+      "input_sha256": "5a3024185ab7ec330c6d51c415e135d02f681bf7e78d107881d9a47b537c4213",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-bt.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 79,
+              "region_preview": "`🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 79,
+              "region_preview": "`🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 79,
+              "region_preview": "`🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 79,
+              "region_preview": "`🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "smart-dq",
+      "input": "“🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode”\n",
+      "input_sha256": "c8735bf02e12a16bbf8f5a1ebe4545c192f6b1b6b6e9d56bf0ddbf26daea64aa",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-smart-dq.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 83,
+              "region_preview": "“🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode”\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 83,
+              "region_preview": "“🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode”\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 83,
+              "region_preview": "“🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode”\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 83,
+              "region_preview": "“🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode”\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "smart-sq",
+      "input": "‘🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode’\n",
+      "input_sha256": "dec0a01ed0a94c1a289105d1289e88f70666b668609c009cb19a544aba4969ba",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-smart-sq.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 83,
+              "region_preview": "‘🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode’\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 83,
+              "region_preview": "‘🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode’\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 83,
+              "region_preview": "‘🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode’\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 83,
+              "region_preview": "‘🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode’\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "barred",
+      "input": "│ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "input_sha256": "327ff8725680979f18b17124db036362233bf2553170d7310b90bf64e3662a52",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-barred.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "│ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "│ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "│ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 76,
+              "region_preview": "│ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "bullet-round",
+      "input": "● esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "input_sha256": "e12a3fff4fe988081ecc7c41752aebd7f44d15d7259848cf6ddc1bb5a4db8514",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-bullet-round.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "● esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "● esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "● esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 76,
+              "region_preview": "● esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "bullet-tri",
+      "input": "▸ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "input_sha256": "307750429e9283e0de4aad2a6f50735617ee022bc1ee45d14651f214faea07e7",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-bullet-tri.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "▸ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "▸ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "▸ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 76,
+              "region_preview": "▸ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "bullet-arrow",
+      "input": "► esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "input_sha256": "cf33d945d3f4cba48a5ae40280b412bf26f95e8814ca6adc9ab22ad9ebb4a5c4",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-bullet-arrow.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "► esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "► esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 76,
+              "region_preview": "► esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 76,
+              "region_preview": "► esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "prefixed-log",
+      "input": "log: 🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "input_sha256": "890612f8a2ad17728f8e582fda8c1f313bae2f1481d8ba56f259d34b1e81cfb2",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-prefixed-log.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 82,
+              "region_preview": "log: 🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 82,
+              "region_preview": "log: 🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 82,
+              "region_preview": "log: 🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 82,
+              "region_preview": "log: 🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "embedded",
+      "input": "output line\nthe screen showed `🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\nready\n",
+      "input_sha256": "1b7ced0cb9296be5a03e78515f892baeeb21ac768bef487448af7abe5c59a65e",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-embedded.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 115,
+              "region_preview": "output line\nthe screen showed `🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\nready\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 115,
+              "region_preview": "output line\nthe screen showed `🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\nready\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 6,
+              "region_preview": "ready\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 115,
+              "region_preview": "output line\nthe screen showed `🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\nready\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "quote-above-idle",
+      "input": "quoted earlier:\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\nDefault / OpenCode\n",
+      "input_sha256": "7d54092b34b84e90f80784b69b2905750d0cf64c6a98960173ab73ce553690e5",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-quote-above-idle.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 112,
+              "region_preview": "quoted earlier:\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\nDefault / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 112,
+              "region_preview": "quoted earlier:\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\nDefault / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 19,
+              "region_preview": "Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 112,
+              "region_preview": "quoted earlier:\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\nDefault / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "trailing-dq",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n",
+      "input_sha256": "2698274b72a05daf15906d79d85ac8068144bca7747abdc5d6e8aeab14796d1f",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-trailing-dq.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 78,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 78,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 78,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 78,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "trailing-space-suffix",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode (copied)\n",
+      "input_sha256": "fa07abdf7f1a24b5388ee546ae0409a1424c75ce0fbec44800128c0b3dafe343",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-trailing-space-suffix.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 86,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode (copied)\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 86,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode (copied)\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 86,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode (copied)\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 86,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode (copied)\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "suffix-bracket",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode[copied]\n",
+      "input_sha256": "ae444e5b753808c2a49c9fe4d8281842f83fd12f9bb462de31596bfd2a21915f",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-suffix-bracket.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 85,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode[copied]\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 85,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode[copied]\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 85,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode[copied]\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 85,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode[copied]\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "suffix-paren",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode(copied)\n",
+      "input_sha256": "4cb050e5724fd194e3ea1dc33869a723cc38489da610c84b523a08a8affb5727",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-suffix-paren.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 85,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode(copied)\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 85,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode(copied)\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 85,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode(copied)\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 85,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode(copied)\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "suffix-guillemet",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode»\n",
+      "input_sha256": "ed2a65192ff1c5935261cf8913ed7f10730d020929dabc22349779821495faeb",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-suffix-guillemet.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 79,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode»\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 79,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode»\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 79,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode»\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 79,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode»\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "idle-only",
+      "input": "Default / OpenCode\n",
+      "input_sha256": "2d10b7ad13137d69f2cc214e3cd061a393652b36688ece94dc6d58023c89b2cf",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-idle-only.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 19,
+              "region_preview": "Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 19,
+              "region_preview": "Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 19,
+              "region_preview": "Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 19,
+              "region_preview": "Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "incomplete-3fields",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max]\n",
+      "input_sha256": "24e4af1d24320c7e3f497aa39c9ff009f045a42672b4f7d2dec331334c89afb1",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-incomplete-3fields.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 55,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max]\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 55,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max]\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 55,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max]\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 55,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max]\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "incomplete-empty-field",
+      "input": "🯧 esc stop · · Default / OpenCode\n",
+      "input_sha256": "e0099958babfdc727141c1b4c58ae5a77453cf48731587551b9774fe84304ed3",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-incomplete-empty-field.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 39,
+              "region_preview": "🯧 esc stop · · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 39,
+              "region_preview": "🯧 esc stop · · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 39,
+              "region_preview": "🯧 esc stop · · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 39,
+              "region_preview": "🯧 esc stop · · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "unmatched",
+      "input": "No known activity hint\n",
+      "input_sha256": "30d491fc70fc984b43a85c75fdb6f3b753f0b018865a3ff37054af21ec09ae61",
+      "expected": "idle",
+      "actual": "idle",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-unmatched.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 23,
+              "region_preview": "No known activity hint\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 23,
+              "region_preview": "No known activity hint\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 23,
+              "region_preview": "No known activity hint\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 23,
+              "region_preview": "No known activity hint\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": "default_known_agent_idle_fallback",
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": null,
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "idle",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "approval-over-busy",
+      "input": "△ Permission required\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "input_sha256": "228b345eda3614339869f70ce2cde1b7d971f288f987d03151a0ebeb8e2f6b1d",
+      "expected": "blocked",
+      "actual": "blocked",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-approval-over-busy.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 101,
+              "region_preview": "△ Permission required\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "permission_required",
+            "matched": true,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 101,
+              "region_preview": "△ Permission required\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 77,
+              "region_preview": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": true,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 101,
+              "region_preview": "△ Permission required\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": null,
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": {
+          "id": "permission_required",
+          "priority": 300,
+          "region": "whole_recent",
+          "state": "blocked"
+        },
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "blocked",
+        "visible_blocker": true,
+        "visible_idle": false,
+        "visible_working": false,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "legacy-interrupt",
+      "input": "esc to interrupt\n",
+      "input_sha256": "c0b859b00dae144b1ab50ef01aee8279dfc2544fbc69b1a70aa550219b6a8b46",
+      "expected": "working",
+      "actual": "working",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-legacy-interrupt.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 17,
+              "region_preview": "esc to interrupt\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 17,
+              "region_preview": "esc to interrupt\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": true,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 17,
+              "region_preview": "esc to interrupt\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 17,
+              "region_preview": "esc to interrupt\n"
+            },
+            "id": "progress_bar_working",
+            "matched": false,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": null,
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": {
+          "id": "interrupt_hint_working",
+          "priority": 110,
+          "region": "whole_recent",
+          "state": "working"
+        },
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "working",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": true,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    },
+    {
+      "case": "legacy-progress",
+      "input": "■■■■■■\n",
+      "input_sha256": "8c1458f61de6f724507eb0e1d62bd0294c979b304d81a55566e61bccbfb7df54",
+      "expected": "working",
+      "actual": "working",
+      "command": [
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/build/debug/herdr",
+        "agent",
+        "explain",
+        "--file",
+        "/tmp/skill-lens-herdr-mini-20261022-o1x7n059/fixtures/final-legacy-progress.txt",
+        "--agent",
+        "opencode",
+        "--json"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "agent": "opencode",
+        "cached_remote_version": null,
+        "evaluated_rules": [
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 2,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 19,
+              "region_preview": "■■■■■■\n"
+            },
+            "id": "permission_required",
+            "matched": false,
+            "priority": 300,
+            "region": "whole_recent",
+            "state": "blocked"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 4,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 19,
+              "region_preview": "■■■■■■\n"
+            },
+            "id": "interrupt_hint_working",
+            "matched": false,
+            "priority": 110,
+            "region": "whole_recent",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [
+                "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ · [^·/\\n\"'`“”‘’]+ / [\\w.\\-]+$"
+              ],
+              "not_count": 0,
+              "regex": [],
+              "region_bytes": 19,
+              "region_preview": "■■■■■■\n"
+            },
+            "id": "status_footer_esc_stop_working",
+            "matched": false,
+            "priority": 105,
+            "region": "bottom_non_empty_lines(1)",
+            "state": "working"
+          },
+          {
+            "evidence": {
+              "all_count": 0,
+              "any_count": 0,
+              "contains": [],
+              "line_regex": [],
+              "not_count": 0,
+              "regex": [
+                "(■|⬝){4,}"
+              ],
+              "region_bytes": 19,
+              "region_preview": "■■■■■■\n"
+            },
+            "id": "progress_bar_working",
+            "matched": true,
+            "priority": 100,
+            "region": "whole_recent",
+            "state": "working"
+          }
+        ],
+        "fallback_reason": null,
+        "local_override_shadowing_remote": false,
+        "manifest_source": "bundled",
+        "manifest_version": "2026.10.22.1",
+        "matched_rule": {
+          "id": "progress_bar_working",
+          "priority": 100,
+          "region": "whole_recent",
+          "state": "working"
+        },
+        "remote_update_error": null,
+        "remote_update_status": null,
+        "screen_detection_skipped": false,
+        "skip_state_update": false,
+        "skipped_update_reason": null,
+        "state": "working",
+        "visible_blocker": false,
+        "visible_idle": false,
+        "visible_working": true,
+        "warning": null
+      },
+      "stderr": "",
+      "ok": true
+    }
+  ],
+  "passed": 29,
+  "failed": 0,
+  "note": "Complete current real-CLI process outputs. Four weak symbol/box inputs replaced by single-symbol regression inputs; all other inputs retained."
+}

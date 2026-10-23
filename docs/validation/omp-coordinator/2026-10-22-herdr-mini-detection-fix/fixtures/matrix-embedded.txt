@@ -1,0 +1,3 @@
+output line
+the screen showed `🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`
+ready

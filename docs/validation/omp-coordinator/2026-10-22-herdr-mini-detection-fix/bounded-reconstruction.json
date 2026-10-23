@@ -1,0 +1,13 @@
+{
+  "source_archive_sha256": "5c745bf712aee3320ed88a665c39a9143cbd6b7ce4376e0ae0f0c07988576c13",
+  "patch_sha256": "f22d2d7edf26dd8e308394de143b015b37cf58f17148a45ca3c12889b8c6efe8",
+  "git_apply_check": true,
+  "applied_to_pristine_members": true,
+  "source_sha256": {
+    "distribution/agent-detection/opencode.toml": "95a282e0376b2cc1f21600fae79b52ec04e6927aab985fd24c5e9ba2e75e838f",
+    "docs/next/website/src/content/docs/agents.mdx": "eaee12139786c6a758baf123b88b4f779789af269bc8dae9299f99c30653f124",
+    "src/detect/manifest/tests.rs": "1d92b9930d56389fb5a758ac3e58cf361524651211cde16b8b59f152a6a8387f",
+    "src/detect/manifests/opencode.toml": "95a282e0376b2cc1f21600fae79b52ec04e6927aab985fd24c5e9ba2e75e838f"
+  },
+  "all_four_output_hashes_match": true
+}

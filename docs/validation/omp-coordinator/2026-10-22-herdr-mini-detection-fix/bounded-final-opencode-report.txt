@@ -1,0 +1,74 @@
+     REQUEST_TOKEN: sol-bounded-final-opencode-20261023
+
+     EFFECTIVE_MODEL
+
+     - Requested: opencode/deepseek-v4.1-flash-free, max, Plan.
+     - Configured: same, as presented to this session.
+     - Settings/mode: max effort; Plan.
+     - Evidence: this session’s model/mode selection; independent of
+       the implementer and both R5 sessions. Coordinator evidence
+       records runtime 2.1.3; the implementer report’s 2.0.32 is stale
+       and not relied on.
+     - Upstream identity: unverified.
+
+     VERDICT: pass
+
+     BLOCKERS
+
+     - None. No consumer-visible defect remains in the frozen offline
+       outcome, the corrected fixture guard, the loader/priority
+       boundaries, the docs/provenance limits, or the source-hash
+       chain.
+
+     SUGGESTIONS
+
+     - None required for acceptance. The remaining limitations are
+       accurately disclosed and no extra validation is requested.
+
+     FILES_AT_RISK
+
+     - src/detect/manifests/opencode.toml:37 — footer rule, region and
+       priority.
+     - distribution/agent-detection/opencode.toml:37 — local-only
+       mirror of the same rule.
+     - src/detect/manifest/tests.rs:696,716-721 — corrected single-
+       symbol negatives.
+     - docs/next/website/src/content/docs/agents.mdx:80 — disclosed
+       limits.
+     - bounded-final-review-twn8x054/provenance.json:71 — suffix-
+       hardening wording.
+
+     CONCEDED
+
+     - Frozen offline outcome is met: captured, undecorated and three
+       real block-frame footers read working; true idle, quotes,
+       prefixes, embedded/history content, incomplete footers and
+       tested suffixes read idle; approval UI over a busy footer reads
+       blocked; interrupt/progress hints still work; unmatched known
+       agents retain idle fallback.
+     - The corrected fixtures are genuine guards: the real loader
+       returns Idle for ▸/●/►/│ followed by the undecorated footer,
+       while the broad \p{So} mutant flips all four to Working and the
+       old weak fixtures stay Idle (16 real executions). R5 blocker 1
+       is closed.
+     - Loader and priority boundaries are proven: bundled 2026.10.22.1
+       is selected over cached 2026.06.10.1; permission priority 300
+       beats footer 105; the 105→350 mutation flips blocked→working on
+       the competing input.
+     - Evidence is internally consistent: final-cli-proof.json retains
+       29 raw inputs/outputs, binary e8e11… matches the mutation and
+       stale-cache receipts, both manifest pins are 95a282…, and
+       bounded-reconstruction.json matches all four current-source
+       hashes. Only the four authorized paths appear; the bounded
+       delta is tests/docs only.
+     - Docs/provenance now claim only tested quote/bracket/paren/
+       guillemet/whitespace suffix rejection, acknowledge that account
+       brackets and identifier-like provider suffixes remain allowed,
+       disclose the byte-identical bottom-row ambiguity and the ASCII/
+       mini.mono footer-only limitation, and do not claim completion-
+       protocol or full-TUI fixes.
+     - No scope expansion, live trial, deployment, waiter change or
+       default block-spinner expansion was found.
+
+     COMPLETION: complete; no delegates; no background work; no report
+     file written.

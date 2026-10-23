@@ -1,0 +1,105 @@
+### REQUEST_TOKEN
+
+  sol-bounded-final-gemini-20261023
+  ──────
+  ### EFFECTIVE_MODEL
+
+  • Requested: Gemini 3.8 Flash High
+  • Configured: Gemini 3.8 Flash (High)
+  • Settings: Model Selection set to Gemini 3.8 Flash (High)
+  • Mode: Plan Mode (/plan), read-only critic
+  • Evidence: Fresh independent review session executed strictly via
+  native file read tools; zero writes, zero shell commands, zero
+  builds/tests/linters, zero git operations, zero subagents, zero
+  background tasks.
+  • Upstream unverified: Upstream served model weights, training
+  lineage, and family identity remain independently unverified
+  beyond platform disclosures.
+  ──────
+  ### VERDICT
+
+  pass
+  ──────
+  ### BLOCKERS
+
+  None.
+  ──────
+  ### SUGGESTIONS
+
+  • Implementer Version Record: Note for the permanent audit trail
+  that while the replacement implementer report cited OpenCode
+  version 2.0.32, coordinator validation confirmed native runtime --
+  version and UI as 2.1.3. As noted by the coordinator, this stale
+  version claim is an implementer assertion artifact and does not
+  affect the verified patch contents.
+  • Upstream Coordination: The bounded documentation update in
+  docs/next/website/src/content/docs/agents.mdx properly qualifies
+  ASCII/mini.mono footer behavior for future doc releases; keep this
+  aligned with upstream Herdr release schedules.
+  ──────
+  ### FILES_AT_RISK
+
+  None. (The four maintained patch
+  files—src/detect/manifests/opencode.toml, distribution/agent-
+  detection/opencode.toml, src/detect/manifest/tests.rs, and
+  docs/next/website/src/content/docs/agents.mdx—match their pinned
+  SHA-256 hashes in current-source-hashes.json and bounded-
+  reconstruction.json with zero unauthorized modifications).
+  ──────
+  ### CONCEDED
+
+  1. Single-Symbol & Box-Drawing Fixture Regression Guard:
+      • In src/detect/manifest/tests.rs (lines 716–719), the four
+      weak negative fixtures have been corrected to use single non-
+      spinner glyphs directly preceding the undecorated footer (▸
+      {undecorated}, ● {undecorated}, ► {undecorated}, │
+      {undecorated}) without an intervening spinner frame.
+      • Evidence in symbol-boundary-mutation.json demonstrates that
+      under a broad \p{So} mutant, these single-symbol forms flip
+      from Idle to Working, whereas the old fixtures (format!("▸
+      {busy}")) failed to catch the regression. The corrected test
+      fixtures are effective and load-bearing.
+  2. Rejection Boundaries & Matcher Scope:
+      • The regex line_regex = ['''^(?:[\x{1CD00}-
+      \x{1CEBF}\x{1FB00}-\x{1FBFF}]\s+)?esc stop · [^·/\n"'“”‘’]+ ·
+      [^·/\n"'“”‘’]+ · [^·/\n"'“”‘’]+ / [\w.-]+$'''] strictly bounds
+      the optional spinner to Legacy Computing code point blocks
+      (\x{1FB00}-\x{1FBFF}and\x{1CD00}-\x{1CEBF}), accepting real
+      block-spinner frames (🯦, 🯧, 🯨`) while rejecting bullets and
+      box-drawing characters.
+      • Suffix assertions in provenance.json (lines 71–72)
+      accurately disclose that the provider token rejects tested
+      punctuation suffixes ([copied], (copied), », quotes, trailing
+      whitespace) rather than overclaiming rejection of arbitrary
+      metadata annotations or identifier-like tokens.
+  3. Priority & Permission Resolution:
+      • permission_required (priority 300) reliably takes precedence
+      over status_footer_esc_stop_working (priority 105), returning
+      Blocked on competing inputs.
+      • priority-mutation.json validates that mutating the footer
+      priority from 105 to 350 flips the outcome to Working,
+      confirming that rule precedence behaves as specified.
+  4. Stale Cache Invalidation:
+      • current-stale-cache-proof.json confirms that the engine
+      correctly selects bundled manifest version 2026.10.22.1 over
+      cached remote version 2026.06.10.1.
+  5. Documentation Accuracy:
+      • The updated text in
+      docs/next/website/src/content/docs/agents.mdx accurately
+      states that ASCII or mini.mono spinner frames do not match the
+      status footer rule alone, while clarifying that other existing
+      rules can still classify a screen as working and that
+      unmatched screens read idle.
+  6. Integrity & Verification Evidence:
+      • bounded-checks.json, final-cli-proof.json (29/29 actual CLI
+      cases with preserved raw inputs/outputs), and bounded-
+      reconstruction.json verify that the full patch (SHA256
+      f22d2d7edf26dd8e308394de143b015b37cf58f17148a45ca3c12889b8c6ef
+      e8) applies cleanly to the pristine Herdr 0.9.5 base with
+      matching output hashes. Existing Skill Lens baseline health
+      gates remain valid and undisturbed.
+
+  ──────
+  ### COMPLETION
+
+  complete; no delegates; no background work.`
