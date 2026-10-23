@@ -32,7 +32,7 @@
  
 --- a/src/detect/manifest/tests.rs
 +++ b/src/detect/manifest/tests.rs
-@@ -687,6 +687,101 @@
+@@ -687,6 +687,104 @@
      });
  }
  
@@ -86,9 +86,12 @@
 +            format!("log: {usage}"),
 +            format!("▸ {usage}"),
 +            format!("output line\nthe screen showed `{usage}`\nready"),
++            format!("output line\nthe screen showed `{open}`\nready"),
 +            format!(
 +                "quoted earlier:\n{open}\nPlan · DeepSeek V4.1 Flash Free [max] · OpenCode · ctrl+p menu"
 +            ),
++            format!("quoted earlier:\n{open}\nDefault / OpenCode"),
++            format!("quoted earlier:\n{usage}\nDefault / OpenCode"),
 +            format!("{open} (copied)"),
 +            format!("{open}»"),
 +            format!("{usage} copied"),

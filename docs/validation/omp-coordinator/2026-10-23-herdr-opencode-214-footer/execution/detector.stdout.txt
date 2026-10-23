@@ -8,12 +8,12 @@ test detect::manifest::tests::manifest_validation_rejects_unknown_fields_empty_r
 test detect::manifest::tests::manifest_validation_rejects_excessive_rule_count ... ok
 test detect::manifest::tests::all_bundled_manifests_parse_and_validate ... ok
 test detect::manifest::tests::compiled_rules_are_shared_until_manifest_reload ... ok
-test detect::manifest::tests::fallback_explain_preserves_active_manifest_version ... ok
-test detect::manifest::tests::invalid_local_override_falls_back_to_cached_remote_manifest ... ok
 test detect::manifest::tests::local_override_shadows_cached_remote_manifest ... ok
 test detect::manifest::tests::end_anchored_footer_gates_allow_only_auxiliary_tail ... ok
 test detect::manifest::tests::detection_uses_cached_manifest_until_explicit_reload ... ok
+test detect::manifest::tests::fallback_explain_preserves_active_manifest_version ... ok
 test detect::manifest::tests::known_agent_no_match_defaults_to_idle_fallback ... ok
+test detect::manifest::tests::invalid_local_override_falls_back_to_cached_remote_manifest ... ok
 test detect::manifest::tests::screen_regions_extract_structure_without_classifying_agent_state ... ok
 test detect::manifest::tests::older_cached_remote_manifest_does_not_shadow_newer_bundled_manifest ... ok
 test detect::manifest::tests::top_non_empty_lines_requires_a_canonical_positive_bounded_count ... ok
@@ -103,5 +103,5 @@ test detect::manifest_update::tests::process_agent_manifest_rejects_downgrade_an
 test detect::manifest_update::tests::process_agent_manifest_rejects_equal_version_content_change ... ok
 test detect::manifest_update::tests::process_agent_manifest_skips_same_version_same_content ... ok
 
-test result: ok. 102 passed; 0 failed; 0 ignored; 0 measured; 3546 filtered out; finished in 11.94s
+test result: ok. 102 passed; 0 failed; 0 ignored; 0 measured; 3546 filtered out; finished in 11.90s
 

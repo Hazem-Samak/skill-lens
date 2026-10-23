@@ -19,5 +19,10 @@
     "Files /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/baseline/src/detect/manifests/opencode.toml and /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/source/src/detect/manifests/opencode.toml differ",
     "Only in /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/source/vendor/libghostty-vt: .zig-cache",
     "Only in /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/source/vendor/libghostty-vt: zig-pkg"
-  ]
+  ],
+  "generated_build_artifacts": [
+    "vendor/libghostty-vt/.zig-cache",
+    "vendor/libghostty-vt/zig-pkg"
+  ],
+  "generated_artifacts_confined_to_temp_root": true
 }

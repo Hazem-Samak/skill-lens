@@ -1,9 +1,9 @@
 {
-  "patch_sha256": "93c2de0685df81f63997c779d5f3cf389a74628cb1c07ff4be2b8c223d2fac7f",
+  "patch_sha256": "e6e649ec3e6e07b2a52d1c40c52c73de88d2763c759c55ca2a4f54f9e60fdf95",
   "source_sha256": {
     "distribution/agent-detection/opencode.toml": "d86463927f13191fb8123a6fe0efe3435e9e4832a9c7cd6123ee7bfe02857104",
     "docs/next/website/src/content/docs/agents.mdx": "0d906f8dc05c172ec7a216fbac4e1e4612e3f96233335d84ddbc9356756fa2f7",
-    "src/detect/manifest/tests.rs": "b40cf0ab507ede855fd63b7f5278154188e867dc0924e4816ef895a5814ccb6b",
+    "src/detect/manifest/tests.rs": "6ff641a259936130f4d9d9ad025e85ad3603590d71d3192110a9d9a854d9aec7",
     "src/detect/manifests/opencode.toml": "d86463927f13191fb8123a6fe0efe3435e9e4832a9c7cd6123ee7bfe02857104"
   },
   "only_allowed_paths_changed": true,
@@ -19,31 +19,32 @@
   "focused": {
     "passed": 2,
     "failed": 0,
-    "seconds_including_compile": 17.0
+    "seconds_wall": 20.1
   },
   "detector": {
     "passed": 102,
     "failed": 0,
     "filtered_out": 3546,
-    "seconds": 11.94
+    "test_runtime_seconds": 11.9,
+    "seconds_wall": 12.1
   },
   "clippy": {
     "passed": true,
     "warnings_denied": true,
-    "seconds": 30.8
+    "seconds_wall": 10.2
   },
   "format": {
     "passed": true,
-    "seconds": 1.9
+    "seconds_wall": 1.5
   },
   "build": {
     "passed": true,
     "seconds": 25.1
   },
   "real_cli": {
-    "passed": 55,
+    "passed": 58,
     "failed": 0,
-    "cases": "29 preserved old-shape cases plus 26 new 2.1.4 positives/negatives",
+    "cases": "29 preserved old-shape cases plus 29 new 2.1.4 positives/negatives, including embedded and above-idle per-arm negatives",
     "manifest_version": "2026.10.23.1",
     "manifest_source": "bundled"
   },
@@ -77,12 +78,30 @@
     "variant": "max",
     "mode": "Build",
     "upstream_verified": false,
-    "session": "ses_e971429c4ffeNHMD2p6JQ6E55M"
+    "turns": [
+      "red test in tests.rs",
+      "full four-file rule/tests/docs edit",
+      "smart-quote follow-up in tests.rs",
+      "three per-arm negative rows in tests.rs"
+    ],
+    "reports": {
+      "full_recovered": "implementer-full-report-recovered.txt",
+      "followup": "implementer-followup-report.txt",
+      "fixture": "implementer-fixture-report.txt"
+    }
   },
   "toolchain": {
     "rust": "1.96.1",
     "zig": "0.16.0",
     "pinned_official_checksums": true
   },
-  "temp_root": "/tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo"
+  "temp_root": "/tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo",
+  "generated_artifacts": {
+    "paths": [
+      "vendor/libghostty-vt/.zig-cache",
+      "vendor/libghostty-vt/zig-pkg"
+    ],
+    "maintained_source": false,
+    "confined_to_temp_root": true
+  }
 }

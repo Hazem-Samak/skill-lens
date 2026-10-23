@@ -1,5 +1,5 @@
 {
-  "passed": 55,
+  "passed": 58,
   "failed": 0,
   "results": [
     {
@@ -700,6 +700,39 @@
       "manifest_source": "bundled",
       "manifest_version": "2026.10.23.1",
       "input": "△ Permission required\n🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode",
+      "stderr": ""
+    },
+    {
+      "case": "214-embedded-open",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "output line\nthe screen showed `🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode`\nready",
+      "stderr": ""
+    },
+    {
+      "case": "214-open-above-idle",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "quoted earlier:\n🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode\nDefault / OpenCode",
+      "stderr": ""
+    },
+    {
+      "case": "214-usage-above-idle",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "quoted earlier:\n🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (3%)\nDefault / OpenCode",
       "stderr": ""
     }
   ]

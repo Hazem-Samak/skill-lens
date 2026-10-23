@@ -1,0 +1,19 @@
+Fixture follow-up implementer report (verbatim)
+================================================
+
+Request token: sol-opencode214-fixture-20261023.
+
+Edit-only change to src/detect/manifest/tests.rs, inside
+opencode_214_footer_variants_under_bundled_manifest:
+
+1. Immediately after the existing embedded-usage row, added
+   format!("output line\nthe screen showed `{open}`\nready").
+2. Immediately after the existing quoted-earlier open-above-menu row, added
+   format!("quoted earlier:\n{open}\nDefault / OpenCode").
+3. Added format!("quoted earlier:\n{usage}\nDefault / OpenCode").
+
+All three are in the negative (AgentState::Idle) array. No other changes; no
+commands, checks, tests, builds, or git operations were run.
+
+Configured model: opencode/deepseek-v4.1-flash-free (DeepSeek V4.1 Flash Free),
+Build. Stopping after the report.

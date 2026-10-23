@@ -23,7 +23,7 @@ priority 300 ahead of this rule at priority 105. The region remains
 - Focused tests: `2 passed; 0 failed`.
 - Full detector filter: `102 passed; 0 failed`, 3,546 filtered.
 - Clippy with `-D warnings`: passed. `cargo fmt --all -- --check`: passed.
-- Real rebuilt CLI: `55/55` (29 preserved cases plus 26 new 2.1.4 cases).
+- Real rebuilt CLI: `58/58` (29 preserved cases plus 29 new 2.1.4 cases).
 - Stale cache: bundled `2026.10.23.1` selected over cached `2026.10.22.1` and
   `2026.06.10.1`.
 - Only the four authorized source-copy paths changed; both manifest copies are
@@ -40,5 +40,9 @@ priority 300 ahead of this rule at priority 105. The region remains
 - `manifest.json` / `manifest.sha256` — canonical evidence hashes.
 
 The implementer is OpenCode 2.1.4 `opencode/deepseek-v4.1-flash-free`, variant
-`max`, Build; upstream identity unverified. Temporary Rust 1.96.1/Zig 0.16.0
-toolchains were official, checksum-verified and confined to the owned root.
+`max`, Build; upstream identity unverified. It made four edit-only turns: red
+test, full four-file edit, smart-quote follow-up, and three per-arm negative
+rows. The exact full-turn report was recovered in
+`implementer-full-report-recovered.txt`; the follow-up and fixture reports are
+preserved separately. Temporary Rust 1.96.1/Zig 0.16.0 toolchains were official,
+checksum-verified and confined to the owned root.

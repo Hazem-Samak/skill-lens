@@ -1,23 +1,25 @@
 {
   "excludes_self": true,
-  "patch_sha256": "93c2de0685df81f63997c779d5f3cf389a74628cb1c07ff4be2b8c223d2fac7f",
+  "patch_sha256": "e6e649ec3e6e07b2a52d1c40c52c73de88d2763c759c55ca2a4f54f9e60fdf95",
   "files": {
-    "README.md": "077d5624a2afefe2a393d6056295bdb9d36f4cbc0dc6fefbe3c0a681cc057d10",
+    "README.md": "8fe65eb8b7156e9a3e2d8cda80ecca6a7c85aca9cd958a2710f0cefbe0fbfa4d",
     "build.json": "da6765b8040bf03f071435c5a1947f08848c7f1b0b3990aedd3bf789e8997ba8",
-    "checks.json": "5681d9fba8aa8f149f9bbf853000208c4518d2743ba7a8920988e2b04492f274",
-    "cli-matrix.json": "689329e12e470ba12c1e18358e89fd5aa38d358c738be92a212497f45c2512e2",
-    "clippy.stderr.txt": "8e5f34c1154e9167530bbfc884a723ea118ef941604ab8971ef33dec27057e54",
-    "correction-214.patch": "93c2de0685df81f63997c779d5f3cf389a74628cb1c07ff4be2b8c223d2fac7f",
-    "detector.stdout.txt": "e273d198f9b28c92f469ffc9ff266597f7d96851e8ab1e7a6a10bf319014c8f3",
-    "focused.stdout.txt": "6ff6c81015718472f94ba93066b059212426140bb8e7ce918c95c6b382f86d0d",
+    "checks.json": "2ba359010b1ee5cf872c27398c1d06562f709d7ed4e0c3257a6dfcd85f76d538",
+    "cli-matrix.json": "b9126a718adb5021d7a88f8ba589fe92beb47ff13ee097f668cd91a7694ab6b3",
+    "clippy.stderr.txt": "0abd0f945c26564294fad60d8dcab9780990b814e47e5bd42e504fe6aed7d3d2",
+    "correction-214.patch": "e6e649ec3e6e07b2a52d1c40c52c73de88d2763c759c55ca2a4f54f9e60fdf95",
+    "detector.stdout.txt": "0d5c7063edcf397859caa9454f9ff3ad615fd96bec216c93b8bf461eb17655a7",
+    "focused.stdout.txt": "bc422622ba7adaae1355f72e1cf8f8f5c8c68416d5a571dcc58788a1d7c290a8",
     "format.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "implementer-fixture-report.txt": "69edf870c7bc40445e5fddc2d2ad724fb5de30baba885db4661f2497a8b4e8c1",
+    "implementer-followup-report.txt": "643ed2264b44bfa25ba2b4fdaa7baf6cec4e6ef89d3975fca07224e0a638e0d6",
     "implementer-full-brief.txt": "723568dbccbe1478db40ea9953d5242043bc57fd46e3b4e69339b7288c6d67a9",
+    "implementer-full-report-recovered.txt": "8629e6463e54f8adf0a16942338b3df56423b2ca6dcb7a8a1c3d00506b2bde5d",
     "implementer-red-brief.txt": "80ef639eba8acaacded3b92f0784ac9291979e9af4fd4f78719e3d25ffaaccc2",
-    "implementer-report.txt": "643ed2264b44bfa25ba2b4fdaa7baf6cec4e6ef89d3975fca07224e0a638e0d6",
     "red.stderr.txt": "fdf1d7b13f8154a4e99f6045d5697551fd7a690dc1e9242df7be3728c6144acb",
     "red.stdout.txt": "e058f3c689b5d960a757c778c24800e8a600fec2ce4cb961295c7d49bcaa751a",
     "stale-cache.json": "52571e562c58d3fa200196c0b3e0a3eb3b63e2f9e5c481284737bd3be2ff4f63",
-    "verification.json": "0290e6168d67269cf58d78cc401093471c0e014340e6ab966ac8df7806190c0f",
-    "worktree-check.json": "dd502fe5bc2899e12f2d65116a1a6857fd934c9f9de1283c47e77aef08c46b90"
+    "verification.json": "61835aba6def5e014704d1e7b0f090ee0fd01698c731433ca30d3325cd90fa73",
+    "worktree-check.json": "7cfe1ddc1244408201f47c80eb1f4ec07a1bac37c884af287ff1e589af0bc6e3"
   }
 }
