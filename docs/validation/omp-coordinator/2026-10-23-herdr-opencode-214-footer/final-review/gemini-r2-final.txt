@@ -1,0 +1,52 @@
+REQUEST_TOKEN: sol-opencode214-final-r2-gemini-20261023
+  EFFECTIVE_MODEL: requested Gemini 3.8 Flash (High) / configured
+  Gemini 3.8 Flash (High) / settings/mode Plan / evidence matches
+  plan roster / upstream unverified
+  VERDICT: pass
+  BLOCKERS: None.
+  SUGGESTIONS: None required.
+  FILES_AT_RISK: None.
+  CONCEDED: Both prior blockers are confirmed resolved. The per-arm
+  negative fixtures (embedded-open, open-above-idle, and usage-
+  above-idle) are present and passing in both unit tests and the 58-
+  case real CLI matrix. The implementer provenance accurately
+  separates the four turns across recovered full, smart-quote
+  follow-up, and fixture reports. Standard limits accepted: offline
+  proof only without live execution/deployment/installation; byte-
+  identical bottom-line ambiguity by design; unverified upstream
+  implementer identity.
+  COMPLETION: complete / no delegates / no background work
+  ──────
+  ### Targeted Confirmation Details
+
+  1. Per-Arm Negative Fixtures (Resolved):
+      • src/detect/manifest/tests.rs adds the three required
+      negative lines:
+          • output line\nthe screen showed \{open}`\nready`
+          (embedded OpenCode arm)
+          • quoted earlier:\n{open}\nDefault / OpenCode (OpenCode
+          arm above idle)
+          • quoted earlier:\n{usage}\nDefault / OpenCode (usage arm
+          above idle)
+      • cli-matrix.json expands from 55 to 58 cases, adding 214-
+      embedded-open, 214-open-above-idle, and 214-usage-above-idle,
+      all passing with actual: idle.
+      • Unit tests pass cleanly (2 focused, 102 detector). Clippy
+      and formatting pass.
+  2. Implementer Records & Provenance (Resolved):
+      • implementer-followup-report.txt correctly preserves the
+      smart-quote follow-up turn.
+      • implementer-full-report-recovered.txt documents the full
+      four-file implementation turn.
+      • implementer-fixture-report.txt documents the three negative
+      fixture additions.
+      • verification.json and README.md explicitly trace all four
+      edit-only turns and map report artifacts.
+  3. Evidence Integrity:
+      • Manifest hash matches
+      c0c83cd38dcd781995f713cc92371e28c3ad7d71a1599f0c58e00907903f5f
+      18.
+      • Patch hash matches
+      e6e649ec3e6e07b2a52d1c40c52c73de88d2763c759c55ca2a4f54f9e60fdf
+      95.
+      • Edits remain strictly confined to the four permitted paths.

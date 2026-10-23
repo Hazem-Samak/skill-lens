@@ -111,3 +111,38 @@ Round 2 targeted confirmation ran against corrected draft SHA-256 `a0dea535936fa
 - No reviewer wrote to the checkout. Both critics conceded the byte-identical bottom-line limit, offline-only proof, no live trial/deployment/installation, and unverified upstream identities.
 
 Status is now Agreed. Freeze this plan in two commits (plan-only, then reference-only), verify the exact reference, and implement offline under the owner's 2026-10-23 authorization. No deployment, live trial or installed-binary change.
+
+## Execution receipt (append-only)
+
+This receipt records execution evidence only. It does not alter the frozen
+reference `738af8dd18c3b980b25d5da5bd47fcb81d37ad44` or its reference commit
+`084d24c9bdc387d1775a193c1b51b930cd1b016c`.
+
+- **Implemented offline** in a fresh owned temporary source copy with pinned,
+  checksum-verified Rust 1.96.1 and Zig 0.16.0. The patch
+  `e6e649ec3e6e07b2a52d1c40c52c73de88d2763c759c55ca2a4f54f9e60fdf95`
+  applies to the accepted `2026.10.22.1` baseline and reproduces the four source
+  hashes. Both OpenCode manifests are version `2026.10.23.1` and byte-identical.
+- **Red first:** `opencode_214_footer_is_working_under_bundled_manifest` failed
+  `Idle` vs `Working` before the rule edit. After the edit: focused `2/2`,
+  detector `102/102`, Clippy with denied warnings and `cargo fmt --check`
+  passed. Real rebuilt CLI matrix: **58/58** (29 preserved + 29 new 2.1.4
+  positives/negatives). Stale-cache checks selected bundled `2026.10.23.1` over
+  cached `2026.10.22.1` and `2026.06.10.1`.
+- **Scope:** only the four authorized source-copy paths changed. Generated
+  `.zig-cache`/`zig-pkg` dependencies remained confined to the owned temporary
+  root. Skill Lens health gates were reused because no product/test/checker
+  input changed.
+- **Final reviews:** Gemini passed both rounds. OpenCode's first final review
+  requested two corrections — three missing per-arm negatives and accurate
+  implementer-report provenance. Those were corrected and the targeted re-review
+  passed. The immutable evidence manifest is
+  `c0c83cd38dcd781995f713cc92371e28c3ad7d71a1599f0c58e00907903f5f18`.
+  Non-blocking README filename/wording suggestions were deferred because the
+  evidence was immutable after the pass.
+- **Not done:** deployment, installation, live Mini trial, formal smoke,
+  full-TUI trace, upstream PR or publication. The rule is proved offline only.
+- **Cleanup:** the implementer/reviewer panes and the owned temporary root are
+  removed after the final-review evidence is committed and pushed; normal
+  services, installed binaries and the three pre-existing user files remain
+  unchanged.

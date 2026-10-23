@@ -1,0 +1,22 @@
+Recovered summary — OpenCode first final review (changes_required)
+=================================================================
+
+The exact terminal report was overwritten by the targeted re-review before it
+could be copied. Its verdict and blockers are recorded in the final review
+history; the targeted re-review confirmed both were resolved.
+
+Verdict: changes_required.
+
+Blockers:
+1. The frozen plan requires per-arm negatives. The variant test had the
+   embedded-sentence fixture only for the usage arm, and its only open-arm
+   "above" fixture ended in the menu line rather than a recognized idle footer;
+   the usage arm had no above-idle fixture. The real-CLI matrix repeated the gap.
+2. The saved implementer report was the smart-quote follow-up (tests.rs only),
+   while the full brief and four-file patch covered the rule, both manifests,
+   tests and docs; the evidence did not record the full turn.
+
+Both were corrected: three per-arm negative rows and three CLI cases were added
+(58/58), and the implementer evidence now separates the red test, full four-file
+turn, smart-quote follow-up and fixture turn, with a recovered full-turn report.
+The targeted re-review passed with no blockers.

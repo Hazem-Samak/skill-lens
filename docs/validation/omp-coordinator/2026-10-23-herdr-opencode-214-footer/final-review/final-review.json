@@ -1,0 +1,44 @@
+{
+  "status": "final reviews complete; rule change accepted offline",
+  "frozen_reference": {
+    "plan_only_commit": "738af8dd18c3b980b25d5da5bd47fcb81d37ad44",
+    "reference_commit": "084d24c9bdc387d1775a193c1b51b930cd1b016c"
+  },
+  "evidence": {
+    "manifest_sha256": "c0c83cd38dcd781995f713cc92371e28c3ad7d71a1599f0c58e00907903f5f18",
+    "patch_sha256": "e6e649ec3e6e07b2a52d1c40c52c73de88d2763c759c55ca2a4f54f9e60fdf95",
+    "implementation_commit": "d6bb7a4ac30aeb768d6952e791d405f7d4bebcbd"
+  },
+  "reviewers": {
+    "gemini": {
+      "session": "8964b73f-137e-4f4a-80e1-188a927613e6",
+      "requested": "Gemini 3.8 Flash High",
+      "configured": "Gemini 3.8 Flash High / Plan",
+      "rounds": [
+        {"round": 1, "verdict": "pass", "report": "final-review/gemini-r1-final.txt"},
+        {"round": 2, "verdict": "pass", "report": "final-review/gemini-r2-final.txt"}
+      ],
+      "upstream_identity_verified": false
+    },
+    "opencode": {
+      "session": "ses_e9709da79ffeUXuL0YvZtgyHHH",
+      "requested": "opencode/deepseek-v4.1-flash-free#max",
+      "configured": "DeepSeek V4.1 Flash Free / max / Plan",
+      "rounds": [
+        {"round": 1, "verdict": "changes_required", "report": "final-review/opencode-r1-final-recovered.txt", "exact_full_report_preserved": false},
+        {"round": 2, "verdict": "pass", "report": "final-review/opencode-r2-final.txt"}
+      ],
+      "upstream_identity_verified": false
+    }
+  },
+  "no_write_proof": {
+    "checkout_status_head_files_equal_before_after": true,
+    "evidence_files_equal_before_after": true,
+    "manifest_equal": true
+  },
+  "suggestions_disposition": [
+    "OpenCode round 2 noted README.md still names the removed implementer-report.txt and calls the recovered full report 'exact'. These are non-blocking evidence-labeling nits; the actual report files and verification.json clearly separate the turns. The immutable evidence package was not edited after the pass."
+  ],
+  "acceptance": "Accepted offline: both fresh final critics passed manifest c0c83cd3…; all in-scope blockers resolved. Rule version 2026.10.23.1, both manifests identical, red→green, 102 detector tests, Clippy/fmt, 58/58 CLI, stale-cache proof. No deployment, live trial, formal smoke, full-TUI trace or installed-binary change.",
+  "cleanup": "Owned reviewer/implementer panes and temporary root removed after this commit and verified; normal services/binaries/user files preserved."
+}

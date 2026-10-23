@@ -1,0 +1,29 @@
+REQUEST_TOKEN: sol-opencode214-final-r2-opencode-20261023
+     EFFECTIVE_MODEL: requested opencode/deepseek-v4.1-flash-free#max;
+     configured opencode/deepseek-v4.1-flash-free; settings/mode Plan;
+     evidence: frozen plan/verification records max; upstream
+     unverified.
+     VERDICT: pass
+     BLOCKERS: None.
+     SUGGESTIONS: README.md:38 still names the removed implementer-
+     report.txt; reference the three actual reports (implementer-
+     followup-report.txt, implementer-full-report-recovered.txt,
+     implementer-fixture-report.txt). README.md:45 calls the recovered
+     report “exact,” while implementer-full-report-recovered.txt:4
+     says the exact terminal export was not archived; use “faithful
+     reconstruction” consistently.
+     FILES_AT_RISK: None.
+     CONCEDED: Both prior blockers are resolved. Per-arm fixtures now
+     cover embedded OpenCode, OpenCode above idle, and usage above
+     idle in src/detect/manifest/tests.rs, with matching real-CLI
+     cases and 58/58 passing. The implementer record is correctly
+     separated: the smart-quote follow-up is labeled, the four-file
+     turn is recorded, the three-row fixture turn is recorded, and
+     verification.json lists all four edit-only turns. Material
+     limits: the c0c83c… manifest, e6e649… patch, and source hashes
+     match the recorded evidence but were not independently recomputed
+     (native read-only tools cannot run SHA-256); the full-turn report
+     is a faithful reconstruction, not a verbatim terminal export;
+     proof remains offline-only; upstream identities are unverified;
+     the byte-identical bottom-line ambiguity remains by design.
+     COMPLETION: complete / no delegates / no background work

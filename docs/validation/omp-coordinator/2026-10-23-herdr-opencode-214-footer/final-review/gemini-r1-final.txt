@@ -1,0 +1,59 @@
+REQUEST_TOKEN: sol-opencode214-final-gemini-20261023
+  EFFECTIVE_MODEL: requested Gemini 3.8 Flash (High) / configured
+  Gemini 3.8 Flash (High) / settings/mode Plan / evidence matches
+  frozen plan roster / upstream unverified
+  VERDICT: pass
+  BLOCKERS: None.
+  SUGGESTIONS: None required.
+  FILES_AT_RISK: None.
+  CONCEDED:
+
+  • Verification is offline-only; no live trial, deployment, or
+  system binary installation was conducted.
+  • A bare transcript string byte-identical to a legitimate footer
+  appearing at the bottom line cannot be distinguished from a live
+  footer by design.
+  • Full-TUI premature-completion defect remains a separate
+  lifecycle issue unaddressed by screen-shape regex detection.
+  • Implementer model upstream identity remains unverified.
+  COMPLETION: complete / no delegates / no background work
+  ──────
+  ### Evaluation Summary
+
+  The offline evidence package confirms that the rule change
+  satisfies all requirements established in frozen plan
+  docs/plans/2026-10-23-herdr-opencode-214-footer.md:
+
+  1. Rule & Priority Integrity:
+      • status_footer_esc_stop_working maintains priority = 105,
+      bottom-line anchoring (region = "bottom_non_empty_lines(1)"),
+      and visible_working = true.
+      • Higher-priority permission_required at priority = 300
+      reliably takes precedence over the working footer in both unit
+      tests and CLI matrix suites (214-blocked).
+  2. Regex Compatibility & Specificity:
+      • The regex preserves the pre-existing <account> / <provider>
+      shape in its first alternation arm ([^·/\n"'“”‘’]+ / [\w.-]+`).
+      • The new arms accept literal OpenCode and strict usage tokens
+      \d+(?:\.\d+)?[KM]? \((?:100|[1-9]?\d)%\).
+      • The rule strictly rejects lowercase/uppercase variations
+      (opencode, OPENCODE, 6.7k), out-of-range percentages (101%,
+      300%), spacing defects (6.7K(3%), 6.7 K (3%)), quotes (ASCII,
+      backtick, smart quotes), prefixes (log:, ▸), trailing copied
+      text, and incomplete fields.
+  3. Evidence Package Consistency:
+      • Manifest hash matches
+      c914927e40e452c7e02772d848867acc34c64dcb5412fb5c513c3e8442ceb6
+      79.
+      • Patch hash matches
+      93c2de0685df81f63997c779d5f3cf389a74628cb1c07ff4be2b8c223d2fac
+      7f.
+      • Both manifest copies (distribution/ and
+      src/detect/manifests/) are byte-identical and incremented to
+      version 2026.10.23.1.
+      • Red-first test confirmed expected initial failure (Idle vs
+      Working).
+      • Rebuilt CLI matrix passed all 55 cases (29 preserved + 26
+      new 2.1.4 cases).
+      • Stale cache correctly selects bundled 2026.10.23.1 over
+      older cached versions.`
