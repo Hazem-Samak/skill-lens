@@ -1,0 +1,45 @@
+REQUEST_TOKEN: sol-mini-trial-plan-r4-opencode-20261023
+
+**Final narrow confirmation only.** The owner authorized one confirmation of the round-3 margin correction. Do not broad-review. Read only the changed timing/acceptance sentences and confirm they close your round-3 residual without introducing a new false-pass or threshold contradiction.
+
+# Subject
+
+Plan: /Users/corvette/Documents/Projects Coding/Skill Lens/docs/plans/2026-10-23-herdr-mini-isolated-trial.md
+Expected SHA-256: 3964f5d1813e56236b7657733ecc4c6dc72f4a63247ecf0e519b55ff2b2f1e20
+Prior report: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-herdr-mini-trial-review-20261023-juh_i8ce/opencode-report.txt; round-3 brief/report in the same directory.
+
+# Confirm exactly
+
+1. Step 4 now defines `pass_margin = timing_band + bracket_half_width`, with `timing_band` at least 50 ms for millisecond data or 1000 ms for second data, and bracket half-width at most 250 ms. Step 8 and the acceptance line require `wait_return >= completed_c + pass_margin`; a difference below `pass_margin` is inconclusive.
+2. `step_threshold = max(250 ms, bracket_half_width)` is used for wall-clock-versus-monotonic drift, not as the pass margin; the table uses `pass_margin` for timing and `step_threshold` for drift. Confirm the round-3 threshold mismatch is gone.
+3. No new false-pass path or contradictory “any offset blocks” wording was introduced in these edited sentences.
+
+# Controls
+
+- Native file read/search tools ONLY. No shell/commands/tests/builds/git/network/delegation/writes, even in /tmp.
+- No credentials, raw transcripts, incidents or recovered receipts.
+- One report under 400 words. Do not write a file. Stop after the report.
+
+READ-ONLY CRITIC TASK. You are reviewing, not implementing.
+
+Do NOT create, edit, move, delete or rename any file in the repository. Do NOT run
+any command that writes: no formatters, no linters with --fix, no install, no
+git commit/checkout/stash, no snapshot or golden regeneration, no test runs that
+write into the checkout. Test output, if you need it, goes only to a temporary
+directory outside the repository.
+
+If you believe a change is required, do not make it. Report it instead.
+
+Return only the report format below. Nothing else.
+
+
+# Report format
+
+REQUEST_TOKEN: sol-mini-trial-plan-r4-opencode-20261023
+EFFECTIVE_MODEL: requested / configured / settings/mode / evidence / upstream identity verified or unverified
+VERDICT: pass | changes_required | unverified
+BLOCKERS: exact sentence/evidence if the margin or threshold is still wrong; otherwise "None."
+SUGGESTIONS: non-blocking only, or "None required."
+FILES_AT_RISK: only the edited sentences, or "None."
+CONCEDED: confirm the bracket uncertainty is now included and the threshold is consistent.
+COMPLETION: complete / no delegates / no background work

@@ -119,5 +119,43 @@
     "Offline acceptance is input evidence, not live proof.",
     "No live Mini trial, installation, full-TUI trace, formal smoke or publication has run.",
     "Model availability without credentials is not yet proved; execution preflight may stop and return a credential choice to the owner."
-  ]
+  ],
+  "cleanup": {
+    "reviewer_panes": [
+      "wG:pA",
+      "wG:pB"
+    ],
+    "returned_to_shell_before_close": true,
+    "closed": true,
+    "base_pane": "wG:p1",
+    "base_shell_pid": 45632,
+    "base_rows": 55,
+    "base_focused": true,
+    "no_server_or_session_stop": true,
+    "remaining_panes": [
+      "wG:p1"
+    ]
+  },
+  "reports_preserved": {
+    "exact": [
+      "reports/gemini-r1.txt",
+      "reports/gemini-r2.txt",
+      "reports/gemini-r3.txt",
+      "reports/opencode-r1.txt",
+      "reports/opencode-r4.txt"
+    ],
+    "recovered_summaries": [
+      "reports/opencode-r2-summary.txt",
+      "reports/opencode-r3-recovered.txt"
+    ],
+    "briefs": [
+      "briefs/gemini-r1.txt",
+      "briefs/gemini-r2.txt",
+      "briefs/gemini-r3.txt",
+      "briefs/opencode-r1.txt",
+      "briefs/opencode-r2.txt",
+      "briefs/opencode-r3.txt",
+      "briefs/opencode-r4.txt"
+    ]
+  }
 }

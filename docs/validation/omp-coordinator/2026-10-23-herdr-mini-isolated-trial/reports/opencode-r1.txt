@@ -1,0 +1,134 @@
+REQUEST_TOKEN: sol-mini-trial-plan-opencode-20261023
+
+     EFFECTIVE_MODEL: requested opencode/deepseek-v4.1-flash-free#max
+     / Plan / read-only; configured opencode/deepseek-v4.1-flash-free
+     / Plan per this session; max variant not independently read back;
+     evidence: harness model/provider metadata and enforced native-
+     read-only tools; upstream identity unverified.
+
+     VERDICT: changes_required
+
+     BLOCKERS:
+
+     1. Acceptance line 62; Execution steps 4 and 7 (lines 47, 50) —
+        the clock comparison is not operational. The plan records
+        whether time.completed is seconds or milliseconds but sets no
+        resolution or clock-offset guard. At second resolution, a wait
+        returning up to one second before true completion can still
+        compare as “not before” after truncation; equality and sub-
+        resolution differences are undefined. Expected: record the
+        clock source/domain and timestamp resolution; require
+        wait_return >= completed + one resolution unit (or a measured
+        offset), and treat any difference inside that band as
+        inconclusive. Evidence: line 47 admits the API does not
+        promise a unit; line 62’s “timing ambiguity” has no test.
+
+     2. Acceptance line 62; Execution step 5 (line 48) — the original
+        wait need not succeed. The pass list omits a successful
+        settled agent prompt --wait result. A non-timeout error or
+        unknown return after native completion could satisfy the
+        timing, token and finish:stop checks. Expected: pass requires
+        the wait to return normal idle/done (not blocked/error/
+        timeout/unknown) after completion; any non-zero or uncertain
+        result is failure/inconclusive. Evidence: line 51 lists
+        timeout/stall only; line 62 has no result-status clause.
+
+     3. Execution steps 3 and 7 (lines 46, 50) — no exactly-one-
+        delivery proof. “Single empty native session” and “one prompt”
+        are asserted, but post-prompt evidence only filters the last
+        assistant message. It does not require zero user messages
+        before submission, exactly one token-bearing user message, and
+        no other turns. A duplicate Herdr submission or startup-
+        created turn could still yield a complete matching answer.
+        Expected: record the pre-prompt count; after, require exactly
+        one token-bearing user message, one matching final assistant,
+        and no other turns; otherwise fail/inconclusive. Evidence:
+        line 38 asserts emptiness without a verification step; line 50
+        checks only the last assistant.
+
+     4. Execution steps 5–6 (lines 48–49) — concurrency of the one
+        prompt wait is undefined. The busy observation must occur
+        “while that same wait is outstanding,” but agent prompt ... --
+        wait is described as a blocking command. The plan does not say
+        how it is supervised/backgrounded, how its exact return time
+        and exit status are captured, or how the observer runs before
+        the turn ends. Sequential execution misses the busy snapshot
+        by construction. Expected: specify a supervised background
+        launch (PID/start/output/exit), then the single observer; no
+        second submission. Evidence: line 48 uses --wait; line 49
+        assumes concurrency; line 55 bounds durations only.
+
+     5. Scope steps 4 and 6 (lines 34, 36) — preflight order is
+        contradictory. Step 6 says model availability must be proved
+        “before any Herdr build,” but step 4 builds and starts the
+        corrected Herdr server. Literal order breaks the preflight
+        rule and can build/start before discovering the model is
+        absent or needs a credential. Expected: run the model
+        preflight before step 2, or hard-gate steps 2–4 on it; stop
+        before any build/server if unavailable. Evidence: line 36’s
+        bold “before any Herdr build” versus line 34’s step 4.
+
+     6. Reporting line 66 versus Acceptance line 62 — final critics
+        are not an acceptance condition. Two fresh critics are
+        required, but the pass list does not require both to return
+        pass, and gives no rule for one changes_required/unverified
+        beyond vague “two nonconvergent rounds” escalation. One pass
+        plus one unverified could be reported as a completed pass.
+        Expected: live pass only if both critics return substantive
+        pass on the same frozen evidence; dissent or unverified
+        blocks/escalates; tie each report to native completion and no
+        active work. Evidence: line 66 says “assess,” not “both pass”;
+        OMP review/dispatch rules require blockers resolved and
+        substantive reports.
+
+     SUGGESTIONS:
+
+     - Add a tri-state table (pass/failure/inconclusive) matching
+       Outcome line 13; acceptance lines 62–64 collapse the last two.
+       Define, for example, early wait as failure and missed busy
+       snapshot or clock ambiguity as inconclusive.
+     - Before the prompt, verify the live evidence commands (agent
+       wait --until working, agent explain, agent get, agent read)
+       against installed 0.9.5 help and the idle isolated pane;
+       current preflight covers only the OpenCode API.
+     - Require a substantive ~500-word answer or a minimum length/
+       content check, not only BEGIN/END markers.
+     - Align line 68 with docs/process/omp/planning-loop.md §5: commit
+       1 plan-only, commit 2 reference-only; “two plan-only commits”
+       is ambiguous. Record the fresh token in the ledger.
+     - Record a pre/post wall-clock bracket and monotonic readings
+       around the wait; a clock step is inconclusive.
+     - Verify no first-run/onboarding modal is present before
+       submitting the prompt.
+
+     FILES_AT_RISK:
+
+     - docs/plans/2026-10-23-herdr-mini-isolated-trial.md
+     - /tmp/skill-lens-herdr-mini-live-20261023-* (owned source/tools/
+       homes/sockets/logs)
+     - /Users/corvette/.config/herdr/herdr.sock, user default session,
+       pane wG:p1
+     - /Users/corvette/.local/bin/herdr; /Users/corvette/.opencode/
+       bin/opencode
+     - User shared OpenCode service at http://127.0.0.1:49374
+     - docs/validation/omp-coordinator/2026-10-23-herdr-mini-isolated-
+       trial/
+     - Preserved modified docs/validation/omp-coordinator/2026-10-20/
+       herdr-dispatch.md, untracked .path, untracked 2026-10-19 plan.
+     - origin/main if evidence is committed/pushed.
+
+     CONCEDED:
+
+     - Debug build only, one free model (not the historical MiniMax
+       alias), one live attempt, no install/release proof, no full-TUI
+       trace/fix, no formal smoke, no general Herdr reliability claim;
+       upstream served identities unverified. The plan correctly
+       treats the accepted offline correction as input evidence and
+       preserves the normal services/files.
+     - I did not compute the expected plan SHA-256 with native read
+       tools; the coordinator’s pre/post check owns it.
+     - Process note: a broad read-only search surfaced preserved
+       receipt text; no transcript content is used or quoted, and no
+       credentials/auth files were opened.
+
+     COMPLETION: complete / no delegates / no background work

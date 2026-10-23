@@ -1,0 +1,66 @@
+REQUEST_TOKEN: sol-mini-trial-plan-r2-opencode-20261023
+
+You are the same independent planning critic, now doing a **targeted round 2** on the corrected draft. You previously reviewed draft SHA-256 af7d0eed50db41e96b3c1937350d5ec748d324f1bd73a83dde0b13ecc90b064d. The coordinator accepted and corrected the six blockers below. Judge whether each is genuinely resolved and whether the corrections introduced a new blocker. Do not reopen settled scope or demand a second live trial, installation, full-TUI trace, formal smoke, credential copying, or impossible certainty.
+
+# Your one question
+
+Are the six prior blockers genuinely resolved without introducing a new false-pass, delivery or acceptance ambiguity?
+
+# Subject
+
+Corrected plan: /Users/corvette/Documents/Projects Coding/Skill Lens/docs/plans/2026-10-23-herdr-mini-isolated-trial.md
+Expected SHA-256: 5a592255d41c7dd3fd4b59860d4812c03c665a93c7c462ae1907c81441fd2abe
+Status: Draft (round 2). Read the complete corrected plan. The coordinator will verify the file before/after your review; do not treat your review as a write check.
+
+Prior review evidence (read-only):
+- Your round-1 brief: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-herdr-mini-trial-review-20261023-juh_i8ce/opencode-brief.txt
+- Your round-1 report: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-herdr-mini-trial-review-20261023-juh_i8ce/opencode-report.txt
+- Named repository evidence from the round-1 brief remains the same; do not search incidents/recovered receipt files or unrelated user data.
+
+# Prior blockers and corrections to verify
+
+1. Timing resolution/offset: corrected execution step 4 now establishes unit, resolution and a two-second offset limit; step 8 and acceptance require wait-return at least `timing_band` after native completion, with inside-band as inconclusive.
+2. Wait status: execution step 7 and acceptance now require zero exit and settled `idle`/`done`, rejecting `blocked`, `agent_prompt_stalled`, `timeout`, `unknown` or another error.
+3. Exactly-one delivery: execution steps 3 and 7 now require pre-prompt zero user/assistant messages and post-prompt exactly one token-bearing user message, one matching assistant and no other turns.
+4. Concurrency: execution step 5 now specifies a supervised background prompt-wait process with PID/streams/exit/status and UTC+monotonic times; step 6 requires the single observer before that wait returns or the run is inconclusive.
+5. Preflight order: scope steps are chronological; step 2's credential-free model preflight strictly precedes tool download/build (steps 3–5), Herdr startup (step 6) and Mini setup (step 9).
+6. Final acceptance: both fresh final critics must return substantive `pass` on the same frozen evidence; one `changes_required`/`unverified` blocks acceptance and escalates.
+
+Also verify the accepted suggestions: tri-state pass/failure/inconclusive table; live evidence-command syntax check; substantive answer rather than markers alone; plan-only then reference-only commit wording; fresh token ledger; clock/onboarding checks.
+
+# Current facts
+
+- Corrected draft hash above; no build/server/prompt has run.
+- Round 1: Gemini pass, OpenCode changes_required. Pre/post checkout, HEAD, 1,305 file fingerprints, plan hash and the three original user files were unchanged.
+- The OpenCode round-1 critic used a broad read that surfaced a preserved receipt file outside named evidence; it reports no content used/quoted, no credentials/raw transcripts read, no writes. Do not repeat that search.
+
+# Controls
+
+- Native file read/search tools ONLY. Do NOT run shell/terminal commands, scripts, builds, tests, linters, formatters, git, network, archive extraction or delegates, even in /tmp. Sol owns all runtime verification and fingerprints.
+- Do NOT read or copy credentials, auth files, raw agent transcripts, old session exports, incidents folders or recovered-coordinator-receipts.
+- Use only the corrected plan, the prior brief/report named above, and the named repository evidence. Do not search unrelated user data.
+- One complete report only. Do not write a report file. Stop after the report.
+
+READ-ONLY CRITIC TASK. You are reviewing, not implementing.
+
+Do NOT create, edit, move, delete or rename any file in the repository. Do NOT run
+any command that writes: no formatters, no linters with --fix, no install, no
+git commit/checkout/stash, no snapshot or golden regeneration, no test runs that
+write into the checkout. Test output, if you need it, goes only to a temporary
+directory outside the repository.
+
+If you believe a change is required, do not make it. Report it instead.
+
+Return only the report format below. Nothing else.
+
+
+# Report format
+
+REQUEST_TOKEN: <the token above>
+EFFECTIVE_MODEL: requested / configured / settings/mode / evidence / upstream identity verified or unverified
+VERDICT: pass | changes_required | unverified
+BLOCKERS: for each unresolved prior blocker, state "prior blocker N unresolved" with exact corrected-plan location and evidence. Add any new blocker with exact location/impact/evidence. Say "None." if none.
+SUGGESTIONS: non-blocking only, or "None required."
+FILES_AT_RISK: files whose behavior or safety could be affected, or "None."
+CONCEDED: material limits you accept as adequately disclosed, including which prior blockers you now consider resolved.
+COMPLETION: complete / no delegates / no background work

@@ -1,0 +1,50 @@
+REQUEST_TOKEN: sol-mini-trial-plan-r3-gemini-20261023
+
+**Targeted round 3 — confirmation only.** Do not perform another broad review. Judge only whether the two round-2 blockers are resolved in the corrected sections and whether those edits introduced a regression. Do not reopen settled scope or demand a live trial, install, full-TUI trace, formal smoke, credential copying or impossible certainty.
+
+# Subject
+
+Corrected plan: /Users/corvette/Documents/Projects Coding/Skill Lens/docs/plans/2026-10-23-herdr-mini-isolated-trial.md
+Expected SHA-256: d077406313009bcbadaedb9209a0fbbad4bbe182c755c1fccf0838a9a1b09396
+Status: Draft. The coordinator owns file verification.
+
+Prior evidence (read-only):
+- Round-1 brief/report and round-2 brief/report for your lane are in /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-herdr-mini-trial-review-20261023-juh_i8ce.
+- Named repository evidence from the round-1 brief remains unchanged. Do not search incidents, recovered receipts or unrelated user data.
+
+# Round-2 findings to confirm
+
+1. **Offset residual.** The previous draft allowed a measured offset but never applied it. The corrected step 4 now derives `offset = native_clock - coordinator_clock`, requires a creation-bracket half-width ≤ 250 ms and `|offset| ≤ 2 s`, converts completion to `completed_c = native_completed - offset`, and records coordinator UTC/monotonic before submission and at return. Step 8 requires `wait_return >= completed_c + timing_band`; offset/drift/step beyond the measured bracket is inconclusive, and the table names those conditions. Confirm this closes the false-pass/false-fail path and that no contradictory “any offset blocks” wording remains.
+2. **Evidence-freeze blocker.** Reporting now requires one immutable evidence package, a canonical file manifest with SHA-256, the same hash and file list in both final-critic briefs, each report naming it, and both critics re-reviewing after any evidence change. It also requires each critic's own native completion/no-active-work evidence. Confirm this prevents two critics from passing different evidence sets and closes the full-TUI early-return reliance.
+
+Also check only these changed items: `agent prompt`/`--until working` syntax check; `models --help` citation; native session creation before Mini starts; duplicate backend-start wording removed; targeted follow-ups explicitly allowed. Do not review unchanged sections anew.
+
+# Controls
+
+- Native file read/search tools ONLY. No shell/terminal commands, scripts, tests, builds, git, network, archive extraction or delegates, even in /tmp.
+- No credentials, auth files, raw transcripts, incidents or recovered receipts.
+- One complete report, under 600 words. Do not write a report file. Stop after the report.
+
+READ-ONLY CRITIC TASK. You are reviewing, not implementing.
+
+Do NOT create, edit, move, delete or rename any file in the repository. Do NOT run
+any command that writes: no formatters, no linters with --fix, no install, no
+git commit/checkout/stash, no snapshot or golden regeneration, no test runs that
+write into the checkout. Test output, if you need it, goes only to a temporary
+directory outside the repository.
+
+If you believe a change is required, do not make it. Report it instead.
+
+Return only the report format below. Nothing else.
+
+
+# Report format
+
+REQUEST_TOKEN: <the token above>
+EFFECTIVE_MODEL: requested / configured / settings/mode / evidence / upstream identity verified or unverified
+VERDICT: pass | changes_required | unverified
+BLOCKERS: "Prior blocker 1 unresolved" or "Evidence-freeze blocker unresolved" with exact location/evidence if applicable; otherwise "None." Add any new regression only if caused by these edits.
+SUGGESTIONS: non-blocking only, or "None required."
+FILES_AT_RISK: only files affected by these edits, or "None."
+CONCEDED: which of the two corrections you verified, and any material limits you accept.
+COMPLETION: complete / no delegates / no background work

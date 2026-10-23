@@ -1,0 +1,34 @@
+REQUEST_TOKEN: sol-mini-trial-plan-gemini-20261023
+  EFFECTIVE_MODEL: requested: Gemini 3.8 Flash (High) / configured:
+  Gemini 3.8 Flash (High) / settings/mode: Model Selection set to
+  Gemini 3.8 Flash (High), Plan Mode (/plan), read-only critic /
+  evidence: native read_file inspection only, zero shell/terminal
+  commands, zero writes, zero background tasks, zero delegates /
+  upstream identity unverified beyond platform API disclosure
+  VERDICT: pass
+  BLOCKERS: None.
+  SUGGESTIONS: None required.
+  FILES_AT_RISK: None. Review was conducted strictly read-only.
+  Future trial execution is constrained to disposable /tmp/skill-
+  lens-herdr-mini-live-20261023-* and authorized plan/receipt paths,
+  leaving user repository files, installed binaries, and running
+  services untouched.
+  CONCEDED:
+
+  • Disposable single-turn scope: Validates the delivered Mini
+  screen-detection correction during a single real generation in an
+  isolated environment; does not constitute formal smoke acceptance
+  or general Herdr reliability certification.
+  • Full-TUI separation: The distinct integration-authority early-
+  completion defect in full-TUI mode remains unresolved and strictly
+  design-only.
+  • Upstream model provenance: Upstream served model identity and
+  weights remain independently unverified beyond platform disclosure.
+  • Passive regex detection bounds: Passive screen-scraping cannot
+  distinguish a literal unadorned bottom-line status string from an
+  active footer.
+  • Model availability preflight: The private profile is strictly
+  credential-free; if the exact model/variant requires
+  authentication or is unavailable during preflight, execution halts
+  and returns to the owner without fallback.
+  COMPLETION: complete / no delegates / no background work

@@ -1,0 +1,77 @@
+REQUEST_TOKEN: sol-mini-trial-plan-gemini-20261023
+
+You are a fresh independent planning critic for a High-risk OMP plan. You have no access to the coordinator's conversation and must judge only the plan, its named evidence and the facts below. Do not resume an earlier review.
+
+# Your one question
+
+Can this plan change the user's normal Herdr/OpenCode services, settings, credentials or data, or leave owned processes/sockets behind? Identify any missing isolation, rollback, ownership or preservation gate.
+
+Review the whole plan for blockers; this question is your primary lens, not a limit.
+
+# Subject
+
+Plan: /Users/corvette/Documents/Projects Coding/Skill Lens/docs/plans/2026-10-23-herdr-mini-isolated-trial.md
+Expected SHA-256: af7d0eed50db41e96b3c1937350d5ec748d324f1bd73a83dde0b13ecc90b064d
+Status: Draft. The coordinator will verify the file before/after your review; do not treat your own review as a write check.
+
+Read the complete plan. Verify its internal claims against the named repository evidence:
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/plans/2026-10-22-herdr-mini-detection-fix.md
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/correction.patch
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/bounded-reconstruction.json
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/bounded-final-review.json
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/verification.json
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/provenance.json
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/omp-coordinator/2026-10-22-herdr-investigation/diagnosis.md
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/process/omp/README.md
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/process/omp/planning-loop.md
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/process/omp/herdr.md
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/plans/2026-10-22-herdr-full-tui-capture.md (boundary only: stays design-only)
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/plans/2026-10-23-herdr-mini-isolated-trial.md
+
+# Current facts supplied by the coordinator
+
+- Repository HEAD 6ce458afe9302e3d5869f293203dda7f3ca43f10. The new plan is untracked. The three pre-existing user changes (modified historical herdr-dispatch.md, untracked .path, untracked 2026-10-19 plan) are preserved and outside delivery.
+- Accepted offline correction commit 5a044803c2cdd22063442411062b25aa9e1ee6b2. Patch SHA-256 f22d2d7edf26dd8e308394de143b015b37cf58f17148a45ca3c12889b8c6efe8. Pinned archive SHA-256 5c745bf712aee3320ed88a665c39a9143cbd6b7ce4376e0ae0f0c07988576c13.
+- Installed Herdr 0.9.5, SHA-256 fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2. User-started default session is running at /Users/corvette/.config/herdr/herdr.sock, protocol 22. Its only pane is wG:p1, shell PID 45632, 55 rows, focused.
+- Installed OpenCode 2.1.4, SHA-256 d8a65dd253dbea759ae0dd829792ff219b40178c7decffea822430a4d1ccadb3. The user's shared service is running at http://127.0.0.1:49374 and must not be used or stopped by the trial.
+- The previous offline phase was accepted with two fresh final passes. That is input evidence, not acceptance of this plan or of live behavior.
+- No temporary source extraction, build, new server/session, diagnostic Mini worker, live prompt or full-TUI capture has run during this planning stage.
+- The owner authorized this isolated trial with the exclusions stated in the plan. A preflight that needs a new credential or compatibility choice must return to the owner.
+
+# Review criteria
+
+- Does the plan implement the frozen outcome without inventing new product behavior or weakening the prior acceptance?
+- Are isolation, process ownership, rollback, preservation and cleanup sufficient to leave the user's normal Herdr/OpenCode services, settings, credentials and data untouched?
+- Are the one-prompt bounds, pass/failure/inconclusive definitions, timing comparison and native completion evidence sufficient to prevent a false pass and prevent an unauthorized retry?
+- Are the source-backed claims, allowed paths, authorization and freeze/delivery gates internally consistent?
+- Do not demand a second live trial, installation, full-TUI trace/fix, formal smoke, credential copying, or impossible certainty. If a limitation is acknowledged and non-blocking, concede it.
+
+# Controls
+
+- Native file read/search tools ONLY. Do NOT run shell/terminal commands, scripts, builds, tests, linters, formatters, git, network, archive extraction or delegates, even in /tmp. Sol owns all runtime verification and fingerprints.
+- Do NOT read or copy credentials, auth files, raw agent transcripts or old session exports.
+- Use only the supplied plan, named repository evidence and current facts. Do not search unrelated user data.
+- One complete report only. Do not write a report file. Stop after the report.
+
+READ-ONLY CRITIC TASK. You are reviewing, not implementing.
+
+Do NOT create, edit, move, delete or rename any file in the repository. Do NOT run
+any command that writes: no formatters, no linters with --fix, no install, no
+git commit/checkout/stash, no snapshot or golden regeneration, no test runs that
+write into the checkout. Test output, if you need it, goes only to a temporary
+directory outside the repository.
+
+If you believe a change is required, do not make it. Report it instead.
+
+Return only the report format below. Nothing else.
+
+# Report format
+
+REQUEST_TOKEN: <the token above>
+EFFECTIVE_MODEL: requested / configured / settings/mode / evidence / upstream identity verified or unverified
+VERDICT: pass | changes_required | unverified
+BLOCKERS: exact plan line/section, the problem, expected behavior, and evidence. Say "None." if none.
+SUGGESTIONS: non-blocking only, or "None required."
+FILES_AT_RISK: files whose behavior or safety could be affected, or "None."
+CONCEDED: material limits you accept as adequately disclosed.
+COMPLETION: complete / no delegates / no background work
