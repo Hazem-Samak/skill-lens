@@ -145,3 +145,46 @@ Final conservative correction:
 The owner reviewed this residual and explicitly selected **“Accept and freeze”** on 2026-10-23. The accepted correction is the reviewer's own conservative alternative: it adds the tolerated step to the pass margin, so it can only make a pass harder, never easier. Gemini passed every round it reviewed; OpenCode verified the evidence-freeze gate, the offset application, the bracket margin and the threshold labels, with this final conservative margin as the only residual. No fifth review was authorized or launched.
 
 Status is now Agreed. The two-commit freeze records the plan-only commit and then this exact reference. No build, server, Mini prompt or full-TUI capture has run; execution remains gated on the frozen reference and preflight.
+
+## Execution receipt (append-only)
+
+This receipt records execution evidence only. It does not alter the frozen reference
+`1ab5297debea785b2f4de069f18ebb40c578dc44` or its reference commit
+`2033b5999dcc37944788aa025570498531b5c9a3`.
+
+- **Preflight passed.** The credential-free private profile listed
+  `opencode/deepseek-v4.1-flash-free` with variants `low`, `high` and `max`. No
+  user credential was copied. The isolated toolchain downloads matched all
+  official SHA-256 values; the accepted patch reproduced all four hashes.
+- **Build and offline checks passed.** Corrected debug binary built; 100 detector
+  tests passed; Clippy with denied warnings and `cargo fmt --check` passed;
+  **29/29** preserved real-CLI cases passed. The Skill Lens health gates were
+  reused on unchanged product/checker/test inputs.
+- **Live trial failed.** One supervised prompt produced
+  `agent_prompt_stalled` (~10.44 s) and the bounded observer timed out
+  (~10.30 s). Herdr evaluated the screen as `idle` with no matched rule; the
+  corrected bundled manifest was `2026.10.22.1` and screen detection was active.
+  The model itself completed successfully in about 9.8 s with a 2,933-byte
+  BEGIN/END answer; native metadata shows DeepSeek V4.1 Flash Free `max`,
+  `finish: stop`, session `succeeded`, exactly one user and one assistant, no
+  active or child work. The wait returned
+  `wait_return - completed_c = +309.17 ms`, below the frozen `pass_margin` of
+  334.18 ms, so timing alone would be inconclusive; the stalled wait status is
+  the failure. The active 2.1.4 footer shape was not captured.
+- **Final evidence reviews passed.** Both fresh critics passed the immutable
+  22-file evidence manifest `b0e2d809ddc6631d36015928d06d750eb08b0c39ead97417ac0e8593425c4976`.
+  Gemini corrected its own model-evidence line; OpenCode's first `done` was
+  rejected as premature and its complete report was recovered without a resend.
+  Their non-blocking wording suggestions were deferred because the evidence is
+  immutable. No reviewer wrote to the checkout or evidence package.
+- **Cleanup completed.** The Mini worker and private backend exited, the isolated
+  Herdr session stopped, and no owned process remained. The normal `default`
+  service, installed binaries, shared OpenCode service and three pre-existing
+  user files were unchanged. Base `wG:p1` remains the only focused pane
+  (`55` rows, shell PID `45632`). The owned temporary root is removed only after
+  the final-review evidence is committed and pushed.
+- **Next step requires separate authorization.** The correction did not validate
+  live; the exact active-footer shape is unknown. No resend, code fix,
+  installation, full-TUI trace or formal smoke was performed or is authorized.
+  A diagnostic capture of the active footer or a new correction plan needs the
+  owner's explicit approval.

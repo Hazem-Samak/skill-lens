@@ -1,0 +1,60 @@
+{
+  "status": "final reviews complete; live trial failure accepted",
+  "trial_result": "failure",
+  "trial_manifest_sha256": "b0e2d809ddc6631d36015928d06d750eb08b0c39ead97417ac0e8593425c4976",
+  "trial_evidence_files": 22,
+  "frozen_reference": {
+    "plan_only_commit": "1ab5297debea785b2f4de069f18ebb40c578dc44",
+    "reference_commit": "2033b5999dcc37944788aa025570498531b5c9a3",
+    "trial_evidence_commit": "6ba68957f5dcdd64d78e7c3e34186fba2404c703"
+  },
+  "reviewers": {
+    "gemini": {
+      "session": "518ab24b-ccb8-4c81-bc15-cdece9a151cb",
+      "requested": "Gemini 3.8 Flash High",
+      "configured": "Gemini 3.8 Flash High",
+      "mode": "Plan, read-only",
+      "verdict": "pass",
+      "waits_s": [134.67, 10.63],
+      "report": "final-review/gemini-report.txt",
+      "superseded_report": "final-review/gemini-report-superseded.txt",
+      "correction": "The first report cited the trial's DeepSeek model as its own evidence and said upstream identity was verified. The targeted correction now states Gemini 3.8 Flash High / Plan, native UI/session evidence, upstream unverified; the pass stands.",
+      "upstream_identity_verified": false
+    },
+    "opencode": {
+      "session": "ses_e973d390fffe0tgLvEPO5FTV7R",
+      "requested": "opencode/deepseek-v4.1-flash-free#max",
+      "configured": "DeepSeek V4.1 Flash Free, max, Plan",
+      "verdict": "pass",
+      "initial_prompt_return": "done",
+      "initial_return_disposition": "rejected as premature; the pane was still working; no resend",
+      "recovery": "one 120 s bounded wait timed out, then a 185.46 s bounded wait returned idle; the complete report was read",
+      "report": "final-review/opencode-report.txt",
+      "upstream_identity_verified": false
+    }
+  },
+  "no_write_proof": {
+    "checkout_status_head_files_equal_before_after": true,
+    "trial_evidence_files_equal_before_after": true,
+    "user_files_equal": true,
+    "head_at_review": "6ba68957f5dcdd64d78e7c3e34186fba2404c703"
+  },
+  "suggestions_disposition": [
+    "OpenCode's non-blocking suggestions (explain the 5 s internal stall window, state the timing inequality, add pre-trial baseline hashes, add an explicit backend-stop receipt, clarify 'raw transcripts', soften 'while generating') are deferred. The trial evidence is immutable and the suggestions do not identify a false pass or unsafe conclusion; the pre-trial planning baseline already records the installed-binary and user-file hashes."
+  ],
+  "cleanup": {
+    "reviewer_panes": ["wG:pC", "wG:pD"],
+    "returned_to_shell_before_close": true,
+    "closed": true,
+    "base_pane": "wG:p1",
+    "base_shell_pid": 45632,
+    "base_rows": 55,
+    "base_focused": true,
+    "remaining_panes": ["wG:p1"],
+    "trial_processes_absent": true,
+    "normal_shared_opencode_service": "http://127.0.0.1:49374",
+    "installed_binaries_unchanged": true,
+    "owned_trial_root_removal": "pending verified final-review commit/push"
+  },
+  "next_step": "The live Mini correction did not validate: the active OpenCode 2.1.4 footer was not recognized, so Herdr returned agent_prompt_stalled while the model completed. The exact active-footer shape is unknown. No fix, resend, installation, full-TUI trace or formal smoke is authorized. The owner must separately authorize a diagnostic capture of the active footer or a new correction plan."
+}

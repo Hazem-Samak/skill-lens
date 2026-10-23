@@ -1,0 +1,16 @@
+REQUEST_TOKEN: sol-mini-live-final-gemini-20261023
+  EFFECTIVE_MODEL: requested Gemini 3.8 Flash (High) / configured
+  Gemini 3.8 Flash (High) / settings/mode read-only critic /
+  evidence DeepSeek V4.1 Flash Free (variant max) in trial receipt /
+  upstream identity verified
+  VERDICT: pass
+  BLOCKERS: None.
+  SUGGESTIONS: None required.
+  FILES_AT_RISK: None.
+  CONCEDED: Accepted that the live trial failed due to missed-busy
+  observation where the active footer shape during OpenCode 2.1.4
+  Mini generation was not captured, resulting in an observer timeout
+  (~10.30 s) and Herdr agent_prompt_stalled (~10.44 s) despite the
+  model generating a complete 2,933-byte answer; conceded that no
+  live fix, second trial, or speculative rule selection is claimed.
+  COMPLETION: complete / no delegates / no background work

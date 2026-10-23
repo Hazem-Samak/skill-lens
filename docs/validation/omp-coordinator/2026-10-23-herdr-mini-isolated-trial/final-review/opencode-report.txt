@@ -1,0 +1,73 @@
+REQUEST_TOKEN: sol-mini-live-final-opencode-20261023
+
+     EFFECTIVE_MODEL: Requested DeepSeek V4.1 Flash Free max;
+     configured opencode/deepseek-v4.1-flash-free, variant max (
+     preflight.json:21-50; live-trial-native.json:6-10,50-54);
+     settings/mode plan; evidence is native session/message metadata
+     plus the model-switched event; upstream identity unverified (no
+     provider-side attestation).
+
+     VERDICT: pass
+
+     BLOCKERS: None.
+
+     SUGGESTIONS: Non-blocking only:
+
+     1. Explain the 5,000 ms text in prompt-wait.stderr.txt:1 against
+        the 10.439 s wall time in live-trial-result.json:11 and 10.295
+        s observer (live-trial-result.json:18). The likely prompt-
+        delivery/settle phase is not recorded, so the two figures look
+        inconsistent on first read.
+     2. State the would_timing_pass inequality.
+        wait_return_minus_completed_c_ms is +309.17 ms (after
+        completion), while pass_margin_ms is 334.178 ms; false is
+        plausible only under a “wait must precede completion by the
+        margin” rule, which is not written down.
+     3. Add pre-trial baseline hashes for the installed binaries and
+        the three user files. environment.json:2-5,79-83 records post-
+        trial values only, so “unchanged” (README.md:7) is attested
+        rather than independently checkable.
+     4. Add an explicit backend-stop receipt for PID 9637 in cleanup.
+        json; owned_root_processes_remaining: [] implies it, but an
+        explicit exit/status would be clearer.
+     5. Clarify README.md:27 “raw transcripts”: live-trial-native.json
+        contains the structured full answer and reasoning, so “no raw
+        terminal/TUI transcript” would be more precise.
+     6. Soften live-trial-result.json:3 “while the model was
+        generating”: the observer timed out about 0.14 s after native
+        completion (live-trial-result.json:19-20,39-40). “During or
+        just after generation” is exact.
+
+     FILES_AT_RISK: Only the named evidence package; no files were
+     modified.
+
+     CONCEDED:
+
+     - The failure classification is correct: agent_prompt_stalled
+       plus observer timeout is a failure even though the model
+       completed successfully; no false-pass claim was found.
+     - The active 2.1.4 footer shape was not captured during
+       generation; the exact shape is unknown, and the package
+       correctly selects no speculative fix.
+     - The manifest sidecar manifest.sha256 matches the supplied
+       digest b0e2d809...; the manifest lists 22 sorted entries and
+       excludes itself. I could not cryptographically recompute the
+       manifest or file hashes using native read-only tools, and I did
+       not use a shell.
+     - The “unchanged” claims rely on post-trial hashes and cleanup
+       receipts, not a before/after baseline in the package.
+     - The 5,000 ms internal stall text versus the 10.439 s wall time
+       is not reconciled in the package; this does not change the
+       failure.
+     - Timing is internally consistent with the clock bracket (27.598
+       ms offset, 34.178 ms half-bracket), but the pass-margin
+       inequality is unstated.
+     - Exactly one prompt is evidenced: one user and one assistant
+       message, one token, no resend (live-trial-native.json:32-121);
+       the complete 2,933-byte BEGIN/END answer is present (assistant-
+       text.txt:1-17; live-trial-native.json:53-54).
+     - No credentials, ephemeral private-server password, or raw
+       terminal transcript were found; private-opencode.json:4-5
+       records password_generated: true, password_retained: false.
+
+     COMPLETION: complete / no delegates / no background work

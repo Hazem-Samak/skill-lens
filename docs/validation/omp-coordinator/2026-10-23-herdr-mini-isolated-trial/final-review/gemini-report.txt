@@ -1,0 +1,16 @@
+REQUEST_TOKEN: sol-mini-live-final-gemini-r2-20261023
+  EFFECTIVE_MODEL: requested Gemini 3.8 Flash High / configured
+  Gemini 3.8 Flash High / settings/mode Plan, read-only critic /
+  evidence native UI/session / upstream unverified
+  VERDICT: pass
+  BLOCKERS: None.
+  SUGGESTIONS: None required.
+  FILES_AT_RISK: None.
+  CONCEDED: Confirmed manifest SHA-256
+  b0e2d809ddc6631d36015928d06d750eb08b0c39ead97417ac0e8593425c4976
+  covering all 22 sorted files; confirmed native session records
+  exactly one user message and one assistant message (2,933 bytes);
+  confirmed complete process cleanup and preservation of normal
+  environment and user files. The verdict of pass stands: the live
+  trial failure record is honestly and completely evidenced.
+  COMPLETION: complete / no delegates / no background work
