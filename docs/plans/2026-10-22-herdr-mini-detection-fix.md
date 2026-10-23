@@ -283,3 +283,27 @@ production matcher, deployment, trial or full-TUI scope.
   Temporary source/tools remain owned and isolated until verified durable
   commit/push, then can be removed without losing the patch or evidence.
 
+## Verified delivery and temporary cleanup
+
+Accepted correction/evidence commit
+**`5a044803c2cdd22063442411062b25aa9e1ee6b2`** was pushed to `origin/main`;
+local HEAD, tracking ref and remote branch hashes matched exactly.
+
+After that verified push, removed only the owned
+`/tmp/skill-lens-herdr-mini-20261022-o1x7n059` environment, including extracted
+source, temporary Rust/Zig tools, build/dependency caches, worker-session copy
+and throwaway scripts. The directory is absent. No worktree binding existed.
+The original pinned archive, delivered patch, complete final reports and
+verification records remain intact.
+
+Post-cleanup checks confirm the three original user-file checksums and installed
+Herdr checksum are unchanged. Base `wG:p1` remains the only focused pane,
+55 viewport rows, foreground original shell PID `45632` in the repository.
+The observed cleanup is recorded in
+[post-delivery-cleanup.json](../validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/post-delivery-cleanup.json).
+This administrative receipt changes no exercised source or acceptance criterion;
+the passing checks/reviews remain valid without rerunning them.
+
+Offline deliverable complete. Deployment, a live Mini trial, full-TUI trace/fix,
+formal smoke and upstream publication remain separately unauthorized.
+

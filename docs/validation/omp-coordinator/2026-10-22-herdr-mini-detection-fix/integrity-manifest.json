@@ -1,6 +1,6 @@
 {
   "excludes_self": true,
-  "acceptance": "Accepted offline after owner-authorized bounded correction and two fresh final passes; historical receipts remain explicitly superseded",
+  "acceptance": "Accepted offline after bounded correction, two fresh final passes and verified delivery; owned temporary environment removed; historical receipts explicitly superseded",
   "files": {
     "bounded-changes-since-r5.patch": "9400e1ac14408a3e5715b5847013f93a0a63f2e8db06efae4682c021bd92bad0",
     "bounded-checks.json": "da83d8b737871281f011a57fdfd3bd9ce38d00a2e6b64a2e659a81ce3492ca66",
@@ -21,6 +21,7 @@
     "final-review-r2.json": "13fc2acfc3e66d85cf4e0336074fd23df8df1d5e90f7531069caf08ae31a1e2e",
     "implementer-report.txt": "94b656c8bd6f1e2bb612dded815079205ba5561811c9c8b46833dcaebbeba8c0",
     "patch-reconstruction.json": "d7ea0a2de292897848206050b17f173a74a608000eae11f9f0a6a20b9c3c85a4",
+    "post-delivery-cleanup.json": "8bada7eb5f5804dac7d668226fd9843ebaed8a71a45b20aac203aab4dad653ee",
     "priority-mutation.json": "9d3736014e1c208854b203109931d13a031720e0ed0b701cefb489d8a055e897",
     "provenance.json": "c04c6967f1e078cf0c71e18b7ed883a48e3c43a380e3e4b49d2316af317e7f5b",
     "red-result.txt": "717927162794c7b446d2967869ab769033bcbc10d154406e81c152dc3f245ff5",

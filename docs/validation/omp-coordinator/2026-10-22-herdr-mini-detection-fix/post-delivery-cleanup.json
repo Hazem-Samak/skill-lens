@@ -1,0 +1,22 @@
+{
+  "status": "complete",
+  "accepted_correction_commit": "5a044803c2cdd22063442411062b25aa9e1ee6b2",
+  "accepted_commit_push_verified": true,
+  "local_tracking_remote_equal": "5a044803c2cdd22063442411062b25aa9e1ee6b2",
+  "removed_owned_temporary_root": "/tmp/skill-lens-herdr-mini-20261022-o1x7n059",
+  "root_absent": true,
+  "removed_contents": "owned extracted source, temporary Rust/Zig toolchains, dependency/build caches, isolated fixtures, worker session copy and throwaway scripts; durable patch/reports/evidence retained in repository",
+  "worktree_binding_before_removal": false,
+  "preserved_archive": "/Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/omp-coordinator/2026-10-22-herdr-investigation/source/herdr-v0.9.5.tar.gz",
+  "archive_sha256": "5c745bf712aee3320ed88a665c39a9143cbd6b7ce4376e0ae0f0c07988576c13",
+  "preserved_user_files": {
+    ".path": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/plans/2026-10-19-herdr-omp-coordinator.md": "7eb7720a8b2d4531b04b284bf7ac677787561e2d36dd6c7db10055fecf178f11",
+    "docs/validation/omp-coordinator/2026-10-20/herdr-dispatch.md": "09899b046779e614fa8cd071d5b2bfa2f58fc158dc4c958eca8f27a900018aee"
+  },
+  "installed_herdr_sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2",
+  "owned_worker_process_cleanup": "bounded-final-review.json",
+  "no_deployment_or_live_trial": true,
+  "no_full_tui_trace_or_fix": true,
+  "no_formal_smoke": true
+}
