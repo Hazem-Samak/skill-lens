@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: Owner, 2026-10-23: “I authorize the rule-change phase for the OpenCode 2.1.4 footer. Plan and freeze it under the OMP planning loop, then implement offline: accept `<spinner> esc stop · <mode> · <model> [<effort>] · (OpenCode | <usage token>)` with the bottom-line anchor, blocked priority, and quoted/prefixed/embedded copies rejected. Fixtures must include varied usage-token shapes (not only `6.7K (3%)`) and negative cases using the new shape in quoted and prefixed forms. Normal final reviews. No deployment, no live trial, no changes to the installed Herdr.”
-Reference: pending
+Reference: 738af8dd18c3b980b25d5da5bd47fcb81d37ad44
 Surface: omp; Sol remains native in Tern; review/implementation workers use the authorized Herdr route.
 Risk and review: High: changes lifecycle detection consumed by automation. Two fresh independent planning critics and two fresh final critics. Reuse the selected Gemini 3.8 Flash High / Plan and OpenCode DeepSeek V4.1 Flash Free / max / Plan pair; upstream identities remain unverified. No silent model substitution.
 Roster: Coordinator requested/configured `openai-codex/gpt-6.1-sol`, thinking high. Implementer: `opencode/deepseek-v4.1-flash-free#max`, Build, reusing the owner's previously approved replacement implementer; edit-only, no checks or delegation. Diagnostic evidence is the captured OpenCode 2.1.4 footer; no live worker/trial is authorized.
