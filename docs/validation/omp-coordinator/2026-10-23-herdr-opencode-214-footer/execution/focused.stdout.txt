@@ -1,0 +1,7 @@
+
+running 2 tests
+test detect::manifest::tests::opencode_214_footer_is_working_under_bundled_manifest ... ok
+test detect::manifest::tests::opencode_214_footer_variants_under_bundled_manifest ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 3646 filtered out; finished in 0.72s
+

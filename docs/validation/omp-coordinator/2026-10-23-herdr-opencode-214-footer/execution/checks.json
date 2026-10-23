@@ -1,0 +1,59 @@
+[
+  {
+    "name": "focused",
+    "command": [
+      "/tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/tools/rust/bin/cargo",
+      "test",
+      "-p",
+      "herdr",
+      "--bin",
+      "herdr",
+      "opencode_214_footer"
+    ],
+    "exit": 0,
+    "seconds": 17.0
+  },
+  {
+    "name": "detector",
+    "command": [
+      "/tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/tools/rust/bin/cargo",
+      "test",
+      "-p",
+      "herdr",
+      "--bin",
+      "herdr",
+      "detect::"
+    ],
+    "exit": 0,
+    "seconds": 12.2
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "/tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/tools/rust/bin/cargo",
+      "clippy",
+      "-p",
+      "herdr",
+      "--bin",
+      "herdr",
+      "--tests",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 30.8
+  },
+  {
+    "name": "format",
+    "command": [
+      "/tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/tools/rust/bin/cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 1.9
+  }
+]

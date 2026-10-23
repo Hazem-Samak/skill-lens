@@ -1,0 +1,23 @@
+{
+  "changed": [
+    "distribution/agent-detection/opencode.toml",
+    "docs/next/website/src/content/docs/agents.mdx",
+    "src/detect/manifest/tests.rs",
+    "src/detect/manifests/opencode.toml"
+  ],
+  "allowed": [
+    "distribution/agent-detection/opencode.toml",
+    "docs/next/website/src/content/docs/agents.mdx",
+    "src/detect/manifest/tests.rs",
+    "src/detect/manifests/opencode.toml"
+  ],
+  "manifest_copies_identical": true,
+  "diff": [
+    "Files /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/baseline/distribution/agent-detection/opencode.toml and /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/source/distribution/agent-detection/opencode.toml differ",
+    "Files /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/baseline/docs/next/website/src/content/docs/agents.mdx and /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/source/docs/next/website/src/content/docs/agents.mdx differ",
+    "Files /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/baseline/src/detect/manifest/tests.rs and /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/source/src/detect/manifest/tests.rs differ",
+    "Files /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/baseline/src/detect/manifests/opencode.toml and /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/source/src/detect/manifests/opencode.toml differ",
+    "Only in /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/source/vendor/libghostty-vt: .zig-cache",
+    "Only in /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/source/vendor/libghostty-vt: zig-pkg"
+  ]
+}

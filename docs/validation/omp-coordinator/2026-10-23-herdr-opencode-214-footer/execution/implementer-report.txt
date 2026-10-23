@@ -1,0 +1,22 @@
+EFFECTIVE_MODEL: requested — none specified in brief; configured
+     — opencode/deepseek-v4.1-flash-free (DeepSeek V4.1 Flash Free)
+
+     OUTCOME: Added the two smart-quote negatives immediately after
+     format!("{usage}") in the
+     opencode_214_footer_variants_under_bundled_manifest negative
+     loop: format!("“{usage}”") and format!("‘{usage}’"). Verified by
+     re-reading lines 731–735; no other edits.
+
+     CHANGED_PATHS: src/detect/manifest/tests.rs (only)
+
+     TESTS_ADDED: 0 new tests; 2 negative rows added to the existing
+     variant test.
+
+     CHECKS_NOT_RUN: No commands, tests, builds, formatters, linters,
+     git, or delegation — per brief.
+
+     DEVIATIONS: None.
+
+     BLOCKERS: None.
+
+     COMPLETION: Edit applied and verified. Stopping.

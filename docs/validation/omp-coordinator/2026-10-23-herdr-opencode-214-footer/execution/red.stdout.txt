@@ -1,0 +1,11 @@
+
+running 1 test
+test detect::manifest::tests::opencode_214_footer_is_working_under_bundled_manifest ... FAILED
+
+failures:
+
+failures:
+    detect::manifest::tests::opencode_214_footer_is_working_under_bundled_manifest
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3646 filtered out; finished in 0.21s
+

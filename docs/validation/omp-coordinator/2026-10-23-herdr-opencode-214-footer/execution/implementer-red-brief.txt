@@ -1,0 +1,17 @@
+EDIT-ONLY RED TEST. REQUEST_TOKEN sol-opencode214-red-20261023.
+Source tree: /tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo/source
+Allowed edit ONLY: src/detect/manifest/tests.rs. Do NOT edit either manifest, docs, helpers or other tests yet.
+
+Current accepted rule is the old `... · account / provider` shape, so this new regression must fail red before the rule change. Add exactly one real-loader test near the existing OpenCode footer tests, using the existing `with_manifest_dirs` and `explain` helpers:
+
+#[test]
+fn opencode_214_footer_is_working_under_bundled_manifest() {
+    with_manifest_dirs("opencode-214-footer", || {
+        let screen = "🯧 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode";
+        assert_eq!(explain(Agent::OpenCode, screen).state, AgentState::Working);
+    });
+}
+
+Do not add copied-regex, source-text or file-parity tests. Do not run tests, commands, formatters, linters, builds, git or delegation. Sol will run the focused test and observe the expected red.
+
+Return EFFECTIVE_MODEL (requested/configured), OUTCOME, CHANGED_PATHS, TESTS_ADDED, CHECKS_NOT_RUN, DEVIATIONS, BLOCKERS, COMPLETION. Stop after the report.

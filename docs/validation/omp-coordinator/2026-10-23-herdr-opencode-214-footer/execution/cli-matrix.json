@@ -1,0 +1,706 @@
+{
+  "passed": 55,
+  "failed": 0,
+  "results": [
+    {
+      "case": "captured-plain",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "undecorated",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "spinner-u1fbe6",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "spinner-u1fbe8",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯨 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "relabeled",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · Build · Some Other Model [high] · Work / Upstream\n",
+      "stderr": ""
+    },
+    {
+      "case": "padded",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "output\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n   \n\t\n\n",
+      "stderr": ""
+    },
+    {
+      "case": "dq",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "\"🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n",
+      "stderr": ""
+    },
+    {
+      "case": "bt",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "`🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\n",
+      "stderr": ""
+    },
+    {
+      "case": "smart-dq",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "“🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode”\n",
+      "stderr": ""
+    },
+    {
+      "case": "smart-sq",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "‘🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode’\n",
+      "stderr": ""
+    },
+    {
+      "case": "barred",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "│ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "bullet-round",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "● esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "bullet-tri",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "▸ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "bullet-arrow",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "► esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "prefixed-log",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "log: 🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "embedded",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "output line\nthe screen showed `🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\nready\n",
+      "stderr": ""
+    },
+    {
+      "case": "quote-above-idle",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "quoted earlier:\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\nDefault / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "trailing-dq",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n",
+      "stderr": ""
+    },
+    {
+      "case": "trailing-space-suffix",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode (copied)\n",
+      "stderr": ""
+    },
+    {
+      "case": "suffix-bracket",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode[copied]\n",
+      "stderr": ""
+    },
+    {
+      "case": "suffix-paren",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode(copied)\n",
+      "stderr": ""
+    },
+    {
+      "case": "suffix-guillemet",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode»\n",
+      "stderr": ""
+    },
+    {
+      "case": "idle-only",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "incomplete-3fields",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max]\n",
+      "stderr": ""
+    },
+    {
+      "case": "incomplete-empty-field",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "unmatched",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "No known activity hint\n",
+      "stderr": ""
+    },
+    {
+      "case": "approval-over-busy",
+      "expected": "blocked",
+      "actual": "blocked",
+      "ok": true,
+      "matched_rule": {
+        "id": "permission_required",
+        "priority": 300,
+        "region": "whole_recent",
+        "state": "blocked"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "△ Permission required\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "stderr": ""
+    },
+    {
+      "case": "legacy-interrupt",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "interrupt_hint_working",
+        "priority": 110,
+        "region": "whole_recent",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "esc to interrupt\n",
+      "stderr": ""
+    },
+    {
+      "case": "legacy-progress",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "progress_bar_working",
+        "priority": 100,
+        "region": "whole_recent",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "■■■■■■\n",
+      "stderr": ""
+    },
+    {
+      "case": "214-open-1fbe6",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode",
+      "stderr": ""
+    },
+    {
+      "case": "214-open-1fbe7",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode",
+      "stderr": ""
+    },
+    {
+      "case": "214-usage-67",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (3%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-usage-12",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯧 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 12K (4%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-usage-1m",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 1.2M (45%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-usage-999",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 999 (2%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-usage-100",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 1.0K (100%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-open-undecorated",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode",
+      "stderr": ""
+    },
+    {
+      "case": "214-usage-undecorated",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (3%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-quoted-open",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "\"🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode\"",
+      "stderr": ""
+    },
+    {
+      "case": "214-quoted-usage",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "\"🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (3%)\"",
+      "stderr": ""
+    },
+    {
+      "case": "214-prefixed-open",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "log: 🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode",
+      "stderr": ""
+    },
+    {
+      "case": "214-prefixed-usage",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "▸ 🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (3%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-embedded-usage",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "output line\nthe screen showed `🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (3%)`\nready",
+      "stderr": ""
+    },
+    {
+      "case": "214-quote-above-idle",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "quoted earlier:\n🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode\nPlan · DeepSeek V4.1 Flash Free [max] · OpenCode · ctrl+p menu",
+      "stderr": ""
+    },
+    {
+      "case": "214-trailing-open",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode (copied)",
+      "stderr": ""
+    },
+    {
+      "case": "214-trailing-usage",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (3%)»",
+      "stderr": ""
+    },
+    {
+      "case": "214-lowercase",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · opencode",
+      "stderr": ""
+    },
+    {
+      "case": "214-upper-percent",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (300%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-101-percent",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (101%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-lower-k",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7k (3%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-no-space",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K(3%)",
+      "stderr": ""
+    },
+    {
+      "case": "214-missing-final",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] ·",
+      "stderr": ""
+    },
+    {
+      "case": "214-empty-mode",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · · DeepSeek V4.1 Flash Free [max] · OpenCode",
+      "stderr": ""
+    },
+    {
+      "case": "214-empty-model",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "🯦 esc stop · Plan · · OpenCode",
+      "stderr": ""
+    },
+    {
+      "case": "214-blocked",
+      "expected": "blocked",
+      "actual": "blocked",
+      "ok": true,
+      "matched_rule": {
+        "id": "permission_required",
+        "priority": 300,
+        "region": "whole_recent",
+        "state": "blocked"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "input": "△ Permission required\n🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode",
+      "stderr": ""
+    }
+  ]
+}

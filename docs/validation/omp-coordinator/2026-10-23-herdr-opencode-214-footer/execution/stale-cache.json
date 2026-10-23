@@ -1,0 +1,35 @@
+{
+  "binary_sha256": "2c440e523740ec42d1b74413c5ad57076c46250f1a29046ffe0a379173d306d8",
+  "proofs": [
+    {
+      "label": "accepted-2026.10.22.1",
+      "returncode": 0,
+      "state": "working",
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "cached_remote_version": "2026.10.22.1",
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "stderr": ""
+    },
+    {
+      "label": "original-2026.06.10.1",
+      "returncode": 0,
+      "state": "working",
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.23.1",
+      "cached_remote_version": "2026.06.10.1",
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "stderr": ""
+    }
+  ]
+}

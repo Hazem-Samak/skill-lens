@@ -1,0 +1,88 @@
+{
+  "patch_sha256": "93c2de0685df81f63997c779d5f3cf389a74628cb1c07ff4be2b8c223d2fac7f",
+  "source_sha256": {
+    "distribution/agent-detection/opencode.toml": "d86463927f13191fb8123a6fe0efe3435e9e4832a9c7cd6123ee7bfe02857104",
+    "docs/next/website/src/content/docs/agents.mdx": "0d906f8dc05c172ec7a216fbac4e1e4612e3f96233335d84ddbc9356756fa2f7",
+    "src/detect/manifest/tests.rs": "b40cf0ab507ede855fd63b7f5278154188e867dc0924e4816ef895a5814ccb6b",
+    "src/detect/manifests/opencode.toml": "d86463927f13191fb8123a6fe0efe3435e9e4832a9c7cd6123ee7bfe02857104"
+  },
+  "only_allowed_paths_changed": true,
+  "manifest_copies_identical": true,
+  "red_regression": {
+    "passed": 0,
+    "failed": 1,
+    "state_actual": "Idle",
+    "state_expected": "Working",
+    "exit": 101,
+    "seconds_including_compile": 135.5
+  },
+  "focused": {
+    "passed": 2,
+    "failed": 0,
+    "seconds_including_compile": 17.0
+  },
+  "detector": {
+    "passed": 102,
+    "failed": 0,
+    "filtered_out": 3546,
+    "seconds": 11.94
+  },
+  "clippy": {
+    "passed": true,
+    "warnings_denied": true,
+    "seconds": 30.8
+  },
+  "format": {
+    "passed": true,
+    "seconds": 1.9
+  },
+  "build": {
+    "passed": true,
+    "seconds": 25.1
+  },
+  "real_cli": {
+    "passed": 55,
+    "failed": 0,
+    "cases": "29 preserved old-shape cases plus 26 new 2.1.4 positives/negatives",
+    "manifest_version": "2026.10.23.1",
+    "manifest_source": "bundled"
+  },
+  "stale_cache": {
+    "passed": true,
+    "cached_versions": [
+      "2026.10.22.1",
+      "2026.06.10.1"
+    ],
+    "selected": "bundled 2026.10.23.1"
+  },
+  "skill_lens_health": {
+    "reused": true,
+    "passed": 1082,
+    "skipped": 1,
+    "coverage_percent": 91.16,
+    "mypy_files": 38,
+    "ruff": "clean",
+    "reason": "No Skill Lens product/test/checker inputs changed"
+  },
+  "not_done": [
+    "deployment",
+    "live trial",
+    "formal smoke",
+    "full-TUI trace",
+    "installed binary change"
+  ],
+  "implementer": {
+    "runtime": "OpenCode 2.1.4",
+    "model": "opencode/deepseek-v4.1-flash-free",
+    "variant": "max",
+    "mode": "Build",
+    "upstream_verified": false,
+    "session": "ses_e971429c4ffeNHMD2p6JQ6E55M"
+  },
+  "toolchain": {
+    "rust": "1.96.1",
+    "zig": "0.16.0",
+    "pinned_official_checksums": true
+  },
+  "temp_root": "/tmp/skill-lens-herdr-opencode214-20261023-4sat1nvo"
+}
