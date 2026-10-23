@@ -1,0 +1,67 @@
+REQUEST_TOKEN: sol-mini-lap-final-opencode-20261023
+
+     EFFECTIVE_MODEL: requested DeepSeek V4.1 Flash Free max, Plan / configured opencode/
+     deepseek-v4.1-flash-free, variant max, agent plan (native.json:6-10, 49-54, 151-155;
+     live-result.json:307-311) / settings/mode Plan (native.json:90; working-frame.txt:11;
+     usage-frame.txt:43) / evidence native session/message metadata and model-switched
+     event / upstream unverified (no provider attestation).
+
+     VERDICT: pass
+
+     BLOCKERS: None.
+
+     SUGGESTIONS: Non-blocking only:
+
+     1. State the timing components and drift check explicitly. live-result.json:324-331
+        gives offset 17.756 ms, half-bracket 22.21 ms, wait-minus-completed 3892.245 ms,
+        and pass margin 322.21 ms. The margin correctly equals 50 + 22.21 + 250, and 3892.
+        245 ≥ 322.21. But timing_band_ms and step_threshold_ms are unstated, and the pre-
+        submit/return monotonic readings needed to evidence the wall-clock step check are
+        absent. The result is robust at roughly 12× the margin, so this is documentation,
+        not a defect.
+
+     2. State the acceptance rule for the second assistant turn. native.json:42-84 contains
+        a second assistant after the matching answer; README.md:40-41 correctly explains it
+        as the Plan-mode system-reminder follow-up. The answer object (native.json:177-186)
+        and the finished session support completion, but the record should say explicitly
+        that this synthetic follow-up is not another user turn and does not invalidate the
+        one-answer criterion. The prior frozen plan's “exactly one matching final
+        assistant” wording could otherwise be read as unmet.
+
+     3. Add a rollback/cleanup receipt. deployment.json:2-9 and setup.json:5-8 identify the
+        isolated root and PIDs and describe rollback; no receipt shows the lap server
+        stopped, the temp root removed, or the normal session still healthy. Reversibility
+        is described, not exercised.
+
+     CONCEDED:
+
+     - manifest.sha256:1 matches the supplied dc9cfe4f... digest, and manifest.json:5-22
+       lists all 16 evidence files except itself and the sidecar. Native read-only tools
+       cannot recompute SHA-256, so the digest is checked by sidecar match, not independent
+       hashing.
+
+     - The “normal config/binary/service untouched” claim is attested by deployment.json:7
+       and the isolated socket/URL (herdr-deploy.json:3-5; setup.json:5-8), not by before/
+       after hashes. No cleanup receipt was found.
+
+     - Timing is internally consistent: native answer completion 1792764260503 ms minus
+       offset 17.756 ms, against wait return 14:04:24.377489, gives 3892.245 ms; the 322.21
+       ms margin is correct. The missing monotonic fields remain a documentation limit.
+
+     - The record has two assistant messages, not one; the second is transparently
+       explained and is not a second user prompt. The pass rests on the complete BEGIN/END
+       answer (native.json:177-186), finish: stop, succeeded, empty active/children, and
+       the one user message — not on a badge alone.
+
+     - Pre-prompt and post-idle are correctly idle with no matched rule (pre-prompt.json:
+       93-107; live-result.json:202-293), and the working/usage footers match
+       status_footer_esc_stop_working (live-observe.json:68-113, 167-212). The idle screens
+       are not misread as working.
+
+     - No credentials or raw terminal transcript were found. setup.json:7-8 records a
+       generated password as not retained; native.json contains structured reasoning/
+       answer, not a raw terminal capture.
+
+     FILES_AT_RISK: Only the named evidence record; no files were modified.
+
+     COMPLETION: complete / no delegates / no background work

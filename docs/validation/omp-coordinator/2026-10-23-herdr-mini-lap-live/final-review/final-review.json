@@ -1,0 +1,87 @@
+{
+  "status": "live lap complete; final reviews passed",
+  "result": "pass",
+  "deployment": {
+    "method": "isolated local manifest override",
+    "manifest_version": "2026.10.23.1",
+    "manifest_sha256": "d86463927f13191fb8123a6fe0efe3435e9e4832a9c7cd6123ee7bfe02857104",
+    "active_source": "local override",
+    "normal_herdr_config_touched": false,
+    "installed_binary_touched": false,
+    "rollback": "stop isolated lap server and remove owned temporary root"
+  },
+  "trial": {
+    "opencode_version": "2.1.4",
+    "model": "opencode/deepseek-v4.1-flash-free",
+    "variant": "max",
+    "agent": "plan",
+    "one_user_prompt": true,
+    "pre_idle": "idle, no matched rule",
+    "working": "working, status_footer_esc_stop_working",
+    "working_footer": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode",
+    "usage": "working, status_footer_esc_stop_working",
+    "usage_footer": "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.2K (3%)",
+    "post_idle": "idle, no matched rule",
+    "wait": "exit 0, idle, 12.544 s, no stderr",
+    "early_done_observed": false,
+    "resend": false,
+    "native": {
+      "outcome": "succeeded",
+      "user_messages": 1,
+      "assistant_messages": 2,
+      "note": "Second assistant is the post-answer Plan-mode system-reminder follow-up, not a second prompt.",
+      "answer_bytes": 1005,
+      "finish": "stop",
+      "active_sessions": {},
+      "child_sessions": []
+    },
+    "timing": {
+      "wait_minus_completed_ms": 3892.245,
+      "pass_margin_ms": 322.21,
+      "after_completion": true,
+      "within_pass_margin": true
+    }
+  },
+  "evidence": {
+    "folder": "docs/validation/omp-coordinator/2026-10-23-herdr-mini-lap-live",
+    "manifest_sha256": "dc9cfe4f0245cb9b1af5fe150192498b37924d601dc17e738379e286e1c5f3c7",
+    "commit": "ca82acca361f5f68bd32aa38a5ef36e879b8763e"
+  },
+  "reviewers": {
+    "gemini": {
+      "session": "22975338-40e3-43f5-8501-73c20ee76fa0",
+      "requested": "Gemini 3.8 Flash High",
+      "configured": "Gemini 3.8 Flash High / Plan",
+      "rounds": [
+        {"round": 1, "verdict": "pass", "report": "final-review/gemini-r1.txt", "note": "Upstream-verified wording was corrected in round 2."},
+        {"round": 2, "verdict": "pass", "report": "final-review/gemini-r2-corrected.txt"}
+      ],
+      "upstream_identity_verified": false
+    },
+    "opencode": {
+      "session": "ses_e96ea051cffehOkolDGIwqS5q6",
+      "requested": "opencode/deepseek-v4.1-flash-free#max",
+      "configured": "DeepSeek V4.1 Flash Free / max / Plan",
+      "verdict": "pass",
+      "report": "final-review/opencode-final.txt",
+      "upstream_identity_verified": false
+    }
+  },
+  "no_write_proof": {
+    "checkout_status_head_files_equal_before_after": true,
+    "evidence_files_equal_before_after": true,
+    "manifest_equal": true
+  },
+  "suggestions_disposition": [
+    "Non-blocking timing-component labels (timing_band, step_threshold, monotonic brackets) are deferred; the result is ~12x the pass margin and the recorded offset/bracket/margin are internally consistent.",
+    "The second-assistant acceptance wording is deferred; the record explicitly identifies the Plan-mode follow-up and accepts completion from the matching answer and finished session.",
+    "The rollback/cleanup receipt suggestion is addressed by post-lap-cleanup.json after the isolated root is stopped and removed."
+  ],
+  "not_done": [
+    "normal/installed Herdr deployment",
+    "formal smoke",
+    "full-TUI instrumentation or trace",
+    "upstream publication",
+    "other changes"
+  ]
+}

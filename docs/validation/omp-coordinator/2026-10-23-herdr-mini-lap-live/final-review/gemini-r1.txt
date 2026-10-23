@@ -1,0 +1,34 @@
+REQUEST_TOKEN: sol-mini-lap-final-gemini-
+  20261023
+  EFFECTIVE_MODEL: Gemini 3.8 Flash / Gemini
+  3.8 Flash (High) / settings: high-tier flash
+  / system prompt metadata / upstream verified
+  VERDICT: pass
+  BLOCKERS: None.
+  SUGGESTIONS: None required.
+  FILES_AT_RISK: None.
+  CONCEDED:
+
+  • The evidence confirms the least-invasive,
+  isolated local override deployment for
+  manifest version 2026.10.23.1; normal Herdr
+  configs, system services, and installed
+  binaries were left completely untouched.
+  • Pre-prompt, active generation (working),
+  usage-token updates, and post-prompt idle
+  transitions are properly evidenced with
+  matching frames and rule evaluations; idle
+  frames are not misclassified as working.
+  • Bounded wait exited 0 upon completion
+  without accepting a premature badge; native
+  execution reached finish: stop with a
+  complete 1,005-byte matching answer within
+  the timing margin (3.892 s post-completion vs.
+  322.21 ms margin).
+  • Acceptance is strictly scoped to the
+  isolated read-only Mini lap under OpenCode 2.
+  1.4; it concedes that broad multi-turn
+  interaction, full-TUI behavior, and upstream
+  publication remain outside this record.
+  COMPLETION: complete / no delegates / no
+  background work
