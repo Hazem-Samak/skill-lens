@@ -15,7 +15,10 @@
       "configured": "Gemini 3.8 Flash High",
       "mode": "Plan, read-only",
       "verdict": "pass",
-      "waits_s": [134.67, 10.63],
+      "waits_s": [
+        134.67,
+        10.63
+      ],
       "report": "final-review/gemini-report.txt",
       "superseded_report": "final-review/gemini-report-superseded.txt",
       "correction": "The first report cited the trial's DeepSeek model as its own evidence and said upstream identity was verified. The targeted correction now states Gemini 3.8 Flash High / Plan, native UI/session evidence, upstream unverified; the pass stands.",
@@ -43,18 +46,24 @@
     "OpenCode's non-blocking suggestions (explain the 5 s internal stall window, state the timing inequality, add pre-trial baseline hashes, add an explicit backend-stop receipt, clarify 'raw transcripts', soften 'while generating') are deferred. The trial evidence is immutable and the suggestions do not identify a false pass or unsafe conclusion; the pre-trial planning baseline already records the installed-binary and user-file hashes."
   ],
   "cleanup": {
-    "reviewer_panes": ["wG:pC", "wG:pD"],
+    "reviewer_panes": [
+      "wG:pC",
+      "wG:pD"
+    ],
     "returned_to_shell_before_close": true,
     "closed": true,
     "base_pane": "wG:p1",
     "base_shell_pid": 45632,
     "base_rows": 55,
     "base_focused": true,
-    "remaining_panes": ["wG:p1"],
+    "remaining_panes": [
+      "wG:p1"
+    ],
     "trial_processes_absent": true,
     "normal_shared_opencode_service": "http://127.0.0.1:49374",
     "installed_binaries_unchanged": true,
-    "owned_trial_root_removal": "pending verified final-review commit/push"
+    "owned_trial_root_removal": "removed after the final-review commit 975c38ad07d0496d8c66c50594807e9f309d44a4; root absent",
+    "post_cleanup_receipt": "post-trial-cleanup.json"
   },
   "next_step": "The live Mini correction did not validate: the active OpenCode 2.1.4 footer was not recognized, so Herdr returned agent_prompt_stalled while the model completed. The exact active-footer shape is unknown. No fix, resend, installation, full-TUI trace or formal smoke is authorized. The owner must separately authorize a diagnostic capture of the active footer or a new correction plan."
 }
