@@ -1,0 +1,20 @@
+{
+  "pid": 9576,
+  "socket": "/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/hc/herdr-dev/sessions/mini/herdr.sock",
+  "status": "{\"status\":\"running\",\"running\":true,\"version\":\"0.9.5\",\"protocol\":22,\"capabilities\":{\"live_handoff\":true,\"detached_server_daemon\":true,\"endpoint_protocol_generation\":1,\"surface_interest\":true,\"health_check\":true,\"ssh_agent_registration\":true},\"compatible\":true,\"endpoint_compatible\":true,\"socket\":\"/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/hc/herdr-dev/sessions/mini/herdr.sock\",\"session\":\"mini\",\"restart_needed\":false,\"server_binary_stale\":false}\n",
+  "workspaces": "{\"id\":\"cli:workspace:list\",\"result\":{\"type\":\"workspace_list\",\"workspaces\":[{\"active_tab_id\":\"w1:t1\",\"agent_status\":\"unknown\",\"focused\":true,\"label\":\"workspace\",\"number\":1,\"pane_count\":1,\"tab_count\":1,\"workspace_id\":\"w1\"}]}}\n",
+  "env_names": [
+    "HERDR_STARTUP_CWD",
+    "HOME",
+    "LANG",
+    "LC_ALL",
+    "PATH",
+    "SHELL",
+    "TERM",
+    "TMPDIR",
+    "XDG_CACHE_HOME",
+    "XDG_CONFIG_HOME",
+    "XDG_RUNTIME_DIR",
+    "XDG_STATE_HOME"
+  ]
+}

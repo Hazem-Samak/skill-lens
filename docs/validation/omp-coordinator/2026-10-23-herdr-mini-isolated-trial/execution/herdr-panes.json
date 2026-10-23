@@ -1,0 +1,8 @@
+{
+  "root_pane": "w1:p1",
+  "test_pane": "w1:p2",
+  "panes": "{\"id\":\"cli:pane:list\",\"result\":{\"panes\":[{\"agent_status\":\"unknown\",\"cwd\":\"/private/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace\",\"focused\":true,\"foreground_cwd\":\"/private/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace\",\"pane_id\":\"w1:p1\",\"revision\":0,\"scroll\":{\"max_offset_from_bottom\":0,\"offset_from_bottom\":0,\"viewport_rows\":55},\"tab_id\":\"w1:t1\",\"terminal_id\":\"term_65e812568a4311\",\"workspace_id\":\"w1\"}],\"type\":\"pane_list\"}}\n",
+  "root_process": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":9578,\"foreground_processes\":[{\"argv\":[\"/bin/sh\"],\"argv0\":\"sh\",\"cmdline\":\"/bin/sh\",\"cwd\":\"/private/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace\",\"name\":\"bash\",\"pid\":9578}],\"pane_id\":\"w1:p1\",\"shell_pid\":9578},\"type\":\"pane_process_info\"}}\n",
+  "layout": "{\"id\":\"cli:pane:layout\",\"result\":{\"layout\":{\"area\":{\"height\":55,\"width\":148,\"x\":0,\"y\":0},\"focused_pane_id\":\"w1:p1\",\"panes\":[{\"focused\":true,\"pane_id\":\"w1:p1\",\"rect\":{\"height\":55,\"width\":148,\"x\":0,\"y\":0}}],\"splits\":[],\"tab_id\":\"w1:t1\",\"workspace_id\":\"w1\",\"zoomed\":false},\"type\":\"pane_layout\"}}\n",
+  "test_process": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":9604,\"foreground_processes\":[{\"argv\":[\"/bin/sh\"],\"argv0\":\"sh\",\"cmdline\":\"/bin/sh\",\"cwd\":\"/private/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace\",\"name\":\"bash\",\"pid\":9604}],\"pane_id\":\"w1:p2\",\"shell_pid\":9604},\"type\":\"pane_process_info\"}}\n"
+}

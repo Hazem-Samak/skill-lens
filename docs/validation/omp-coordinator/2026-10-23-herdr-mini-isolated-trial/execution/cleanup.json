@@ -1,0 +1,9 @@
+{
+  "backend_pid": 9637,
+  "server_pid": 9576,
+  "mini_exited": true,
+  "server_stop_exit": 0,
+  "server_status_after_stop": "{\"status\":\"not_running\",\"running\":false,\"version\":null,\"protocol\":null,\"capabilities\":null,\"compatible\":null,\"endpoint_compatible\":null,\"socket\":\"/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/hc/herdr-dev/sessions/mini/herdr.sock\",\"session\":\"mini\",\"restart_needed\":false,\"server_binary_stale\":false}\n",
+  "owned_root_processes_remaining": [],
+  "normal_default_untouched": true
+}

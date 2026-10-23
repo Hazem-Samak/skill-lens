@@ -1,0 +1,125 @@
+{
+  "session": {
+    "id": "ses_e9741de5affem04NxMz7pICqCv",
+    "projectID": "87f71f743bd581840a496b5d5033217c8f438115",
+    "agent": "plan",
+    "cost": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "reasoning": 0,
+      "cache": {
+        "read": 0,
+        "write": 0
+      }
+    },
+    "time": {
+      "created": 1792758653350,
+      "updated": 1792758653350
+    },
+    "subpath": "../../../../tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace",
+    "location": {
+      "directory": "/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace"
+    }
+  },
+  "messages": {
+    "data": [],
+    "cursor": {
+      "previous": null,
+      "next": null
+    }
+  },
+  "agent_explain": {
+    "agent": "opencode",
+    "cached_remote_version": null,
+    "evaluated_rules": [
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 2,
+          "contains": [],
+          "line_regex": [],
+          "not_count": 0,
+          "regex": [],
+          "region_bytes": 156,
+          "region_preview": "\n\u25aa oc mini v2.1.4 \u00b7 \u2026/workspace\n\n\u2503 Ask anything, / for commands, @ for context\u2026\n\nPlan \u00b7 DeepSeek V4.1 Flash Free [max] \u00b7 OpenCode \u00b7 ctrl+p menu\n"
+        },
+        "id": "permission_required",
+        "matched": false,
+        "priority": 300,
+        "region": "whole_recent",
+        "state": "blocked"
+      },
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 4,
+          "contains": [],
+          "line_regex": [],
+          "not_count": 0,
+          "regex": [],
+          "region_bytes": 156,
+          "region_preview": "\n\u25aa oc mini v2.1.4 \u00b7 \u2026/workspace\n\n\u2503 Ask anything, / for commands, @ for context\u2026\n\nPlan \u00b7 DeepSeek V4.1 Flash Free [max] \u00b7 OpenCode \u00b7 ctrl+p menu\n"
+        },
+        "id": "interrupt_hint_working",
+        "matched": false,
+        "priority": 110,
+        "region": "whole_recent",
+        "state": "working"
+      },
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 0,
+          "contains": [],
+          "line_regex": [
+            "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop \u00b7 [^\u00b7/\\n\"'`\u201c\u201d\u2018\u2019]+ \u00b7 [^\u00b7/\\n\"'`\u201c\u201d\u2018\u2019]+ \u00b7 [^\u00b7/\\n\"'`\u201c\u201d\u2018\u2019]+ / [\\w.\\-]+$"
+          ],
+          "not_count": 0,
+          "regex": [],
+          "region_bytes": 66,
+          "region_preview": "Plan \u00b7 DeepSeek V4.1 Flash Free [max] \u00b7 OpenCode \u00b7 ctrl+p menu\n"
+        },
+        "id": "status_footer_esc_stop_working",
+        "matched": false,
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 0,
+          "contains": [],
+          "line_regex": [],
+          "not_count": 0,
+          "regex": [
+            "(\u25a0|\u2b1d){4,}"
+          ],
+          "region_bytes": 156,
+          "region_preview": "\n\u25aa oc mini v2.1.4 \u00b7 \u2026/workspace\n\n\u2503 Ask anything, / for commands, @ for context\u2026\n\nPlan \u00b7 DeepSeek V4.1 Flash Free [max] \u00b7 OpenCode \u00b7 ctrl+p menu\n"
+        },
+        "id": "progress_bar_working",
+        "matched": false,
+        "priority": 100,
+        "region": "whole_recent",
+        "state": "working"
+      }
+    ],
+    "fallback_reason": "default_known_agent_idle_fallback",
+    "local_override_shadowing_remote": false,
+    "manifest_source": "bundled",
+    "manifest_version": "2026.10.22.1",
+    "matched_rule": null,
+    "remote_update_error": null,
+    "remote_update_status": null,
+    "screen_detection_skipped": false,
+    "skip_state_update": false,
+    "skipped_update_reason": null,
+    "state": "idle",
+    "visible_blocker": false,
+    "visible_idle": false,
+    "visible_working": false,
+    "warning": null
+  }
+}

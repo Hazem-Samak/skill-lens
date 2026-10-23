@@ -1,0 +1,85 @@
+{
+  "installed_binary_sha256": {
+    "/Users/corvette/.local/bin/herdr": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2",
+    "/Users/corvette/.opencode/bin/opencode": "d8a65dd253dbea759ae0dd829792ff219b40178c7decffea822430a4d1ccadb3"
+  },
+  "normal_sessions": {
+    "sessions": [
+      {
+        "default": true,
+        "name": "default",
+        "running": true,
+        "session_dir": "/Users/corvette/.config/herdr",
+        "socket_path": "/Users/corvette/.config/herdr/herdr.sock"
+      },
+      {
+        "default": false,
+        "name": "skill-lens",
+        "running": false,
+        "session_dir": "/Users/corvette/.config/herdr/sessions/skill-lens",
+        "socket_path": "/Users/corvette/.config/herdr/sessions/skill-lens/herdr.sock"
+      },
+      {
+        "default": false,
+        "name": "skill-lens-pilot-20261017",
+        "running": false,
+        "session_dir": "/Users/corvette/.config/herdr/sessions/skill-lens-pilot-20261017",
+        "socket_path": "/Users/corvette/.config/herdr/sessions/skill-lens-pilot-20261017/herdr.sock"
+      }
+    ]
+  },
+  "normal_panes": {
+    "id": "cli:pane:list",
+    "result": {
+      "panes": [
+        {
+          "agent_status": "unknown",
+          "cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+          "focused": true,
+          "foreground_cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+          "pane_id": "wG:p1",
+          "revision": 0,
+          "scroll": {
+            "max_offset_from_bottom": 0,
+            "offset_from_bottom": 0,
+            "viewport_rows": 55
+          },
+          "tab_id": "wG:t1",
+          "terminal_id": "term_65e743b3b484e1",
+          "workspace_id": "wG"
+        }
+      ],
+      "type": "pane_list"
+    }
+  },
+  "normal_base_process": {
+    "id": "cli:pane:process_info",
+    "result": {
+      "process_info": {
+        "foreground_process_group_id": 45632,
+        "foreground_processes": [
+          {
+            "argv": [
+              "-zsh"
+            ],
+            "argv0": "zsh",
+            "cmdline": "-zsh",
+            "cwd": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+            "name": "zsh",
+            "pid": 45632
+          }
+        ],
+        "pane_id": "wG:p1",
+        "shell_pid": 45632
+      },
+      "type": "pane_process_info"
+    }
+  },
+  "shared_opencode_service": "http://127.0.0.1:49374",
+  "user_sha256": {
+    ".path": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/plans/2026-10-19-herdr-omp-coordinator.md": "7eb7720a8b2d4531b04b284bf7ac677787561e2d36dd6c7db10055fecf178f11",
+    "docs/validation/omp-coordinator/2026-10-20/herdr-dispatch.md": "09899b046779e614fa8cd071d5b2bfa2f58fc158dc4c958eca8f27a900018aee"
+  },
+  "owned_root_processes_remaining": []
+}

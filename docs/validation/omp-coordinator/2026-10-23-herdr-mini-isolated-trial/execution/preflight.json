@@ -1,0 +1,59 @@
+{
+  "status": "passed",
+  "frozen_plan_only_commit": "1ab5297debea785b2f4de069f18ebb40c578dc44",
+  "frozen_reference_commit": "2033b5999dcc37944788aa025570498531b5c9a3",
+  "owned_root": "/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5",
+  "isolation": {
+    "synthetic_home": true,
+    "synthetic_xdg": true,
+    "cwd": "/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace",
+    "shared_service_used": false,
+    "credentials_copied": false,
+    "installed_binary_changed": false
+  },
+  "models_command": {
+    "command": [
+      "opencode",
+      "models",
+      "--standalone"
+    ],
+    "returncode": 0,
+    "elapsed_s": 1.06,
+    "model_present": true,
+    "model_id": "opencode/deepseek-v4.1-flash-free"
+  },
+  "catalog_query": {
+    "owned_server": "loopback ephemeral port",
+    "server_stopped": true,
+    "owned_root_processes_remaining": [],
+    "model_entry": {
+      "id": "deepseek-v4.1-flash-free",
+      "modelID": "deepseek-v4.1-flash-free",
+      "providerID": "opencode",
+      "family": "deepseek-flash",
+      "name": "DeepSeek V4.1 Flash Free",
+      "status": "active",
+      "enabled": true
+    },
+    "variants": [
+      {
+        "id": "low"
+      },
+      {
+        "id": "high"
+      },
+      {
+        "id": "max"
+      }
+    ]
+  },
+  "variant_max_available": true,
+  "not_yet_run": [
+    "toolchain download",
+    "build",
+    "Herdr server",
+    "private OpenCode backend for the trial",
+    "Mini prompt",
+    "full-TUI capture"
+  ]
+}

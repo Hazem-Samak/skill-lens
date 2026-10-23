@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/tools/rust/bin/cargo",
+    "build",
+    "-p",
+    "herdr",
+    "--bin",
+    "herdr"
+  ],
+  "exit": 0,
+  "seconds": 114.8,
+  "binary": "/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/build/debug/herdr",
+  "binary_sha256": "6eb34f05e6413d91319a8c5835c5e6f0c12c0ac1c738b9af890fd96785c69ef2"
+}

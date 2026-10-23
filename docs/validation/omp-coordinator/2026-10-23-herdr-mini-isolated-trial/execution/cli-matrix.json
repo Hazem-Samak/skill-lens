@@ -1,0 +1,400 @@
+{
+  "binary_sha256": "6eb34f05e6413d91319a8c5835c5e6f0c12c0ac1c738b9af890fd96785c69ef2",
+  "passed": 29,
+  "failed": 0,
+  "results": [
+    {
+      "case": "captured-plain",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "undecorated",
+      "input": "esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "spinner-u1fbe6",
+      "input": "🯦 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "spinner-u1fbe8",
+      "input": "🯨 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "relabeled",
+      "input": "🯧 esc stop · Build · Some Other Model [high] · Work / Upstream\n",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "padded",
+      "input": "output\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n   \n\t\n\n",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "dq",
+      "input": "\"🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "bt",
+      "input": "`🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "smart-dq",
+      "input": "“🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode”\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "smart-sq",
+      "input": "‘🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode’\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "barred",
+      "input": "│ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "bullet-round",
+      "input": "● esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "bullet-tri",
+      "input": "▸ esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "bullet-arrow",
+      "input": "► esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "prefixed-log",
+      "input": "log: 🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "embedded",
+      "input": "output line\nthe screen showed `🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode`\nready\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "quote-above-idle",
+      "input": "quoted earlier:\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\nDefault / OpenCode\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "trailing-dq",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\"\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "trailing-space-suffix",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode (copied)\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "suffix-bracket",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode[copied]\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "suffix-paren",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode(copied)\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "suffix-guillemet",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode»\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "idle-only",
+      "input": "Default / OpenCode\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "incomplete-3fields",
+      "input": "🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max]\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "incomplete-empty-field",
+      "input": "🯧 esc stop · · Default / OpenCode\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "unmatched",
+      "input": "No known activity hint\n",
+      "expected": "idle",
+      "actual": "idle",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": null,
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "approval-over-busy",
+      "input": "△ Permission required\n🯧 esc stop · Plan · MiniMax M3.1 Flash Free [max] · Default / OpenCode\n",
+      "expected": "blocked",
+      "actual": "blocked",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": {
+        "id": "permission_required",
+        "priority": 300,
+        "region": "whole_recent",
+        "state": "blocked"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "legacy-interrupt",
+      "input": "esc to interrupt\n",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": {
+        "id": "interrupt_hint_working",
+        "priority": 110,
+        "region": "whole_recent",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    },
+    {
+      "case": "legacy-progress",
+      "input": "■■■■■■\n",
+      "expected": "working",
+      "actual": "working",
+      "ok": true,
+      "returncode": 0,
+      "matched_rule": {
+        "id": "progress_bar_working",
+        "priority": 100,
+        "region": "whole_recent",
+        "state": "working"
+      },
+      "manifest_source": "bundled",
+      "manifest_version": "2026.10.22.1",
+      "stderr": ""
+    }
+  ]
+}

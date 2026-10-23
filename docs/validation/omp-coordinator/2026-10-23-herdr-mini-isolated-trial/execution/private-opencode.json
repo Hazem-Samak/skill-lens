@@ -1,0 +1,10 @@
+{
+  "pid": 9637,
+  "url": "http://127.0.0.1:58241",
+  "password_generated": true,
+  "password_retained": false,
+  "session_id": "ses_e9741de5affem04NxMz7pICqCv",
+  "create_stdout": "{\"data\":{\"id\":\"ses_e9741de5affem04NxMz7pICqCv\",\"projectID\":\"87f71f743bd581840a496b5d5033217c8f438115\",\"agent\":\"plan\",\"cost\":0,\"tokens\":{\"input\":0,\"output\":0,\"reasoning\":0,\"cache\":{\"read\":0,\"write\":0}},\"time\":{\"created\":1792758653350,\"updated\":1792758653350},\"subpath\":\"../../../../tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace\",\"location\":{\"directory\":\"/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace\"}}}\n",
+  "get_stdout": "{\"data\":{\"id\":\"ses_e9741de5affem04NxMz7pICqCv\",\"projectID\":\"87f71f743bd581840a496b5d5033217c8f438115\",\"agent\":\"plan\",\"cost\":0,\"tokens\":{\"input\":0,\"output\":0,\"reasoning\":0,\"cache\":{\"read\":0,\"write\":0}},\"time\":{\"created\":1792758653350,\"updated\":1792758653350},\"subpath\":\"../../../../tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace\",\"location\":{\"directory\":\"/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/workspace\"}}}\n",
+  "messages_stdout": "{\"data\":[],\"cursor\":{\"previous\":null,\"next\":null}}\n"
+}

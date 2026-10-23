@@ -1,0 +1,30 @@
+{
+  "excludes_self": true,
+  "created_utc": "2026-10-23T12:34:43.224041+00:00",
+  "trial_result": "failure",
+  "result_file": "live-trial-result.json",
+  "files": {
+    "README.md": "0854cf93f6ff76eecd59635046d0e40821397ab0d83603526ad029357afd97fe",
+    "agent-readiness.json": "e90ccdb064f35349be8f4c23ac54a733e56eca65a150ceed53b5b23b0dc93b4e",
+    "assistant-text.txt": "0f70c4772ec1b3e6765da9d3e528ed5b95e66aa5e61976e1a75eeeae1daeb909",
+    "build.json": "dd4a38895edd75a8b99440df7589a07853c6fee137146d98f7d73c1ae57bab8d",
+    "checks.json": "fd71911e32638f38e2ca76957c55c1ae65e06665e1e221609b1dea612e6f5c39",
+    "cleanup.json": "06cb038229065cdf28cb0514788305b4c9ce3099abd8ce30d7ad723435a151d1",
+    "cli-matrix.json": "1b82c2901de4d308d8afd389c2071af3ea5775cde964edda3776b814fca14aa6",
+    "clock-bracket.json": "6fa951aec48969f50cd0b636d8db544f85ae5c95be3d93273ea02bd653c9ae02",
+    "environment.json": "c0f31d2aa18438b546e0555f3d0acb3ceedb7c7c0bfc23d03118f272d5bcb231",
+    "herdr-panes.json": "82922f209630c9df05566befca1f08c90a863955a78c4b37aa649698a45bd1d3",
+    "herdr-server-start.json": "9063d2ae0e90a732cf3e640e91cf60b93344ab98b6093e08ee40449d10394906",
+    "live-trial-native.json": "e5ae2f2dc1dc23445dbd8e6396f541a3d7f38727e129e8832e9a0c54e11534d8",
+    "live-trial-observe.json": "da2c1cc08fcb72e57cceccd5e927e5309d7964ee0e239024ea0d3af69b8fe7ac",
+    "live-trial-result.json": "d1ecc347076c8d647858f5df50dd3dab6d66b0f25e8a45f4a4f6650eb1858b44",
+    "pre-prompt-final.json": "dae0f2a7ebfd94ac57e83b81262dcab4d1f8678b93250a71c1f723d51e9bc0c6",
+    "pre-prompt-session.json": "e914c4e1c75575e7b6260d73f87a2dfa57a21994913a8c365833a89a4f17af37",
+    "preflight.json": "4e868ef917fa07eac155e903c5b7fcf56a65be3bf5f400a34c7f2a539adab2ba",
+    "private-opencode.json": "951e90069cf8505c117371a92ef7adccfa539d9fb5c71b1d5c2c2ed19cd0d875",
+    "prompt-wait.stderr.txt": "4dee36591e67fad5e50bb50b4ca4274e3983bf05d0c70d8a1d0e4f235b9038e3",
+    "prompt-wait.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source-patch.json": "c71f600b76f629e3ebeba7a0b29d9f592a44fe3160fdd2d7a05b1c83f2e3007e",
+    "toolchain-downloads.json": "3484788542be2a48e0eed9faf21e12f4dae283b0dad026df417a082e71dfb114"
+  }
+}

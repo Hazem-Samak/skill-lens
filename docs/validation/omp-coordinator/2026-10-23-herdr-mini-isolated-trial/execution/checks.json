@@ -1,0 +1,51 @@
+[
+  {
+    "name": "detector-tests",
+    "command": [
+      "/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/tools/rust/bin/cargo",
+      "test",
+      "-p",
+      "herdr",
+      "--bin",
+      "herdr",
+      "detect::"
+    ],
+    "exit": 0,
+    "seconds": 49.6,
+    "stdout_bytes": 8919,
+    "stderr_bytes": 495
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/tools/rust/bin/cargo",
+      "clippy",
+      "-p",
+      "herdr",
+      "--bin",
+      "herdr",
+      "--tests",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 31.1,
+    "stdout_bytes": 0,
+    "stderr_bytes": 4305
+  },
+  {
+    "name": "format",
+    "command": [
+      "/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/tools/rust/bin/cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 1.7,
+    "stdout_bytes": 0,
+    "stderr_bytes": 0
+  }
+]

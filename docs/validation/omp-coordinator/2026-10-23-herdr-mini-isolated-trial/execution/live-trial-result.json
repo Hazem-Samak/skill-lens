@@ -1,0 +1,79 @@
+{
+  "result": "failure",
+  "reason": "Herdr returned agent_prompt_stalled and the observer timed out while the model was generating. The corrected footer rule did not classify the live OpenCode 2.1.4 Mini screen as working. The model itself completed successfully.",
+  "request_token": "sol-mini-live-20261023-da007b1b",
+  "trial_session": "ses_e9740a52effeiDIx2ulUO6BkDJ",
+  "wait": {
+    "command": "agent prompt w1:p2 --wait --timeout 120000",
+    "exit": 1,
+    "status": "agent_prompt_stalled",
+    "stderr": "/tmp/skill-lens-herdr-mini-live-20261023-dwjcw7w5/receipts/prompt-wait.stderr.txt",
+    "elapsed_s": 10.439,
+    "return_utc": "2026-10-23T12:33:03.813572+00:00"
+  },
+  "observer": {
+    "command": "agent wait w1:p2 --until working --timeout 10000",
+    "exit": 1,
+    "status": "timeout",
+    "elapsed_s": 10.295,
+    "start_utc": "2026-10-23T12:32:53.378397+00:00",
+    "end_utc": "2026-10-23T12:33:03.673176+00:00"
+  },
+  "screen_state": {
+    "state": "idle",
+    "matched_rule": null,
+    "manifest_version": "2026.10.22.1",
+    "screen_detection_skipped": false,
+    "visible_working": false,
+    "visible_idle": false
+  },
+  "native": {
+    "outcome": "succeeded",
+    "agent": "plan",
+    "model": {
+      "id": "deepseek-v4.1-flash-free",
+      "providerID": "opencode",
+      "variant": "max"
+    },
+    "finish": "stop",
+    "completed_native_ms": 1792758783532,
+    "completed_coordinator_ms": 1792758783504.402,
+    "user_count": 1,
+    "assistant_count": 1,
+    "active": {
+      "data": {}
+    },
+    "children": {
+      "data": [],
+      "cursor": {
+        "previous": null,
+        "next": null
+      }
+    },
+    "begin_end_present": true,
+    "text_bytes": 2933
+  },
+  "timing": {
+    "offset_ms": 27.598,
+    "bracket_half_ms": 34.178,
+    "timing_band_ms": 50.0,
+    "step_threshold_ms": 250.0,
+    "pass_margin_ms": 334.178,
+    "wait_return_minus_completed_c_ms": 309.17,
+    "would_timing_pass": false
+  },
+  "interpretation": "The wait error is a missed-busy observation, not an early completion. The native answer completed successfully and the final session is settled. The live screen rule remains unvalidated on OpenCode 2.1.4; the active footer shape was not captured during generation.",
+  "not_done": [
+    "no resend",
+    "no code change",
+    "no installation",
+    "no full-TUI trace",
+    "no formal smoke"
+  ],
+  "evidence_paths": {
+    "observe": "receipts/live-trial-observe.json",
+    "native": "receipts/live-trial-native.json",
+    "assistant": "receipts/assistant-text.txt",
+    "clock": "receipts/clock-bracket.json"
+  }
+}
