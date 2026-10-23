@@ -1,0 +1,28 @@
+Recovered summary — OpenCode round 3 (full terminal report overwritten)
+=====================================================================
+
+REQUEST_TOKEN: sol-mini-trial-plan-r3-opencode-20261023
+VERDICT: changes_required
+WAIT: 72.34 s bounded wait; same native session ses_e9770becfffeaFz02oO5eZpULU.
+
+The complete terminal report was overwritten before it could be copied. The
+reviewer confirmed:
+
+- The evidence-freeze blocker is resolved: immutable package, canonical
+  SHA-256 manifest, same hash in both final briefs/reports, re-review on change,
+  and each critic's own native completion/no-active-work evidence.
+- The offset is now derived, applied to completion, and the table no longer says
+  any offset blocks.
+- The narrow edits (agent prompt syntax, models help citation, session-before-Mini
+  order, duplicate wording removal, targeted follow-ups) are coherent.
+
+Remaining blocker: the creation-bracket half-width (up to 250 ms) was not added
+to the 50 ms pass margin, so a wait shortly after completed_c could still precede
+true completion. The reviewer also noted a threshold mismatch between the pass
+margin and the drift/step threshold.
+
+The coordinator corrected this with pass_margin = timing_band +
+bracket_half_width and separate step_threshold; a later narrow confirmation found
+one final tolerated-step hole, closed by adding step_threshold to pass_margin.
+This file is not an exact quote; the frozen plan records the authoritative
+findings and dispositions.

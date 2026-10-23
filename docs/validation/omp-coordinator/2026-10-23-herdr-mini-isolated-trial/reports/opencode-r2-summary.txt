@@ -1,0 +1,24 @@
+Recovered summary — OpenCode round 2 (full terminal report overwritten)
+=====================================================================
+
+REQUEST_TOKEN: sol-mini-trial-plan-r2-opencode-20261023
+VERDICT: changes_required
+WAIT: 231.69 s bounded wait; same native session ses_e9770becfffeaFz02oO5eZpULU.
+
+The complete terminal report was overwritten before it could be copied. The frozen
+plan's Review decisions records the six blockers and their dispositions. The
+reviewer conceded prior blockers 2–6 resolved and raised:
+
+1. Prior blocker 1 residual: the measured offset was allowed but not applied to
+   the pass comparison.
+2. New blocker: "same frozen evidence" had no manifest/hash, so two critics could
+   review different evidence sets and both pass.
+
+Suggestions included adding `agent prompt` to the syntax check, verifying
+`opencode models --standalone`, tying final-critic reports to their own native
+completion/no-active-work evidence, creating the native session before Mini
+starts, re-measuring the offset, and clarifying targeted follow-ups against
+"No resumed review contexts."
+
+The coordinator accepted and corrected all items; the exact text is in the
+frozen plan, not in this recovered summary. This file is not an exact quote.

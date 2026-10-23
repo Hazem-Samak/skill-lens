@@ -1,0 +1,59 @@
+REQUEST_TOKEN: sol-mini-trial-plan-r2-gemini-20261023
+  EFFECTIVE_MODEL: requested: Gemini 3.8 Flash (High) / configured:
+  Gemini 3.8 Flash (High) / settings/mode: Model Selection set to
+  Gemini 3.8 Flash (High), Plan Mode (/plan), read-only targeted
+  round-2 critic / evidence: native read_file inspection only, zero
+  shell/terminal commands, zero writes, zero background tasks, zero
+  delegates / upstream identity unverified beyond platform API
+  disclosure
+  VERDICT: pass
+  BLOCKERS: None.
+  SUGGESTIONS: None required.
+  FILES_AT_RISK: None. Review was conducted strictly read-only.
+  Trial execution remains strictly isolated to disposable
+  /tmp/skill-lens-herdr-mini-live-20261023-* and authorized
+  documentation/receipt files, leaving user repository files,
+  installed binaries, and running services untouched.
+  CONCEDED:
+
+  • Prior blockers 1–6 resolved:
+      1. Timing resolution/offset: Corrected step 4 establishes
+      native units/resolution, enforces a two-second clock-offset
+      ceiling, and defines timing_band; step 8 and acceptance
+      require wait-return at least timing_band after native
+      completion, treating inside-band returns as inconclusive.
+      2. Wait status: Corrected step 7 and acceptance require a zero
+      exit code and settled idle/done status, explicitly rejecting
+      blocked, agent_prompt_stalled, timeout, or unknown.
+      3. Exactly-one delivery: Corrected steps 3 and 7 enforce pre-
+      prompt zero counts and post-prompt verification of exactly one
+      token-bearing user message and one matching assistant turn.
+      4. Concurrency: Corrected step 5 explicitly supervises the
+      background prompt-wait process (recording PID, streams, status,
+      and UTC/monotonic timestamps), while step 6 mandates that the
+      observation probe execute before the wait process returns.
+      5. Preflight order: Scope steps 1–9 are strictly chronological;
+      step 2's credential-free model preflight strictly precedes
+      toolchain download, build, Herdr startup, and Mini execution.
+      6. Final acceptance: Acceptance criteria and the tri-state
+      table require substantive pass from both fresh final critics
+      on the same frozen evidence, with any non-pass triggering
+      escalation.
+  • Acknowledged material limits:
+      • Single disposable generation: The trial validates the
+      delivered screen-rule fix during a single live turn in a
+      synthetic root; it does not constitute general Herdr
+      reliability verification or formal smoke acceptance.
+      • Full-TUI separation: The distinct integration-authority
+      early-completion defect in full-TUI mode remains unresolved
+      and strictly design-only.
+      • Upstream model provenance: Upstream served model weights and
+      family identity remain independently unverified beyond
+      provider disclosure.
+      • Passive regex detection bounds: Passive screen scraping
+      cannot distinguish a literal unadorned bottom-line status
+      string from an active footer.
+      • Credential independence: If the model/variant is unavailable
+      in the isolated credential-free profile during preflight,
+      execution stops and returns to the owner.
+      COMPLETION: complete / no delegates / no background work

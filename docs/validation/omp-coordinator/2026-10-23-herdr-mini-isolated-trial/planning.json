@@ -1,0 +1,123 @@
+{
+  "status": "frozen; execution preflight not yet run",
+  "authorization": "Owner 2026-10-23: go ahead with what is needed to be done; prepare and run the isolated Mini trial within the frozen exclusions.",
+  "freeze": {
+    "plan_only_commit": "1ab5297debea785b2f4de069f18ebb40c578dc44",
+    "reference_commit": "2033b5999dcc37944788aa025570498531b5c9a3",
+    "plan_sha256_at_agreement": "a725a3f407a91b369338cf51d05fe8a057ae0f77d6a53440da8198bd3d6093d7",
+    "reference_plan_sha256": "ee263ed20267020e2499f60785cd1a1bfda02810c46432e51980c2c7abb434d1",
+    "pushed_origin_main": true,
+    "local_tracking_remote_equal": "2033b5999dcc37944788aa025570498531b5c9a3"
+  },
+  "review_rounds": [
+    {
+      "round": 1,
+      "draft_sha256": "af7d0eed50db41e96b3c1937350d5ec748d324f1bd73a83dde0b13ecc90b064d",
+      "gemini": {
+        "session": "2650ed26-5e7b-4340-b6d9-fc8cbd544b2c",
+        "verdict": "pass",
+        "wait_s": 160.5,
+        "report": "reports/gemini-r1.txt"
+      },
+      "opencode": {
+        "session": "ses_e9770becfffeaFz02oO5eZpULU",
+        "verdict": "changes_required",
+        "wait_s": 377.46,
+        "report": "reports/opencode-r1.txt"
+      }
+    },
+    {
+      "round": 2,
+      "draft_sha256": "5a592255d41c7dd3fd4b59860d4812c03c665a93c7c462ae1907c81441fd2abe",
+      "gemini": {
+        "session": "2650ed26-5e7b-4340-b6d9-fc8cbd544b2c",
+        "verdict": "pass",
+        "wait_s": 50.81,
+        "report": "reports/gemini-r2.txt"
+      },
+      "opencode": {
+        "session": "ses_e9770becfffeaFz02oO5eZpULU",
+        "verdict": "changes_required",
+        "wait_s": 231.69,
+        "report": "reports/opencode-r2-summary.txt",
+        "exact_full_report_preserved": false,
+        "reason": "terminal scrollback overwritten before preservation"
+      }
+    },
+    {
+      "round": 3,
+      "draft_sha256": "d077406313009bcbadaedb9209a0fbbad4bbe182c755c1fccf0838a9a1b09396",
+      "gemini": {
+        "session": "2650ed26-5e7b-4340-b6d9-fc8cbd544b2c",
+        "verdict": "pass",
+        "wait_s": 30.96,
+        "report": "reports/gemini-r3.txt"
+      },
+      "opencode": {
+        "session": "ses_e9770becfffeaFz02oO5eZpULU",
+        "verdict": "changes_required",
+        "wait_s": 72.34,
+        "report": "reports/opencode-r3-recovered.txt",
+        "exact_full_report_preserved": false,
+        "reason": "terminal scrollback overwritten; recovered summary from coordinator transcript"
+      }
+    },
+    {
+      "round": 4,
+      "draft_sha256": "3964f5d1813e56236b7657733ecc4c6dc72f4a63247ecf0e519b55ff2b2f1e20",
+      "gemini": null,
+      "opencode": {
+        "session": "ses_e9770becfffeaFz02oO5eZpULU",
+        "verdict": "changes_required",
+        "wait_s": 298.06,
+        "report": "reports/opencode-r4.txt"
+      }
+    }
+  ],
+  "final_correction": "pass_margin = timing_band + bracket_half_width + step_threshold; acceptance requires wait_return - completed_c >= pass_margin. Owner accepted this conservative fix on 2026-10-23; no fifth review.",
+  "no_write_proof": {
+    "canonical_file_map_excluding_plan_sha256": "7af9f644a96ea8d6c7b0ee0a7b74f98b22497f1a746503bd9b41520d3e4c37e7",
+    "pre_r1_pre_r2_pre_r3_equal": true,
+    "current_nonplan_nonevidence_equal": true,
+    "head_before": "6ce458afe9302e3d5869f293203dda7f3ca43f10",
+    "head_after_freeze": "2033b5999dcc37944788aa025570498531b5c9a3",
+    "file_count": 1305,
+    "only_plan_changed_by_coordinator": true,
+    "user_files": {
+      ".path": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "docs/plans/2026-10-19-herdr-omp-coordinator.md": "7eb7720a8b2d4531b04b284bf7ac677787561e2d36dd6c7db10055fecf178f11",
+      "docs/validation/omp-coordinator/2026-10-20/herdr-dispatch.md": "09899b046779e614fa8cd071d5b2bfa2f58fc158dc4c958eca8f27a900018aee"
+    }
+  },
+  "review_process_notes": [
+    "OpenCode round 1 used a broad search that surfaced a preserved receipt outside named evidence; it reports no content used/quoted, no credentials/raw transcripts read, and no writes.",
+    "OpenCode round 2 and round 3 full terminal reports were overwritten before preservation; their findings and dispositions are recorded in the frozen plan and recovered summaries. They are not presented as exact quotes.",
+    "OpenCode reviewer model was observed as DeepSeek V4.1 Flash Free / max / Plan in the native footer; the reviewer did not independently read the max variant. Upstream identity remains unverified.",
+    "Gemini reviewer used 1.4.6, Gemini 3.8 Flash High / Plan; upstream identity remains unverified."
+  ],
+  "installed_environment": {
+    "herdr": {
+      "version": "0.9.5",
+      "sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2"
+    },
+    "opencode": {
+      "version": "2.1.4",
+      "sha256": "d8a65dd253dbea759ae0dd829792ff219b40178c7decffea822430a4d1ccadb3"
+    },
+    "shared_opencode_service": "http://127.0.0.1:49374 (must not be used or stopped by the trial)",
+    "base_pane": {
+      "id": "wG:p1",
+      "shell_pid": 45632,
+      "rows": 55,
+      "focused": true
+    },
+    "system_opencode_config": "absent",
+    "managed_preferences": "absent",
+    "inherited_opencode_herdr_env_overrides": "none observed (only HOME relevant)"
+  },
+  "limitations": [
+    "Offline acceptance is input evidence, not live proof.",
+    "No live Mini trial, installation, full-TUI trace, formal smoke or publication has run.",
+    "Model availability without credentials is not yet proved; execution preflight may stop and return a credential choice to the owner."
+  ]
+}
