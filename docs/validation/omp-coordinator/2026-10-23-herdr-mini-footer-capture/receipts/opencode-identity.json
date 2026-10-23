@@ -1,0 +1,8 @@
+{
+  "backend_pid": 14323,
+  "url": "http://127.0.0.1:58682",
+  "password_generated": true,
+  "password_retained_in_launcher": true,
+  "session_id": "ses_e972a2d30ffea2SYyDCqHFBRVd",
+  "create_stdout": "{\"data\":{\"id\":\"ses_e972a2d30ffea2SYyDCqHFBRVd\",\"projectID\":\"4d36d9556e66ef699dd2a6830b7ca571e0bde720\",\"agent\":\"plan\",\"cost\":0,\"tokens\":{\"input\":0,\"output\":0,\"reasoning\":0,\"cache\":{\"read\":0,\"write\":0}},\"time\":{\"created\":1792760206033,\"updated\":1792760206033},\"subpath\":\"../../../../tmp/skill-lens-herdr-mini-capture-20261023-k0dw6avt/workspace\",\"location\":{\"directory\":\"/tmp/skill-lens-herdr-mini-capture-20261023-k0dw6avt/workspace\"}}}\n"
+}

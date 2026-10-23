@@ -1,0 +1,11 @@
+
+▪ oc mini v2.1.4 · …/workspace
+
+› REQUEST_TOKEN capture-20261023-94bec387. Do not use tools, delegate,
+read files or change anything. In about 400 words, explain how a
+bicycle works, using plain English. Start with BEGIN capture-20261023-
+94bec387 and finish with END capture-20261023-94bec387.
+
+┃
+
+🯧 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode

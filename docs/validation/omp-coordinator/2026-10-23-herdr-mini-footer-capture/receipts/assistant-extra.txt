@@ -1,0 +1,3 @@
+Plan mode is active, so I'll keep to discussion and won't change any files. The previous request needed only a written answer, which is already delivered — nothing there required a plan or edits.
+
+What would you like to plan next? If it involves code or file changes, tell me the goal and I'll outline the approach; you'd then need to switch agents for me to implement it.

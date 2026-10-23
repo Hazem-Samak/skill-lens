@@ -1,0 +1,23 @@
+{
+  "authorization": "Owner 2026-10-23: approve diagnostic footer capture in the same isolated setup; one Mini generation, timestamped idle/active/completion frames, pin OpenCode version; no rule change, code change, installation or trial beyond the capture.",
+  "scope": "Read-only screen capture. Installed Herdr 0.9.5 and installed OpenCode 2.1.4; fresh synthetic HOME/XDG roots; private OpenCode backend; one test pane; one Mini generation.",
+  "not_allowed": [
+    "rule change",
+    "source code change",
+    "installation",
+    "second generation",
+    "normal-session use",
+    "shared OpenCode service use",
+    "credential copy"
+  ],
+  "versions": {
+    "opencode_path": "/Users/corvette/.opencode/bin/opencode",
+    "opencode_version": "opencode v2.1.4",
+    "opencode_sha256": "d8a65dd253dbea759ae0dd829792ff219b40178c7decffea822430a4d1ccadb3",
+    "herdr_path": "/Users/corvette/.local/bin/herdr",
+    "herdr_version": "herdr 0.9.5",
+    "herdr_sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2"
+  },
+  "created_utc": "2026-10-23T12:56:29.380929+00:00",
+  "root": "/tmp/skill-lens-herdr-mini-capture-20261023-k0dw6avt"
+}

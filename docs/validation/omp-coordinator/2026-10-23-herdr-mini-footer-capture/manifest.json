@@ -1,0 +1,26 @@
+{
+  "excludes_self": true,
+  "opencode_version": "opencode v2.1.4",
+  "opencode_sha256": "d8a65dd253dbea759ae0dd829792ff219b40178c7decffea822430a4d1ccadb3",
+  "files": {
+    "README.md": "0759d7613e42912838cd376fbc5e0bbc5b4c108007fd26579251b9b22ad403df",
+    "capture-analysis.json": "44fa8404201eaee5efd142b2e6b3f124472d0602a48bdfecdc8a37257ed754e9",
+    "capture-method.json": "f23b3f3746ad1ba14db374769b75ec09b69a07591df97d63bd4912f10d83301d",
+    "frames/frames.jsonl": "f76966c143107e29bcca4d3fdd5ede6d89c02c7f0abc96e901fb544a5fe876d9",
+    "key-frames/active-answer-spinner-1fbe6.txt": "394f33f7ebe7a35eb8017f76cb0e5d4fa53753fcc12d6a2eb8bf0c70c9d2e7d3",
+    "key-frames/active-answer-spinner-1fbe7.txt": "355de33eab8635a458c40e3f6edd50de36412841878e44c14b10bff3e06e98f1",
+    "key-frames/active-first.txt": "394f33f7ebe7a35eb8017f76cb0e5d4fa53753fcc12d6a2eb8bf0c70c9d2e7d3",
+    "key-frames/active-followup-usage.txt": "626064bf6411c030835fb8f54437d10d14ac0586e4b71338994d743da239dbc3",
+    "key-frames/answer-completion-first.txt": "626064bf6411c030835fb8f54437d10d14ac0586e4b71338994d743da239dbc3",
+    "key-frames/final-frame.txt": "5bd8b63db9227961edfe94f7429895ceee189bf7f9dea8e5d324162672a6126b",
+    "key-frames/followup-completion-first.txt": "5bd8b63db9227961edfe94f7429895ceee189bf7f9dea8e5d324162672a6126b",
+    "key-frames/idle-before.txt": "ae1bf245adb40f348e0c97059b7f0daad28144f259e16baaf693495600d5505a",
+    "receipts/assistant-answer.txt": "bd0776d2ff3cbf331b22d8ef05c55e4eb1d59edd854ff3bf209489af828c89ed",
+    "receipts/assistant-extra.txt": "bcc24a7f32f7d32926705d19d3249b58e467b7c47b5606249ff2f7777211d5e2",
+    "receipts/herdr-identity.json": "74328edcb9a30599a73faedf78a2149afbc16fdf4c40b586f220a81fdaf8f65e",
+    "receipts/native.json": "ad85d8934a385c96a0aa33e423a42fd874aa07efc17dd60a3b07c73bdfb83839",
+    "receipts/opencode-identity.json": "014a5ca1eac59505b9f650283e0d96f0883d39a6f4fb12b60e6ee65e11d2f24d",
+    "receipts/submission.json": "8ed8f66d8a53e0a70fb4dff63686c259e332eca266d0d9652268827b63e5eeba",
+    "receipts/synthetic-reminder.txt": "c023b4528a3bc2b4ab3b3c470d6bd2d8bbd3a4473db6e7610a1621d65fb8f846"
+  }
+}

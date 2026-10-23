@@ -1,0 +1,87 @@
+{
+  "opencode_version": "opencode v2.1.4",
+  "opencode_sha256": "d8a65dd253dbea759ae0dd829792ff219b40178c7decffea822430a4d1ccadb3",
+  "herdr_version": "herdr 0.9.5",
+  "herdr_sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2",
+  "session_id": "ses_e972a2d30ffea2SYyDCqHFBRVd",
+  "user_count": 1,
+  "assistant_count": 2,
+  "answer_message": {
+    "created_utc": "2026-10-23T12:57:10.694000+00:00",
+    "completed_utc": "2026-10-23T12:57:21.746000+00:00",
+    "finish": "stop",
+    "model": {
+      "id": "deepseek-v4.1-flash-free",
+      "providerID": "opencode",
+      "variant": "max"
+    },
+    "text_bytes": 2459
+  },
+  "extra_assistant": {
+    "created_utc": "2026-10-23T12:57:21.768000+00:00",
+    "completed_utc": "2026-10-23T12:57:24.304000+00:00",
+    "finish": "stop",
+    "model": {
+      "id": "deepseek-v4.1-flash-free",
+      "providerID": "opencode",
+      "variant": "max"
+    },
+    "text_bytes": 374,
+    "note": "Post-answer response to a synthetic Plan-mode reminder; one user prompt only."
+  },
+  "frame_count": 152,
+  "active_frame_count": 94,
+  "answer_active_frames": [
+    0,
+    75
+  ],
+  "followup_active_frames": [
+    76,
+    93
+  ],
+  "spinner_glyphs": [
+    {
+      "glyph": "🯦",
+      "codepoint": "0x1fbe6"
+    },
+    {
+      "glyph": "🯧",
+      "codepoint": "0x1fbe7"
+    }
+  ],
+  "footer_shapes": {
+    "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode": {
+      "first_frame": 0,
+      "last_frame": 75,
+      "count": 38
+    },
+    "🯧 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode": {
+      "first_frame": 4,
+      "last_frame": 74,
+      "count": 38
+    },
+    "🯦 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (3%)": {
+      "first_frame": 76,
+      "last_frame": 92,
+      "count": 11
+    },
+    "🯧 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (3%)": {
+      "first_frame": 79,
+      "last_frame": 93,
+      "count": 7
+    }
+  },
+  "first_active_utc": "2026-10-23T12:57:10.637004+00:00",
+  "answer_completion_frame": 76,
+  "followup_completion_frame": 94,
+  "capture_end_utc": "2026-10-23T12:57:32.777822+00:00",
+  "answer_active_utc": [
+    "2026-10-23T12:57:10.637004+00:00",
+    "2026-10-23T12:57:21.667882+00:00"
+  ],
+  "followup_active_utc": [
+    "2026-10-23T12:57:21.816229+00:00",
+    "2026-10-23T12:57:24.262912+00:00"
+  ],
+  "observed_rule_mismatch": "Offline rule expects three metadata fields with a ` / ` account/provider suffix. Live 2.1.4 shows spinner + `esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode` during the answer, then `... · 6.7K (3%)` during the post-answer follow-up. No ` / OpenCode` suffix was observed."
+}

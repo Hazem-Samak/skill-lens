@@ -1,0 +1,10 @@
+{
+  "token": "capture-20261023-94bec387",
+  "prompt": "REQUEST_TOKEN capture-20261023-94bec387. Do not use tools, delegate, read files or change anything. In about 400 words, explain how a bicycle works, using plain English. Start with BEGIN capture-20261023-94bec387 and finish with END capture-20261023-94bec387.",
+  "submit_utc": "2026-10-23T12:57:10.314250+00:00",
+  "submit_mono": 63373.985568,
+  "submit_exit": 0,
+  "submit_stdout": "{\"id\":\"cli:agent:prompt\",\"result\":{\"agent\":{\"agent\":\"opencode\",\"agent_status\":\"idle\",\"cwd\":\"/private/tmp/skill-lens-herdr-mini-capture-20261023-k0dw6avt/workspace\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/skill-lens-herdr-mini-capture-20261023-k0dw6avt/workspace\",\"pane_id\":\"w1:p2\",\"revision\":0,\"state_change_seq\":1,\"tab_id\":\"w1:t1\",\"terminal_id\":\"term_65e8182c13aee2\",\"workspace_id\":\"w1\"},\"type\":\"agent_prompted\"}}\n",
+  "submit_stderr": "",
+  "frames": 152
+}

@@ -1,0 +1,19 @@
+BEGIN capture-20261023-94bec387
+
+A bicycle is a simple machine that turns human effort into much faster travel. Its main parts are the frame, two wheels, a crank with pedals, a chain, gears, brakes, and a steering assembly.
+
+The frame is the skeleton. It holds the wheels in line, supports the rider, and keeps the pedals, seat, and handlebars in the right places. Frames are usually triangles because that shape is strong for its weight.
+
+Pedalling is where the work starts. Your legs push the pedals around in a circle, and the pedals turn a crank attached to a toothed disc called a chainring. A chain loops around that disc and around a smaller cog on the rear wheel. When you turn the pedals, the chain pulls the rear cog and spins the rear wheel. The size difference matters: a large front ring driving a small rear cog makes the wheel turn several times for each turn of the pedals, so one push carries you further. Bicycles with several gears let you change that ratio — low gears make climbing easier, high gears give more speed on flat ground.
+
+The wheels do the moving. Rolling resistance is far lower than the friction of dragging something along the ground, which is why a bike is so efficient. Spokes hold the rim under tension, keeping the wheel round and strong while staying light. The rear wheel is driven; the front wheel steers.
+
+Stability looks like magic but is mostly active steering. If the bike begins to lean, the rider turns the handlebars slightly into the lean, which brings the wheels back underneath the combined weight of rider and bike. The angle of the front fork helps the bike correct itself, and the spinning wheels add a small gyroscopic contribution. Balance is something you keep doing, not something the bike does for you.
+
+Brakes remove energy. Squeezing the lever pulls a cable or pushes hydraulic fluid, pressing pads against a metal rim or a disc on the wheel. Friction turns motion into heat and slows you down.
+
+Steering is simple: the handlebars turn the fork and front wheel. Leaning also helps the bike turn, because it shifts the rider's weight and lets the tyres curve through the corner.
+
+Put together, energy from your muscles travels through the pedals, crank, chain, and gears to the rear wheel. The tyre pushes the ground backward, and the ground pushes the bike forward. Air resistance and friction hold you back, and the brakes take away energy when you want to stop.
+
+END capture-20261023-94bec387
