@@ -1,0 +1,70 @@
+REQUEST_TOKEN: sol-opencode214-plan-opencode-20261023
+     EFFECTIVE_MODEL: Requested by plan roster: opencode/deepseek-v4.
+     1-flash-free, max, Plan. Configured: opencode/deepseek-v4.1-
+     flash-free, Plan mode (harness); max variant not independently
+     readable. Evidence: harness model line and Plan-mode reminder.
+     Upstream identity unverified.
+     VERDICT: changes_required
+
+     BLOCKERS:
+
+     - Plan line 56 vs line 65 — the usage grammar \d+(?:\.\d+)?[KM]?
+       \(\d{1,3}%\) accepts 6.7K (300%), yet the negative matrix
+       requires that exact string to remain Idle. Expected: freeze the
+       intended percentage range (for example (?:100|[1-9]?\d)%) or
+       remove the 300% negative and state that percentage semantics
+       are not validated. Evidence: line 56; line 65 malformed-usage
+       list; acceptance line 74.
+     - Plan lines 50 and 66 — the frozen rule is a schematic, not a
+       literal regex. ( <account> / <provider> | OpenCode | <usage> )
+       leaves grouping, alternation precedence, incidental spaces,
+       anchor scope and the exact old field classes unspecified; "the
+       extended regex above" cannot be implemented without inference.
+       Expected: include the exact line_regex string with non-
+       capturing groups, ^/$, no decorative spaces, and the exact
+       account/provider branch. Evidence: line 50; line 66.
+     - Plan lines 57 and 65 — optional spinner is claimed but only
+       old-shape and decorated new-shape positives are listed. No
+       undecorated OpenCode or usage-token positive is named; a
+       regression making the spinner mandatory in the new arms would
+       pass the stated matrix. Expected: add no-spinner positives for
+       both new suffixes. Evidence: line 57 "only one optional spinner
+       cell"; line 65 positives.
+     - Plan line 65 — negatives are not pinned per alternation arm.
+       Quoted/prefixed/embedded rows are not explicitly assigned to
+       the usage arm, and the only trailing-suffix row is OpenCode (
+       copied); no quoted/prefixed/trailing usage-token footer or new-
+       shape incomplete-final-field row is named. Expected: add
+       explicit usage-arm quote/prefix/trailing-suffix negatives and
+       new-shape incomplete rows (missing/empty final field, empty
+       mode/model). Evidence: line 65; acceptance line 74.
+
+     SUGGESTIONS:
+
+     - Add a lowercase opencode (and perhaps OPENCODE) negative to
+       prove the exact-case token.
+     - State that K/M are uppercase-only and percentages are integer-
+       only; add a lowercase usage negative if that is intended.
+     - Disambiguate the 🯦/🯧 esc stop shorthand in lines 26–27; it
+       reads as one line with two spinner cells, while the capture has
+       separate frames and the rule permits one.
+     - Pin the stale-cache fixture to the accepted 2026.10.22.1 (or
+       preserved 2026.06.10.1) and name the 29-case matrix file so
+       "older cached manifest" is reproducible.
+     - Say "two-commit freeze (plan, then reference)" rather than "two
+       plan-only commits" to match the OMP loop.
+
+     FILES_AT_RISK: Inside the fresh temporary source copy only: src/
+     detect/manifests/opencode.toml, distribution/agent-detection/
+     opencode.toml, src/detect/manifest/tests.rs, docs/next/website/
+     src/content/docs/agents.mdx. No skill_lens/ product path changes.
+     CONCEDED: Offline proof cannot distinguish a byte-identical
+     bottom line; that limit is acceptable and documented. The non-
+     captured usage variants are grammar probes, not live evidence. No
+     live trial, deployment or installation is required. The plan SHA-
+     256 was not recomputed under the native-file-only/no-shell
+     constraint. The old Default / OpenCode positive, blocked priority
+     300, bottom-line anchor, version bump, both manifests, real-
+     loader/CLI/stale-cache outline and offline-only boundaries are
+     adequately covered.
+     COMPLETION: complete / no delegates / no background work

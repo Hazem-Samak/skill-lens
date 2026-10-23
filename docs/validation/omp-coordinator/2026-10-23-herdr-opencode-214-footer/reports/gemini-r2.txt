@@ -1,0 +1,45 @@
+REQUEST_TOKEN: sol-opencode214-plan-r2-gemini-20261023
+  EFFECTIVE_MODEL: gemini-3.8-flash-high / configured: Antigravity
+  UI gemini-3.8-flash-high / Plan mode, thinking high / session
+  readback / upstream unverified
+  VERDICT: pass
+  BLOCKERS: None.
+  SUGGESTIONS: None required.
+  FILES_AT_RISK:
+
+  • src/detect/manifests/opencode.toml
+  • distribution/agent-detection/opencode.toml
+  • src/detect/manifest/tests.rs
+  • docs/next/website/src/content/docs/agents.mdx
+  (Scoped strictly to the fresh temporary source copy; no
+  skill_lens/ paths affected.)
+  CONCEDED:
+  • Verified resolved:
+      1. Percentage grammar contradiction: <usage> pattern is now
+      \d+(?:\.\d+)?[KM]? \((?:100|[1-9]?\d)%\), properly accepting
+      1.0K (100%) while rejecting 6.7K (300%), 6.7K (101%), 6.7k
+      (3%), 6.7K(3%), and 6.7 K (3%).
+      2. Exact literal line_regex embedded in §Rule design with non-
+      capturing grouping (?:... / ...|OpenCode|...) and no syntax
+      ambiguity.
+      3. Undecorated no-spinner positive fixtures explicitly
+      specified for both new suffix arms.
+      4. Negative fixtures explicitly pinned per alternation arm
+      (quoted, prefixed, embedded, trailing, case-sensitive provider,
+      malformed usage, and incomplete fields).
+      5. Stale-cache fixture version pinned (2026.10.22.1 / 2026.06.
+      10.1), 29-case CLI matrix JSON named, and two-commit freeze
+      procedure clarified.
+      6. Spinner glyph notation disambiguated as distinct captured
+      frames.
+  • Material limits:
+      • An unquoted, byte-identical footer string appearing on the
+      bottom non-empty buffer line remains indistinguishable from a
+      live status footer by design.
+      • Verification remains strictly offline; no live trials,
+      daemon processes, or system installations.
+      • The plan addresses status footer detection only and
+      explicitly documents that the separate full-TUI completion
+      defect remains open.
+      • Upstream model identities remain unverified.
+      COMPLETION: complete / no delegates / no background work

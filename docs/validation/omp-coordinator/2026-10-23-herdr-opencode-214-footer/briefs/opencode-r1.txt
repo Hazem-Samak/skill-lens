@@ -1,0 +1,67 @@
+REQUEST_TOKEN: sol-opencode214-plan-opencode-20261023
+
+You are a fresh independent planning critic for a High-risk Herdr detector change. Judge the plan, its named evidence and the current accepted rule. Do not implement, run checks or reopen settled scope.
+
+# Your one question
+
+Are the regex alternation, usage-token grammar and fixture matrix precise and complete enough to prove the new shape offline?
+
+# Subject
+
+Plan: /Users/corvette/Documents/Projects Coding/Skill Lens/docs/plans/2026-10-23-herdr-opencode-214-footer.md
+Expected SHA-256: 2a133cc756cea79f5a26db5549f3a023a0428263a562b4b4c651a6b3511f7a2d
+Status: Draft. The coordinator will verify the file before/after review.
+
+Named evidence:
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/omp-coordinator/2026-10-23-herdr-mini-footer-capture/README.md
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/omp-coordinator/2026-10-23-herdr-mini-footer-capture/capture-analysis.json
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/omp-coordinator/2026-10-22-herdr-mini-detection-fix/correction.patch
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/plans/2026-10-22-herdr-mini-detection-fix.md
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/process/omp/README.md
+- /Users/corvette/Documents/Projects Coding/Skill Lens/docs/process/omp/planning-loop.md
+
+# Captured facts
+
+OpenCode v2.1.4, SHA-256 d8a65dd253dbea759ae0dd829792ff219b40178c7decffea822430a4d1ccadb3.
+Herdr 0.9.5, SHA-256 fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2.
+Active answer footer: `🯦/🯧 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · OpenCode`.
+Post-answer follow-up footer: `🯦/🯧 esc stop · Plan · DeepSeek V4.1 Flash Free [max] · 6.7K (3%)`.
+Idle footer has no `esc stop`. The accepted rule requires three metadata fields plus ` / <provider>`; it misses both live shapes.
+
+# Review criteria
+
+- Does the plan preserve the existing captured `Default / OpenCode` footer and blocked priority, while adding the new three-field `OpenCode` and usage-token shapes?
+- Is the proposed alternation precise enough to reject quoted, prefixed, embedded, historical-above-idle, trailing-suffix and malformed-usage copies, without matching arbitrary transcript text?
+- Are varied usage tokens and the negative matrix sufficient? Is the bottom-line anchor and optional single spinner cell correct?
+- Are version bump, both manifests, real-loader tests, actual CLI matrix, stale-cache proof and offline-only boundaries sufficient?
+- Do not demand a live trial, deployment, installation or impossible certainty. Acknowledged limits are acceptable.
+
+# Controls
+
+- Native file read/search tools ONLY. No shell/commands/tests/builds/linters/git/network/delegation/writes, even in /tmp.
+- No credentials, raw transcripts, incidents or unrelated user data.
+- One complete report under 800 words. Do not write a file. Stop after the report.
+
+READ-ONLY CRITIC TASK. You are reviewing, not implementing.
+
+Do NOT create, edit, move, delete or rename any file in the repository. Do NOT run
+any command that writes: no formatters, no linters with --fix, no install, no
+git commit/checkout/stash, no snapshot or golden regeneration, no test runs that
+write into the checkout. Test output, if you need it, goes only to a temporary
+directory outside the repository.
+
+If you believe a change is required, do not make it. Report it instead.
+
+Return only the report format below. Nothing else.
+
+
+# Report format
+
+REQUEST_TOKEN: <the token above>
+EFFECTIVE_MODEL: requested / configured / settings/mode / evidence / upstream verified or unverified
+VERDICT: pass | changes_required | unverified
+BLOCKERS: exact plan location, problem, expected behavior, evidence. "None." if none.
+SUGGESTIONS: non-blocking only, or "None required."
+FILES_AT_RISK: permitted paths whose behavior could change, or "None."
+CONCEDED: material limits you accept.
+COMPLETION: complete / no delegates / no background work

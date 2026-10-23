@@ -1,0 +1,35 @@
+REQUEST_TOKEN: sol-opencode214-plan-r2-opencode-20261023
+     EFFECTIVE_MODEL: requested: opencode/deepseek-v4.1-flash-free,
+     max, Plan (plan roster); configured: opencode/deepseek-v4.1-
+     flash-free, Plan mode; max variant not independently readable;
+     evidence: harness model line + Plan-mode reminder; upstream
+     unverified.
+     VERDICT: pass
+
+     BLOCKERS: None.
+
+     SUGGESTIONS: None required.
+
+     FILES_AT_RISK: Temp source copy only: src/detect/manifests/
+     opencode.toml, distribution/agent-detection/opencode.toml, src/
+     detect/manifest/tests.rs, docs/next/website/src/content/docs/
+     agents.mdx. No skill_lens/ product paths.
+
+     CONCEDED: Prior blockers verified resolved: (1) the exact
+     line_regex is embedded at line 50 with (?:...), ^/$, the exact
+     old account/provider branch, OpenCode, and the usage branch; (2)
+     the percentage grammar at line 56 accepts 0–100 only, rejects
+     300% and 101%, and accepts 1.0K (100%); (3) undecorated positives
+     for both new final arms are at line 68; (4) negatives are pinned
+     per arm at lines 72–74, including quoted/prefixed/embedded/
+     trailing copies, lowercase/uppercase provider, empty/missing
+     final field, and malformed usage; (5) stale-cache is pinned, the
+     29-case matrix is named, the two-commit wording is corrected, and
+     the spinner shorthand is clarified. No new blocker found.
+     Material limits: a byte-identical bottom line remains
+     indistinguishable; proof is offline only; no live trial,
+     deployment, or installation; the corrected plan SHA-256 was not
+     recomputed under the no-shell constraint; upstream identities
+     remain unverified.
+
+     COMPLETION: complete / no delegates / no background work

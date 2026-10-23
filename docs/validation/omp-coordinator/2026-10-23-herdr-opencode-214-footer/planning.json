@@ -1,0 +1,48 @@
+{
+  "status": "frozen; implementation authorized",
+  "plan_only_commit": "738af8dd18c3b980b25d5da5bd47fcb81d37ad44",
+  "reference_commit": "084d24c9bdc387d1775a193c1b51b930cd1b016c",
+  "plan_sha256_at_agreement": "9cf833018d7a3320a9b56d5a4a220809074938f71c8469d29e24fec664120b16",
+  "rounds": [
+    {
+      "round": 1,
+      "draft_sha256": "2a133cc756cea79f5a26db5549f3a023a0428263a562b4b4c651a6b3511f7a2d",
+      "gemini": {
+        "session": "ed4f8a35-8f73-4a5b-88e9-58db1d497961",
+        "verdict": "changes_required"
+      },
+      "opencode": {
+        "session": "ses_e972129baffeEB5TBq1Dpdk3UQ",
+        "verdict": "changes_required"
+      }
+    },
+    {
+      "round": 2,
+      "draft_sha256": "a0dea535936fae5a6c1d5b152542495d276f90eb66c4deae08f5fd218954ad57",
+      "gemini": {
+        "session": "ed4f8a35-8f73-4a5b-88e9-58db1d497961",
+        "verdict": "pass"
+      },
+      "opencode": {
+        "session": "ses_e972129baffeEB5TBq1Dpdk3UQ",
+        "verdict": "pass"
+      }
+    }
+  ],
+  "no_write_proof": {
+    "head": "f836559c0c46d00adbef5ed80135dcdf07a7ac95",
+    "file_count": 1372,
+    "checkout_unchanged_after_reviews": true,
+    "only_plan_changed_by_coordinator": true,
+    "user_files": {
+      ".path": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "docs/plans/2026-10-19-herdr-omp-coordinator.md": "7eb7720a8b2d4531b04b284bf7ac677787561e2d36dd6c7db10055fecf178f11",
+      "docs/validation/omp-coordinator/2026-10-20/herdr-dispatch.md": "09899b046779e614fa8cd071d5b2bfa2f58fc158dc4c958eca8f27a900018aee"
+    }
+  },
+  "limitations": [
+    "Upstream identities unverified",
+    "Offline proof only",
+    "Byte-identical bottom-line ambiguity"
+  ]
+}

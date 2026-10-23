@@ -1,0 +1,48 @@
+REQUEST_TOKEN: sol-opencode214-plan-r2-gemini-20261023
+
+**Targeted round 2 — confirmation only.** Do not broad-review. Verify the prior blockers are resolved in the corrected sections and that the edits introduced no new blocker. Do not reopen settled scope or demand a live trial, deployment or installation.
+
+# Subject
+
+Corrected plan: /Users/corvette/Documents/Projects Coding/Skill Lens/docs/plans/2026-10-23-herdr-opencode-214-footer.md
+Expected SHA-256: a0dea535936fae5a6c1d5b152542495d276f90eb66c4deae08f5fd218954ad57
+Prior R1 reports: /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-opencode214-plan-review-20261023-4c86bn8p/gemini-r1.txt and /var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-opencode214-plan-review-20261023-4c86bn8p/opencode-r1.txt (read your lane's and the other for the shared blocker only).
+
+# Corrections to confirm
+
+1. The exact frozen `line_regex` is now embedded in Rule design, with non-capturing alternation, anchors, the exact old account/provider branch, `OpenCode`, and the usage branch.
+2. Usage grammar is `\d+(?:\.\d+)?[KM]? \((?:100|[1-9]?\d)%\)` — uppercase K/M, integer 0–100; `6.7K (300%)`, `6.7K (101%)`, `6.7k (3%)`, `6.7K(3%)` and `6.7 K (3%)` are negatives; `1.0K (100%)` is a positive.
+3. Positives now include undecorated no-spinner footers for both new final arms, both observed spinner frames, the old `Default / OpenCode` branch, and the varied usage matrix.
+4. Negatives are pinned per arm: quoted/prefixed/embedded/trailing for both `OpenCode` and usage, lowercase/uppercase provider, empty/missing final field, empty mode/model, malformed usage, permission-over-busy, and known-agent no-match.
+5. Stale-cache fixture is pinned to `2026.10.22.1` or `2026.06.10.1`; the 29-case matrix file is named; the freeze wording is plan-only then reference-only; the spinner shorthand is clarified.
+
+# Controls
+
+- Native file read/search tools ONLY. No shell/commands/tests/builds/lint/git/network/delegation/writes, even in /tmp.
+- No credentials, raw transcripts or unrelated data.
+- One complete report under 600 words. Do not write a file. Stop after the report.
+
+READ-ONLY CRITIC TASK. You are reviewing, not implementing.
+
+Do NOT create, edit, move, delete or rename any file in the repository. Do NOT run
+any command that writes: no formatters, no linters with --fix, no install, no
+git commit/checkout/stash, no snapshot or golden regeneration, no test runs that
+write into the checkout. Test output, if you need it, goes only to a temporary
+directory outside the repository.
+
+If you believe a change is required, do not make it. Report it instead.
+
+Return only the report format below. Nothing else.
+
+
+
+# Report format
+
+REQUEST_TOKEN: <the token above>
+EFFECTIVE_MODEL: requested / configured / settings/mode / evidence / upstream verified or unverified
+VERDICT: pass | changes_required | unverified
+BLOCKERS: list any unresolved prior blocker by number or any new blocker with exact plan location/evidence; otherwise "None."
+SUGGESTIONS: non-blocking only, or "None required."
+FILES_AT_RISK: permitted paths only, or "None."
+CONCEDED: which prior blockers you verified as resolved, and material limits.
+COMPLETION: complete / no delegates / no background work
