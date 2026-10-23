@@ -53,8 +53,17 @@
       "requested": "Gemini 3.8 Flash High",
       "configured": "Gemini 3.8 Flash High / Plan",
       "rounds": [
-        {"round": 1, "verdict": "pass", "report": "final-review/gemini-r1.txt", "note": "Upstream-verified wording was corrected in round 2."},
-        {"round": 2, "verdict": "pass", "report": "final-review/gemini-r2-corrected.txt"}
+        {
+          "round": 1,
+          "verdict": "pass",
+          "report": "final-review/gemini-r1.txt",
+          "note": "Upstream-verified wording was corrected in round 2."
+        },
+        {
+          "round": 2,
+          "verdict": "pass",
+          "report": "final-review/gemini-r2-corrected.txt"
+        }
       ],
       "upstream_identity_verified": false
     },
@@ -75,7 +84,7 @@
   "suggestions_disposition": [
     "Non-blocking timing-component labels (timing_band, step_threshold, monotonic brackets) are deferred; the result is ~12x the pass margin and the recorded offset/bracket/margin are internally consistent.",
     "The second-assistant acceptance wording is deferred; the record explicitly identifies the Plan-mode follow-up and accepts completion from the matching answer and finished session.",
-    "The rollback/cleanup receipt suggestion is addressed by post-lap-cleanup.json after the isolated root is stopped and removed."
+    "Rollback/cleanup receipt supplied by post-lap-cleanup.json; the isolated lap server stopped, backend and Mini exited, the owned root was removed, and the normal environment was verified."
   ],
   "not_done": [
     "normal/installed Herdr deployment",
@@ -83,5 +92,18 @@
     "full-TUI instrumentation or trace",
     "upstream publication",
     "other changes"
-  ]
+  ],
+  "cleanup": {
+    "root": "/tmp/skill-lens-herdr-mini-lap-20261023-btkg7tav",
+    "root_absent": true,
+    "isolated_lap_session": "not running",
+    "normal_default_session": "running",
+    "normal_base_pane": "wG:p1",
+    "base_shell_pid": 45632,
+    "base_rows": 55,
+    "shared_opencode_service": "http://127.0.0.1:49374",
+    "installed_binaries_unchanged": true,
+    "user_files_unchanged": true,
+    "receipt": "post-lap-cleanup.json"
+  }
 }
