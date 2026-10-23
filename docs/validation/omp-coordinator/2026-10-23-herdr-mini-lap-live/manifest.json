@@ -1,0 +1,23 @@
+{
+  "excludes_self": true,
+  "result": "pass",
+  "manifest_version": "2026.10.23.1",
+  "files": {
+    "README.md": "48f7186d17259166a40c6710445b59af25f33db9dbcc19bbeda6c3319b0a944c",
+    "agent-manifests.json": "ad4af0ba5b20164ce96a418505b39297e49ef38694c4538edb8c18c11cc48322",
+    "clock.json": "c03f24766dd1e76a098523c12731628ec53534905abf74db9ea1a1f04ba8b2ec",
+    "deployment.json": "ec0cd30afab416b04ce0f1fc2ee9f6f6f0a9188f5ee0254b80ceec2a5e8d9534",
+    "herdr-deploy.json": "c20c8c7cd3e08d9b0ff62a132b531e85fd3b901d99eb8f6f83650dad468f141d",
+    "idle-after-frame.txt": "40dd9af4a7b39cd5d57101de586a608fec0a041676aa6090ed7bd46e85ec97b5",
+    "live-frames.jsonl": "6b96127e63e86cff18ce493a5532039384bede8caabe2d6c3d16405729b4a237",
+    "live-observe.json": "fb4226734256960f102c03e0dc48562466236777d27af178bc87933bb72988e3",
+    "live-result.json": "7f69c2aa99d00497032d831fd9f98d495e0004ab99b1150d4d9d1916b72caef9",
+    "native.json": "169ceec96e6b4207de5301ee5c9a76092d59de02bf21432ffd923b5e03d7bdd4",
+    "pre-prompt.json": "b4066ec4eb9a2a781405af09d41a543c54f270353809021c5077223ade308843",
+    "prompt-wait.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "prompt-wait.stdout.txt": "d5f1a58277f7a9b7e5ac38a2ae9df677d004c74d5f378a2ac8f937d8cae9655a",
+    "setup.json": "e1d7794234c2f41a285106256d33499b53f700a76cb3684ced6dd6fb6443739a",
+    "usage-frame.txt": "405d0983bb8ca1420fe609418bc961a2841f1f2beca92db0041f75083a61ca50",
+    "working-frame.txt": "11c5bd2f887dbc0aba7edc9651a8a36dedebec385a50fdf2cf953dcd99b2923e"
+  }
+}

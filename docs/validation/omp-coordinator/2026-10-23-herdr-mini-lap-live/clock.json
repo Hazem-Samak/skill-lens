@@ -1,0 +1,10 @@
+{
+  "trial_session": "ses_e96ed0e99ffeb4Sj7HWIu0Wg0p",
+  "control_session": "ses_e96eccbd2ffe8bLjfn3BrbckHr",
+  "control_created_native_ms": 1792764228654,
+  "coordinator_0_utc": "2026-10-23T14:03:48.614034+00:00",
+  "coordinator_1_utc": "2026-10-23T14:03:48.658454+00:00",
+  "bracket_half_ms": 22.21,
+  "offset_ms": 17.756,
+  "within_limits": true
+}

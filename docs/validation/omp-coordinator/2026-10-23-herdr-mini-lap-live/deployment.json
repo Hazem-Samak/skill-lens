@@ -1,0 +1,10 @@
+{
+  "root": "/tmp/skill-lens-herdr-mini-lap-20261023-btkg7tav",
+  "method": "isolated local manifest override",
+  "override_path": "/tmp/skill-lens-herdr-mini-lap-20261023-btkg7tav/hc/herdr/agent-detection/opencode.toml",
+  "manifest_sha256": "d86463927f13191fb8123a6fe0efe3435e9e4832a9c7cd6123ee7bfe02857104",
+  "manifest_version": "2026.10.23.1",
+  "normal_config_touched": false,
+  "installed_binary_sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2",
+  "rollback": "stop isolated server and remove owned root"
+}

@@ -1,0 +1,11 @@
+{
+  "workspace": "w1",
+  "root_pane": "w1:p1",
+  "test_pane": "w1:p2",
+  "backend_pid": 30429,
+  "url": "http://127.0.0.1:59851",
+  "password_generated": true,
+  "password_retained": false,
+  "session_id": "ses_e96ed0e99ffeb4Sj7HWIu0Wg0p",
+  "manifest_override": "2026.10.23.1"
+}

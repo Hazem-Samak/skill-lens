@@ -1,0 +1,109 @@
+{
+  "visible": "\n\u25aa oc mini v2.1.4 \u00b7 \u2026/workspace\n\n\u2503 Ask anything, / for commands, @ for context\u2026\n\nPlan \u00b7 DeepSeek V4.1 Flash Free [max] \u00b7 OpenCode \u00b7 ctrl+p menu\n",
+  "agent": {
+    "agent": "opencode",
+    "agent_status": "idle",
+    "cwd": "/private/tmp/skill-lens-herdr-mini-lap-20261023-btkg7tav/workspace",
+    "focused": false,
+    "foreground_cwd": "/private/tmp/skill-lens-herdr-mini-lap-20261023-btkg7tav/workspace",
+    "pane_id": "w1:p2",
+    "revision": 0,
+    "state_change_seq": 1,
+    "tab_id": "w1:t1",
+    "terminal_id": "term_65e8271f461c82",
+    "workspace_id": "w1"
+  },
+  "explain": {
+    "agent": "opencode",
+    "cached_remote_version": null,
+    "evaluated_rules": [
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 2,
+          "contains": [],
+          "line_regex": [],
+          "not_count": 0,
+          "regex": [],
+          "region_bytes": 156,
+          "region_preview": "\n\u25aa oc mini v2.1.4 \u00b7 \u2026/workspace\n\n\u2503 Ask anything, / for commands, @ for context\u2026\n\nPlan \u00b7 DeepSeek V4.1 Flash Free [max] \u00b7 OpenCode \u00b7 ctrl+p menu\n"
+        },
+        "id": "permission_required",
+        "matched": false,
+        "priority": 300,
+        "region": "whole_recent",
+        "state": "blocked"
+      },
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 4,
+          "contains": [],
+          "line_regex": [],
+          "not_count": 0,
+          "regex": [],
+          "region_bytes": 156,
+          "region_preview": "\n\u25aa oc mini v2.1.4 \u00b7 \u2026/workspace\n\n\u2503 Ask anything, / for commands, @ for context\u2026\n\nPlan \u00b7 DeepSeek V4.1 Flash Free [max] \u00b7 OpenCode \u00b7 ctrl+p menu\n"
+        },
+        "id": "interrupt_hint_working",
+        "matched": false,
+        "priority": 110,
+        "region": "whole_recent",
+        "state": "working"
+      },
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 0,
+          "contains": [],
+          "line_regex": [
+            "^(?:[\\x{1CD00}-\\x{1CEBF}\\x{1FB00}-\\x{1FBFF}]\\s+)?esc stop \u00b7 [^\u00b7/\\n\"'`\u201c\u201d\u2018\u2019]+ \u00b7 [^\u00b7/\\n\"'`\u201c\u201d\u2018\u2019]+ \u00b7 (?:[^\u00b7/\\n\"'`\u201c\u201d\u2018\u2019]+ / [\\w.\\-]+|OpenCode|\\d+(?:\\.\\d+)?[KM]? \\((?:100|[1-9]?\\d)%\\))$"
+          ],
+          "not_count": 0,
+          "regex": [],
+          "region_bytes": 66,
+          "region_preview": "Plan \u00b7 DeepSeek V4.1 Flash Free [max] \u00b7 OpenCode \u00b7 ctrl+p menu\n"
+        },
+        "id": "status_footer_esc_stop_working",
+        "matched": false,
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      {
+        "evidence": {
+          "all_count": 0,
+          "any_count": 0,
+          "contains": [],
+          "line_regex": [],
+          "not_count": 0,
+          "regex": [
+            "(\u25a0|\u2b1d){4,}"
+          ],
+          "region_bytes": 156,
+          "region_preview": "\n\u25aa oc mini v2.1.4 \u00b7 \u2026/workspace\n\n\u2503 Ask anything, / for commands, @ for context\u2026\n\nPlan \u00b7 DeepSeek V4.1 Flash Free [max] \u00b7 OpenCode \u00b7 ctrl+p menu\n"
+        },
+        "id": "progress_bar_working",
+        "matched": false,
+        "priority": 100,
+        "region": "whole_recent",
+        "state": "working"
+      }
+    ],
+    "fallback_reason": "default_known_agent_idle_fallback",
+    "local_override_shadowing_remote": false,
+    "manifest_source": "/tmp/skill-lens-herdr-mini-lap-20261023-btkg7tav/hc/herdr/agent-detection/opencode.toml",
+    "manifest_version": "2026.10.23.1",
+    "matched_rule": null,
+    "remote_update_error": null,
+    "remote_update_status": null,
+    "screen_detection_skipped": false,
+    "skip_state_update": false,
+    "skipped_update_reason": null,
+    "state": "idle",
+    "visible_blocker": false,
+    "visible_idle": false,
+    "visible_working": false,
+    "warning": null
+  }
+}
