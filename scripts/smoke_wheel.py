@@ -351,7 +351,10 @@ def verify_tui_endpoint_install(
     textual_spec: str | None = None,
     python_bin: str = sys.executable,
     repo_root: pathlib.Path | None = None,
-    timeout_seconds: int = 180,
+    # The installed-lane suite runs 360 tests in a cold virtualenv. Local runtime
+    # is ~40 s, but GitHub's 2-core runner exceeded the old 180 s bound while
+    # still making progress. 600 s is a bounded ceiling, not a performance gate.
+    timeout_seconds: int = 600,
 ) -> dict[str, Any]:
     """Verify [tui] installation, lifecycle, and parity in an isolated virtualenv."""
     wheel_path = pathlib.Path(wheel_path).resolve()
@@ -526,14 +529,32 @@ def verify_tui_endpoint_install(
 
     # 5. Run test suites with bounded timeout
     test_cmd = [str(pytest_exe), *INSTALLED_TUI_TEST_SUITES, "-ra"]
-    test_res = subprocess.run(
-        test_cmd,
-        cwd=str(test_lane),
-        env=env,
-        capture_output=True,
-        text=True,
-        timeout=timeout_seconds,
-    )
+    try:
+        test_res = subprocess.run(
+            test_cmd,
+            cwd=str(test_lane),
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+        )
+    except subprocess.TimeoutExpired as exc:
+        partial_stdout = (
+            exc.stdout
+            if isinstance(exc.stdout, str)
+            else (exc.stdout or b"").decode("utf-8", "replace")
+        )
+        partial_stderr = (
+            exc.stderr
+            if isinstance(exc.stderr, str)
+            else (exc.stderr or b"").decode("utf-8", "replace")
+        )
+        raise AssertionError(
+            f"Installed test suites exceeded the {timeout_seconds}s bound "
+            f"([{', '.join(test_cmd)}]):\n"
+            f"STDOUT (partial):\n{partial_stdout}\n"
+            f"STDERR (partial):\n{partial_stderr}"
+        ) from exc
     if test_res.returncode != 0:
         raise AssertionError(
             f"Installed test suites failed with code {test_res.returncode}:\n"
