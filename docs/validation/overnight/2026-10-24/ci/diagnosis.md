@@ -75,6 +75,6 @@ prove the full matrix.
 
 | Environment | Result |
 | --- | --- |
-| Python 3.11 (project venv, coverage gate) | see report; 1083 passed, 1 skipped |
+| Python 3.11 (project venv, coverage gate) | 1083 passed, 1 skipped, 91.16% |
 | Python 3.13, locked `[dev]`, Textual 8.2.8 | 1083 passed, 1 skipped, 65 s |
-| Python 3.14, locked `[dev]`, Textual 8.2.8 | see report |
+| Python 3.14, locked `[dev]`, Textual 8.2.8 | 1083 passed, 1 skipped, 65 s |
