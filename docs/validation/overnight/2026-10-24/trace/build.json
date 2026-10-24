@@ -1,0 +1,18 @@
+{
+  "source": "herdr v0.9.5 archive, SHA-256 5c745bf712aee3320ed88a665c39a9143cbd6b7ce4376e0ae0f0c07988576c13",
+  "source_commit": "2ecf19a92fc3a7fff75b6ce3655ef04f4625ec01",
+  "applied_patches": [
+    "2026-10-22 herdr-mini-detection-fix/correction.patch (f22d2d7e...)",
+    "2026-10-23 herdr-opencode-214-footer/execution/correction-214.patch (e6e649ec...)"
+  ],
+  "instrumentation_patch_sha256": "dad01f3ffdc9a713195715074366ff22eb7095fa1881472d40d4fc917001ae75",
+  "toolchain": {
+    "rust": "1.96.1",
+    "zig": "0.16.0",
+    "rust_packages_verified_sha256": "from 2026-10-22 provenance.json",
+    "zig_sha256": "b23d70deaa879b5c2d486ed3316f7eaa53e84acf6fc9cc747de152450d401489"
+  },
+  "build_command": "cargo build -p herdr --bin herdr",
+  "build_env": "isolated HOME/XDG/Cargo/target/temp; SSL_CERT_FILE=/etc/ssl/cert.pem for Zig package fetch",
+  "binary_sha256": "27b933577f5f1f801269b3506f71dd52e164d4ddf2925c8199ecd0c90503b842"
+}

@@ -1,0 +1,2 @@
+2026-10-24T21:25:58.689282000Z
+{"error":{"code":"timeout","message":"timed out waiting for agent status"},"id":"cli:agent:wait"}

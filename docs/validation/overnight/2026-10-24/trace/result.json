@@ -1,0 +1,67 @@
+{
+  "date_utc": "2026-10-24T21:32:22.036894+00:00",
+  "classification": "selection-derived idle",
+  "result": "cause of the state ordering measured; the premature waiter return is source-backed but was not observed in a single run",
+  "what_was_measured": {
+    "reporter_selection_idle": {
+      "turn": "auto-submitted prompt at TUI startup (--prompt)",
+      "user_message_utc": "2026-10-24T21:29:55.047000+00:00",
+      "selection_idle_published_utc": "2026-10-24T21:29:55.070000+00:00",
+      "server_accepted_idle_utc": "2026-10-24T21:29:55.289000+00:00",
+      "server_state_change_seq": 18,
+      "working_report_accepted_utc": "2026-10-24T21:29:55.401000+00:00",
+      "server_working_state_change_seq": 19,
+      "native_completed_utc": "2026-10-24T21:30:03.430000+00:00",
+      "meaning": "Idle from the TUI reporter's selection path was accepted by the server before the turn's first working report, while the turn ran for another 8.4 s."
+    },
+    "historical_incident_2026_10_19": {
+      "wait_returned_idle_utc": "2026-10-19T22:29:29.093933+00:00",
+      "returned_completion_seq": 18,
+      "next_working_read_utc": "2026-10-19T22:29:32.281817+00:00",
+      "working_state_change_seq": 19,
+      "native_completed_utc": "2026-10-19T22:29:36.003000+00:00",
+      "early_by_seconds": 6.909067,
+      "meaning": "Same ordering as the measured run: idle sequence 18 accepted before working sequence 19."
+    }
+  },
+  "return_mechanism": {
+    "code": "src/api/wait.rs, prompt_agent",
+    "explanation": "The activity gate wait uses after_state_change_seq=Some(prompt_state_change_seq) and consumes the pre-working idle without matching. The settled wait then starts from last_event_sequence captured before submission with after_state_change_seq=None, so it replays and matches that same idle. The returned status is idle; the later working report proves the turn was still running.",
+    "source_excerpt": "ResolvedAgentWait { ... last_event_sequence, after_state_change_seq: None, accept_transient_status: false, ... }"
+  },
+  "waiter_runs_without_early_return": [
+    {
+      "run": "prompt2",
+      "wait_return_minus_native_seconds": 0.159
+    },
+    {
+      "run": "prompt3",
+      "wait_return_minus_native_seconds": 0.159
+    },
+    {
+      "run": "prompt4",
+      "wait_return_minus_native_seconds": 0.197
+    },
+    {
+      "run": "prompt6",
+      "wait_return_minus_native_seconds": 0.183
+    }
+  ],
+  "why_not_reproduced_end_to_end": "Herdr's agent prompt --wait can only submit after the TUI is registered. By then the reporter's selection idle is already before the waiter's submission baseline, so it is not in the replay window. The TUI's own --prompt submission starts before selection sync and reproduces the ordering, but it bypasses the waiter.",
+  "fix_candidates_not_implemented": [
+    "Settled wait: require a state change after the working/blocked sequence consumed by the activity gate (e.g. pass the working state_change_seq as after_state_change_seq), so a pre-working idle cannot satisfy it.",
+    "Reporter: do not publish an idle state for a selection while an execution for that session is starting, or publish selection state only after the execution event is observed.",
+    "Server: reject or suppress idle reports whose sequence predates the most recent accepted working report."
+  ],
+  "limits": [
+    "One isolated session; no production installation or user service used.",
+    "The worker used the private OpenCode backend and the isolated Herdr server in an owned temporary root.",
+    "Upstream served model identity is unverified; the configured model was opencode/deepseek-v4.1-flash-free, variant default.",
+    "No fix was implemented or verified."
+  ],
+  "evidence": {
+    "capture.jsonl_sha256": "c6333a1c858185be8e882d50199444cf8bd02ebf935368dbe87f750a6d8417fa",
+    "instrumentation_patch_sha256": "dad01f3ffdc9a713195715074366ff22eb7095fa1881472d40d4fc917001ae75",
+    "native_export_sha256": "668695f9620447ebc8f869fc572f386e3386a9967468610bec0db5b0cc42eb76"
+  }
+}

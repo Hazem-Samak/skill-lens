@@ -1,0 +1,4 @@
+2026-10-24T21:27:27.993450000Z
+{"id":"cli:agent:prompt","result":{"agent":{"agent":"opencode","agent_session":{"agent":"opencode","kind":"id","source":"herdr:opencode","value":"ses_e90352cf2ffe68n3xEGoIWOR0z"},"agent_status":"idle","completion_seq":13,"cwd":"/private/tmp/skill-lens-herdr-trace-20261025-guEhPYXw/live/home","focused":false,"foreground_cwd":"/private/tmp/skill-lens-herdr-trace-20261025-guEhPYXw/live/home","interactive_ready":true,"name":"trace-full-tui-5","pane_id":"w1:p2","revision":9,"screen_detection_skipped":true,"state_change_seq":13,"tab_id":"w1:t1","terminal_id":"term_65e9cb2efef402","terminal_title":"OpenCode","terminal_title_stripped":"OpenCode","workspace_id":"w1"},"type":"agent_prompted"}}
+EXIT=0
+2026-10-24T21:27:33.274420000Z
