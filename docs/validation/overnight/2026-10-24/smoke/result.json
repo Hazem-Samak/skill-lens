@@ -1,0 +1,85 @@
+{
+  "result": "pass",
+  "scope": "bounded read-only worker dispatch through the everyday default Herdr session; not a Sol-coordinator formal smoke and not a full-TUI test",
+  "route": {
+    "kind": "opencode",
+    "argv": [
+      "opencode",
+      "mini",
+      "--model",
+      "opencode/deepseek-v4.1-flash-free#max",
+      "--agent",
+      "plan",
+      "--no-replay"
+    ],
+    "session": "default",
+    "pane": "wG:pQ",
+    "worker_name": "overnight-smoke-20261024t210633z"
+  },
+  "identity": {
+    "agent": "plan",
+    "model": {
+      "id": "deepseek-v4.1-flash-free",
+      "providerID": "opencode",
+      "variant": "max"
+    },
+    "outcome": "succeeded",
+    "upstream_identity_verified": false
+  },
+  "detection": {
+    "pre_prompt_state": "idle",
+    "working_state": "working",
+    "working_rule": "status_footer_esc_stop_working",
+    "working_footer": "\ud83e\udfe7 esc stop \u00b7 Plan \u00b7 DeepSeek V4.1 Flash Free [max] \u00b7 Default / OpenCode",
+    "manifest_version": "2026.10.23.1",
+    "manifest_source": "/Users/corvette/.config/herdr/agent-detection/opencode.toml",
+    "screen_detection_skipped": false,
+    "note": "This live screen used the preserved 'account / provider' (Default / OpenCode) branch. The new 2.1.4 '\u00b7 OpenCode' / usage suffixes were proved in the isolated lap, not in this run."
+  },
+  "timing": {
+    "prompt_submitted_utc": "2026-10-24T21:07:02.958408+00:00",
+    "wait_returned_utc": "2026-10-24T21:07:08.483631+00:00",
+    "native_completed_utc": "2026-10-24T21:07:07.972000+00:00",
+    "wait_minus_native_seconds": 0.512,
+    "state_sequence": {
+      "pre": 1,
+      "working": 2,
+      "done": 3
+    },
+    "completion_seq": 3,
+    "early_idle_observed": false
+  },
+  "native": {
+    "session": "ses_e90432b65ffenndIvyxzc45lBz",
+    "message_types": [
+      "agent-switched",
+      "synthetic",
+      "user",
+      "assistant",
+      "idle"
+    ],
+    "assistant_finishes": [
+      "stop"
+    ],
+    "tool_parts": 0,
+    "begin_end_present": true
+  },
+  "preservation": {
+    "pre_panes": [
+      "wG:p1"
+    ],
+    "post_panes": [
+      "wG:p1"
+    ],
+    "focus_restored": true,
+    "agents_after": 0,
+    "worker_exited_to_original_shell": true,
+    "user_files_touched": "none outside docs/validation/overnight/2026-10-24/smoke/"
+  },
+  "limits": [
+    "The worker's own session export shows zero tool parts; the file snapshot it records lists coordinator-written evidence files, not worker writes.",
+    "This run used the everyday shared OpenCode service, not an isolated private backend.",
+    "It validates the deployed manifest, worker startup, prompt delivery, screen-based working detection, wait ordering and native completion for the Mini route.",
+    "It does not validate full-TUI lifecycle-hook waiting, and it does not claim Sol/OMP coordinator identity."
+  ]
+}

@@ -1,0 +1,45 @@
+corvette@MacBook-Air-Hazem Skill Lens % opencode mini --model 'opencode/deepseek-v4.1-flash-free#max' --agent plan --no-replay
+
+▪ oc mini v2.1.4 · ~/Documents/Projects Coding/Skill Lens
+
+› REQUEST_TOKEN overnight-smoke-20261024T210633Z. Do not use tools,
+read files, run commands, delegate, or change anything. This is a read-
+only review smoke. Rule under review: "Skill Lens must never modify
+user skills on their machine." Question: does a reply that uses no
+tools comply with that rule? Answer in plain English. Start with BEGIN
+overnight-smoke-20261024T210633Z and finish with END overnight-smoke-
+20261024T210633Z.
+
+Thinking: The user asks a simple question: does a reply that uses no tools comply with the read-only rule? They
+explicitly say do not use tools. I should answer in plain English, starting with BEGIN overnight-smoke-20261024T210633Z and ending with
+END overnight-smoke-20261024T210633Z. Keep it concise, plain English per AGENTS.md communication rules.
+I should note: yes, it complies, but compliance by inaction is weak evidence — it doesn't prove the rule is enforced, only that nothing waschanged. Mention that. No tools.
+
+BEGIN overnight-smoke-20261024T210633Z
+
+Short answer: yes — but only in a shallow way.
+
+- It complies. The rule says Skill Lens must never change a user's
+  skills. A reply that touches no files, runs no commands and calls no
+  tools cannot change anything, so nothing was broken.
+- It proves very little. Following the rule by doing nothing is like
+  proving a safe is locked by never walking past it. It shows the rule
+  wasn't broken, not that it would be respected when the agent actually
+  does something. The real test is a run that reads a skills folder and
+  still leaves every byte untouched.
+- So for this smoke test: pass on "no damage done", but treat the
+  result as weak evidence and don't count it as proof the read-only
+  guarantee works.
+
+What would make it a real check: let the agent perform a normal read-
+only task (scan, or a why lookup) against a throwaway fixture home,
+then confirm file hashes, timestamps and permissions are unchanged
+afterwards. That catches accidental writes, whereas a silent reply
+cannot.
+END overnight-smoke-20261024T210633Z
+
+Plan · DeepSeek V4.1 Flash Free · 4.7s
+
+┃
+
+Plan · DeepSeek V4.1 Flash Free [max] · 18.1K (9%) · Default / OpenCode

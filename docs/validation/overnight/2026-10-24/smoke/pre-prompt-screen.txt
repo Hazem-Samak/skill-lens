@@ -1,0 +1,8 @@
+corvette@MacBook-Air-Hazem Skill Lens % opencode mini --model 'opencode
+/deepseek-v4.1-flash-free#max' --agent plan --no-replay
+
+▪ oc mini v2.1.4 · ~/Documents/Projects Coding/Skill Lens
+
+┃ Ask anything, / for commands, @ for context…
+
+Plan · DeepSeek V4.1 Flash Free [max] · Default / OpenCode
