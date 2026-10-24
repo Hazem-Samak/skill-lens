@@ -1,0 +1,111 @@
+{
+  "date_utc": "2026-10-24T21:05:02.196018+00:00",
+  "scope": "everyday Herdr local override; no installation, no upstream publication",
+  "overall_windows_session": "default",
+  "override": {
+    "path": "/Users/corvette/.config/herdr/agent-detection/opencode.toml",
+    "absent_before": true,
+    "sha256": "d86463927f13191fb8123a6fe0efe3435e9e4832a9c7cd6123ee7bfe02857104",
+    "version": "2026.10.23.1",
+    "built_from": "pinned herdr-v0.9.5 archive + correction.patch (2026.10.22.1) + correction-214.patch (2026.10.23.1)",
+    "built_source_hashes": {
+      "distribution/agent-detection/opencode.toml": "d86463927f13191fb8123a6fe0efe3435e9e4832a9c7cd6123ee7bfe02857104",
+      "src/detect/manifests/opencode.toml": "d86463927f13191fb8123a6fe0efe3435e9e4832a9c7cd6123ee7bfe02857104",
+      "src/detect/manifest/tests.rs": "6ff641a259936130f4d9d9ad025e85ad3603590d71d3192110a9d9a854d9aec7",
+      "docs/next/website/src/content/docs/agents.mdx": "0d906f8dc05c172ec7a216fbac4e1e4612e3f96233335d84ddbc9356756fa2f7"
+    }
+  },
+  "unchanged": {
+    "installed_binary_sha256": "fb77c2232a05a8035421382c894392f4174e4e38a18e48af3dd0290157c3a7e2",
+    "remote_manifest_sha256": "faa82aed2d76ad856528caae04232894594b74cc903aed3e522b3e725c5f2c95",
+    "remote_manifest_version": "2026.06.10.1"
+  },
+  "server_reload": {
+    "method": "server.reload_agent_manifests over the verified default Unix socket",
+    "opencode_entry": {
+      "agent": "opencode",
+      "source": "/Users/corvette/.config/herdr/agent-detection/opencode.toml",
+      "source_kind": "local override",
+      "active_version": "2026.10.23.1",
+      "cached_remote_version": "2026.06.10.1",
+      "local_override_shadowing_remote": true,
+      "remote_update_result": "current",
+      "remote_last_checked_unix": 1792875358
+    }
+  },
+  "explain": {
+    "active-opencode": {
+      "state": "working",
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_version": "2026.10.23.1",
+      "manifest_source": "/Users/corvette/.config/herdr/agent-detection/opencode.toml",
+      "local_override_shadowing_remote": true,
+      "cached_remote_version": "2026.06.10.1",
+      "fallback_reason": null,
+      "warning": null
+    },
+    "active-usage": {
+      "state": "working",
+      "matched_rule": {
+        "id": "status_footer_esc_stop_working",
+        "priority": 105,
+        "region": "bottom_non_empty_lines(1)",
+        "state": "working"
+      },
+      "manifest_version": "2026.10.23.1",
+      "manifest_source": "/Users/corvette/.config/herdr/agent-detection/opencode.toml",
+      "local_override_shadowing_remote": true,
+      "cached_remote_version": "2026.06.10.1",
+      "fallback_reason": null,
+      "warning": null
+    },
+    "idle-after": {
+      "state": "idle",
+      "matched_rule": null,
+      "manifest_version": "2026.10.23.1",
+      "manifest_source": "/Users/corvette/.config/herdr/agent-detection/opencode.toml",
+      "local_override_shadowing_remote": true,
+      "cached_remote_version": "2026.06.10.1",
+      "fallback_reason": "default_known_agent_idle_fallback",
+      "warning": null
+    },
+    "negative-quoted": {
+      "state": "idle",
+      "matched_rule": null,
+      "manifest_version": "2026.10.23.1",
+      "manifest_source": "/Users/corvette/.config/herdr/agent-detection/opencode.toml",
+      "local_override_shadowing_remote": true,
+      "cached_remote_version": "2026.06.10.1",
+      "fallback_reason": "default_known_agent_idle_fallback",
+      "warning": null
+    },
+    "negative-prefixed": {
+      "state": "idle",
+      "matched_rule": null,
+      "manifest_version": "2026.10.23.1",
+      "manifest_source": "/Users/corvette/.config/herdr/agent-detection/opencode.toml",
+      "local_override_shadowing_remote": true,
+      "cached_remote_version": "2026.06.10.1",
+      "fallback_reason": "default_known_agent_idle_fallback",
+      "warning": null
+    }
+  },
+  "rollback": {
+    "steps": [
+      "rm ~/.config/herdr/agent-detection/opencode.toml",
+      "send server.reload_agent_manifests over ~/.config/herdr/herdr.sock",
+      "confirm opencode source is again remote:/Users/corvette/.local/state/herdr/agent-detection/remote/opencode.toml at 2026.06.10.1"
+    ],
+    "restart_required": false
+  },
+  "limits": [
+    "No live OpenCode worker was started in the everyday session for this deployment check; verification uses captured frames and the server manifest inventory.",
+    "Upstream identity and upstream publication are not claimed.",
+    "The local override shadows the remote 2026.06.10.1 manifest until removed."
+  ]
+}
