@@ -73,7 +73,7 @@ No independent review round was run under this overnight instruction. That is a 
   regression (symlink loops no longer raising under `Path.resolve(strict=False)`)
   was fixed with a strict-first resolver. Local: 3.11 gate 1083 passed/1 skipped,
   91.16%; 3.13 and 3.14 each 1083 passed/1 skipped in ~65 s. Final CI run
-  `40136543801` is the remaining proof.
+  `40136543801` is green on all nine jobs.
 - **Deployment.** Manifest `2026.10.23.1` installed at
   `~/.config/herdr/agent-detection/opencode.toml` (SHA-256 `d8646392…`), no
   prior override; the running `default` server reloaded and reports the local

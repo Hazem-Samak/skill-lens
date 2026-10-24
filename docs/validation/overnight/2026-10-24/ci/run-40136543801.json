@@ -1,0 +1,59 @@
+{
+  "run": 40136543801,
+  "url": "https://github.com/Hazem-Samak/skill-lens/actions/runs/40136543801",
+  "head_sha": "d06c8b370341a1c1713f51bb58276ed43d1fe13d",
+  "result": "success",
+  "jobs": [
+    {
+      "name": "packaging (build + install)",
+      "conclusion": "success",
+      "seconds": 98,
+      "lanes": [
+        "base passed",
+        "minimum endpoint (textual==8.2.8) passed in ~43 s",
+        "latest endpoint passed"
+      ]
+    },
+    {
+      "name": "ubuntu-latest / py3.11",
+      "conclusion": "success"
+    },
+    {
+      "name": "ubuntu-latest / py3.12",
+      "conclusion": "success"
+    },
+    {
+      "name": "ubuntu-latest / py3.13",
+      "conclusion": "success"
+    },
+    {
+      "name": "ubuntu-latest / py3.14",
+      "conclusion": "success"
+    },
+    {
+      "name": "macos-latest / py3.11",
+      "conclusion": "success"
+    },
+    {
+      "name": "macos-latest / py3.12",
+      "conclusion": "success"
+    },
+    {
+      "name": "macos-latest / py3.13",
+      "conclusion": "success"
+    },
+    {
+      "name": "macos-latest / py3.14",
+      "conclusion": "success"
+    }
+  ],
+  "local_cross_checks": {
+    "python_3.11_gate": "1083 passed, 1 skipped, 91.16% coverage; mypy 38 files; Ruff clean",
+    "python_3.13_locked": "1083 passed, 1 skipped in 65.08 s",
+    "python_3.14_locked": "1083 passed, 1 skipped in 64.82 s"
+  },
+  "limits": [
+    "The later commits on the branch are documentation-only and are noted in the report.",
+    "Upstream model identity is unrelated to this CI run."
+  ]
+}

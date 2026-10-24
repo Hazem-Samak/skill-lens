@@ -20,9 +20,10 @@ Morning report: [REPORT.md](REPORT.md).
 
 ## One-paragraph summary
 
-The Linux-only test failure is fixed and now passes on Ubuntu; the packaging
-lane is a genuine min-endpoint hang, not a timeout, and is still being
-localized. The accepted footer rule is live in the everyday Herdr and a
+The Linux-only test failure is fixed. The packaging lane was a genuine Python
+3.13 test-timing hang, not a timeout; both it and a 3.13 symlink-cycle
+regression are fixed, and CI run 40136543801 is green on all nine jobs
+(Ubuntu and macOS 3.11-3.14 plus packaging). The accepted footer rule is live in the everyday Herdr and a
 read-only worker completed end-to-end with the wait returning after native
 completion. The full-TUI trace found the idle frame that can satisfy the
 settled wait (selection path, accepted before working) and named why the waiter

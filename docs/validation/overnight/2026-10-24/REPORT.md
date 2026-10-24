@@ -7,9 +7,9 @@ Date: 2026-10-25. Branch: `fix/overnight-closure-20261024` (draft PR #3).
 
 | Item | State |
 | --- | --- |
-| Linux CI test failure | **Fixed** on the branch; Ubuntu 3.11 and macOS 3.11 pass |
-| Packaging lane | **Root-caused and fixed locally**: a Python 3.13 test-timing hang, not slowness; final CI run in progress |
-| Python 3.12–3.14 matrix | **Fixed locally on 3.13 and 3.14**: same hang plus a 3.13 symlink-cycle regression |
+| Linux CI test failure | **Fixed**; Ubuntu 3.11 and macOS 3.11 pass |
+| Packaging lane | **Fixed and green**: Python 3.13 test-timing hang, not slowness |
+| Python 3.12–3.14 matrix | **Green** on Ubuntu and macOS after the timing and symlink-cycle fixes |
 | Footer rule in everyday Herdr | **Deployed and active** (`2026.10.23.1`, local override, no restart) |
 | Bounded worker smoke | **Pass** for the Mini route; wait returned after native completion |
 | Full-TUI early-idle trace | **Cause identified** at the state-ordering level; exact waiter boundary not reproduced in one run |
@@ -38,9 +38,15 @@ The full matrix also failed on Python 3.13 for a second reason:
 cycles were no longer classified as unsupported. `_resolve_config_path()`
 resolves strictly first and falls back to non-strict only for missing paths.
 
-Local results: Python 3.11 gate 1083 passed, 1 skipped, 91.16% coverage;
-Python 3.13 and 3.14 each 1083 passed, 1 skipped in about 65 s. The final CI run
-is the remaining proof; its run ID and result are appended when it finishes.
+Local results before the run: Python 3.11 gate 1083 passed, 1 skipped, 91.16%
+coverage; Python 3.13 and 3.14 each 1083 passed, 1 skipped in about 65 s.
+
+**Final CI run [40136543801](https://github.com/Hazem-Samak/skill-lens/actions/runs/40136543801)
+is green:** all four Ubuntu versions, all four macOS versions and the packaging
+job passed. The packaging job took 98 s; the minimum endpoint
+(`textual==8.2.8`) passed in about 43 s against the 300 s bound. The verified
+code commit is `d06c8b3`; later commits are documentation only.
+Receipt: [ci/run-40136543801.json](ci/run-40136543801.json).
 Full details: [ci/diagnosis.md](ci/diagnosis.md).
 
 ## 2. Everyday Herdr deployment
@@ -110,14 +116,15 @@ No fix was implemented. Candidate fixes are listed in
 
 ## Decisions for you
 
-1. **Packaging hang:** after the debug workflow names the file, approve a fix
-   slice (product or test) and a rerun. Do not merge while the lane is red.
-2. **Merge the branch:** CI must be fully green first; the branch is for review.
-3. **Trace fix:** choose a sorted-wait bound, reporter suppression, or server
+1. **Merge the branch:** the gate is green on the verified code commit
+   `d06c8b3`; review PR #3. Later commits are documentation only.
+2. **Trace fix:** choose a sorted-wait bound, reporter suppression, or server
    suppression (see `trace/result.json`). I did not implement one.
-4. **Formal smoke:** decide whether the Mini-route pass is enough for the loop,
+3. **Formal smoke:** decide whether the Mini-route pass is enough for the loop,
    or require a Sol-coordinator run after the full-TUI fix.
-5. **Upstream publication:** untouched; the rule remains a local override.
+4. **Upstream publication:** untouched; the rule remains a local override.
+5. **Packaging bound:** now 300 s (measured ~98 s job, ~43 s min lane). Say if
+   you want it tighter or looser.
 
 ## Deviations and limits
 
@@ -126,5 +133,7 @@ No fix was implemented. Candidate fixes are listed in
 - The trace used a private OpenCode backend and an isolated Herdr session; the
   everyday server was not touched by it.
 - Upstream model identity is unverified in every run.
-- The main CI run still has queued matrix jobs after the packaging failure;
-  fail-fast hides their status.
+- The 600 s diagnostic timeout was not treated as a fix; the real cause was the
+  Python 3.13 key-timing hang.
+- The branch tip adds documentation after the verified `d06c8b3` code commit;
+  those later commits are not a second product verification.
