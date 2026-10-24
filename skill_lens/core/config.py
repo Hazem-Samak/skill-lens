@@ -622,6 +622,20 @@ def collect_all_config_paths(
     return deduped
 
 
+def _resolve_config_path(path: Path) -> str:
+    """Resolve a config path while still treating symlink loops as errors.
+
+    ``Path.resolve(strict=False)`` stopped reporting loops on Python 3.13: it
+    returns the unresolved symlink instead of raising. Resolving strictly first
+    keeps a loop an error on every supported version, then falls back to the
+    non-strict form for paths that do not exist yet.
+    """
+    try:
+        return str(path.resolve(strict=True))
+    except FileNotFoundError:
+        return str(path.resolve(strict=False))
+
+
 def resolve_agent_controls(
     agent: AgentDefinition,
     home: Path,
@@ -744,7 +758,7 @@ def resolve_agent_controls(
                     else:
                         codex_paths_map[os.path.join(norm, "SKILL.md")] = False
                     try:
-                        real = str(Path(norm).resolve())
+                        real = _resolve_config_path(Path(norm))
                         codex_paths_map[real] = False
                         if real.endswith("/SKILL.md"):
                             codex_paths_map[os.path.dirname(real)] = False

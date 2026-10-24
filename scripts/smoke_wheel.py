@@ -351,10 +351,10 @@ def verify_tui_endpoint_install(
     textual_spec: str | None = None,
     python_bin: str = sys.executable,
     repo_root: pathlib.Path | None = None,
-    # The installed-lane suite runs 360 tests in a cold virtualenv. Local runtime
-    # is ~40 s, but GitHub's 2-core runner exceeded the old 180 s bound while
-    # still making progress. 600 s is a bounded ceiling, not a performance gate.
-    timeout_seconds: int = 600,
+    # The installed-lane suite runs 360 tests in a cold virtualenv. On the
+    # 2-core runner it finishes in roughly two minutes; 300 s leaves headroom
+    # while still failing a hang quickly. Partial output is preserved below.
+    timeout_seconds: int = 300,
 ) -> dict[str, Any]:
     """Verify [tui] installation, lifecycle, and parity in an isolated virtualenv."""
     wheel_path = pathlib.Path(wheel_path).resolve()

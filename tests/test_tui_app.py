@@ -423,6 +423,9 @@ def test_synchronous_run_quit_proof_before_blocked_capture_release(
             assert capture_started.is_set(), "capture worker must have started"
             # Press 'q' while capture worker is STILL BLOCKED!
             assert not release_capture.is_set()
+            # Let the mounted screen install its bindings; an immediate press
+            # can be dropped on slower interpreters (3.13+).
+            await pilot.pause(0.2)
             await pilot.press("q")
 
         code = tui.run(tmp_path, tmp_path, headless=True, auto_pilot=auto_quit)
