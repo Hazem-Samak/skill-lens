@@ -24,20 +24,17 @@ jobs:
           uv venv --python 3.11 /tmp/minvenv
           uv pip install --python /tmp/minvenv/bin/python "textual==8.2.8" dist/*.whl pytest pytest-cov pyyaml
           /tmp/minvenv/bin/python -c "import textual, skill_lens; print(textual.__version__, skill_lens.__file__)"
-      - name: Copy tests without source shadowing
+      - name: Copy the exact installed lane
         run: |
           mkdir -p /tmp/lane /tmp/lanehome
-          cp -R tests scripts pyproject.toml uv.lock /tmp/lane
-      - name: Run each installed-lane file with a bound
+          cp -R tests scripts pyproject.toml uv.lock .github /tmp/lane
+      - name: Run the grouped selection verbosely
         env:
           HOME: /tmp/lanehome
           PYTHONUNBUFFERED: "1"
         run: |
           cd /tmp/lane
-          for f in tests/test_render_snapshots.py tests/test_fixtures.py tests/test_phase3_gate.py tests/test_phase4_gate.py tests/test_tui_app.py tests/test_tui_session.py tests/test_tui_read_only.py tests/test_stage_g_repairs.py tests/test_tui_packaging.py; do
-            echo "================ $f"
-            date -u +%FT%TZ
-            timeout 150 /tmp/minvenv/bin/pytest "$f" -q -ra --no-header -p no:cacheprovider
-            echo "EXIT=$?"
-            date -u +%FT%TZ
-          done
+          date -u +%FT%TZ
+          timeout -s INT 240 /tmp/minvenv/bin/pytest tests/test_render_snapshots.py tests/test_fixtures.py tests/test_phase3_gate.py tests/test_phase4_gate.py tests/test_tui_app.py tests/test_tui_session.py tests/test_tui_read_only.py tests/test_stage_g_repairs.py tests/test_tui_packaging.py -v -ra --no-header -p no:cacheprovider
+          echo "EXIT=$?"
+          date -u +%FT%TZ
