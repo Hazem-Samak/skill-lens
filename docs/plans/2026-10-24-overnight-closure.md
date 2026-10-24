@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: Owner, 2026-10-24: “Overnight goal: close out every open fix on the skill-lens loop and product tracks, and leave me a morning report I can act on.” The same instruction names the five items (CI repair, local Mini footer deployment, full-TUI capture, formal end-to-end smoke, housekeeping), requires repo-held reviewable evidence, limits deployment to the everyday Herdr with no upstream publication, forbids new product work and main merges, and requires unresolved owner decisions to be listed rather than decided.
-Reference: pending
+Reference: 0f024f6ceb8972685a8b58e30cca1ef2f499d219
 Surface: product (CI test/packaging only) and omp/herdr (deployment, trace, smoke).
 Risk and review: High: live worker control, a local configuration write and CI changes. This is an owner-directed overnight run. No independent critic wave is dispatched or claimed; the plan states that deviation explicitly and the morning report repeats it. No product behaviour changes.
 Roster: This operator session only. No Sol identity and no independent-model review are claimed. Workers used for the smoke are session-selected and recorded by their configured identities; upstream identity remains unverified.
