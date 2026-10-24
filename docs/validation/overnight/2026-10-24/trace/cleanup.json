@@ -1,0 +1,37 @@
+{
+  "date_utc": "2026-10-24T21:33:28.665354+00:00",
+  "stopped": [
+    {
+      "what": "full-TUI worker",
+      "method": "ctrl+c in owned pane; agent list empty",
+      "verified": "pane w1:p2 returned to original zsh"
+    },
+    {
+      "what": "owned worker pane w1:p2",
+      "method": "pane close",
+      "verified": "only w1:p1 remains"
+    },
+    {
+      "what": "isolated TUI client",
+      "method": "service stop",
+      "verified": "pid 66693 absent"
+    },
+    {
+      "what": "isolated Herdr server",
+      "method": "service stop",
+      "verified": "pid 66488 absent; no default/user server touched"
+    },
+    {
+      "what": "private OpenCode backend",
+      "method": "service stop",
+      "verified": "pid 67113 absent; shared service untouched"
+    }
+  ],
+  "user_environment": {
+    "everyday_default_server": "running",
+    "opencode_override": "~/.config/herdr/agent-detection/opencode.toml, SHA-256 d8646392..., active 2026.10.23.1",
+    "installed_binary_unchanged": "fb77c223...",
+    "user_config_changes": "only the intended override file; no other settings, integrations or services changed"
+  },
+  "evidence_root_removed_after_push": true
+}
