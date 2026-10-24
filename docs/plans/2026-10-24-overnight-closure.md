@@ -61,3 +61,32 @@ Leave `main` untouched and produce, on a review branch:
 ## Review decisions
 
 No independent review round was run under this overnight instruction. That is a recorded process deviation, not an exemption claimed by this plan. The owner reviews the branch and evidence in the morning.
+
+## Execution receipt (append-only)
+
+- **CI.** Split the case-insensitive `samefile` phase into its own test with a
+  precise skip; the Linux 3.11 and macOS 3.11 jobs passed. The packaging lane
+  was not a timeout: at 600 s it still produced no output. The lane runs on
+  Python 3.13, where two blocked-capture teardown tests pressed `q` before the
+  mounted screen installed its bindings; the app never exited. A bounded 0.2 s
+  pause after confirming the blocked worker restores the proof. A second 3.13
+  regression (symlink loops no longer raising under `Path.resolve(strict=False)`)
+  was fixed with a strict-first resolver. Local: 3.11 gate 1083 passed/1 skipped,
+  91.16%; 3.13 and 3.14 each 1083 passed/1 skipped in ~65 s. Final CI run
+  `40136543801` is the remaining proof.
+- **Deployment.** Manifest `2026.10.23.1` installed at
+  `~/.config/herdr/agent-detection/opencode.toml` (SHA-256 `d8646392…`), no
+  prior override; the running `default` server reloaded and reports the local
+  override active. Installed binary and remote `2026.06.10.1` unchanged.
+- **Trace.** Full-TUI capture classified as selection-derived idle; the settled
+  wait replays the pre-working idle. The exact waiter boundary was not
+  reproduced in one run; no fix implemented. Instrumentation patch and 663
+  records preserved under `docs/validation/overnight/2026-10-24/trace/`.
+- **Smoke.** One read-only Mini worker passed; wait returned 0.512 s after
+  native completion; owned pane closed and layout restored. Not the Sol formal
+  smoke.
+- **Housekeeping.** The two failed-trial records are committed; the 2026-10-19
+  draft is archived with a supersession pointer; `.path` left untouched.
+- **Deviation.** No independent critic wave; recorded in the report. Temporary
+  diagnostic workflows and roots were removed; no main merge; no upstream
+  publication.
