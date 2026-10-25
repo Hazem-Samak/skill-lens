@@ -2,7 +2,7 @@
 
 Status: Agreed — revision 2; owner authorized freeze and Stage 1 preparation
 Authorization: Owner, 2026-10-25: “Approved: freeze the revised diagnosis-first draft (2026-10-25-herdr-settled-wait-bound-draft) per the repo's two-commit procedure, and start stage 1 (prepare and verify the diagnostic observer).” This authorizes A0 isolated observer preparation, build/offline verification and required final review. Stage 2/A1 live diagnosis remains separately unauthorized until the owner approves its exact worker, session, prompts and limits. B fixes, deployment and upstream publication remain unauthorized. Select the named implementer before instrumentation edits.
-Reference: pending
+Reference: 6cff4c73957431a90c5c0da5e1cc81d86e5d749a
 Surface: isolated Herdr investigation; Skill Lens documentation only
 Risk and review: High — timing-sensitive completion and compatibility behavior. Two fresh independent planning critics; two fresh final critics for any later instrumentation or fix implementation.
 Roster: Sol coordinates and owns verification. Owner selected a fresh River/OMP `deepseek-ai/DeepSeek-V4.1-Flash-1017` session with `--thinking max` as the Stage 1 edit-only implementer. Planning and fresh final critics use the named pair: River/OMP `deepseek-ai/DeepSeek-V4.1-Flash-1017` with `--thinking max`, and Qoder CLI `Qwen3.8-Flash` with `--reasoning-effort max`; final sessions must not reuse the author session or its hidden context. Verify configured model/settings and disclose unverified upstream identity/effort; no substitution. The later live diagnostic-worker identity requires separate selection/approval.
