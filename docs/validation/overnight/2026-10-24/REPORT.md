@@ -3,6 +3,12 @@
 Date: 2026-10-25. Branch: `fix/overnight-closure-20261024` (draft PR #3).
 `main` is untouched. Nothing was published upstream.
 
+**2026-10-25 owner disposition:** scope deviation accepted; PR #3 merged whole
+without a tag or release. See the [acceptance note](acceptance.md) for the merge
+receipt, changelog reconciliation and remaining evidence limits. This report
+is the original pre-merge record; its waiter replay explanation is a hypothesis,
+not a reproduced premature return.
+
 ## Bottom line
 
 | Item | State |

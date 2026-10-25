@@ -3,6 +3,11 @@
 Date: 2026-10-24/25. Branch: `fix/overnight-closure-20261024` (draft PR #3).
 Plan: [2026-10-24-overnight-closure.md](../../../plans/2026-10-24-overnight-closure.md).
 Morning report: [REPORT.md](REPORT.md).
+Owner disposition: [acceptance and merge receipt](acceptance.md), 2026-10-25.
+PR #3 is now merged; the original summary below records the pre-merge state.
+The acceptance note also distinguishes the observed full-TUI event ordering
+from the unproven premature-wait explanation.
+
 
 ## Contents
 

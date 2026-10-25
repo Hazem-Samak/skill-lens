@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Every **released** entry below was verified against the repository gate:
 `pytest --cov=skill_lens`, `mypy`, `ruff check .` and `ruff format --check .`
-all clean. Unreleased work in `[Unreleased]` and Stage H has executed local
-gates only (pytest, mypy, ruff check, ruff format on macOS/Python 3.11); it is
-accepted locally and makes no claim about unexecuted CI lanes. Prior Stage G contains local packaging evidence.
+all clean. Earlier unreleased work (including Stage H) records local-only
+verification. The later CI repair was verified on all nine GitHub jobs; the
+dated evidence below distinguishes those results from the historical records.
 
 ---
 
@@ -25,9 +25,12 @@ heading to 0.1.2.
 The current development branch ships six line-oriented CLI commands plus an
 optional, additive, read-only TUI through U3 Home browsing
 (C1–C5 and U1–U3 complete). U4–U9 screens and 0.2 publishing remain
-separate future work. No unreleased work in this section claims to have executed
-all CI lanes; local gate evidence is recorded under
-`docs/validation/assessment-repairs/h/` and `docs/validation/u3/`.
+separate future work. Earlier local gate evidence is recorded under
+`docs/validation/assessment-repairs/h/` and `docs/validation/u3/`. The later
+[overnight CI repair](docs/validation/overnight/2026-10-24/acceptance.md) passed
+all eight Ubuntu/macOS Python 3.11–3.14 jobs and the packaging job in
+[run 40136543801](https://github.com/Hazem-Samak/skill-lens/actions/runs/40136543801).
+This is development verification, not a release.
 
 ### Planned
 
@@ -105,6 +108,22 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
   [`docs/plans/2026-10-16-snapshot-capture-budget.md`](./docs/plans/2026-10-16-snapshot-capture-budget.md).
 
 ### Fixed
+
+- **Codex configuration symlink loops on Python 3.13 and later.** Resolve
+  existing configuration paths strictly before allowing missing paths. A
+  circular shortcut is reported as unsupported instead of silently surviving
+  non-strict path resolution. Missing paths retain their existing behavior.
+
+- **Linux cancellation coverage.** Isolated the cancellation case that needs a
+  case-insensitive filesystem and skip only that case when unavailable. The
+  remaining capture-cancellation phases still run on Linux and macOS.
+
+- **TUI quit checks and packaging diagnostics.** Two blocked-worker tests allow
+  the screen to finish mounting before sending `q`, avoiding the observed
+  Python 3.13 hang while retaining their quit watchdogs. Installed-wheel TUI
+  checks now have a 300-second limit and include partial output on timeout.
+  The repaired packaging job completed in 98 seconds. Diagnosis and limits:
+  [overnight CI record](docs/validation/overnight/2026-10-24/ci/diagnosis.md).
 
 - **The install instructions did not work on a stock Mac.** `pip install
   skill-lens-cli` was the only documented route, and it fails on a new Mac two
