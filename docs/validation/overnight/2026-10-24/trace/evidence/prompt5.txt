@@ -1,0 +1,1 @@
+REQUEST_TOKEN trace-full-tui-20261025T0038Z. Do not use tools, read files, run commands, delegate, or change anything. In about 500 words, explain in plain English how a public library lends and returns books, including holds, due dates, renewals, fines and lost items. Start with BEGIN trace-full-tui-20261025T0038Z and finish with END trace-full-tui-20261025T0038Z.

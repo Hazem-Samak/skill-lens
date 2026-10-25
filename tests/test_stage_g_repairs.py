@@ -251,6 +251,10 @@ def test_prompt_quit_does_not_block_on_worker(
                 await pilot.pause(0.02)
             assert capture_started.is_set(), "capture worker must have started"
             assert not release_capture.is_set(), "capture worker must still be blocked"
+            # The key binding is installed with the mounted screen. On slower
+            # interpreters (3.13+) an immediate key press can be dropped before
+            # the screen is ready, leaving the app running forever.
+            await pilot.pause(0.2)
             await pilot.press("q")
 
         code = tui.run(mock_home, cwd, headless=True, auto_pilot=auto_quit)

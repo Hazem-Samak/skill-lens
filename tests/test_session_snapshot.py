@@ -1600,28 +1600,9 @@ def test_cancelled_capture_does_not_publish(
     assert read_guarded_called
     monkeypatch.undo()
 
-    # 9. Cancellation at samefile fallback candidate loop in step 4
-    step_4_samefile_calls = 0
-    orig_samefile = os.path.samefile
-
-    def tracking_samefile(p1: Any, p2: Any) -> bool:
-        nonlocal step_4_samefile_calls
-        res = orig_samefile(p1, p2)
-        if "lowercase_skill" in str(p1) and "lowercase_skill" in str(p2):
-            step_4_samefile_calls += 1
-        return res
-
-    monkeypatch.setattr(os.path, "samefile", tracking_samefile)
-
-    def cancel_on_samefile() -> bool:
-        return step_4_samefile_calls >= 1
-
-    with pytest.raises(CaptureCancelled):
-        capture_session(generation=1, home=home, cwd=project, cancelled=cancel_on_samefile)
-    assert step_4_samefile_calls == 1, (
-        "Expected cancellation before second samefile candidate probe"
-    )
-    monkeypatch.undo()
+    # 9. The samefile-fallback checkpoint is exercised separately, because that
+    # branch is only reachable on a case-insensitive filesystem. See
+    # test_cancelled_capture_during_case_insensitive_samefile_fallback.
 
     # 10. Cancellation at final publication checkpoint
     from skill_lens.core.system import installer_lockfile
@@ -1654,6 +1635,53 @@ def test_cancelled_capture_does_not_publish(
         f"Expected all {total_expected_reads} reads to complete before publication cancellation"
     )
     monkeypatch.undo()
+
+
+def test_cancelled_capture_during_case_insensitive_samefile_fallback(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Cancellation fires before the second step-4 samefile candidate probe.
+
+    The fallback exists for case-insensitive filesystems: discovery asks for
+    ``SKILL.md``, which resolves to the real ``skill.md`` entry, while capture
+    records the real on-disk name. A case-sensitive filesystem resolves the
+    lowercase document directly, never enters the fallback, and therefore has
+    no checkpoint to exercise. Skip there with that exact reason instead of
+    reporting a check that did not run.
+    """
+    home = paths.home()
+    project = home / "project"
+    project.mkdir(parents=True, exist_ok=True)
+    _setup_rich_fixture(home, project)
+
+    lowercase_dir = home / ".claude" / "skills" / "lowercase_skill"
+    if not (lowercase_dir / "SKILL.md").is_file():
+        pytest.skip(
+            "case-insensitive filesystem required: discovery must resolve "
+            "SKILL.md to the real lowercase skill.md entry to reach the "
+            "samefile fallback"
+        )
+
+    step_4_samefile_calls = 0
+    orig_samefile = os.path.samefile
+
+    def tracking_samefile(p1: Any, p2: Any) -> bool:
+        nonlocal step_4_samefile_calls
+        res = orig_samefile(p1, p2)
+        if "lowercase_skill" in str(p1) and "lowercase_skill" in str(p2):
+            step_4_samefile_calls += 1
+        return res
+
+    monkeypatch.setattr(os.path, "samefile", tracking_samefile)
+
+    def cancel_on_samefile() -> bool:
+        return step_4_samefile_calls >= 1
+
+    with pytest.raises(CaptureCancelled):
+        capture_session(generation=1, home=home, cwd=project, cancelled=cancel_on_samefile)
+    assert step_4_samefile_calls == 1, (
+        "Expected cancellation before second samefile candidate probe"
+    )
 
 
 # ---------------------------------------------------------------------------

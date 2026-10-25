@@ -1,0 +1,10 @@
+then confirm file hashes, timestamps and permissions are unchanged
+afterwards. That catches accidental writes, whereas a silent reply
+cannot.
+END overnight-smoke-20261024T210633Z
+
+Plan · DeepSeek V4.1 Flash Free · 4.7s
+
+┃
+
+Press ctrl+c again to exit

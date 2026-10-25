@@ -1,0 +1,4 @@
+2026-10-24T21:07:05.907816000Z
+{"id":"cli:agent:wait","result":{"agent":{"agent":"opencode","agent_status":"working","cwd":"/Users/corvette/Documents/Projects Coding/Skill Lens","focused":false,"foreground_cwd":"/Users/corvette/Documents/Projects Coding/Skill Lens","interactive_ready":true,"name":"overnight-smoke-20261024t210633z","pane_id":"wG:pQ","revision":0,"state_change_seq":2,"tab_id":"wG:t1","terminal_id":"term_65e9c78fb9c7c2","workspace_id":"wG"},"type":"agent_info"}}
+EXIT=0
+2026-10-24T21:07:05.951093000Z

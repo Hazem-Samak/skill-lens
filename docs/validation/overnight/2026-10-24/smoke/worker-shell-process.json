@@ -1,0 +1,1 @@
+{"id":"cli:pane:process_info","result":{"process_info":{"foreground_process_group_id":55320,"foreground_processes":[{"argv":["-zsh"],"argv0":"zsh","cmdline":"-zsh","cwd":"/Users/corvette/Documents/Projects Coding/Skill Lens","name":"zsh","pid":55320}],"pane_id":"wG:pQ","shell_pid":55320},"type":"pane_process_info"}}

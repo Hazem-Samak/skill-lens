@@ -1,0 +1,490 @@
+diff --git a/src/api/wait.rs b/src/api/wait.rs
+index 541779f..0c8f9e2 100644
+--- a/src/api/wait.rs
++++ b/src/api/wait.rs
+@@ -249,6 +249,18 @@ pub(super) fn prompt_agent(
+     let prompt_state_change_seq = prompted.state_change_seq;
+     let until = agent_wait_statuses(wait.until);
+     let mut initial = prompted;
++    crate::capture_log::log(
++        "prompt_wait_baseline",
++        serde_json::json!({
++            "request_id": &request_id,
++            "target": &target,
++            "until": format!("{until:?}"),
++            "prompt_activity_observed": prompt_activity_observed,
++            "initial_status": format!("{:?}", initial.agent_status),
++            "initial_state_change_seq": initial.state_change_seq,
++            "initial_completion_seq": initial.completion_seq,
++        }),
++    );
+ 
+     if !prompt_activity_observed {
+         let remaining_timeout_ms = remaining_timeout_ms(wait.timeout_ms, wait_started);
+@@ -289,6 +301,16 @@ pub(super) fn prompt_agent(
+         };
+     }
+     if agent_wait_matches(&initial, &until, None) {
++        crate::capture_log::log(
++            "prompt_wait_return",
++            serde_json::json!({
++                "request_id": &request_id,
++                "phase": "activity_gate",
++                "status": format!("{:?}", initial.agent_status),
++                "state_change_seq": initial.state_change_seq,
++                "completion_seq": initial.completion_seq,
++            }),
++        );
+         return agent_prompt_success(request_id, initial).map(Some);
+     }
+ 
+@@ -318,6 +340,16 @@ pub(super) fn prompt_agent(
+         AgentWaitOutcome::Matched(agent) => *agent,
+         AgentWaitOutcome::Response(response) => return Ok(Some(response)),
+     };
++    crate::capture_log::log(
++        "prompt_wait_return",
++        serde_json::json!({
++            "request_id": &request_id,
++            "phase": "settled",
++            "status": format!("{:?}", agent.agent_status),
++            "state_change_seq": agent.state_change_seq,
++            "completion_seq": agent.completion_seq,
++        }),
++    );
+     agent_prompt_success(request_id, agent).map(Some)
+ }
+ 
+diff --git a/src/app/api/panes.rs b/src/app/api/panes.rs
+index b5f3baf..b96a67b 100644
+--- a/src/app/api/panes.rs
++++ b/src/app/api/panes.rs
+@@ -1568,6 +1568,19 @@ impl App {
+         let report_is_newer = self
+             .pane_terminal(ws_idx, pane_id)
+             .is_some_and(|terminal| terminal.hook_report_is_newer(&params.source, params.seq));
++        crate::capture_log::log(
++            "pane_report_agent",
++            serde_json::json!({
++                "request_id": &id,
++                "pane_id": &params.pane_id,
++                "source": &params.source,
++                "agent": &params.agent,
++                "state": format!("{:?}", params.state),
++                "seq": params.seq,
++                "agent_session_id": &params.agent_session_id,
++                "report_is_newer": report_is_newer,
++            }),
++        );
+         let session_ref = crate::agent_resume::session_ref_from_report(
+             &params.source,
+             &agent_label,
+@@ -1585,6 +1598,14 @@ impl App {
+         });
+         let applied =
+             report_is_newer && self.session_report_applied(ws_idx, pane_id, session_ref.as_ref());
++        crate::capture_log::log(
++            "pane_report_agent_result",
++            serde_json::json!({
++                "request_id": &id,
++                "applied": applied,
++                "report_is_newer": report_is_newer,
++            }),
++        );
+         self.report_agent_resume(
+             id,
+             ws_idx,
+@@ -1613,6 +1634,19 @@ impl App {
+         let report_is_newer = self
+             .pane_terminal(ws_idx, pane_id)
+             .is_some_and(|terminal| terminal.hook_report_is_newer(&params.source, params.seq));
++        crate::capture_log::log(
++            "pane_report_agent_session",
++            serde_json::json!({
++                "request_id": &id,
++                "pane_id": &params.pane_id,
++                "source": &params.source,
++                "agent": &params.agent,
++                "seq": params.seq,
++                "agent_session_id": &params.agent_session_id,
++                "session_start_source": &params.session_start_source,
++                "report_is_newer": report_is_newer,
++            }),
++        );
+         let session_ref = crate::agent_resume::session_ref_from_report(
+             &params.source,
+             &agent_label,
+@@ -1631,6 +1665,14 @@ impl App {
+         });
+         let applied =
+             report_is_newer && self.session_report_applied(ws_idx, pane_id, session_ref.as_ref());
++        crate::capture_log::log(
++            "pane_report_agent_session_result",
++            serde_json::json!({
++                "request_id": &id,
++                "applied": applied,
++                "report_is_newer": report_is_newer,
++            }),
++        );
+         self.report_agent_resume(
+             id,
+             ws_idx,
+diff --git a/src/capture_log.rs b/src/capture_log.rs
+new file mode 100644
+index 0000000..09f584b
+--- /dev/null
++++ b/src/capture_log.rs
+@@ -0,0 +1,36 @@
++// Diagnostic-only structured capture for the frozen full-TUI trace.
++//
++// Every record is one JSON object per line, appended to the path in
++// HERDR_CAPTURE_LOG. When that variable is unset this is a no-op, so normal
++// builds pay one environment lookup per boundary and nothing else.
++//
++// Fields deliberately exclude prompt bodies, tool arguments and terminal text;
++// callers pass only identity, state, sequence and accept/reject facts.
++
++use std::io::Write;
++
++pub(crate) fn log(event: &str, fields: serde_json::Value) {
++    let Some(path) = std::env::var_os("HERDR_CAPTURE_LOG") else {
++        return;
++    };
++    let Ok(mut file) = std::fs::OpenOptions::new()
++        .create(true)
++        .append(true)
++        .open(path)
++    else {
++        return;
++    };
++    let wall_ms = std::time::SystemTime::now()
++        .duration_since(std::time::UNIX_EPOCH)
++        .map(|duration| duration.as_millis())
++        .unwrap_or(0);
++    let record = serde_json::json!({
++        "producer": "server",
++        "capture_id": std::env::var("HERDR_CAPTURE_ID").ok(),
++        "pid": std::process::id(),
++        "wall_ms": wall_ms,
++        "event": event,
++        "fields": fields,
++    });
++    let _ = writeln!(file, "{record}");
++}
+diff --git a/src/integration/assets/opencode/herdr-tui-session.js b/src/integration/assets/opencode/herdr-tui-session.js
+index d21c1f7..c8231ea 100644
+--- a/src/integration/assets/opencode/herdr-tui-session.js
++++ b/src/integration/assets/opencode/herdr-tui-session.js
+@@ -4,12 +4,34 @@
+ // HERDR_INTEGRATION_VERSION=13
+ 
+ import net from "node:net";
++import fs from "node:fs";
+ 
+ const SOURCE = "herdr:opencode";
+ const AGENT = "opencode";
+ const ROUTE_POLL_INTERVAL_MS = 100;
+ const SELECTION_RETRY_DELAYS_MS = [100, 400, 1_000];
+ 
++// Diagnostic-only JSONL capture for the frozen full-TUI trace. Unset
++// HERDR_CAPTURE_LOG makes this a no-op. Only identity, state and sequence
++// facts are recorded; prompt and terminal bodies are never included.
++function capture(event, fields) {
++  const path = process.env.HERDR_CAPTURE_LOG;
++  if (!path) return;
++  try {
++    fs.appendFileSync(
++      path,
++      JSON.stringify({
++        producer: "reporter",
++        capture_id: process.env.HERDR_CAPTURE_ID ?? null,
++        pid: process.pid,
++        wall_ms: Date.now(),
++        event,
++        fields,
++      }) + "\n",
++    );
++  } catch {}
++}
++
+ function requestOnce(sessionID, state, seq, isCurrent = () => true) {
+   const paneId = process.env.HERDR_PANE_ID;
+   const socketPath = process.env.HERDR_SOCKET_PATH;
+@@ -39,15 +61,37 @@ function requestOnce(sessionID, state, seq, isCurrent = () => true) {
+     const settle = (delivered) => {
+       if (settled) return;
+       settled = true;
++      capture("report_response", {
++        request_id: request.id,
++        method: request.method,
++        session_id: sessionID,
++        state: state ?? null,
++        seq: seq ?? null,
++        delivered,
++      });
+       clearTimeout(timer);
+       client.destroy();
+       resolve(delivered);
+     };
+     const client = net.createConnection(socketEndpoint, () => {
+       if (!isCurrent()) {
++        capture("report_skipped", {
++          request_id: request.id,
++          reason: "stale_route",
++          session_id: sessionID,
++          state: state ?? null,
++          seq: seq ?? null,
++        });
+         settle(false);
+         return;
+       }
++      capture("report_send", {
++        request_id: request.id,
++        method: request.method,
++        session_id: sessionID,
++        state: state ?? null,
++        seq: seq ?? null,
++      });
+       client.write(`${JSON.stringify(request)}\n`);
+     });
+ 
+@@ -463,6 +507,12 @@ function setup(api) {
+   }
+ 
+   function publish() {
++    capture("publish", {
++      selected,
++      state,
++      blocked: blockers.size > 0,
++      sequence,
++    });
+     enqueue(blockers.size ? "blocked" : state);
+   }
+ 
+@@ -510,6 +560,13 @@ function setup(api) {
+     if (disposed) return;
+     const id = current();
+     if (id !== selected) {
++      capture("selection_change", {
++        previous: selected,
++        next: id,
++        previous_state: state,
++        generation_before: generation,
++        status: id ? api.data.session.status(id) : null,
++      });
+       selected = id;
+       generation += 1;
+       retryIndex = 0;
+@@ -518,6 +575,7 @@ function setup(api) {
+       blockerChanges.clear();
+       if (id) {
+         state = api.data.session.status(id) === "running" ? "working" : "idle";
++        capture("selection_state", { selected: id, state });
+       }
+     }
+     if (!id) return;
+@@ -536,6 +594,12 @@ function setup(api) {
+     if (disposed) return;
+     const data = event.data;
+     if (data == null) return;
++    capture("runtime_event", {
++      type: event.type,
++      session_id: data.sessionID ?? data.form?.sessionID ?? null,
++      selected,
++      state,
++    });
+     if (event.type === "session.created") {
+       sessions.set(data.sessionID, { id: data.sessionID, parentID: data.parentID });
+     }
+diff --git a/src/main.rs b/src/main.rs
+index f97e7e2..66836c7 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -16,6 +16,7 @@ mod agent_view_eval;
+ mod api;
+ mod app;
+ mod build_info;
++mod capture_log;
+ mod checksum;
+ mod cli;
+ mod client;
+diff --git a/src/terminal/state.rs b/src/terminal/state.rs
+index 11d540b..38c786c 100644
+--- a/src/terminal/state.rs
++++ b/src/terminal/state.rs
+@@ -708,7 +708,24 @@ impl TerminalState {
+         seq: Option<u64>,
+         now: Instant,
+     ) -> Option<TerminalStateMutation> {
++        crate::capture_log::log(
++            "hook_authority_entry",
++            serde_json::json!({
++                "source": &source,
++                "agent": &agent_label,
++                "incoming_state": format!("{state:?}"),
++                "incoming_seq": seq,
++                "incoming_session": session_ref.as_ref().map(|r| format!("{r:?}")),
++                "current_state": format!("{:?}", self.state),
++                "current_state_change_seq": self.last_agent_state_change_seq,
++                "current_completion_seq": self.last_agent_completion_seq,
++            }),
++        );
+         if crate::detect::session_identity_only_integration(&source, &agent_label) {
++            crate::capture_log::log(
++                "hook_authority_ignored",
++                serde_json::json!({"reason": "session_identity_only_integration"}),
++            );
+             return None;
+         }
+         if !crate::detect::full_lifecycle_hook_authority(&source, &agent_label)
+@@ -716,6 +733,10 @@ impl TerminalState {
+                 crate::detect::parse_agent_label(&agent_label) == Some(exit.agent)
+             })
+         {
++            crate::capture_log::log(
++                "hook_authority_ignored",
++                serde_json::json!({"reason": "recent_agent_process_exit"}),
++            );
+             return None;
+         }
+         let reanchor_sequence = match self.route_full_lifecycle_hook_report(
+@@ -728,9 +749,19 @@ impl TerminalState {
+             now,
+         ) {
+             FullLifecycleHookReportRoute::Accept { reanchor_sequence } => reanchor_sequence,
+-            FullLifecycleHookReportRoute::Ignore => return None,
++            FullLifecycleHookReportRoute::Ignore => {
++                crate::capture_log::log(
++                    "hook_authority_ignored",
++                    serde_json::json!({"reason": "full_lifecycle_route_ignore"}),
++                );
++                return None;
++            }
+         };
+         if self.known_agent_label_conflicts_with_detected_agent(&agent_label) {
++            crate::capture_log::log(
++                "hook_authority_ignored",
++                serde_json::json!({"reason": "known_agent_label_conflict"}),
++            );
+             return None;
+         }
+         let owner_conflicts = self.current_session_owner_conflicts(&source, &agent_label);
+@@ -741,6 +772,10 @@ impl TerminalState {
+                 &session_ref,
+             );
+         if owner_conflicts && !foreground_takeover_allowed {
++            crate::capture_log::log(
++                "hook_authority_ignored",
++                serde_json::json!({"reason": "owner_conflict"}),
++            );
+             return None;
+         }
+         let session_ref = session_ref.map(|session_ref| {
+@@ -760,12 +795,20 @@ impl TerminalState {
+             &agent_label,
+             &session_ref,
+         ) {
++            crate::capture_log::log(
++                "hook_authority_ignored",
++                serde_json::json!({"reason": "live_authority_session_conflict"}),
++            );
+             return None;
+         }
+         if reanchor_sequence {
+             self.hook_report_sequences.remove(&source);
+         }
+         if !self.accept_hook_report(&source, seq) {
++            crate::capture_log::log(
++                "hook_authority_ignored",
++                serde_json::json!({"reason": "stale_sequence"}),
++            );
+             return None;
+         }
+ 
+@@ -811,6 +854,21 @@ impl TerminalState {
+         if state == AgentState::Working && self.state == AgentState::Working {
+             self.agent_process_acquisition_pending = false;
+         }
++        crate::capture_log::log(
++            "hook_authority_accepted",
++            serde_json::json!({
++                "source": self.hook_authority.as_ref().map(|a| a.source.as_str()),
++                "agent": self.hook_authority.as_ref().map(|a| a.agent_label.as_str()),
++                "accepted_state": self.hook_authority.as_ref().map(|a| format!("{:?}", a.state)),
++                "accepted_seq": seq,
++                "accepted_session": self.hook_authority.as_ref().and_then(|a| a.session_ref.as_ref()).map(|r| format!("{r:?}")),
++                "effective_state": format!("{:?}", self.state),
++                "state_change_seq": self.last_agent_state_change_seq,
++                "completion_seq": self.last_agent_completion_seq,
++                "mutation": effective_state_change.is_some(),
++                "session_ref_changed": previous_session != current_session,
++            }),
++        );
+         Some(TerminalStateMutation {
+             effective_state_change,
+             session_ref_changed: previous_session != current_session,
+@@ -1466,7 +1524,26 @@ impl TerminalState {
+         seq: Option<u64>,
+         session_start_source: Option<String>,
+     ) -> Option<TerminalStateMutation> {
+-        let session_ref = session_ref?;
++        crate::capture_log::log(
++            "agent_session_ref_entry",
++            serde_json::json!({
++                "source": &source,
++                "agent": &agent_label,
++                "seq": seq,
++                "session_start_source": &session_start_source,
++                "incoming_session": session_ref.as_ref().map(|r| format!("{r:?}")),
++                "current_state": format!("{:?}", self.state),
++                "current_state_change_seq": self.last_agent_state_change_seq,
++                "current_completion_seq": self.last_agent_completion_seq,
++            }),
++        );
++        let Some(session_ref) = session_ref else {
++            crate::capture_log::log(
++                "agent_session_ref_ignored",
++                serde_json::json!({"reason": "missing_session_ref"}),
++            );
++            return None;
++        };
+         let known_agent = crate::detect::parse_agent_label(&agent_label);
+         let process_present = known_agent.is_some()
+             && self.detected_agent == known_agent
+@@ -1492,6 +1569,19 @@ impl TerminalState {
+             seq,
+         );
+         let selection_can_reconcile = unsequenced_selection && process_present;
++        crate::capture_log::log(
++            "agent_session_ref_route",
++            serde_json::json!({
++                "source": &source,
++                "agent": &agent_label,
++                "process_present": process_present,
++                "full_lifecycle_source": full_lifecycle_source,
++                "generation_gated": generation_gated,
++                "session_anchored": session_anchored,
++                "unsequenced_selection": unsequenced_selection,
++                "selection_can_reconcile": selection_can_reconcile,
++            }),
++        );
+         if selection_can_reconcile {
+             self.suppressed_full_lifecycle_hook_reports.remove(&source);
+         } else if full_lifecycle_source && unsequenced_selection {
+@@ -1678,6 +1768,16 @@ impl TerminalState {
+         }
+         self.persisted_agent_session = Some(persisted_session);
+         let current_session = self.current_session_identity_for_persistence();
++        crate::capture_log::log(
++            "agent_session_ref_accepted",
++            serde_json::json!({
++                "source": self.persisted_agent_session.as_ref().map(|s| s.source.as_str()),
++                "agent": self.persisted_agent_session.as_ref().map(|s| s.agent.as_str()),
++                "accepted_session": self.persisted_agent_session.as_ref().map(|s| format!("{:?}", s.session_ref)),
++                "session_ref_changed": previous_session != current_session,
++                "effective_state": format!("{:?}", self.state),
++            }),
++        );
+         if previous_session.is_some() && previous_session != current_session {
+             // Rebinding can expose a cached Working screen; only a fresh report ends acquisition.
+             self.agent_process_acquisition_pending = true;
