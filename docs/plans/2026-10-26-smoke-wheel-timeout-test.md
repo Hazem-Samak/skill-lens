@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: User instruction on 2026-10-26: add the missing test for the `TimeoutExpired` branch in `scripts/smoke_wheel.py`; Qoder implements, GLM and MiniMax review, same OMP-coordinated pattern as the trial, trial branch only, no merge without the user's word. If Qoder fails to run, report and stop.
-Reference: Pending the OMP two-commit freeze procedure
+Reference: 087c370b130bb526b56e0e1b8f4f561149a65d4d (agreed plan freeze; this line is recorded in a following plan-only provenance commit)
 Surface: omp; no Herdr
 Risk and review: Low risk for product behavior — the change is test-only and adds no runtime path. The user explicitly selected two independent final reviewers, GLM and MiniMax, so both review the implemented test. No planning critic is dispatched under the Low-risk policy; Sol inspects the draft and source. Configured model identities are recorded; upstream identity remains unverified.
 Roster: Sol coordinator; implementer Qwen 3.8 Flash via Qoder CLI; final reviewer 1 GLM 5.3 Flash free via OpenCode; final reviewer 2 MiniMax M3.1 Flash via mcode. No silent model, provider, paid-seat, or Herdr substitution.
