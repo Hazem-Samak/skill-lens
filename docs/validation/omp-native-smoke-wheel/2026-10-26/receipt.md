@@ -117,7 +117,7 @@ No blocker required a correction batch.
 
 ## Delivery
 
-The accepted test, plan execution record and these reports are committed only on
-the trial branch; the commit hash is recorded after the receipt in the trial
-branch history. Nothing was pushed or merged. The branch remains available for
-the user's review and decision.
+The accepted test, plan execution record and reports are in implementation
+commit `468d5836ea0017db766832bc83caebcba35c95f7` on the trial branch. This
+hash-recording line is a following administrative commit. Nothing was pushed or
+merged. The branch remains available for the user's review and decision.

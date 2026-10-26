@@ -165,5 +165,6 @@ No files were added, deleted, or changed by reviewers. The only tracked change
 is `tests/test_tui_packaging.py`; `scripts/smoke_wheel.py` restored to its
 original SHA-256 `1ebe1c18eddb4fca78d3874cbe595d35b9f1fb82143bea360a5f4b9131a01f34`.
 
-Accepted local commit: recorded after this receipt in the trial branch history.
+Accepted implementation commit: `468d5836ea0017db766832bc83caebcba35c95f7`
+(this hash line is recorded in a following administrative commit).
 No push or merge occurred. The user's waiter track remains parked.
