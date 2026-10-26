@@ -108,6 +108,62 @@ product behavior.
   The user's explicit two-reviewer roster is applied to the implemented test.
 - **Accepted — source evidence:** `scripts/smoke_wheel.py:532-556` already
   contains the catch/decode/raise path; only regression coverage is missing.
-- **Pending:** implementation diff, both final reviewers' findings, and
-  coordinator dispositions will be recorded here before the final acceptance
-  commit.
+- **Accepted — implementation:** Qoder added the timeout simulation and the
+  parametrized str/bytes regression test in `tests/test_tui_packaging.py` only.
+  The existing helper defaults and tests are unchanged; the production script
+  remained byte-identical.
+- **Accepted — coordinator verification:** the new test passes; removing the
+  production `except subprocess.TimeoutExpired` handling makes both parameters
+  fail with a bare `TimeoutExpired`; replacing the bytes decode with `str()`
+  makes the bytes parameter fail while the string parameter still passes.
+  Restoring the original script returns the test to green. All four gates pass
+  on the final tree: 1,085 passed, 1 skipped, 91.16% coverage; mypy clean on 38
+  files; Ruff lint and format clean on 346 files.
+- **Accepted — GLM final review:** `pass`, no blockers. Reported relay cost USD
+  0; account billing and upstream serving identity remain unverified.
+- **Accepted — MiniMax final review:** first attempt reached the 10-minute bound
+  with `status: timeout` and no report; a fresh, bounded no-tool retry completed
+  in 63.5 seconds with `pass`, no blockers. The timeout is retained as a
+  completion-reliability finding, not counted as a review. Cost/token-plan debit
+  and upstream identity remain unverified.
+- **Deferred — non-blocking suggestions:** pinning stream labels, asserting the
+  cause's `timeout`/`cmd` contents or the forwarding `timeout` kwarg, a third
+  `None`-output case, documenting helper-flag precedence, and removing the
+  `mock_home` fixture parameter. The frozen acceptance already requires both
+  streams, the bound, the command, chained cause, and load-bearing proof; these
+  are refinements outside this one-test task.
+- **Rejected — none.** No reviewer finding required a code change.
+
+## Execution record — 2026-10-26
+
+Mechanisms: OMP background `bash` jobs drove the external CLIs; no Herdr pane,
+waiter, manifest, or everyday-Herdr change was used. Completion was recovered
+by native `wait` for each job; auto-delivery was not observed.
+
+| Role | Selected route | Observed receipt | Elapsed | Cost evidence |
+|---|---|---|---|---|
+| Implementer | Qoder 1.1.78, `Qwen3.8-Flash`, permission `auto` | `completed`, exit 0; `actualModel` `Qwen3.8-Flash`; only `tests/test_tui_packaging.py` changed; session `8302cd8d-088b-4bf7-85cc-78b67a598797` | 157.87 s | Usage counters reported zeros; no charge field; free-seat billing not audited |
+| Reviewer 1 | OpenCode 2.1.4, `opencode/glm-5.3-flash-free`, `plan` agent | `completed`, exit 0; substantive `pass`; session `ses_e88572487ffeNtMZoTC5VftTEv` | 77.33 s | Relay reported USD 0; invoice not independently verified |
+| Reviewer 2, attempt 1 | mcode 0.6.12, `minimax/MiniMax-M3.1-Flash`, smart permissions | `timeout`, exit 6, 600.023 s; no final report; usage incomplete | 600.02 s | OAuth token-plan; charge/quota debit unavailable |
+| Reviewer 2, retry | Same model, fresh session, bounded `--max-steps 3`, inline evidence, no tools | `succeeded`, exit 0; substantive `pass`; session `mvs_614f1bf13cf94aadb5b56c8f66f09efe` | 63.48 s | OAuth token-plan; charge/quota debit unavailable |
+
+The MiniMax retry was not a blind resend: the first attempt spent 21 model
+phases on repeated repository commands without a report. The retry supplied the
+exact diff and production branch inline and forbade tools. It completed in
+63.5 seconds. Both reviewers returned `pass` with no blockers; their full reports
+are retained under `docs/validation/omp-native-smoke-wheel/2026-10-26/`.
+
+Coordinator verification: direct new test `2 passed`; handler-removal mutation
+`2 failed` with bare `TimeoutExpired`, then restored `2 passed`; decode-to-`str`
+mutation `1 failed, 1 passed`, then restored `2 passed`. Final four gates:
+1,085 passed, 1 skipped, 91.16% coverage; mypy clean on 38 files; Ruff lint and
+format clean on 346 files. Gate log is retained beside the reports.
+
+Fingerprints: 2,304 tracked/untracked non-ignored files were hashed plus Git
+status before the reviewer wave and after both reviewers and the bounded retry.
+No files were added, deleted, or changed by reviewers. The only tracked change
+is `tests/test_tui_packaging.py`; `scripts/smoke_wheel.py` restored to its
+original SHA-256 `1ebe1c18eddb4fca78d3874cbe595d35b9f1fb82143bea360a5f4b9131a01f34`.
+
+Accepted local commit: recorded after this receipt in the trial branch history.
+No push or merge occurred. The user's waiter track remains parked.

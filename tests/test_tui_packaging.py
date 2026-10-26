@@ -19,6 +19,7 @@ Covers:
    - Module provenance failure rejection (base and both endpoint branches)
    - Textual presence failure rejection in base environment
    - Nonzero test suite returncode failure rejection
+   - Bounded test suite timeout rejection (partial stdout/stderr preserved, chained cause)
    - Source directory leak in test lane rejection
 8. Relative wheel and harness paths normalized before lane cwd switch
 """
@@ -361,8 +362,16 @@ def _make_packaging_subprocess_runner(
     pytest_stdout: str = "================ 10 passed in 0.1s ================\n",
     pytest_stderr: str = "",
     captured_calls: list[dict[str, Any]] | None = None,
+    pytest_timeout: bool = False,
+    pytest_partial_bytes: bool = False,
 ) -> Callable[..., subprocess.CompletedProcess[str]]:
-    """Create a deterministic subprocess runner double for installed lane packaging tests."""
+    """Create a deterministic subprocess runner double for installed lane packaging tests.
+
+    With ``pytest_timeout=True`` the ``pytest`` invocation raises
+    ``subprocess.TimeoutExpired`` after the earlier install/provenance calls,
+    simulating an exceeded suite run. The partial output is bytes when
+    ``pytest_partial_bytes=True`` and str otherwise.
+    """
 
     def mock_subprocess_run(
         cmd: list[str], *args: Any, **kwargs: Any
@@ -471,6 +480,19 @@ def _make_packaging_subprocess_runner(
                 return subprocess.CompletedProcess(cmd, 2, stdout="", stderr=msg)
 
         if cmd_exe == "pytest":
+            if pytest_timeout:
+                stdout_partial: str | bytes = (
+                    b"PARTIAL SUITE STDOUT" if pytest_partial_bytes else "PARTIAL SUITE STDOUT"
+                )
+                stderr_partial: str | bytes = (
+                    b"PARTIAL SUITE STDERR" if pytest_partial_bytes else "PARTIAL SUITE STDERR"
+                )
+                raise subprocess.TimeoutExpired(
+                    list(cmd),
+                    timeout=kwargs.get("timeout"),
+                    output=stdout_partial,
+                    stderr=stderr_partial,
+                )
             if pytest_returncode != 0:
                 return subprocess.CompletedProcess(
                     cmd, pytest_returncode, stdout=pytest_stdout, stderr=pytest_stderr
@@ -669,6 +691,57 @@ def test_verify_tui_endpoint_install_fails_on_nonzero_test_suite_exit(
             endpoint_name="min",
             textual_spec="textual==8.2.8",
             repo_root=REPO_ROOT,
+        )
+
+
+@pytest.mark.parametrize("partial_output_is_bytes", [False, True])
+def test_verify_tui_endpoint_install_fails_on_test_suite_timeout(
+    tmp_path: Path,
+    mock_home: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    partial_output_is_bytes: bool,
+) -> None:
+    """verify_tui_endpoint_install must convert a suite TimeoutExpired into an AssertionError.
+
+    Covers the ``except subprocess.TimeoutExpired`` branch around the installed
+    suite run: the error must name the timeout bound and command, preserve both
+    partial output streams (decoding them when the subprocess handed over bytes),
+    and chain the original timeout as ``__cause__``. Removing that handler turns
+    this test red (a bare ``TimeoutExpired`` escapes instead).
+    """
+    invoking_cwd = tmp_path / "invoking_cwd"
+    invoking_cwd.mkdir()
+    wheel_file = invoking_cwd / "skill_lens_cli-0.1.1-py3-none-any.whl"
+    wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
+    monkeypatch.chdir(invoking_cwd)
+
+    runner = _make_packaging_subprocess_runner(
+        pytest_timeout=True, pytest_partial_bytes=partial_output_is_bytes
+    )
+    monkeypatch.setattr(subprocess, "run", runner)
+
+    with pytest.raises(AssertionError, match=r"exceeded the 42s bound") as exc_info:
+        verify_tui_endpoint_install(
+            wheel_file,
+            tmp_path / "work_dir",
+            endpoint_name="min",
+            textual_spec="textual==8.2.8",
+            repo_root=REPO_ROOT,
+            timeout_seconds=42,
+        )
+
+    message = str(exc_info.value)
+    assert "pytest" in message, f"timeout error must name the suite command: {message}"
+    assert "PARTIAL SUITE STDOUT" in message
+    assert "PARTIAL SUITE STDERR" in message
+    assert isinstance(exc_info.value.__cause__, subprocess.TimeoutExpired)
+
+    if partial_output_is_bytes:
+        # The bytes case must go through the decode path: a raw bytes repr
+        # ("b'PARTIAL SUITE STDOUT'") leaking into the message means the
+        # str() fallback stood in for the actual decode.
+        assert "b'PARTIAL SUITE" not in message, (
+            f"bytes partial output must be decoded, not repr'd: {message}"
         )
 
 
