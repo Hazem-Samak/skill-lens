@@ -5,8 +5,12 @@
 **What this is.** The council is the independent review system in T3 Code for Skill Lens. Other AI models check plans and code diffs before work is frozen or accepted. They read and report; they never edit the project.
 
 - A **critic** (or reviewer) is an agent dispatched with read-only instructions to inspect a plan or diff.
-- The **coordinator** is Sol (`gpt-6.1-sol`, default reasoning `high`, OpenAI). It plans, dispatches, inspects, runs verification gates, judges, and commits. It may make small administrative document corrections (see §6); Antigravity writes all product code and tests.
-- The **implementer** is Antigravity (`gemini-3.8-flash-high`, Google). It is the sole implementer: it writes code and tests, runs checks, and reports. It never reviews, never delegates, and never commits.
+- The **coordinator** plans, dispatches, inspects, runs verification gates, judges, and commits. It may make small administrative document corrections (see §6). It never writes product code or tests.
+- The **implementer** writes code and tests, runs checks, and reports. It never reviews, never delegates, and never commits.
+
+**No role owns a model.** Roles bind behaviour only. The provider, model, and effort for every role come from the user's selection for that mission (§1).
+
+"Sol" is a legacy label that appears in dated evidence records. It names no model and creates no requirement; live documents say "the coordinator".
 
 Read this together with `profiles/project-profile.md` (what "correct" means here) and `profiles/machine-profile.md` (live environment and provider facts).
 
@@ -14,26 +18,32 @@ Read this together with `profiles/project-profile.md` (what "correct" means here
 
 ## 1. The Roster and Roles
 
-The operational roster has clear role separation:
+**The user selects every model.** No role has a fixed, default, preferred, standing, or inherited provider, model, or effort. At the start of each mission the user names the roster; each entry gives provider, model, and effort/settings.
 
-| Role | Agent / Model | Family | Selection Policy |
+| Role | Selected by | Named per | Behaviour bound to the role |
 |---|---|---|---|
-| **Coordinator** | Codex (`gpt-6.1-sol`, reasoning `high` by default) | OpenAI | **Fixed coordinator.** Never writes product code. |
-| **Implementer** | Antigravity (`gemini-3.8-flash-high`) | Google | **Sole implementer.** Never reviews or commits. |
-| **Critic Pool** | Native `pi`, `grok`, `opencode` | Varies | **USER selects models AND settings per session** from live T3 catalog. |
-| **Deferred** | MCode (`MiniMax M3.1 Flash`) | MiniMax | Future ACP integration only; not native in T3. |
+| **Coordinator** | User | Mission | Plans, dispatches, verifies, judges, commits. Never writes product code. |
+| **Implementer** | User | Mission or phase | Writes code/tests, reports. Never reviews, delegates, or commits. |
+| **Critic / reviewer** | User | Review round | Inspects read-only, reports. Never edits. |
+| **Follow-up worker** | User | Dispatch | Carries a targeted correction or later round. |
 
-### Role rules and independence
+### Selection rules
 
-1. **Strict role independence:** The coordinator judges and commits; the implementer writes code; critics review. Antigravity does not review; its former feasibility review role is removed.
-2. **Role/context independence vs. family diversity:** Distinguish role and context independence from verified family diversity.
-   - **Context independence:** Running a critic in a fresh delegated task provides role and context independence (isolated subagent context, dedicated prompt, separate reasoning chain). Avoid categorical claims that same-family models cannot provide independent context.
-   - **Family diversity requirement:** High-risk reviews strictly require verified distinct model families when established. A critic sharing a model family with the coordinator (OpenAI) or implementer (Google) does not satisfy the independent family diversity requirement for high-risk review, regardless of context separation. Different providers alone do not prove different model families (e.g. multiple providers wrapping open weights or upstream APIs).
-   - **Unverified-family operational path:** Unknown family identity stays unverified. If a selected model family cannot be verified, disclose which model identity is unverified and obtain explicit user acceptance of the named pair for that session before proceeding. Never claim verified family diversity when identity is unverified.
-3. **USER selects critic models AND settings:** The human user explicitly selects critic models AND their settings (options) from the live T3 catalog (`orchestrator_capabilities`). If choices are missing, the coordinator presents an ask-once menu showing the live pool and options with recommended risk-sized choices. Authorized choices are reused across rounds within the session. No silent defaults or substitutions.
-4. **Post-freeze execution record:** The implementation-session roster is logged as an append-only execution record after freeze. Selecting or updating models under existing per-session authorization is an authorized operational record, not silently rewriting frozen behavior.
-5. **Historical session evidence:** The [migration record](../plans/2026-10-10-t3-orchestrator-v2-migration.md) retains that session's roster, quota fallback, and user-accepted unverified-family exception. Those choices are not future defaults or a permanent waiver.
-6. **No silent substitutes:** If a selected critic model exhausts quota or becomes unavailable, ask the user once or use an already authorized fallback. Never silently dispatch an unapproved substitute model.
+1. **No silent choice.** When a needed selection is missing, ask once with the live catalog (`orchestrator_capabilities`) and a risk-sized effort recommendation. Never default, infer, accept an application's own default as the user's choice, or substitute.
+2. **Scoped to the mission.** A named selection applies to that mission or session only. Reuse across rounds inside the mission is allowed under the same authorization. It never becomes a future default or a permanent waiver.
+3. **No silent substitute.** If a named model becomes unavailable or exhausts quota, stop and ask the user, or use a fallback the user already authorized for that case.
+4. **Verified identity.** Before dispatch, confirm the running identity matches the user's naming through readback or session evidence. On disagreement, stop and report; never continue under a different model.
+5. **Recorded roster.** Record the roster in the plan (`Roster:`) and in the execution receipt, keeping requested, configured, and confirmed identity separate (§4).
+6. **Post-freeze record.** Logging a roster or updating a selection under existing mission authorization is an append-only execution record. It never rewrites frozen behavior.
+7. **Historical rosters are evidence only.** Rosters in [the migration record](../plans/2026-10-10-t3-orchestrator-v2-migration.md) and other dated records show what a past session ran, including any accepted exception. They select nothing now and waive nothing later.
+
+### Role and family independence
+
+1. **Strict role independence:** the coordinator judges and commits; the implementer writes code; critics review. No participant reviews its own implementation.
+2. **Context independence is not family diversity.** Distinguish the two:
+   - **Context independence:** a critic in a fresh delegated task has role and context independence (isolated subagent context, dedicated prompt, separate reasoning chain). Avoid claims that same-family models cannot provide independent context.
+   - **Family diversity:** different provider labels alone do not prove different model families (e.g. multiple providers wrapping open weights or upstream APIs). Unknown family identity stays unverified; never claim verified diversity when identity is unverified.
+3. **Family overlap is disclosed, not preselected.** State each participant's model family from evidence and flag any critic that shares the coordinator's or the implementer's family. Whether a review wave must use distinct families is the user's decision for that mission, recorded with the acceptance of the named set. This process requires the disclosure and the recorded acceptance; it prescribes no pool.
 
 ---
 
@@ -89,21 +99,21 @@ To dispatch a critic via `delegate_task`:
 {
   "task": "<prompt with verbatim guard and review brief>",
   "target": {
-    "providerInstanceId": "opencode",
-    "model": "opencode/space-bunny-free",
+    "providerInstanceId": "<provider named by the user for this round>",
+    "model": "<model named by the user>",
     "options": {
-      "variant": "max"
+      "variant": "<effort/option named by the user>"
     }
   },
   "role": "review",
   "runtimeMode": "full-access",
   "interactionMode": "plan",
   "mode": "async",
-  "clientRequestId": "round-1-opencode-review"
+  "clientRequestId": "<stable id, distinct per round>"
 }
 ```
 
-This uses a historical user-selected target to demonstrate valid JSON. Select the actual provider, model, and options from the live catalog under §1; neither this target nor `max` is a critic default.
+Field names show valid JSON shape only. Every angle-bracket value comes from the user's roster for this mission (§1); nothing here is a default, and no historical target implies the next one.
 
 ### Lifecycle and ledger rules
 
@@ -136,7 +146,7 @@ CONCEDED:        [ ... ]        points withdrawn after argument
 
 ### Implementer report format
 
-Antigravity returns:
+The implementer returns:
 
 ```text
 EFFECTIVE_MODEL:       [ provider/model, settings, runtimeMode, interactionMode | evidence: requested vs configured vs confirmed/unverified ]
@@ -159,7 +169,7 @@ BLOCKED_ON:            [ ... ]
 - **Blockers require evidence:** Location (`path:line`), problem, expected behaviour, and concrete evidence (command output or failing test). Without evidence, it is a suggestion.
 - **Blocker discipline:** No unresolved blocker affecting frozen or accepted work may be deferred. Deferral is permitted only for points proved outside current scope or non-blocking suggestions.
 - **`unverified`:** An honest verdict when conditions prevent verification.
-- **No FEASIBILITY line:** Antigravity does not review; feasibility lines are removed.
+- **No FEASIBILITY line:** the implementer does not review; feasibility lines are removed.
 
 ---
 
@@ -167,15 +177,15 @@ BLOCKED_ON:            [ ... ]
 
 | Risk Level | Trigger | Planning Review | Implementation Review | Expected child tasks for one separately planned phase, before corrections |
 |---|---|---|---|---|
-| **Low** | Obvious low-impact typos, links, and formatting | Coordinator plans alone | Coordinator reading + 4 gates | 0 administrative; 1 if product code/tests require Antigravity |
+| **Low** | Obvious low-impact typos, links, and formatting | Coordinator plans alone | Coordinator reading + 4 gates | 0 administrative; 1 if product code/tests require the implementer |
 | **Normal** | Features, substantive refactors, non-load-bearing fixes | 1 independent critic | 1 independent critic | 3: plan critic + implementer + final critic |
-| **High** | Path resolution, data formats, registry TOML, exit codes, permissions, load-bearing areas (`AGENTS.md` §4), internal refactors touching load-bearing behavior | **2 critics, verified different families** (or explicit user acceptance of unverified family pair) | **2 critics, verified different families** (or explicit user acceptance of unverified family pair) | 5: 2 plan critics + implementer + 2 final critics |
+| **High** | Path resolution, data formats, registry TOML, exit codes, permissions, load-bearing areas (`AGENTS.md` §4), internal refactors touching load-bearing behavior | **2 critics named by the user**, family overlap disclosed and accepted (§1) | **2 critics named by the user**, family overlap disclosed and accepted (§1) | 5: 2 plan critics + implementer + 2 final critics |
 
 *Risk policy notes:*
 - Classify by what changes, not file type: a document changing permissions or a load-bearing contract is High risk. Low risk is strictly limited to obvious low-impact work.
 - Internal refactors touching load-bearing behavior remain High risk.
 - Substantive refactors are at least Normal risk.
-- Family requirements and the user-accepted unverified-family path are defined in §1. Task counts are expectations, not caps that allow skipping required checks or unresolved blockers.
+- Family disclosure, and the user's decision whether a wave needs distinct families, are defined in §1. Task counts are expectations, not caps that allow skipping required checks or unresolved blockers.
 
 ### Two-round non-convergence escalation
 
@@ -196,13 +206,13 @@ Give each critic one explicit question; for two critics, use complementary quest
 - Where to read the complete relevant evidence: named paths and a diff command or external temporary artifact. Include only useful excerpts inline; do not paste a full diff and also require rereading the same diff. Scope the initial reads, while permitting additional named dependencies when needed to prove a concern.
 - Current check results and log paths, known limitations, and, for follow-ups, the original brief plus a concise ledger of prior findings, responses, and unresolved objections (§3).
 
-Reuse already-read unchanged references; revisit relevant sections when a finding needs proof. Recommend effort suited to the review question using live options; explain why a higher setting is needed rather than automatically recommending Max. The user still selects every reviewer model and setting, and authorized selections stay fixed within the session (§1).
+Reuse already-read unchanged references; revisit relevant sections when a finding needs proof. Recommend effort suited to the review question using live options; explain why a higher setting is needed rather than automatically recommending the maximum. The user still selects every reviewer model and setting, and an authorized selection stays fixed for that mission (§1).
 
 ### Checks and corrections
 
 Before independent review, the coordinator checks applicable plan/report fields, allowed file scope, links, JSON examples, source-backed API claims, exact guard text, and required verification evidence. Use small disposable checks where useful; a new validation framework is unnecessary.
 
-Collect the coordinator's and all critics' findings before sending one correction brief. Reproduce reported defects, resolve blocking findings, and keep optional polish separate. The coordinator may directly correct typos, links, formatting, examples of an already agreed API, and administrative execution records. Antigravity remains the sole product-code/test implementer. A change to behavior, scope, permissions, or the frozen contract follows the plan-change procedure; only an explicit user instruction can authorize an exception to the usual workflow.
+Collect the coordinator's and all critics' findings before sending one correction brief. Reproduce reported defects, resolve blocking findings, and keep optional polish separate. The coordinator may directly correct typos, links, formatting, examples of an already agreed API, and administrative execution records. Product code and tests remain with the implementer the user named for this mission. A change to behavior, scope, permissions, or the frozen contract follows the plan-change procedure; only an explicit user instruction can authorize an exception to the usual workflow.
 
 Follow-up reviews are fresh tasks (§3) focused on the changed areas and unresolved findings. Send them to every critic whose review question is affected; if the fix changes a shared contract or both questions, both critics must review it. An unaffected verdict remains evidence only after the coordinator verifies its scope is unchanged. Broaden review when dependencies, acceptance criteria, or wider behavior changed. Every blocker needs a recorded disposition and the required independent acceptance; targeted review never waives that requirement or the two-round escalation limit.
 

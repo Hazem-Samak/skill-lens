@@ -1,17 +1,25 @@
 # OMP implementation loop
 
-Sol coordinates delivery of one authorized frozen phase. Product code/tests belong to session-selected implementers; Sol inspects, verifies, reviews, accepts and commits. Use the [OMP roles, review policy and lifecycle](./README.md), not T3 APIs. The current process-document migration explicitly permits Sol documentation authorship.
+The coordinator delivers one authorized frozen phase. Product code/tests belong to the implementer the user named for this mission; the coordinator inspects, verifies, reviews, accepts and commits. Use the [OMP roles, review policy and lifecycle](./README.md), not T3 APIs.
 
 ## Start prompt
 
 ```text
-Act as OMP coordinator Sol (openai-codex/gpt-6.1-sol, thinking high).
-Implement <phase> from docs/plans/<dated-slug>.md @ <full frozen hash>.
+Mission roster (named by the user; read it from the frozen plan's Roster field;
+nothing here has a standing model):
+  coordinator:   <provider>/<model>/<effort>
+  implementer:   <provider>/<model>/<effort>
+  final critics: <provider>/<model>/<effort> per risk level
+
+Act as OMP coordinator. Implement <phase> from
+docs/plans/<dated-slug>.md @ <full frozen hash>.
 Follow docs/process/omp/implementation-loop.md. Verify active identity,
 authorization, operative amendments, checkout ownership and baseline evidence.
-Delegate product code/tests to authorized session-selected implementers.
+Delegate product code/tests to the implementer named in the roster.
 Children edit only and SKIP gates/formatters. Coordinate verification,
 fresh independent review, acceptance and authorized commit/push yourself.
+If a roster entry is missing or a named model is unavailable, ask once;
+substitute nothing.
 ```
 
 ## 1. Establish contract and baseline
@@ -37,25 +45,25 @@ Prefer one coherent implementer for a phase. Parallelize only genuinely independ
 
 Each brief contains exact target/change, allowed paths, exclusions, source references, frozen plan/full hash, meaningful acceptance, ownership, and selected runtime/model/settings. Verify effective configured choices against authorization before dispatch; inherited native defaults do not establish the requested model (see [dispatch rules](./README.md#roles-and-session-choices)). Use a supported explicit-model external route when appropriate, or ask; never silently substitute.
 
-Select the dispatch route before starting implementers or final reviewers: when Herdr is requested, keep Sol/OMP native in Tern and follow the [external Herdr adapter](./herdr.md) for the verified named-session/socket gate, explicit worker pane IDs, bounded waits and inspect-before-resend. Missing or ambiguous connection stops that route; being outside Herdr does not. Never silently replace requested Herdr dispatch with native tasks or standalone relays. When Herdr is not requested, ordinary standalone OMP remains available.
+Select the dispatch route before starting implementers or final reviewers: when Herdr is requested, keep the OMP coordinator native in Tern and follow the [external Herdr adapter](./herdr.md) for the verified named-session/socket gate, explicit worker pane IDs, bounded waits and inspect-before-resend. Missing or ambiguous connection stops that route; being outside Herdr does not. Never silently replace requested Herdr dispatch with native tasks or standalone relays. When Herdr is not requested, ordinary standalone OMP remains available.
 
-Children must **SKIP ALL tests, gates, linters, formatters and runtime checks**, including mid-flight smoke runs. They edit and report only; no review, delegation, staging, commits, push or settings changes. Sol owns smoke checks and all final verification. Their report must include effective-model evidence (requested/configured/upstream unverified as applicable), changed paths, tests added, checks not run, outcome, deviations and blockers.
+Children must **SKIP ALL tests, gates, linters, formatters and runtime checks**, including mid-flight smoke runs. They edit and report only; no review, delegation, staging, commits, push or settings changes. The coordinator owns smoke checks and all final verification. Their report must include effective-model evidence (requested/configured/upstream unverified as applicable), changed paths, tests added, checks not run, outcome, deviations and blockers.
 
-Retain task/process/session IDs and result paths. Follow the README's uncertain-delivery, terminal-state and cleanup rules; no blind resend, duplicate workers, idle-terminal acceptance or exit-only acceptance. A scope conflict returns to Sol before expansion.
+Retain task/process/session IDs and result paths. Follow the README's uncertain-delivery, terminal-state and cleanup rules; no blind resend, duplicate workers, idle-terminal acceptance or exit-only acceptance. A scope conflict returns to the coordinator before expansion.
 
 ## 3. Inspect and verify as coordinator
 
 After all assigned edits land, inspect the entire diff and actual files against the frozen contract, including consumers/dependencies. Account for untracked changes, enforce allowed paths, preserve unexpected edits and investigate attribution. Check relevant links, API examples, report fields, exact guard and source-backed claims. Inspect snapshot/golden changes rather than accepting passing assertions blindly.
 
-Sol runs focused smoke/affected checks where useful, then the four gates above on the ready batch, with logs tied to the inspected tree and environment. Worker self-reports do not replace direct coordinator evidence. Do not repeat gates on unchanged valid evidence. If changes invalidate evidence, run affected smoke checks and establish all four gates on the final tree; no check is waived merely because the edit is documentation.
+The coordinator runs focused smoke/affected checks where useful, then the four gates above on the ready batch, with logs tied to the inspected tree and environment. Worker self-reports do not replace direct coordinator evidence. Do not repeat gates on unchanged valid evidence. If changes invalidate evidence, run affected smoke checks and establish all four gates on the final tree; no check is waived merely because the edit is documentation.
 
 ## 4. Review independently and correct
 
-Use the plan's risk level and explicit exceptions: Normal one independent reviewer, High two, Low coordinator inspection/gates only. The current migration explicitly uses one selected OpenCode MiniMax reviewer at planning and one fresh final review. It does not change future policy.
+Use the plan's risk level and explicit exceptions: Normal one independent reviewer, High two, Low coordinator inspection/gates only. Where the plan records a user-granted exception for this mission, apply exactly that exception and nothing further: it binds no other mission and selects no model for anyone.
 
 Use fresh review sessions and the README's exact guard, report schema, fingerprints and actual completion checks. Supply frozen plan/full hash, exact diff base/current revision or uncommitted tree fingerprint, relevant files/dependencies and current gate logs through one complete evidence source. Verify requested/configured model/settings; disclose unverified upstream identity. Capture post-review fingerprints and preserve/inspect/stop on unexpected writes; read-only instructions are not sandbox enforcement.
 
-Collect all findings into one correction brief. Sol may correct administrative documentation issues; product-code/test corrections go to the assigned implementer, still edit-only with no gates/formatters. Resolve every in-scope blocker with evidence. Defer only proved outside-scope issues or non-blocking suggestions. User-reported failures are ground truth, not something to rerun merely to confirm.
+Collect all findings into one correction brief. The coordinator may correct administrative documentation issues; product-code/test corrections go to the assigned implementer, still edit-only with no gates/formatters. Resolve every in-scope blocker with evidence. Defer only proved outside-scope issues or non-blocking suggestions. User-reported failures are ground truth, not something to rerun merely to confirm.
 
 After corrections, update invalidated coordinator check evidence and request fresh targeted review from affected critics with the original brief, findings, responses and unresolved objections. Broaden review when dependencies, shared contracts or acceptance change. Verified unchanged scope may retain an unaffected verdict; no redundant broad review wave. Two non-convergent rounds require user escalation, not a third broad wave.
 
@@ -71,7 +79,7 @@ Reuse authorization already covering the concrete action. Coordinator and implem
 
 ## 6. Accept, commit and deliver
 
-Only Sol accepts, stages, commits and pushes. Require all of:
+Only the coordinator accepts, stages, commits and pushes. Require all of:
 
 - Every authorized acceptance criterion and operative amendment satisfied; final files inspected.
 - Four passing gates with valid coordinator evidence for the final tree/environment.
@@ -88,4 +96,4 @@ git add <allowed paths>
 git commit -m "<type>(<scope>): <summary>"
 ```
 
-Push only as authorized. For the current migration the authorized destination is `git push origin main`; verify full hashes from `git rev-parse HEAD`, `git rev-parse origin/main`, and `git ls-remote origin refs/heads/main` agree. Report actual commit/push evidence, never assume delivery from an exit-only child receipt. Remove only owned unused checkouts after checking bindings and preserving user edits. Final receipt states what changed, why, actual checks/review evidence, commit/delivery status, deviations and any remaining user decision. Unchanged accepted evidence needs no duplicate verification wave.
+Push only when the user explicitly authorized that push, to the destination they named; when a push is authorized, verify full hashes from `git rev-parse HEAD`, `git rev-parse origin/<branch>`, and `git ls-remote origin refs/heads/<branch>` agree. Report actual commit/push evidence, never assume delivery from an exit-only child receipt. Remove only owned unused checkouts after checking bindings and preserving user edits. Final receipt states what changed, why, actual checks/review evidence, commit/delivery status, deviations and any remaining user decision. Unchanged accepted evidence needs no duplicate verification wave.

@@ -12,16 +12,11 @@ The active workflow uses native T3 orchestration. The [Orca process archive](../
 
 ## 2. Models and Providers
 
-The fixed roster and user-selected critic policy are defined in [council §1](../council.md#1-the-roster-and-roles). Native IDs observed in this build:
+**This profile binds no role to any model.** The user names the roster for each mission ([council §1](../council.md#1-the-roster-and-roles)). What follows is only what this machine can run.
 
-| Role | Provider ID | Model/options |
-|---|---|---|
-| Coordinator | `codex` | `gpt-6.1-sol`, default `reasoningEffort=high` |
-| Implementer | `antigravity` | `gemini-3.8-flash-high`; no separate options selected |
-| Critic pool | `pi`, `grok`, `opencode` | User-selected model and settings from the live catalog |
-| Deferred | MCode | MiniMax M3.1 Flash through future ACP integration; not native support |
+Provider IDs observed in this build: `codex`, `antigravity`, `pi`, `grok`, `opencode`. This is a capability snapshot, not a suggestion. Use `orchestrator_capabilities` for what is selectable now; installed models change between upgrades.
 
-The migration's `xhigh` coordinator effort was a session override; historical receipts stay unchanged. Reviewer Max settings from that session are not defaults.
+Effort or option values from any past session — a coordinator override, a reviewer maximum, or a named model in a dated receipt — are historical evidence only. Nothing from a previous mission is a default for the next one.
 
 For actual execution evidence use [council §4](../council.md#4-report-formats): distinguish requested, configured, and provider-confirmed/unverified values. Catalog defaults do not prove what a task ran.
 

@@ -1,16 +1,23 @@
 # OMP planning loop
 
-Sol turns a concrete request into an authorized frozen contract. Follow the [OMP entry and role/review rules](./README.md); this is not the T3 workflow. Read [project-profile.md](../profiles/project-profile.md) for correctness and gates, and [machine-profile.md](../profiles/machine-profile.md) only for relevant environment facts, not T3-only APIs.
+The coordinator turns a concrete request into an authorized frozen contract. Follow the [OMP entry and role/review rules](./README.md); this is not the T3 workflow. Read [project-profile.md](../profiles/project-profile.md) for correctness and gates, and [machine-profile.md](../profiles/machine-profile.md) only for relevant environment facts, not T3-only APIs.
 
 ## Start prompt
 
 ```text
-Act as OMP coordinator Sol (openai-codex/gpt-6.1-sol, thinking high).
-Plan <concrete request>. Verify active configured identity; do not substitute.
+Mission roster (named by the user, this mission only; nothing here has a standing model):
+  coordinator:   <provider>/<model>/<effort>
+  plan critics:  <provider>/<model>/<effort> per risk level, or none for Low
+  implementer:   <provider>/<model>/<effort>
+  final critics: <provider>/<model>/<effort>
+
+Act as OMP coordinator. Plan <concrete request>.
+Verify active configured identity; do not substitute or default.
 Read AGENTS.md, relevant specification, sources, tests, and findings.
 Follow docs/process/omp/planning-loop.md. Resolve requirements and blockers,
 obtain risk-sized independent review, and freeze the authorized dated plan.
-Do not begin implementation automatically.
+If a needed roster entry is missing, inspect the live available choices and
+ask once; choose no model yourself. Do not begin implementation automatically.
 ```
 
 ## 1. Inspect before deciding
@@ -28,7 +35,7 @@ Authorization: <concrete user instruction, or pending>
 Reference: <pending until freeze>
 Surface: omp
 Risk and review: <level, reason, independent questions, explicit exceptions>
-Roster: <authorized runtimes/models/settings; requested vs configured evidence>
+Roster: <user-named runtimes/models/settings per role; requested vs configured evidence>
 Expected child tasks: <plan reviewers + implementers + final reviewers>
 
 ## Outcome
@@ -45,13 +52,13 @@ Behavior, meaningful edge cases/tests, four project gates and delivery authority
 Findings, evidence, dispositions and reasons.
 ```
 
-Use the [OMP risk policy](./README.md#review-policy): Normal one reviewer, High two unless explicitly excepted. Permissions/workflow documents can be High risk. Select workers/settings per session; no unavailable-model substitute. Keep scope sufficient to implement without invented requirements. Plan product access as read-only; tests use synthetic HOME, never the user's real application state. Inspect changed snapshot/golden evidence before any regeneration.
+Use the [OMP risk policy](./README.md#review-policy): Normal one reviewer, High two unless explicitly excepted. Permissions/workflow documents can be High risk. The user names workers/settings per session; no unavailable-model substitute. Keep scope sufficient to implement without invented requirements. Plan product access as read-only; tests use synthetic HOME, never the user's real application state. Inspect changed snapshot/golden evidence before any regeneration.
 
 ## 3. Review independently
 
 First inspect draft fields, relative links, allowed paths, and source-backed claims. Prepare compact evidence-first briefs using the README's exact guard and report schema. Include one clear question per critic, relevant named sources, draft revision/fingerprint, and review criteria. Verify configured runtime/model/settings match authorization; disclose upstream identity limits.
 
-Select the dispatch route before starting any critic: when Herdr is requested, keep Sol/OMP native in Tern and follow the [external Herdr adapter](./herdr.md) for the verified named-session/socket gate, explicit worker pane IDs, bounded waits and inspect-before-resend. Missing or ambiguous connection stops that route; being outside Herdr does not. Never silently replace requested Herdr dispatch with native tasks or standalone relays. When Herdr is not requested, use the standalone route.
+Select the dispatch route before starting any critic: when Herdr is requested, keep the OMP coordinator native in Tern and follow the [external Herdr adapter](./herdr.md) for the verified named-session/socket gate, explicit worker pane IDs, bounded waits and inspect-before-resend. Missing or ambiguous connection stops that route; being outside Herdr does not. Never silently replace requested Herdr dispatch with native tasks or standalone relays. When Herdr is not requested, use the standalone route.
 
 Capture status/fingerprints, dispatch all required reviewers before waiting, and retain the README lifecycle ledger. Each round uses a fresh independent session, not a resumed author conversation. Inspect the complete reports and post-review fingerprints. Require a substantive verdict, not idle/exit-only success; unexpected edits trigger preserve/inspect/stop. Low risk needs no critic dispatch.
 
@@ -63,7 +70,7 @@ Use fresh targeted follow-ups for affected review questions, carrying the origin
 
 ## 5. Freeze in two commits
 
-Only Sol commits. A commit cannot include its own future hash:
+Only the coordinator commits. A commit cannot include its own future hash:
 
 1. Leave `Reference:` pending and commit **only** the agreed plan:
    ```bash
@@ -77,7 +84,7 @@ Only Sol commits. A commit cannot include its own future hash:
    git commit -m "docs: record plan <slug> frozen reference"
    ```
 
-The second commit cannot change the operative contract. Commit presence is not human authorization. Push only under applicable user authorization; the current migration explicitly requires `git push origin main` for each commit and agreement of `git rev-parse HEAD`, `git rev-parse origin/main`, and `git ls-remote origin refs/heads/main`.
+The second commit cannot change the operative contract. Commit presence is not human authorization. Push only when the user explicitly authorized that push, to the destination they named; when a push is authorized, verify agreement of `git rev-parse HEAD`, `git rev-parse origin/<branch>`, and `git ls-remote origin refs/heads/<branch>`.
 
 Before affected implementation, **both coordinator and implementer** inspect the referenced frozen version and confirm every approved operative amendment is included. Behavior, scope, compatibility, permissions, machine changes, or execution-contract amendments require explicit applicable authorization and a new two-commit freeze. Reuse authorization already covering the concrete action. An arbitrary newer plan commit cannot override the frozen reference.
 

@@ -2,17 +2,26 @@
 
 > **Surface: T3 Code (active).** This T3 workflow remains unchanged. In OMP / Oh My Pi, use the separate [OMP entry](./omp/README.md) and [OMP planning loop](./omp/planning-loop.md). OMP policy takes precedence only on OMP.
 
-How a request becomes a reviewed, frozen plan before implementation. Sol coordinates; review roles and risk levels are defined in [council.md](./council.md).
+How a request becomes a reviewed, frozen plan before implementation. The coordinator drives; review roles and risk levels are defined in [council.md](./council.md).
 
 Read [project-profile.md](./profiles/project-profile.md) for correctness, gates, and sensitive areas. Before dispatch, read council §§1–4 for model choices, Full access preflight, the exact critic guard, reports, and task lifecycle. Consult [machine-profile.md](./profiles/machine-profile.md) when provider or workspace facts need checking.
 
 ## Start-Planning Prompt
 
+Name the roster first. The user gives provider, model, and effort for every role at mission start; the prompt itself carries no model choice ([council §1](./council.md#1-the-roster-and-roles)).
+
 ```text
-Act as coordinator Sol (Codex gpt-6.1-sol). Plan <feature/bug>.
+Mission roster (named by the user, this mission only):
+  coordinator:   <provider>/<model>/<effort>
+  plan critics:  <provider>/<model>/<effort> per risk level, or none for Low
+  implementer:   <provider>/<model>/<effort>
+  final critics: <provider>/<model>/<effort>
+
+Act as coordinator. Plan <feature/bug>.
 Read AGENTS.md §4, the relevant specification, source, tests, and findings.
 Follow docs/process/planning-loop.md. Choose the risk level and review scope,
 resolve findings, and freeze docs/plans/<dated-slug>.md before implementation.
+If a needed roster entry is missing, ask once with the live catalog; choose no model yourself.
 ```
 
 ## Step 1 — Inspect
@@ -29,6 +38,7 @@ Write a short, sufficient plan to `docs/plans/<dated-slug>.md`, for example `202
 # Plan: <name>
 Status: Draft | Agreed
 Authorization: <existing user instruction, or "pending">
+Roster: <user-named provider/model/effort per role; requested vs configured evidence>
 Reference: <pending until Step 5>
 Risk and review: <council §5 level, reason, reviewer questions>
 Expected child tasks: <planning + implementation + final review; before corrections>
@@ -59,7 +69,7 @@ Choose risk and expected task count under [council §5](./council.md#5-review-ri
 For the chosen risk level:
 
 1. Check applicable draft fields, references/links, and source-backed claims before dispatch.
-2. Reuse the user's session model/settings choices and approved fallback. If missing, use the council's live-catalog ask-once procedure; do not silently choose models or waive family requirements.
+2. Reuse the roster the user named for this mission and any fallback they already authorized. If an entry is missing, use the council's live-catalog ask-once procedure; choose no model yourself and waive no family disclosure-and-acceptance duty (council §1).
 3. Verify the coordinator's active Full access mode. Prepare each critic's compact, evidence-first brief under [council §6](./council.md#6-review-efficiency-without-weaker-acceptance), including the verbatim guard and report schema.
 4. Capture status/fingerprints and dispatch all critics in the wave before waiting. Use `delegate_task` with explicit user-selected target/options, `runtimeMode=full-access`, `interactionMode=plan`, `role=review`, `mode=async`, and a stable request ID distinct per round.
 5. Track task/run identity and follow council §3 for waiting, readback, cancellation, and cleanup. Collect every report and verify that critics left the files unchanged.
