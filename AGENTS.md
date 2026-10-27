@@ -8,6 +8,10 @@
 > implementer, reviewers) are selected by the user per mission. If a roster entry is missing,
 > ask once — never default, infer, or substitute (`docs/process/council.md` §1; on the OMP
 > surface, `docs/process/omp/README.md`).
+>
+> **Surface routing:** on the BB surface, the critic and implementer dispatch, tracking, readback,
+> and cancellation mechanics come from the `bb-council` skill; `council.md` policy — roles, risk
+> levels, guard, report fields — is unchanged there.
 
 Welcome, AI agent. You are pair-programming on **Skill Lens**, a local diagnostics and resolution CLI tool for AI agent capabilities (`SKILL.md`).
 
