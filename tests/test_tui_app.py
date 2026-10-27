@@ -862,13 +862,19 @@ def test_real_worker_newest_failure_retains_old_snapshot(
         app = SkillLensApp(home=tmp_path, cwd=tmp_path)
         async with app.run_test() as pilot:
             # Initial capture succeeds
-            await pilot.pause()
+            for _ in range(100):
+                if app.controller.current is not None and app.controller.status == "ready":
+                    break
+                await pilot.pause(0.01)
             assert app.controller.current is not None
             initial_snap = app.controller.current
 
             # Refresh fails
             await pilot.press("r")
-            await pilot.pause()
+            for _ in range(100):
+                if app.controller.is_failed:
+                    break
+                await pilot.pause(0.01)
 
             # Old snapshot retained!
             assert app.controller.current is initial_snap
