@@ -117,6 +117,12 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
 
 ### Fixed
 
+- **TUI Home could stay empty after its initial scan.** If the first capture
+  finished before the Home screen finished mounting, the ready snapshot was
+  published while the screen still treated itself as unmounted, and no later
+  event repopulated the table. The post-mount update now runs after the screen
+  has finished mounting. A regression test covers the early-completion ordering.
+
 - **Codex configuration symlink loops on Python 3.13 and later.** Resolve
   existing configuration paths strictly before allowing missing paths. A
   circular shortcut is reported as unsupported instead of silently surviving

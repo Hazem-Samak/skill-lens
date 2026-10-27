@@ -420,7 +420,7 @@ class HomeScreen(Screen[None]):
         table.focus()
         self._apply_width(self.size.width)
         self.sync_from_controller()
-        self._host._update_ui()
+        self.call_after_refresh(self._host._update_ui)
 
     def on_resize(self, event: events.Resize) -> None:
         self._apply_width(event.size.width)

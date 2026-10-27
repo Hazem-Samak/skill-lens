@@ -1690,3 +1690,54 @@ def test_home_state_cell_suppresses_only_expected_stale_row(mock_home: Path) -> 
             assert app.return_code == int(ExitCode.OK)
 
     asyncio.run(_run())
+
+
+def test_initial_capture_completing_before_home_mount_still_populates_table(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A capture that wins the mount race must still populate the Home table.
+
+    Regression: the app starts the initial capture before the default Home
+    screen is mounted.  If the worker finishes first, the ready snapshot is
+    published while Home's mounted guard is still false.  Without a deferred
+    post-mount reconcile, the table stays empty until the user refreshes.
+    """
+    _claude_skills(mock_home, "alpha")
+    home = paths.home()
+    snapshot = capture_session(generation=1, home=home, cwd=home)
+
+    def instant_capture(*, generation: int, **_: Any) -> Any:
+        return replace(snapshot, generation=generation)
+
+    mount_statuses: list[str] = []
+    original_on_mount = HomeScreen.on_mount
+
+    def recording_on_mount(self: HomeScreen) -> None:
+        mount_statuses.append(self._host.controller.status)
+        original_on_mount(self)
+
+    monkeypatch.setattr("skill_lens.tui.app.capture_session", instant_capture)
+    monkeypatch.setattr(HomeScreen, "on_mount", recording_on_mount)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=home, cwd=home)
+        async with app.run_test(size=(100, 30)) as pilot:
+            await _wait_until(
+                pilot,
+                lambda: (
+                    app.controller.status == "ready"
+                    and isinstance(app.screen, HomeScreen)
+                    and app.screen.is_mounted
+                ),
+                "ready Home mounted",
+            )
+            await pilot.pause(0.05)
+            assert mount_statuses == ["ready"], (
+                "test no longer exercises the early-capture ordering"
+            )
+            assert _table(app).row_count == 1
+            assert _row_texts(app)[0][0] == "alpha"
+            await pilot.press("q")
+            assert app.return_code == int(ExitCode.OK)
+
+    asyncio.run(_run())
