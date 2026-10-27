@@ -8,7 +8,7 @@ and push it.
 Roster: Coordinator/implementer — the current assistant session; the owner
 approved the reviewer exception for this one-line fix. No critic models were
 named for this mission.
-Reference: pending
+Reference: a361a12fee38dedbc417438b7466a9df6bed1eb0
 Risk and review: Normal by the project table (a non-load-bearing product fix),
 with the owner's explicit exception from independent critic dispatch. Review is
 the requested two-axis `/code-review` pass plus the four project gates.
