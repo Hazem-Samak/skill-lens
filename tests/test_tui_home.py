@@ -137,9 +137,19 @@ async def _wait_until(pilot: Any, predicate: Any, label: str, timeout: float = 5
 async def _wait_ready(pilot: Any, app: SkillLensApp) -> None:
     await _wait_until(
         pilot,
-        lambda: app.controller.current is not None and app.controller.status == "ready",
-        "initial capture",
+        lambda: (
+            app.controller.current is not None
+            and app.controller.status == "ready"
+            and isinstance(app.screen, HomeScreen)
+            and app.screen._generation == app.controller.current.generation
+            and (
+                len(app.controller.current.scan.skills) == 0
+                or app.screen.query_one("#skill-table", DataTable).row_count > 0
+            )
+        ),
+        "initial capture and home table ready",
     )
+    await pilot.pause(0.02)
 
 
 async def _wait_reports_idle(pilot: Any, app: SkillLensApp) -> None:
