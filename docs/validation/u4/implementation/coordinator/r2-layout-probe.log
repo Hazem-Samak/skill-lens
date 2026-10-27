@@ -1,0 +1,77 @@
+INITIAL screen_scroll 0.0 max 9 title Region(x=0, y=1, width=58, height=22) strip Region(x=0, y=23, width=58, height=3) candidates Region(x=0, y=31, width=58, height=1) focus Button(id='why-agent-opencode', classes='-style-default active')
+VISIBLE:  ⭘                 Skill Lens — 0.1.1                       
+ Installation:                                              
+ ~/.claude/skills/nested_long_directory_component_nested_   
+ long_directory_component_nested_long_directory_component   
+ _/long_candidate_skill_name_exceeding_narrow_terminals_e   
+ asily_and_wrapping_properly                                
+ Name:                                                      
+ long_candidate_skill_name_exceeding_narrow_terminals_eas   
+ ily_and_wrapping_properly                                  
+ Working directory: ~                                       
+ Agent: OpenCode V2                                         
+ Lookup name:                                               
+ long_candidate_skill_name_exceeding_narrow_terminals_eas   
+ ily_and_wrapping_properly                                  
+ Collision policy: Shadow (Later-registered source wins)    
+ (documented)                                               
+ Report-wide headline: ACTIVE                               
+ Note: OpenCode evaluation assumes base 'build' agent in  ▄▄
+ a new session; system/managed configuration locations,     
+ system skills, existing-session selections, and            
+ agent-specific policies are omitted from runtime           
+ modeling, which may affect permission and discovery        
+ confidence.                                                
+ esc Back  q Quit  r Refresh                                
+AFTER TAB screen_scroll 9 max 9 title Region(x=0, y=-8, width=58, height=22) strip Region(x=0, y=14, width=58, height=3) candidates Region(x=0, y=22, width=58, height=1) focus CollapsibleTitle()
+VISIBLE:  ⭘                 Skill Lens — 0.1.1                       
+ Agent: OpenCode V2                                         
+ Lookup name:                                               
+ long_candidate_skill_name_exceeding_narrow_terminals_eas   
+ ily_and_wrapping_properly                                  
+ Collision policy: Shadow (Later-registered source wins)    
+ (documented)                                             ▄▄
+ Report-wide headline: ACTIVE                               
+ Note: OpenCode evaluation assumes base 'build' agent in    
+ a new session; system/managed configuration locations,     
+ system skills, existing-session selections, and            
+ agent-specific policies are omitted from runtime           
+ modeling, which may affect permission and discovery        
+ confidence.                                                
+  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔                                            
+   OpenCode V2                                              
+  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                            
+ Ready: 1 skills discovered                                 
+                                                            
+ Report:                                                    
+ long_candidate_skill_name_exceeding_narrow_terminals_eas   
+ ily_and_wrapping_properly for OpenCode V2                  
+  ▼ *                                                       
+ esc Back  q Quit  r Refresh                                
+AFTER ENTER/PAGEDOWN screen_scroll 9 max 9 title Region(x=0, y=-8, width=58, height=22) strip Region(x=0, y=14, width=58, height=3) candidates Region(x=0, y=22, width=58, height=1) focus CollapsibleTitle()
+VISIBLE:  ⭘                 Skill Lens — 0.1.1                       
+ Agent: OpenCode V2                                         
+ Lookup name:                                               
+ long_candidate_skill_name_exceeding_narrow_terminals_eas   
+ ily_and_wrapping_properly                                  
+ Collision policy: Shadow (Later-registered source wins)    
+ (documented)                                             ▄▄
+ Report-wide headline: ACTIVE                               
+ Note: OpenCode evaluation assumes base 'build' agent in    
+ a new session; system/managed configuration locations,     
+ system skills, existing-session selections, and            
+ agent-specific policies are omitted from runtime           
+ modeling, which may affect permission and discovery        
+ confidence.                                                
+  ▔▔▔▔▔▔▔▔▔▔▔▔▔▔                                            
+   OpenCode V2                                              
+  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                            
+ Ready: 1 skills discovered                                 
+                                                            
+ Report:                                                    
+ long_candidate_skill_name_exceeding_narrow_terminals_eas   
+ ily_and_wrapping_properly for OpenCode V2                  
+  long_candidate_skill_name_exceeding_narrow_terminals_     
+ esc Back  q Quit  r Refresh                                
+.
+1 passed in 0.91s

@@ -1,0 +1,37 @@
+import asyncio
+from textual.widgets import Collapsible
+from textual.containers import VerticalScroll
+from skill_lens.core import paths
+from skill_lens.tui.app import SkillLensApp
+from tests.test_tui_why import _wait_ready, _wait_why_idle
+
+def test_layout(mock_home,monkeypatch):
+    monkeypatch.setattr(paths,'home',lambda:mock_home)
+    name='long_candidate_skill_name_exceeding_narrow_terminals_easily_and_wrapping_properly'
+    d=mock_home/'.claude'/'skills'/('nested_long_directory_component_'*3)/name
+    d.mkdir(parents=True)
+    (d/'SKILL.md').write_text(f'---\nname: {name}\ndescription: Very long description\n---\nBody')
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test(size=(60,24)) as pilot:
+            await _wait_ready(pilot,app)
+            await pilot.press('enter')
+            await _wait_why_idle(pilot,app)
+            screen=app.screen
+            block=screen.query_one(Collapsible)
+            scroll=screen.query_one('#why-candidates',VerticalScroll)
+            def state(label):
+                strips=screen._compositor.render_strips()
+                visible='\n'.join(''.join(seg.text for seg in s) for s in strips)
+                print(label,'screen_scroll',screen.scroll_y,'max',screen.max_scroll_y,'title',screen.query_one('#why-title').region,'strip',screen.query_one('#why-agent-strip').region,'candidates',scroll.region,'focus',app.focused)
+                print('VISIBLE:',visible)
+            state('INITIAL')
+            await pilot.press('tab')
+            await pilot.pause()
+            state('AFTER TAB')
+            await pilot.press('enter')
+            await pilot.pause()
+            await pilot.press('pagedown')
+            await pilot.pause()
+            state('AFTER ENTER/PAGEDOWN')
+    asyncio.run(run())

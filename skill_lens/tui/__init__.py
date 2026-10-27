@@ -1,4 +1,4 @@
-"""Skill Lens full-screen terminal UI entry points (Assignment U2).
+"""Skill Lens full-screen terminal UI entry points (Assignments U2-U4).
 
 Specification reference: FULL_SCREEN_TUI.md §9.1, §10, Step 2, and §21.7.
 Lazily exposes `run(home, cwd) -> int` for CLI launch, using an owned
@@ -29,6 +29,7 @@ from skill_lens.tui.session import (
     ViewName,
     ViewRequest,
 )
+from skill_lens.tui.why import WhyScreen
 
 
 def run(
@@ -111,5 +112,6 @@ __all__ = [
     "ViewReportComplete",
     "ViewReportFailed",
     "ViewRequest",
+    "WhyScreen",
     "run",
 ]

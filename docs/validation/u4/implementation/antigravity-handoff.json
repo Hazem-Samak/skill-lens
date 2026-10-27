@@ -1,0 +1,13 @@
+{
+  "authorization": "Owner: Okay you can use Gemini 3.8 Flash High from Anti Gravity as the implementer",
+  "target": "antigravity/gemini-3.8-flash-high",
+  "runtimeMode": "full-access",
+  "interactionMode": "default",
+  "partial_sha256": {
+    "skill_lens/tui/why.py": "30896ff2c551dcdb2ef15a152164b6c9c7502aa367fe070d95eab717967a0e4d",
+    "skill_lens/tui/home.py": "c869afa9d55b6707f4080bc00f9df59b5314926ec0dffdbbb38d318253a811c4"
+  },
+  "prior_attempts": 2,
+  "original_baseline": "baseline-pytest.log",
+  "reviewers_unchanged": true
+}

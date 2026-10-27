@@ -44,6 +44,7 @@ from skill_lens.tui.session import (
     SessionController,
     ViewName,
 )
+from skill_lens.tui.why import WhyScreen
 
 
 class CaptureComplete(Message):
@@ -118,6 +119,7 @@ class SkillLensApp(App[int]):
     SUB_TITLE = __version__
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = False
     COMMANDS: ClassVar[set[Any]] = set()
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("q", "quit", "Quit", show=True),
         Binding("r", "refresh", "Refresh", show=True),
@@ -200,11 +202,37 @@ class SkillLensApp(App[int]):
 
     def action_refresh(self) -> None:
         """Request a session refresh and dispatch background worker."""
+        if isinstance(self.screen, HomeScreen):
+            self.screen._clear_removal_notice()
         req = self.controller.request_refresh()
         if req is not None:
             gen, event = req
             self._update_ui()
             self._run_capture(gen, self._home, self._cwd, event)
+
+    def open_why(self, key: str, agent_id: str | None) -> None:
+        """Open a Why screen for the given installation key and agent."""
+        if isinstance(self.screen, WhyScreen):
+            return
+        home = self.screen if isinstance(self.screen, HomeScreen) else None
+        if home is not None:
+            home.suspend_why()
+        why = WhyScreen(key, agent_id)
+        self.push_screen(why)
+
+    def close_why(self, removal_notice: str | None = None) -> None:
+        """Close the Why screen and return to Home."""
+        if not isinstance(self.screen, WhyScreen):
+            return
+        why = self.screen
+        why._cancel_owned_token()
+        prev_screen = self.screen_stack[-2] if len(self.screen_stack) >= 2 else None
+        self.pop_screen()
+        if isinstance(prev_screen, HomeScreen):
+            if removal_notice is not None:
+                prev_screen.set_removal_notice(removal_notice)
+            prev_screen.resume_why()
+            self._update_ui()
 
     def request_report(self, view: ViewName, arguments: tuple[str, ...]) -> ReportValue | None:
         """Adapter method for Why/Diff/Compare report computation.
@@ -308,9 +336,9 @@ class SkillLensApp(App[int]):
             message.arguments,
             message.report,
         )
-        home = self._home_screen()
-        if home is not None:
-            home.note_report_outcome(
+        screen = self.screen
+        if isinstance(screen, (HomeScreen, WhyScreen)):
+            screen.note_report_outcome(
                 message.view,
                 message.request_id,
                 message.generation,
@@ -332,9 +360,9 @@ class SkillLensApp(App[int]):
             message.arguments,
             message.error,
         )
-        home = self._home_screen()
-        if home is not None:
-            home.note_report_outcome(
+        screen = self.screen
+        if isinstance(screen, (HomeScreen, WhyScreen)):
+            screen.note_report_outcome(
                 message.view,
                 message.request_id,
                 message.generation,
@@ -370,41 +398,99 @@ class SkillLensApp(App[int]):
     def _update_ui(self) -> None:
         """Update placeholder screen status labels on the UI thread."""
         try:
-            status_widget = self.query_one("#status-text", Static)
-            details_widget = self.query_one("#error-details", Static)
-        except NoMatches:
+            screen = self.screen
+        except (ScreenStackError, UnknownModeError):
             return
 
-        status = self.controller.status
-        if status == "loading":
-            status_widget.update("Scanning skills...")
-            details_widget.update("")
-        elif status == "ready":
-            count = (
-                len(self.controller.current.index.entries)
-                if self.controller.current is not None
-                else 0
-            )
-            status_widget.update(f"Ready: {count} skills discovered")
-            details_widget.update("")
-        elif status == "refused":
-            msg = self.controller.refusal_message or "Snapshot refused."
-            status_widget.update(msg)
-            details_widget.update("")
-        elif status == "retry":
-            msg = self.controller.retry_message or "Files changed while scanning. Press r to retry."
-            status_widget.update(msg)
-            details_widget.update("")
-        elif status == "error":
-            status_widget.update("Error: Unexpected internal fault. Details in memory only.")
-            details_widget.update(self.controller.last_error_details or "")
-        else:
-            status_widget.update("Idle")
-            details_widget.update("")
+        if isinstance(screen, HomeScreen):
+            try:
+                status_widget = screen.query_one("#status-text", Static)
+                details_widget = screen.query_one("#error-details", Static)
+            except NoMatches:
+                status_widget = None
+                details_widget = None
 
-        home = self._home_screen()
-        if home is not None:
-            home.sync_from_controller()
+            if status_widget is not None and details_widget is not None:
+                status = self.controller.status
+                if status == "loading":
+                    status_widget.update("Scanning skills...")
+                    details_widget.update("")
+                elif status == "ready":
+                    count = (
+                        len(self.controller.current.index.entries)
+                        if self.controller.current is not None
+                        else 0
+                    )
+                    status_widget.update(f"Ready: {count} skills discovered")
+                    details_widget.update("")
+                elif status == "refused":
+                    msg = self.controller.refusal_message or "Snapshot refused."
+                    status_widget.update(msg)
+                    details_widget.update("")
+                elif status == "retry":
+                    msg = (
+                        self.controller.retry_message
+                        or "Files changed while scanning. Press r to retry."
+                    )
+                    status_widget.update(msg)
+                    details_widget.update("")
+                elif status == "error":
+                    status_widget.update(
+                        "Error: Unexpected internal fault. Details in memory only."
+                    )
+                    details_widget.update(self.controller.last_error_details or "")
+                else:
+                    status_widget.update("Idle")
+                    details_widget.update("")
+
+            with contextlib.suppress(NoMatches):
+                notice_widget = screen.query_one("#removal-notice", Static)
+                notice_widget.update(screen._removal_notice or "")
+
+            screen.sync_from_controller()
+
+        elif isinstance(screen, WhyScreen):
+            try:
+                status_widget = screen.query_one("#why-status", Static)
+                details_widget = screen.query_one("#why-error-details", Static)
+            except NoMatches:
+                status_widget = None
+                details_widget = None
+
+            if status_widget is not None and details_widget is not None:
+                status = self.controller.status
+                if status == "loading":
+                    status_widget.update("Scanning skills...")
+                    details_widget.update("")
+                elif status == "ready":
+                    count = (
+                        len(self.controller.current.index.entries)
+                        if self.controller.current is not None
+                        else 0
+                    )
+                    status_widget.update(f"Ready: {count} skills discovered")
+                    details_widget.update("")
+                elif status == "refused":
+                    msg = self.controller.refusal_message or "Snapshot refused."
+                    status_widget.update(msg)
+                    details_widget.update("")
+                elif status == "retry":
+                    msg = (
+                        self.controller.retry_message
+                        or "Files changed while scanning. Press r to retry."
+                    )
+                    status_widget.update(msg)
+                    details_widget.update("")
+                elif status == "error":
+                    status_widget.update(
+                        "Error: Unexpected internal fault. Details in memory only."
+                    )
+                    details_widget.update(self.controller.last_error_details or "")
+                else:
+                    status_widget.update("Idle")
+                    details_widget.update("")
+
+            screen.sync_from_controller()
 
 
 __all__ = [
@@ -414,4 +500,5 @@ __all__ = [
     "SkillLensApp",
     "ViewReportComplete",
     "ViewReportFailed",
+    "WhyScreen",
 ]

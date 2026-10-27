@@ -1,0 +1,119 @@
+{
+  "cases": [
+    {
+      "mutant_detected_pattern": "rich",
+      "mutant_failing_assertion": "E       AssertionError: Shipped tui/ code contains prohibited operations:",
+      "mutant_rc": 1,
+      "name": "read_only_guard_detects_rich_import_in_why",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_read_only.py::test_shipped_tui_code_has_zero_read_only_violations"
+    },
+    {
+      "mutant_detected_pattern": "Forbidden synthetic-target filesystem read",
+      "mutant_failing_assertion": "E           AssertionError: Forbidden synthetic-target filesystem read: Path.read_text /Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-Jf15MJ/pytest-of-corvette/pytest-44/test_broad_read",
+      "mutant_rc": 1,
+      "name": "target_read_sentinel_detects_direct_path_read",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_broad_read_sentinels_and_target_preservation_manifest"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: Unowned Home token was invalidated by delayed detail callback!",
+      "mutant_rc": 1,
+      "name": "detail_token_guard_detects_unowned_invalidation",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_real_pop_delayed_detail_callback_protects_resumed_home"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: assert ResolutionReport(skill_name='deploy', agent='claude', agent_name='Claude Code', cwd='/mock/cwd', collision_policy='pre...ce=<Evidence.DOCUMENTED: 'documented'>, head",
+      "mutant_rc": 1,
+      "name": "agent_switch_detects_arguments_mismatch_bypass",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_detail_agent_switch_a_to_b_while_a_completes"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: assert 'Reason with [red]tags[/red] and \\\\backslashes' in '\u25bc * [bold]skill[/bold]\\\\test  (ACTIVE)\\n* skill\\\\test\\n  Canonical: ~/.claude/skills/deploy\\n  Hash: none\\nReason",
+      "mutant_rc": 1,
+      "name": "literal_markup_detects_enabled_markup_in_candidate_body",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_literal_rendering_markup_false"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: assert _OwnedWhy(lookup_name='shared', request=ViewRequest(generation=1, request_id=2, view='why', arguments=('/Users/corvett...fd6ddd/run-Jf15MJ/pytest-of-corvette/pytest-",
+      "mutant_rc": 1,
+      "name": "reviewer_mutant_1_remove_home_drive_suspended_guard",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_home_suspended_drive_and_outcome_guards_prevent_hidden_dispatch"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: Suspended guard must prevent note_report_outcome from processing outcome",
+      "mutant_rc": 1,
+      "name": "reviewer_mutant_2_remove_home_outcome_suspended_guard",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_home_suspended_drive_and_outcome_guards_prevent_hidden_dispatch"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: suspend_why must set worker cancellation event",
+      "mutant_rc": 1,
+      "name": "reviewer_mutant_3_omit_home_suspend_cancellation",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_cancellation_guards_kill_mutants"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: Matching _cancel_owned_token must set cancellation event",
+      "mutant_rc": 1,
+      "name": "reviewer_mutant_4_omit_detail_owned_cancellation",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_cancellation_guards_kill_mutants"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: assert ViewRequest(generation=1, request_id=3, view='why', arguments=('/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-Jf15MJ/pytest-of-corvette/pytest-60/tes",
+      "mutant_rc": 1,
+      "name": "reviewer_mutant_5_omit_pre_pop_detail_cancellation",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_cancellation_guards_kill_mutants"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: assert True is False",
+      "mutant_rc": 1,
+      "name": "reviewer_mutant_6_stale_error_marks_controller_failed",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_real_worker_race_blocked_home_to_detail_agent_change_and_stale_callbacks[error]"
+    }
+  ],
+  "control": {
+    "agent_switch": 0,
+    "cancellation_guards": 0,
+    "detail_token": 0,
+    "literal_markup": 0,
+    "read_only": 0,
+    "stale_error": 0,
+    "suspended_guards": 0,
+    "target_read": 0
+  },
+  "preservation": {
+    "repo_app_sha256_after": "c6a915e5d520eb07aef2faaea0fd9ee2834d05362ca2b2f1eae3c14b48a36867",
+    "repo_app_sha256_before": "c6a915e5d520eb07aef2faaea0fd9ee2834d05362ca2b2f1eae3c14b48a36867",
+    "repo_home_sha256_after": "efb8b049a9824abae8dd041336d1abcd4414ca1e79c0040d66fc6ded65e1278c",
+    "repo_home_sha256_before": "efb8b049a9824abae8dd041336d1abcd4414ca1e79c0040d66fc6ded65e1278c",
+    "repo_why_sha256_after": "54b8e5c22e56bb2f26978f1c9ddf70d07a73cf3467b5560d6784392ca6ec7412",
+    "repo_why_sha256_before": "54b8e5c22e56bb2f26978f1c9ddf70d07a73cf3467b5560d6784392ca6ec7412",
+    "restored_identical": true,
+    "work_app_sha256": "c6a915e5d520eb07aef2faaea0fd9ee2834d05362ca2b2f1eae3c14b48a36867",
+    "work_app_sha256_after_restore": "c6a915e5d520eb07aef2faaea0fd9ee2834d05362ca2b2f1eae3c14b48a36867",
+    "work_home_sha256": "efb8b049a9824abae8dd041336d1abcd4414ca1e79c0040d66fc6ded65e1278c",
+    "work_home_sha256_after_restore": "efb8b049a9824abae8dd041336d1abcd4414ca1e79c0040d66fc6ded65e1278c",
+    "work_why_sha256": "54b8e5c22e56bb2f26978f1c9ddf70d07a73cf3467b5560d6784392ca6ec7412",
+    "work_why_sha256_after_restore": "54b8e5c22e56bb2f26978f1c9ddf70d07a73cf3467b5560d6784392ca6ec7412"
+  },
+  "schema": "skill-lens/u4-mutation-gate/2",
+  "work_copy": "/Users/corvette/.t3/userdata/antigravity-tmp/ac0a3dfd6ddd/run-Jf15MJ/skill-lens-u4-mutation-x55kuq5e"
+}

@@ -1,0 +1,30 @@
+{
+  "head": "e29fca970ee32b3e71545a9902ea7f1c1f333a76",
+  "authorization": "Owner: I do authorize; bounded-continuation-authorization.md",
+  "gates": {
+    "pytest_tail": "skill_lens/tui/home.py                  686     56    250     50    88%   228->226, 452, 457-458, 464, 466->exit, 470-471, 481, 496, 533, 546->549, 551->554, 559->563, 560->562, 564->568, 604, 612, 616, 620, 625, 655, 672, 674, 678, 692-694, 770, 773, 785, 807, 897, 914-917, 933, 939->944, 941->944, 963->965, 975, 987, 993, 997, 1000, 1014, 1019, 1021, 1023, 1030, 1032, 1037, 1042, 1045->1047, 1051, 1065, 1071, 1078, 1081, 1084, 1090, 1094-1099\nskill_lens/tui/session.py               194      6     74      8    95%   109->112, 260, 262, 296, 298, 314, 330->exit, 346\nskill_lens/tui/why.py                   475     34    166     24    91%   317, 320, 323-324, 351->353, 379, 385-386, 399-402, 423, 429-432, 437->exit, 454, 501->509, 504->502, 547->552, 549->551, 573-576, 606-607, 625, 674-678, 751, 754-755, 761, 778-780, 812, 831->833, 846->858\n---------------------------------------------------------------------------------\nTOTAL                                  5611    399   2114    249    91%\nRequired test coverage of 90.0% reached. Total coverage: 90.78%\n=========================== short test summary info ============================\nSKIPPED [1] tests/test_session_snapshot.py:1979: Filesystem is case-insensitive; dual distinct physical files unsupported.\n================= 1127 passed, 1 skipped in 116.15s (0:01:56) ==================",
+    "mypy": "passed39files",
+    "ruff_check": "whole-repository passed",
+    "ruff_format": "whole-repository passed377files",
+    "diff_check": "passed",
+    "mutations": "11mutants/8controls/restores pass, bounded-mutations.json",
+    "layout_discrimination": "current pass / previous R2 layout fails intended1row assertion / restored pass; bounded-layout-discrimination.json",
+    "AST_mapping": "41functions,zero unmatched selectors"
+  },
+  "sha256": {
+    "CHANGELOG.md": "5f33145ddaa6dc862ecb91182db528faa4377523e0696ac93c2172801b5042a8",
+    "DEVELOPMENT.md": "ab4915e89be00a87c163f167768cd324a69562f0501173f010c437e57994f84f",
+    "FULL_SCREEN_TUI.md": "277a4809c7f677b3319674f503a1bd77d4a5888021d877ac92fbd845453d8afb",
+    "README.md": "f9b907aabd9e645f3561d56a8c6c68b188e586ae1ae04ef2c997f308252e69f2",
+    "docs/plans/2026-10-26-tui-u4-why.md": "9afc3fa0ab0b113575867e0365d29739e619491ff83c0a8e6f675c1f7cb2c400",
+    "skill_lens/tui/__init__.py": "48af91b94ee61a8622b8bc28226a7c3c79094628f528fdf285d01fff6d992a3a",
+    "skill_lens/tui/app.py": "c6a915e5d520eb07aef2faaea0fd9ee2834d05362ca2b2f1eae3c14b48a36867",
+    "skill_lens/tui/home.py": "efb8b049a9824abae8dd041336d1abcd4414ca1e79c0040d66fc6ded65e1278c",
+    "skill_lens/tui/why.py": "54b8e5c22e56bb2f26978f1c9ddf70d07a73cf3467b5560d6784392ca6ec7412",
+    "tests/test_tui_why.py": "95831c0b2542aec3429510fe7ad7545d11cc261d57fc5895bdb1b2c7c1124f1f",
+    "docs/TUI_U4_WALKTHROUGH.md": "332529bf9bf5c6b6aa766af612803b3b8cab587153ff6905068e0dccd58dffc9",
+    "docs/validation/u4/implementation/mutation_gate.py": "13beda96973fe48099767ce2371d6619857e0d2d864716e1dc8a79fa6bd4e451",
+    "docs/validation/u4/implementation/acceptance_mapping_r4.md": "085be99322ca11edc9272b21446b7d0227b85ac14a8728abe680aa83d3747949"
+  },
+  "acceptance": "pending targeted checks"
+}

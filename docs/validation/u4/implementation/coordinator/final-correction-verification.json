@@ -1,0 +1,89 @@
+{
+  "authorization": "Owner: yes a final authorization no problem; append-only plan execution record",
+  "base_head": "e29fca970ee32b3e71545a9902ea7f1c1f333a76",
+  "acceptance": "local technical acceptance; final MiniMax B1 resolved by direct discrimination, historical verdict preserved; no further delegate review claimed",
+  "pytest": {
+    "command": ".venv/bin/pytest --cov=skill_lens",
+    "exit_code": 0,
+    "summary": "================= 1127 passed, 1 skipped in 118.72s (0:01:58) ==================",
+    "combined_coverage": "90.78%",
+    "why_coverage": "91%",
+    "log": "final-correction-pytest.log"
+  },
+  "checks": {
+    "mypy": {
+      "command": [
+        ".venv/bin/mypy"
+      ],
+      "exit_code": 0,
+      "output": "Success: no issues found in 39 source files"
+    },
+    "ruff_check": {
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "output": "All checks passed!"
+    },
+    "ruff_format": {
+      "command": [
+        ".venv/bin/ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "output": "382 files already formatted"
+    },
+    "diff_check_preserving_raw_receipts": {
+      "command": [
+        "git",
+        "-c",
+        "core.whitespace=-blank-at-eol,-blank-at-eof",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": ""
+    }
+  },
+  "mutation_gate": {
+    "receipt": "../mutation_gate_r5.json",
+    "mutants_detected": 14,
+    "controls": 9,
+    "all_restores_pass": true,
+    "product_preserved": true
+  },
+  "reviewed_product_hashes_unchanged": {
+    "skill_lens/tui/__init__.py": "48af91b94ee61a8622b8bc28226a7c3c79094628f528fdf285d01fff6d992a3a",
+    "skill_lens/tui/app.py": "c6a915e5d520eb07aef2faaea0fd9ee2834d05362ca2b2f1eae3c14b48a36867",
+    "skill_lens/tui/home.py": "efb8b049a9824abae8dd041336d1abcd4414ca1e79c0040d66fc6ded65e1278c",
+    "skill_lens/tui/why.py": "54b8e5c22e56bb2f26978f1c9ddf70d07a73cf3467b5560d6784392ca6ec7412"
+  },
+  "sha256": {
+    "CHANGELOG.md": "3e0a770a0a4024fabf9d1f52103a7ec450fe1e6ffb590e8fc9cf04bc06a1f598",
+    "DEVELOPMENT.md": "5312c58c11da5ab269ed55db69f7f23dc46ee810f0445a7e5689abfbbe490fd5",
+    "FULL_SCREEN_TUI.md": "7ac2d748f2f6d112f3e972684fdf472294588d25dd2afcf298950da494cbd360",
+    "README.md": "859c9ae4562726abb01918aa1707d5711f3b7f1dec613289ef9f2b51e0166ba7",
+    "docs/plans/2026-10-26-tui-u4-why.md": "cbe26dd57a06f770c29e7c9b9e17c6d4b487f30ae94bf9df6996602851f9679c",
+    "skill_lens/tui/__init__.py": "48af91b94ee61a8622b8bc28226a7c3c79094628f528fdf285d01fff6d992a3a",
+    "skill_lens/tui/app.py": "c6a915e5d520eb07aef2faaea0fd9ee2834d05362ca2b2f1eae3c14b48a36867",
+    "skill_lens/tui/home.py": "efb8b049a9824abae8dd041336d1abcd4414ca1e79c0040d66fc6ded65e1278c",
+    "skill_lens/tui/why.py": "54b8e5c22e56bb2f26978f1c9ddf70d07a73cf3467b5560d6784392ca6ec7412",
+    "tests/test_tui_why.py": "9694683aa7e8c04b28a2c902232fbcaffd3c2cdaf724f061058b1743b5439b3a",
+    "docs/TUI_U4_WALKTHROUGH.md": "e142163755214b096bf4f4c1ee8a5d6a3ca00bc7b1e31d653a452e91d9e0dfc5",
+    "docs/validation/u4/implementation/mutation_gate.py": "d11465e58ff6b318ef1b57ef22140d00a53825d5d7038f8c690407d60cd8aaab",
+    "docs/validation/u4/implementation/acceptance_mapping_r4.md": "2222c9ad65cabd4f79e80b7573856faa06d88db63de4ba44642608f841852ffc",
+    "docs/validation/u4/acceptance.md": "3dd4205cea62a42a80b06538cd210a6b4c2f57445896ceec5623e3d941e86c60",
+    "docs/validation/u4/implementation/mutation_gate_r5.json": "f6dfe10c436a7411e0395ea9a89ece28f00964920384a04de43c3687def8610f"
+  },
+  "limits": [
+    "No human visual approval, hosted CI acceptance, release or publishing claimed",
+    "Exact entrypoint display-path assertion branch unexercised; mapping narrows claim",
+    "Historical raw diffs/logs and Markdown line breaks preserved; default staged whitespace check reports their original trailing whitespace"
+  ],
+  "delivery": "Coordinator authorized to commit/push accepted U4 paths; unrelated user paths excluded"
+}

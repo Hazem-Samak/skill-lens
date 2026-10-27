@@ -1,0 +1,60 @@
+{
+  "cases": [
+    {
+      "mutant_detected_pattern": "rich",
+      "mutant_failing_assertion": "E       AssertionError: Shipped tui/ code contains prohibited operations:",
+      "mutant_rc": 1,
+      "name": "read_only_guard_detects_rich_import_in_why",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_read_only.py::test_shipped_tui_code_has_zero_read_only_violations"
+    },
+    {
+      "mutant_detected_pattern": "Forbidden synthetic-target filesystem read",
+      "mutant_failing_assertion": "E           AssertionError: Forbidden synthetic-target filesystem read: Path.read_text /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-11/test_broad_read_sentinels_a",
+      "mutant_rc": 1,
+      "name": "target_read_sentinel_detects_direct_path_read",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_broad_read_sentinels_and_target_preservation_manifest"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: Unowned Home token was invalidated by delayed detail callback!",
+      "mutant_rc": 1,
+      "name": "detail_token_guard_detects_unowned_invalidation",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_real_pop_delayed_detail_callback_protects_resumed_home"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: assert ResolutionReport(skill_name='deploy', agent='claude', agent_name='Claude Code', cwd='/mock/cwd', collision_policy='pre...ce=<Evidence.DOCUMENTED: 'documented'>, head",
+      "mutant_rc": 1,
+      "name": "agent_switch_detects_arguments_mismatch_bypass",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_detail_agent_switch_a_to_b_while_a_completes"
+    },
+    {
+      "mutant_detected_pattern": "AssertionError",
+      "mutant_failing_assertion": "E           AssertionError: assert 'Reason with [red]tags[/red] and \\\\backslashes' in '\u25bc * [bold]skill[/bold]\\\\test  (ACTIVE)\\n* skill\\\\test\\n  Canonical: ~/.claude/skills/deploy\\n  Hash: none\\nReason",
+      "mutant_rc": 1,
+      "name": "literal_markup_detects_enabled_markup_in_candidate_body",
+      "restored_rc": 0,
+      "selector": "tests/test_tui_why.py::test_literal_rendering_markup_false"
+    }
+  ],
+  "control": {
+    "agent_switch": 0,
+    "detail_token": 0,
+    "literal_markup": 0,
+    "read_only": 0,
+    "target_read": 0
+  },
+  "preservation": {
+    "repo_why_sha256_after": "85d8ec0eccbe2a782166e06d5310defa04840122389f1912a50e3847a332a408",
+    "repo_why_sha256_before": "85d8ec0eccbe2a782166e06d5310defa04840122389f1912a50e3847a332a408",
+    "restored_identical": true,
+    "work_why_sha256": "85d8ec0eccbe2a782166e06d5310defa04840122389f1912a50e3847a332a408",
+    "work_why_sha256_after_restore": "85d8ec0eccbe2a782166e06d5310defa04840122389f1912a50e3847a332a408"
+  },
+  "schema": "skill-lens/u4-mutation-gate/1",
+  "work_copy": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u4-mutation-wao657vi"
+}

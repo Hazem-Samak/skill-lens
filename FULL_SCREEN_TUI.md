@@ -3,10 +3,11 @@
 > **Status:** 🛠️ **Partially implemented in development — 0.2 plan not released.**
 > C1–C5 (byte/hash helpers, captured engine inputs, capture and cancellation,
 > presentation extraction, Step 0 audit) and U1–U3 (optional install, worker
-> controller and Home browsing screen) are complete as development work
-> on the current branch. U4–U9 screens and 0.2 publishing remain
-> separate future work. No TUI extra is released: published PyPI 0.1.1 contains
-> no TUI package and no `[tui]` extra.
+> controller and Home browsing screen) are complete and accepted development work
+> on the current branch. U4 (Why detail screen) is technically accepted in
+> development after independent review and directly verified final test corrections.
+> See [U4 acceptance](docs/validation/u4/acceptance.md). U5–U9 screens and 0.2 publishing remain separate future work.
+> No TUI extra is released: published PyPI 0.1.1 contains no TUI package and no `[tui]` extra.
 > It overturns a v1 rule ("no full-screen TUI"), so it is deliberately detailed:
 > the point of the plan is that the next person can scaffold the work without
 > re-litigating the decisions below.
@@ -26,7 +27,7 @@
 > retained for its limited fixture result. Findings and prerequisite records are
 > in §20; [earlier review history](docs/archive/TUI_PLAN_REVIEWS.md) is retained
 > separately. Step 0 implementation (C1–C5) is complete under §21;
-> U1–U3 complete; U4–U9 assignments (§22) remain future work.
+> U1–U4 are technically accepted in development; U5–U9 assignments (§22) remain future work.
 
 > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
 > Catalog, skill contents, settings and diagnostic inputs remain fixed until
@@ -36,10 +37,9 @@
 > **Implementer handoff:** [§21](#21-step-0-implementation-contract) specifies
 > Step 0 types, function signatures, files and acceptance tests.
 > [§22](#22-assignments-for-the-implementer) is the ordered assignment list.
-> Current next work: **U4** (dedicated Why screen), per §22 order, after
-> separate authorization. Prerequisites (P1→P2→P3, C1–C5, U1–U3) are complete;
-> U4–U9 remain future work. Its plan must address shared Why-request ownership
-> between Home and the dedicated screen.
+> Current next assignment: **U5 (Diff and JSON)**, per §22 order, after separate
+> authorization. U4 local technical acceptance is recorded above; no new phase is started.
+> Prerequisites (P1→P2→P3, C1–C5, U1–U4) are complete and technically accepted; U5–U9 remain future work.
 
 ---
 

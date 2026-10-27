@@ -1,0 +1,22 @@
+from pathlib import Path
+import tempfile,subprocess,shutil,os,json,hashlib
+repo=Path.cwd(); work=Path(tempfile.mkdtemp(prefix='u4-bounded-layout-proof-')); py=repo/'.venv/bin/python'
+for name in ['skill_lens','tests']:
+ shutil.copytree(repo/name,work/name,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
+shutil.copy2(repo/'pyproject.toml',work/'pyproject.toml')
+diff=(repo/'docs/validation/u4/implementation/coordinator/review-r2.diff').read_text()
+section=diff.split('diff --git a/skill_lens/tui/why.py b/skill_lens/tui/why.py\n',1)[1].split('\ndiff --git ',1)[0]
+old='\n'.join(line[1:] for line in section.splitlines() if line.startswith('+') and not line.startswith('+++'))+'\n'
+expected=json.loads((repo/'docs/validation/u4/implementation/coordinator/verification-r2.json').read_text())['sha256']['skill_lens/tui/why.py']
+assert hashlib.sha256(old.encode()).hexdigest()==expected
+path=work/'skill_lens/tui/why.py'; current=path.read_text(); selector='tests/test_tui_why.py::test_terminal_dimensions_100x30_and_60x24_controls_and_wrapping'
+def run(label):
+ env=dict(os.environ,PYTHONPATH=str(work));r=subprocess.run([str(py),'-m','pytest',selector,'-q','-p','no:cacheprovider'],cwd=work,env=env,capture_output=True,text=True)
+ (Path('/private/tmp')/f'u4-bounded-layout-{label}.log').write_text(r.stdout+r.stderr);return {'returncode':r.returncode,'output_tail':(r.stdout+r.stderr)[-2200:]}
+result={'control':run('control')};path.write_text(old);result['old_layout']=run('old');path.write_text(current);result['restored']=run('restored')
+assert result['control']['returncode']==0,result
+assert result['old_layout']['returncode']!=0,result
+assert result['restored']['returncode']==0,result
+result['old_layout_sha256']=expected;result['current_layout_sha256']=hashlib.sha256(current.encode()).hexdigest();result['selector']=selector
+Path('/private/tmp/u4-bounded-layout-discrimination.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({k:v['returncode'] for k,v in result.items() if isinstance(v,dict)}))
+shutil.rmtree(work)

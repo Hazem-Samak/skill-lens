@@ -1,0 +1,121 @@
+NOTICE AFTER REFRESH: Removed old-installation
+FMODEL: ['claude', 'codex', 'dsh', 'omp', 'opencode', 'pi', 'qoder'] DOM: ['codex', 'dsh', 'omp', 'opencode', 'pi', 'qoder', 'claude']
+F
+=================================== FAILURES ===================================
+___________________ test_notice_cleared_on_explicit_refresh ____________________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-54/test_notice_cleared_on_explici0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a024150>
+
+    def test_notice_cleared_on_explicit_refresh(mock_home, monkeypatch):
+        monkeypatch.setattr(paths, 'home', lambda: mock_home)
+        build_scenario('claude_personal_beats_project', mock_home)
+        async def run():
+            app=SkillLensApp(home=mock_home,cwd=mock_home)
+            async with app.run_test() as pilot:
+                await _wait_ready(pilot,app)
+                home=app.screen
+                home.set_removal_notice('Removed old-installation')
+                await pilot.press('r')
+                await _wait_until(pilot,lambda:app.controller.current.generation==2,'refresh publication')
+                print('NOTICE AFTER REFRESH:',home._removal_notice)
+                assert home._removal_notice is None
+                assert not str(home.query_one('#removal-notice',Static).content)
+>       asyncio.run(run())
+
+/private/tmp/u4-review-probes/test_minimax_findings.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            await _wait_ready(pilot,app)
+            home=app.screen
+            home.set_removal_notice('Removed old-installation')
+            await pilot.press('r')
+            await _wait_until(pilot,lambda:app.controller.current.generation==2,'refresh publication')
+            print('NOTICE AFTER REFRESH:',home._removal_notice)
+>           assert home._removal_notice is None
+E           AssertionError: assert 'Removed old-installation' is None
+E            +  where 'Removed old-installation' = PlaceholderHomeScreen()._removal_notice
+
+/private/tmp/u4-review-probes/test_minimax_findings.py:22: AssertionError
+________________ test_agent_dom_order_after_eligibility_refresh ________________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-54/test_agent_dom_order_after_eli0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a317d50>
+
+    def test_agent_dom_order_after_eligibility_refresh(mock_home,monkeypatch):
+        monkeypatch.setattr(paths,'home',lambda:mock_home)
+        build_scenario('symlink_farm_multi_agent',mock_home)
+        def controlled_capture(**kwargs):
+            snap=capture_session(**kwargs)
+            if kwargs['generation']==1:
+                snap=replace(snap,scan=replace(snap.scan,skills=tuple(replace(s,agents=tuple(a for a in s.agents if a!='claude')) for s in snap.scan.skills)))
+            return snap
+        monkeypatch.setattr('skill_lens.tui.app.capture_session',controlled_capture)
+        async def run():
+            app=SkillLensApp(home=mock_home,cwd=mock_home)
+            async with app.run_test() as pilot:
+                await _wait_ready(pilot,app)
+                await pilot.press('enter')
+                await _wait_why_idle(pilot,app)
+                why=app.screen
+                assert 'claude' not in [o.agent_id for o in why._agent_options]
+                await pilot.press('r')
+                await _wait_until(pilot,lambda:why._generation==2,'detail refresh')
+                await _wait_why_idle(pilot,app)
+                model=[o.agent_id for o in why._agent_options]
+                dom=[b.id.removeprefix('why-agent-') for b in why.query('#why-agent-strip Button')]
+                print('MODEL:',model,'DOM:',dom)
+                assert dom==model
+>       asyncio.run(run())
+
+/private/tmp/u4-review-probes/test_minimax_findings.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            await _wait_ready(pilot,app)
+            await pilot.press('enter')
+            await _wait_why_idle(pilot,app)
+            why=app.screen
+            assert 'claude' not in [o.agent_id for o in why._agent_options]
+            await pilot.press('r')
+            await _wait_until(pilot,lambda:why._generation==2,'detail refresh')
+            await _wait_why_idle(pilot,app)
+            model=[o.agent_id for o in why._agent_options]
+            dom=[b.id.removeprefix('why-agent-') for b in why.query('#why-agent-strip Button')]
+            print('MODEL:',model,'DOM:',dom)
+>           assert dom==model
+E           AssertionError: assert ['codex', 'ds... 'qoder', ...] == ['claude', 'c...e', 'pi', ...]
+E             
+E             At index 0 diff: 'codex' != 'claude'
+E             Use -v to get more diff
+
+/private/tmp/u4-review-probes/test_minimax_findings.py:49: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../../../private/tmp/u4-review-probes/test_minimax_findings.py::test_notice_cleared_on_explicit_refresh
+FAILED ../../../../../private/tmp/u4-review-probes/test_minimax_findings.py::test_agent_dom_order_after_eligibility_refresh
+2 failed in 0.75s

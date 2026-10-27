@@ -23,8 +23,8 @@ release (the optional `[tui]` browsing layer), not 0.1.2 — do not rename this
 heading to 0.1.2.
 
 The current development branch ships six line-oriented CLI commands plus an
-optional, additive, read-only TUI through U3 Home browsing
-(C1–C5 and U1–U3 complete). U4–U9 screens and 0.2 publishing remain
+optional, additive, read-only TUI through U4 Why resolution
+(C1–C5 and U1–U4 technically accepted in development). U5–U9 screens and 0.2 publishing remain
 separate future work. Earlier local gate evidence is recorded under
 `docs/validation/assessment-repairs/h/` and `docs/validation/u3/`. The later
 [overnight CI repair](docs/validation/overnight/2026-10-24/acceptance.md) passed
@@ -74,6 +74,14 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
   unbounded by bytes.
 
 ### Added
+
+- **Why resolution screen (U4).** The development TUI now provides a dedicated
+  Why resolution screen accessible by pressing Enter on a focused Home skill row.
+  Shows candidate collapsibles in resolution order, active agent switching strip,
+  lookup details, and honest loading/refreshed states. See the
+  [U4 walkthrough](docs/TUI_U4_WALKTHROUGH.md) and
+  [local technical acceptance](docs/validation/u4/acceptance.md). Human visual
+  approval and 0.2 publishing remain separate and are not claimed here.
 
 - **Home browsing screen (U3).** The development TUI now shows a skill table,
   scrollable metadata preview, text and agent filters, and optional per-agent

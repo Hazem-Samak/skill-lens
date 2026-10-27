@@ -15,6 +15,7 @@ helpers but never ``skill_lens.render`` or ``rich``.
 
 from __future__ import annotations
 
+import contextlib
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, ClassVar, Literal, Protocol, cast
 
@@ -56,6 +57,10 @@ class _ReportHost(Protocol):
 
     def _update_ui(self) -> None:
         """Ask the host app to refresh its status/error presentation."""
+        ...
+
+    def open_why(self, key: str, agent_id: str | None) -> None:
+        """Open a Why screen for the given installation key and agent."""
         ...
 
 
@@ -272,7 +277,7 @@ class HomeScreen(Screen[None]):
         Binding("slash", "focus_filter", "Filter", show=False),
         Binding("a", "cycle_agent", "Agent", show=False),
         Binding("escape", "clear_filter", "Clear filter", show=False),
-        Binding("enter", "noop_enter", "List", show=False),
+        Binding("enter", "open_why", "Why", show=False),
     ]
 
     DEFAULT_CSS = """
@@ -330,9 +335,18 @@ class HomeScreen(Screen[None]):
         padding: 0 1;
         color: $warning;
     }
-    #status-text, #error-details {
+    #status-text {
         height: auto;
         padding: 0 1;
+    }
+    #error-details {
+        height: auto;
+        padding: 0 1;
+    }
+    #removal-notice {
+        height: auto;
+        padding: 0 1;
+        color: $warning;
     }
     #footer-help {
         height: 1;
@@ -368,6 +382,8 @@ class HomeScreen(Screen[None]):
         self._inflight: _OwnedWhy | None = None
         self._syncing = False
         self._last_query = ""
+        self._suspended = False
+        self._removal_notice: str | None = None
 
     # -- lifecycle ---------------------------------------------------------
 
@@ -390,8 +406,9 @@ class HomeScreen(Screen[None]):
         yield Static("", id="catalog-note", markup=False)
         yield Static("Initializing...", id="status-text", markup=False)
         yield Static("", id="error-details", markup=False)
+        yield Static("", id="removal-notice", markup=False)
         yield Static(
-            "q: Quit   r: Refresh   /: Filter   a: Agent   Tab: Focus",
+            "q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   Tab: Focus",
             id="footer-help",
             markup=False,
         )
@@ -424,9 +441,55 @@ class HomeScreen(Screen[None]):
     def _controller_or_none(self) -> SessionController | None:
         return getattr(self._host, "controller", None)
 
+    def suspend_why(self) -> None:
+        """Suspend Home screen activity while detail screen is active."""
+        self._suspended = True
+        self._cancel_owned_why()
+
+    def on_screen_resume(self) -> None:
+        """Handle Textual ScreenResume event when detail screen pops."""
+        if self._suspended:
+            self.resume_why()
+        else:
+            try:
+                table = self.query_one("#skill-table", DataTable)
+                table.focus()
+            except NoMatches:
+                pass
+
+    def resume_why(self) -> None:
+        """Resume Home screen activity after returning from detail."""
+        self._suspended = False
+        if not self.is_mounted:
+            return
+        self.sync_from_controller()
+        if self.app.screen is self:
+            try:
+                table = self.query_one("#skill-table", DataTable)
+                table.focus()
+            except NoMatches:
+                pass
+
+    def set_removal_notice(self, notice: str | None) -> None:
+        """Set the notice displayed when a detail installation was removed."""
+        self._removal_notice = notice
+        with contextlib.suppress(NoMatches):
+            self.query_one("#removal-notice", Static).update(notice or "")
+
+    def clear_removal_notice(self) -> None:
+        """Clear removal notice on explicit user navigation or action."""
+        self._clear_removal_notice()
+
+    def _clear_removal_notice(self) -> None:
+        """Clear removal notice on explicit user navigation or action."""
+        if self._removal_notice is not None:
+            self._removal_notice = None
+            with contextlib.suppress(NoMatches):
+                self.query_one("#removal-notice", Static).update("")
+
     def sync_from_controller(self) -> None:
         """Reconcile the screen with the controller's published session."""
-        if not self.is_mounted:
+        if not self.is_mounted or self._suspended:
             return
         controller = self._controller_or_none()
         if controller is None:
@@ -463,7 +526,7 @@ class HomeScreen(Screen[None]):
         error: Exception | None = None,
     ) -> None:
         """Consume an accepted Home Why result, or merely wake after rejection."""
-        if not self.is_mounted or view != "why":
+        if not self.is_mounted or self._suspended or view != "why":
             return
         controller = self._controller_or_none()
         if controller is None:
@@ -558,6 +621,8 @@ class HomeScreen(Screen[None]):
             self._lookup_by_key[row.key] = lookup_name_for_entry(entry, agent)
 
     def _apply_filters(self, *, reason: str) -> None:
+        if self._suspended:
+            return
         controller = self._host.controller
         query_widget = self.query_one("#filter-input", Input)
         query = query_widget.value
@@ -609,6 +674,8 @@ class HomeScreen(Screen[None]):
                     del self._groups[lookup]
 
     def _ensure_selection(self) -> None:
+        if self._suspended:
+            return
         controller = self._host.controller
         visible_keys = {row.key for row in self._visible}
         selected = controller.selected_key
@@ -823,7 +890,7 @@ class HomeScreen(Screen[None]):
 
     def _drive(self) -> None:
         """Dispatch the next pending group while at most one request is active."""
-        if not self.is_mounted or self._agent_id is None:
+        if not self.is_mounted or self._suspended or self._agent_id is None:
             return
         controller = self._host.controller
         if controller.current is None or controller.is_closed:
@@ -915,8 +982,14 @@ class HomeScreen(Screen[None]):
 
     # -- events / actions --------------------------------------------------
 
+    def on_key(self, event: events.Key) -> None:
+        if self._suspended:
+            return
+        if event.key in ("down", "up", "j", "k", "slash", "a", "escape", "enter", "r"):
+            self._clear_removal_notice()
+
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
-        if self._syncing:
+        if self._syncing or self._suspended:
             return
         key = event.row_key.value
         table = self.query_one("#skill-table", DataTable)
@@ -936,29 +1009,47 @@ class HomeScreen(Screen[None]):
         self._update_preview()
         self._drive()
 
+    def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
+        if self._suspended:
+            return
+        self.action_open_why()
+
     def on_input_changed(self, event: Input.Changed) -> None:
+        if self._suspended:
+            return
         if event.input.id != "filter-input":
             return
         if event.value == self._last_query:
             return
+        self._clear_removal_notice()
         self._apply_filters(reason="text")
         self._update_agent_widgets()
 
     def on_input_submitted(self, event: Input.Submitted) -> None:
+        if self._suspended:
+            return
         if event.input.id != "filter-input":
             return
         self.query_one("#skill-table", DataTable).focus()
 
     def action_focus_filter(self) -> None:
+        if self._suspended:
+            return
         self.query_one("#filter-input", Input).focus()
 
     def action_clear_filter(self) -> None:
+        if self._suspended:
+            return
+        self._clear_removal_notice()
         query = self.query_one("#filter-input", Input)
         if query.value:
             query.value = ""
         self.query_one("#skill-table", DataTable).focus()
 
     def action_cycle_agent(self) -> None:
+        if self._suspended:
+            return
+        self._clear_removal_notice()
         if len(self._agent_options) <= 1:
             self._update_agent_widgets()
             return
@@ -970,14 +1061,42 @@ class HomeScreen(Screen[None]):
         self._apply_filters(reason="agent")
 
     def action_cursor_down(self) -> None:
+        if self._suspended:
+            return
+        self._clear_removal_notice()
         self.query_one("#skill-table", DataTable).action_cursor_down()
 
     def action_cursor_up(self) -> None:
+        if self._suspended:
+            return
+        self._clear_removal_notice()
         self.query_one("#skill-table", DataTable).action_cursor_up()
 
+    def action_open_why(self) -> None:
+        """Open Why detail screen for the selected row."""
+        if self._suspended:
+            return
+        table = self.query_one("#skill-table", DataTable)
+        if not table.has_focus or table.row_count == 0:
+            return
+        cursor_index = table.cursor_row
+        if cursor_index < 0 or cursor_index >= len(self._visible):
+            return
+        key = self._visible[cursor_index].key
+        self._host.open_why(key, self._agent_id)
+
     def action_noop_enter(self) -> None:
-        """Enter on the list is deliberately inert until U4."""
-        return
+        """Backward compatibility alias for enter action."""
+        self.action_open_why()
+
+    def action_refresh(self) -> None:
+        """Clear removal notice on explicit refresh and request refresh."""
+        if self._suspended:
+            return
+        self._clear_removal_notice()
+        refresh_action = getattr(self.app, "action_refresh", None)
+        if callable(refresh_action):
+            refresh_action()
 
 
 __all__ = [

@@ -1,0 +1,23 @@
+{
+  "taskId": "node:delegated-task:command%3Amcp%3Adc029550-1e4a-4aa4-a8c4-2d7573dc23a8%3Adelegate-task%3Au4-antigravity-pre-r2-proof-completion-20261027",
+  "childThreadId": "thread:delegated-task:command%3Amcp%3Adc029550-1e4a-4aa4-a8c4-2d7573dc23a8%3Adelegate-task%3Au4-antigravity-pre-r2-proof-completion-20261027",
+  "link": "[U4 final proof completion — Gemini High](t3-thread://v1/thread:delegated-task:command%3Amcp%3Adc029550-1e4a-4aa4-a8c4-2d7573dc23a8%3Adelegate-task%3Au4-antigravity-pre-r2-proof-completion-20261027)",
+  "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Adc029550-1e4a-4aa4-a8c4-2d7573dc23a8%253Adelegate-task%253Au4-antigravity-pre-r2-proof-completion-20261027:ordinal:1",
+  "childNodeId": "node:delegated-task:command%3Amcp%3Adc029550-1e4a-4aa4-a8c4-2d7573dc23a8%3Adelegate-task%3Au4-antigravity-pre-r2-proof-completion-20261027",
+  "status": "running",
+  "workState": "working",
+  "hasPendingChildRuns": false,
+  "latestTerminalRunId": null,
+  "latestTerminalStatus": null,
+  "latestTerminalSummary": null,
+  "latestTerminalResultContextTransferId": null,
+  "providerInstanceId": "antigravity",
+  "model": "gemini-3.8-flash-high",
+  "options": [],
+  "summary": null,
+  "resultContextTransferId": null,
+  "hasPendingQuestion": false,
+  "pendingApproval": null,
+  "waitTimedOut": false,
+  "next": "Completion wakes this thread, so end your turn. Do not wait on it or poll it."
+}

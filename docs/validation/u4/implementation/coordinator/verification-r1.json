@@ -1,0 +1,32 @@
+{
+  "head": "e29fca970ee32b3e71545a9902ea7f1c1f333a76",
+  "frozen_reference": "684cdb7aa0e3a28e5bb722bf65e4f3953edc6f76",
+  "gates": {
+    "pytest": "1121 passed, 1 expected skip, 90.84% combined, Why 90%, 104.75s; review-r1-pytest.log",
+    "mypy": "passed 39 source files",
+    "ruff_check": "passed all repo",
+    "ruff_format": "passed 362 files",
+    "git_diff_check": "passed",
+    "reproduction": "2 passed in 1.65s",
+    "mutations": "5/5 intended failures, all clean/restored controls pass"
+  },
+  "review_files_sha256": {
+    "CHANGELOG.md": "5f33145ddaa6dc862ecb91182db528faa4377523e0696ac93c2172801b5042a8",
+    "DEVELOPMENT.md": "ab4915e89be00a87c163f167768cd324a69562f0501173f010c437e57994f84f",
+    "FULL_SCREEN_TUI.md": "277a4809c7f677b3319674f503a1bd77d4a5888021d877ac92fbd845453d8afb",
+    "README.md": "f9b907aabd9e645f3561d56a8c6c68b188e586ae1ae04ef2c997f308252e69f2",
+    "docs/plans/2026-10-26-tui-u4-why.md": "340dab910f25fa97130e5943532aebf06768d4cc33c65e83488d2df44ef9c94d",
+    "skill_lens/tui/__init__.py": "48af91b94ee61a8622b8bc28226a7c3c79094628f528fdf285d01fff6d992a3a",
+    "skill_lens/tui/app.py": "224173dcd1fb3cc6e2f9e296b59632672e4838bb5248a284b2e02331ebab540c",
+    "skill_lens/tui/home.py": "f005de59bd46e6f19af542034817bc3f136de770d9c37346cbdc9268ed7cc693",
+    "skill_lens/tui/why.py": "85d8ec0eccbe2a782166e06d5310defa04840122389f1912a50e3847a332a408",
+    "tests/test_tui_why.py": "a036c121749abfea37e6d1378784837147b432fc83a74785f2b7a69da0ced5a8",
+    "docs/TUI_U4_WALKTHROUGH.md": "b26926f3382ec9eb0d14227faeac720b54f48b6739b4c7eb3c7824843e9c5245",
+    "docs/validation/u4/implementation/mutation_gate.py": "d21c7be31f13a35a84ad28da97393cec7a4a137ebac5e217659ab02418be4d44"
+  },
+  "independent_reviewers": {
+    "mcode": "MiniMax M3.1 Flash thinking High",
+    "pi": "River DeepSeek V4.1 Flash 1017 thinking High"
+  },
+  "acceptance": "pending; see review-concerns-r1.md"
+}

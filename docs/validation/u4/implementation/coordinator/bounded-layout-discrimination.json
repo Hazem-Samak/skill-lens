@@ -1,0 +1,17 @@
+{
+  "control": {
+    "returncode": 0,
+    "output_tail": ".                                                                        [100%]\n1 passed in 4.84s\n"
+  },
+  "old_layout": {
+    "returncode": 1,
+    "output_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsize = (60, 24)\n\n    async def _run_at_size(size: tuple[int, int]) -> None:\n        app = SkillLensApp(home=mock_home, cwd=mock_home)\n        async with app.run_test(size=size) as pilot:\n            await _wait_ready(pilot, app)\n            await pilot.press(\"enter\")\n            await _wait_why_idle(pilot, app)\n            why: WhyScreen = app.screen  # type: ignore[assignment]\n            if size[0] < 80:\n                assert why.has_class(\"narrow\")\n            else:\n                assert not why.has_class(\"narrow\")\n    \n            # 1. Multi-agent strip options present\n            assert len(why._agent_options) >= 2\n    \n            # 2. Left/Right on strip switches agent deterministically\n            agent_init = why._agent_id\n            await pilot.press(\"right\")\n            await _wait_why_idle(pilot, app)\n            assert why._agent_id != agent_init\n            await pilot.press(\"left\")\n            await _wait_why_idle(pilot, app)\n            assert why._agent_id == agent_init\n    \n            # 3. Tab to candidate CollapsibleTitle\n            collapsible = why.query_one(Collapsible)\n            ct = collapsible.query_one(\"CollapsibleTitle\")\n            while app.focused != ct:\n                await pilot.press(\"tab\")\n                await pilot.pause(0.02)\n            assert app.focused == ct\n    \n            # Candidate container has readable viewport height (not squished to 1 row)\n            candidates = why.query_one(\"#why-candidates\", VerticalScroll)\n>           assert candidates.size.height >= 4, (\n                f\"candidates container height too small: {candidates.size.height}\"\n            )\nE           AssertionError: candidates container height too small: 1\nE           assert 1 >= 4\nE            +  where 1 = Size(width=58, height=1).height\nE            +    where Size(width=58, height=1) = VerticalScroll(id='why-candidates').size\n\ntests/test_tui_why.py:2447: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_tui_why.py::test_terminal_dimensions_100x30_and_60x24_controls_and_wrapping\n1 failed in 3.78s\n"
+  },
+  "restored": {
+    "returncode": 0,
+    "output_tail": ".                                                                        [100%]\n1 passed in 4.73s\n"
+  },
+  "old_layout_sha256": "ad075945b243b2b54d3646b209f56e492eef2b3c0e64094cd8d58a6083b619e9",
+  "current_layout_sha256": "54b8e5c22e56bb2f26978f1c9ddf70d07a73cf3467b5560d6784392ca6ec7412",
+  "selector": "tests/test_tui_why.py::test_terminal_dimensions_100x30_and_60x24_controls_and_wrapping"
+}

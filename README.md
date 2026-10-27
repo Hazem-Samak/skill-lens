@@ -181,14 +181,14 @@ recorded residual rather than a bounded one.
 release ships a TUI.
 
 **Current development branch:** the same six line-oriented commands plus an
-optional, additive, read-only TUI through U3 Home browsing: a skill table,
-metadata preview, text and agent filters, and per-agent resolution states
-(C1–C5 and U1–U3 complete). U4–U9 screens and 0.2 publishing remain
+optional, additive, read-only TUI through U4 Why resolution: a skill table,
+metadata preview, text and agent filters, and candidate resolution detail
+(C1–C5 and U1–U4 technically accepted in development). U5–U9 screens and 0.2 publishing remain
 separate future work. Do not install released `skill-lens-cli[tui]` expecting a
 browsing UI — the published 0.1.1 has no TUI extra at all.
 
-The latest local verification result (2026-10-19) is recorded in the
-[U3 acceptance record](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/validation/u3/acceptance.md).
+The latest local verification result (2026-10-27) is recorded in the
+[U4 acceptance record](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/validation/u4/acceptance.md).
 See [`DEVELOPMENT.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/DEVELOPMENT.md)
 for the full build record, including dated historical measurements, and the
 resource-risk evidence under

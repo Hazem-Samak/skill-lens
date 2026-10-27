@@ -1,0 +1,50 @@
+import asyncio
+from dataclasses import replace
+from textual.widgets import Button, Static
+from skill_lens.core import paths
+from skill_lens.core.snapshot import capture_session
+from skill_lens.tui.app import SkillLensApp
+from tests.fixtures.scenarios import build_scenario
+from tests.test_tui_why import _wait_ready, _wait_why_idle, _wait_until
+
+def test_notice_cleared_on_explicit_refresh(mock_home, monkeypatch):
+    monkeypatch.setattr(paths, 'home', lambda: mock_home)
+    build_scenario('claude_personal_beats_project', mock_home)
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            await _wait_ready(pilot,app)
+            home=app.screen
+            home.set_removal_notice('Removed old-installation')
+            await pilot.press('r')
+            await _wait_until(pilot,lambda:app.controller.current.generation==2,'refresh publication')
+            print('NOTICE AFTER REFRESH:',home._removal_notice)
+            assert home._removal_notice is None
+            assert not str(home.query_one('#removal-notice',Static).content)
+    asyncio.run(run())
+
+def test_agent_dom_order_after_eligibility_refresh(mock_home,monkeypatch):
+    monkeypatch.setattr(paths,'home',lambda:mock_home)
+    build_scenario('symlink_farm_multi_agent',mock_home)
+    def controlled_capture(**kwargs):
+        snap=capture_session(**kwargs)
+        if kwargs['generation']==1:
+            snap=replace(snap,scan=replace(snap.scan,skills=tuple(replace(s,agents=tuple(a for a in s.agents if a!='claude')) for s in snap.scan.skills)))
+        return snap
+    monkeypatch.setattr('skill_lens.tui.app.capture_session',controlled_capture)
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            await _wait_ready(pilot,app)
+            await pilot.press('enter')
+            await _wait_why_idle(pilot,app)
+            why=app.screen
+            assert 'claude' not in [o.agent_id for o in why._agent_options]
+            await pilot.press('r')
+            await _wait_until(pilot,lambda:why._generation==2,'detail refresh')
+            await _wait_why_idle(pilot,app)
+            model=[o.agent_id for o in why._agent_options]
+            dom=[b.id.removeprefix('why-agent-') for b in why.query('#why-agent-strip Button')]
+            print('MODEL:',model,'DOM:',dom)
+            assert dom==model
+    asyncio.run(run())

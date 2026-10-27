@@ -1,0 +1,4032 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index e2ec849..1a0ef2c 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -23,8 +23,8 @@ release (the optional `[tui]` browsing layer), not 0.1.2 — do not rename this
+ heading to 0.1.2.
+ 
+ The current development branch ships six line-oriented CLI commands plus an
+-optional, additive, read-only TUI through U3 Home browsing
+-(C1–C5 and U1–U3 complete). U4–U9 screens and 0.2 publishing remain
++optional, additive, read-only TUI through U4 Why resolution
++(C1–C5 and U1–U3 accepted; U4 implemented in development pending review). U5–U9 screens and 0.2 publishing remain
+ separate future work. Earlier local gate evidence is recorded under
+ `docs/validation/assessment-repairs/h/` and `docs/validation/u3/`. The later
+ [overnight CI repair](docs/validation/overnight/2026-10-24/acceptance.md) passed
+@@ -75,6 +75,13 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
+ 
+ ### Added
+ 
++- **Why resolution screen (U4).** The development TUI now provides a dedicated
++  Why resolution screen accessible by pressing Enter on a focused Home skill row.
++  Shows candidate collapsibles in resolution order, active agent switching strip,
++  lookup details, and honest loading/refreshed states. See the
++  [U4 walkthrough](docs/TUI_U4_WALKTHROUGH.md). Human visual approval, coordinator
++  acceptance, and 0.2 publishing are separate; neither is claimed here.
++
+ - **Home browsing screen (U3).** The development TUI now shows a skill table,
+   scrollable metadata preview, text and agent filters, and optional per-agent
+   resolution states. Selection, refresh and late worker results preserve the
+diff --git a/DEVELOPMENT.md b/DEVELOPMENT.md
+index ad24025..7abd4b8 100644
+--- a/DEVELOPMENT.md
++++ b/DEVELOPMENT.md
+@@ -58,15 +58,15 @@ and the build proceeds by phase:
+   managed-skills folder was ranked **above** the folders that should win. All 10
+   agents now cite a source, and an enforced invariant guarantees it.
+ - [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope, partially
+-  implemented through U3; U4–U9 planned.* An optional, additive, read-only
++  implemented through U4; U5–U9 planned.* An optional, additive, read-only
+   browsing layer built on the existing frozen models, shipped as the opt-in
+   `[tui]` extra so the base install gains nothing. Overturns the v1 "no
+   full-screen TUI" rule for 0.2. The complete plan — vision, screens, phasing
+   and gates — is [`FULL_SCREEN_TUI.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/FULL_SCREEN_TUI.md).
+   **Status:** C1–C5 (byte/hash helpers, captured engine inputs, capture and
+-  cancellation, presentation extraction, Step 0 audit) and U1–U3 (optional
+-  install, worker controller and Home browsing screen) are complete as
+-  development work on the current branch. U4–U9 screens and 0.2
++  cancellation, presentation extraction, Step 0 audit) and U1–U3 (optional install, worker controller, Home browsing screen) are
++  accepted; U4 Why resolution screen correction batch is implemented in
++  development on the current branch pending review. U5–U9 screens and 0.2
+   publishing remain future work. The 2026-10-04 readiness review recorded two
+   engine fixes required before Step 0: P1 (non-object settings robustness) and
+   P2 (lock decoding robustness). Both have been implemented and verified with
+diff --git a/FULL_SCREEN_TUI.md b/FULL_SCREEN_TUI.md
+index 7daf5a6..d88e8b5 100644
+--- a/FULL_SCREEN_TUI.md
++++ b/FULL_SCREEN_TUI.md
+@@ -3,10 +3,11 @@
+ > **Status:** 🛠️ **Partially implemented in development — 0.2 plan not released.**
+ > C1–C5 (byte/hash helpers, captured engine inputs, capture and cancellation,
+ > presentation extraction, Step 0 audit) and U1–U3 (optional install, worker
+-> controller and Home browsing screen) are complete as development work
+-> on the current branch. U4–U9 screens and 0.2 publishing remain
+-> separate future work. No TUI extra is released: published PyPI 0.1.1 contains
+-> no TUI package and no `[tui]` extra.
++> controller and Home browsing screen) are complete and accepted development work
++> on the current branch. U4 (Why detail screen) correction batch is implemented
++> in development; coordinator and independent critic reviews remain pending before
++> technical acceptance. U5–U9 screens and 0.2 publishing remain separate future work.
++> No TUI extra is released: published PyPI 0.1.1 contains no TUI package and no `[tui]` extra.
+ > It overturns a v1 rule ("no full-screen TUI"), so it is deliberately detailed:
+ > the point of the plan is that the next person can scaffold the work without
+ > re-litigating the decisions below.
+@@ -26,7 +27,8 @@
+ > retained for its limited fixture result. Findings and prerequisite records are
+ > in §20; [earlier review history](docs/archive/TUI_PLAN_REVIEWS.md) is retained
+ > separately. Step 0 implementation (C1–C5) is complete under §21;
+-> U1–U3 complete; U4–U9 assignments (§22) remain future work.
++> U1–U3 are accepted; U4 correction batch is implemented in development
++> pending review; U5–U9 assignments (§22) remain future work.
+ 
+ > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
+ > Catalog, skill contents, settings and diagnostic inputs remain fixed until
+@@ -36,10 +38,9 @@
+ > **Implementer handoff:** [§21](#21-step-0-implementation-contract) specifies
+ > Step 0 types, function signatures, files and acceptance tests.
+ > [§22](#22-assignments-for-the-implementer) is the ordered assignment list.
+-> Current next work: **U4** (dedicated Why screen), per §22 order, after
+-> separate authorization. Prerequisites (P1→P2→P3, C1–C5, U1–U3) are complete;
+-> U4–U9 remain future work. Its plan must address shared Why-request ownership
+-> between Home and the dedicated screen.
++> Current next work: **U4 review and technical acceptance**; subsequent assignment
++> is **U5 (Diff and JSON)**, per §22 order, after separate authorization.
++> Prerequisites (P1→P2→P3, C1–C5, U1–U3) are complete and accepted; U5–U9 remain future work.
+ 
+ ---
+ 
+diff --git a/README.md b/README.md
+index 9d731c8..b9b4d15 100644
+--- a/README.md
++++ b/README.md
+@@ -181,9 +181,9 @@ recorded residual rather than a bounded one.
+ release ships a TUI.
+ 
+ **Current development branch:** the same six line-oriented commands plus an
+-optional, additive, read-only TUI through U3 Home browsing: a skill table,
+-metadata preview, text and agent filters, and per-agent resolution states
+-(C1–C5 and U1–U3 complete). U4–U9 screens and 0.2 publishing remain
++optional, additive, read-only TUI through U4 Why resolution: a skill table,
++metadata preview, text and agent filters, and candidate resolution detail
++(C1–C5 and U1–U3 accepted; U4 implemented in development pending review). U5–U9 screens and 0.2 publishing remain
+ separate future work. Do not install released `skill-lens-cli[tui]` expecting a
+ browsing UI — the published 0.1.1 has no TUI extra at all.
+ 
+diff --git a/docs/plans/2026-10-26-tui-u4-why.md b/docs/plans/2026-10-26-tui-u4-why.md
+index 318a3c8..fb291e9 100644
+--- a/docs/plans/2026-10-26-tui-u4-why.md
++++ b/docs/plans/2026-10-26-tui-u4-why.md
+@@ -399,3 +399,33 @@ for this documentation-only plan. Billed tokens/active compute time unavailable.
+ Full reports and compact receipts are retained under `docs/validation/u4/planning/`.
+ The two-commit freeze commits this agreed plan first, then changes only Reference
+ to that full hash. No product implementation is authorized by this freeze.
++
++## Implementation execution record — 26 October 2026
++
++The owner subsequently instructed: implement U4 using native T3 V2, Nemotron
++3.5 Super VL through OpenRouter/Pi at Max effort, with independent MiniMax
++M3.1 Flash through MCode and DeepSeek V4.1 Flash 1017 through River/Pi reviews.
++This supplies the later implementation authorization required above; the frozen
++behavior and boundaries remain those at the recorded Reference.
++
++Live catalog confirms the exact frozen roster routes. Sol remains coordinator
++and commit owner at the inherited Medium setting, Full access/default, bound to
++the root main checkout. Nemotron uses `thinking=max`; both final critics will
++initially use High effort, adjustable under the owner's instruction. Expected
++implementation launches: three before corrections (one implementer, two fresh
++independent critics). Baseline, task identities, gates, fingerprints, findings,
++mutations and final acceptance are recorded under `docs/validation/u4/implementation/`.
++Preserve the four pre-existing untracked paths listed above. No release or
++publication is authorized. Billed token and active-compute metrics are unavailable
++unless exposed by a provider.
++
++Implementation roster update: after Nvidia HTTP 500/502 and then OpenRouter
++daily quota exhaustion (HTTP 429), the owner explicitly authorized Gemini 3.8
++Flash High through Antigravity as the replacement sole implementer. Live T3
++catalog confirms `antigravity/gemini-3.8-flash-high`; Full access/default, no
++separate catalog effort option. MiniMax and DeepSeek remain the independent
++critics. Both Nemotron attempts are terminal with no pending children/questions.
++Attempt two left unverified `why.py` and 12 added Home lines; preserve and
++inspect these as partial implementation, not an accepted baseline. Original
++pre-implementation gates remain recorded separately. This is a session roster
++record under explicit owner authorization, with no frozen behavior change.
+diff --git a/skill_lens/tui/__init__.py b/skill_lens/tui/__init__.py
+index ce8fc03..6e9e9da 100644
+--- a/skill_lens/tui/__init__.py
++++ b/skill_lens/tui/__init__.py
+@@ -1,4 +1,4 @@
+-"""Skill Lens full-screen terminal UI entry points (Assignment U2).
++"""Skill Lens full-screen terminal UI entry points (Assignments U2-U4).
+ 
+ Specification reference: FULL_SCREEN_TUI.md §9.1, §10, Step 2, and §21.7.
+ Lazily exposes `run(home, cwd) -> int` for CLI launch, using an owned
+@@ -29,6 +29,7 @@ from skill_lens.tui.session import (
+     ViewName,
+     ViewRequest,
+ )
++from skill_lens.tui.why import WhyScreen
+ 
+ 
+ def run(
+@@ -111,5 +112,6 @@ __all__ = [
+     "ViewReportComplete",
+     "ViewReportFailed",
+     "ViewRequest",
++    "WhyScreen",
+     "run",
+ ]
+diff --git a/skill_lens/tui/app.py b/skill_lens/tui/app.py
+index f637a3d..957d748 100644
+--- a/skill_lens/tui/app.py
++++ b/skill_lens/tui/app.py
+@@ -44,6 +44,7 @@ from skill_lens.tui.session import (
+     SessionController,
+     ViewName,
+ )
++from skill_lens.tui.why import WhyScreen
+ 
+ 
+ class CaptureComplete(Message):
+@@ -118,6 +119,7 @@ class SkillLensApp(App[int]):
+     SUB_TITLE = __version__
+     ENABLE_COMMAND_PALETTE: ClassVar[bool] = False
+     COMMANDS: ClassVar[set[Any]] = set()
++
+     BINDINGS: ClassVar[list[BindingType]] = [
+         Binding("q", "quit", "Quit", show=True),
+         Binding("r", "refresh", "Refresh", show=True),
+@@ -206,6 +208,30 @@ class SkillLensApp(App[int]):
+             self._update_ui()
+             self._run_capture(gen, self._home, self._cwd, event)
+ 
++    def open_why(self, key: str, agent_id: str | None) -> None:
++        """Open a Why screen for the given installation key and agent."""
++        if isinstance(self.screen, WhyScreen):
++            return
++        home = self.screen if isinstance(self.screen, HomeScreen) else None
++        if home is not None:
++            home.suspend_why()
++        why = WhyScreen(key, agent_id)
++        self.push_screen(why)
++
++    def close_why(self, removal_notice: str | None = None) -> None:
++        """Close the Why screen and return to Home."""
++        if not isinstance(self.screen, WhyScreen):
++            return
++        why = self.screen
++        why._cancel_owned_token()
++        prev_screen = self.screen_stack[-2] if len(self.screen_stack) >= 2 else None
++        self.pop_screen()
++        if isinstance(prev_screen, HomeScreen):
++            if removal_notice is not None:
++                prev_screen.set_removal_notice(removal_notice)
++            prev_screen.resume_why()
++            self._update_ui()
++
+     def request_report(self, view: ViewName, arguments: tuple[str, ...]) -> ReportValue | None:
+         """Adapter method for Why/Diff/Compare report computation.
+ 
+@@ -308,9 +334,9 @@ class SkillLensApp(App[int]):
+             message.arguments,
+             message.report,
+         )
+-        home = self._home_screen()
+-        if home is not None:
+-            home.note_report_outcome(
++        screen = self.screen
++        if isinstance(screen, (HomeScreen, WhyScreen)):
++            screen.note_report_outcome(
+                 message.view,
+                 message.request_id,
+                 message.generation,
+@@ -332,9 +358,9 @@ class SkillLensApp(App[int]):
+             message.arguments,
+             message.error,
+         )
+-        home = self._home_screen()
+-        if home is not None:
+-            home.note_report_outcome(
++        screen = self.screen
++        if isinstance(screen, (HomeScreen, WhyScreen)):
++            screen.note_report_outcome(
+                 message.view,
+                 message.request_id,
+                 message.generation,
+@@ -370,41 +396,99 @@ class SkillLensApp(App[int]):
+     def _update_ui(self) -> None:
+         """Update placeholder screen status labels on the UI thread."""
+         try:
+-            status_widget = self.query_one("#status-text", Static)
+-            details_widget = self.query_one("#error-details", Static)
+-        except NoMatches:
++            screen = self.screen
++        except (ScreenStackError, UnknownModeError):
+             return
+ 
+-        status = self.controller.status
+-        if status == "loading":
+-            status_widget.update("Scanning skills...")
+-            details_widget.update("")
+-        elif status == "ready":
+-            count = (
+-                len(self.controller.current.index.entries)
+-                if self.controller.current is not None
+-                else 0
+-            )
+-            status_widget.update(f"Ready: {count} skills discovered")
+-            details_widget.update("")
+-        elif status == "refused":
+-            msg = self.controller.refusal_message or "Snapshot refused."
+-            status_widget.update(msg)
+-            details_widget.update("")
+-        elif status == "retry":
+-            msg = self.controller.retry_message or "Files changed while scanning. Press r to retry."
+-            status_widget.update(msg)
+-            details_widget.update("")
+-        elif status == "error":
+-            status_widget.update("Error: Unexpected internal fault. Details in memory only.")
+-            details_widget.update(self.controller.last_error_details or "")
+-        else:
+-            status_widget.update("Idle")
+-            details_widget.update("")
+-
+-        home = self._home_screen()
+-        if home is not None:
+-            home.sync_from_controller()
++        if isinstance(screen, HomeScreen):
++            try:
++                status_widget = screen.query_one("#status-text", Static)
++                details_widget = screen.query_one("#error-details", Static)
++            except NoMatches:
++                status_widget = None
++                details_widget = None
++
++            if status_widget is not None and details_widget is not None:
++                status = self.controller.status
++                if status == "loading":
++                    status_widget.update("Scanning skills...")
++                    details_widget.update("")
++                elif status == "ready":
++                    count = (
++                        len(self.controller.current.index.entries)
++                        if self.controller.current is not None
++                        else 0
++                    )
++                    status_widget.update(f"Ready: {count} skills discovered")
++                    details_widget.update("")
++                elif status == "refused":
++                    msg = self.controller.refusal_message or "Snapshot refused."
++                    status_widget.update(msg)
++                    details_widget.update("")
++                elif status == "retry":
++                    msg = (
++                        self.controller.retry_message
++                        or "Files changed while scanning. Press r to retry."
++                    )
++                    status_widget.update(msg)
++                    details_widget.update("")
++                elif status == "error":
++                    status_widget.update(
++                        "Error: Unexpected internal fault. Details in memory only."
++                    )
++                    details_widget.update(self.controller.last_error_details or "")
++                else:
++                    status_widget.update("Idle")
++                    details_widget.update("")
++
++            with contextlib.suppress(NoMatches):
++                notice_widget = screen.query_one("#removal-notice", Static)
++                notice_widget.update(screen._removal_notice or "")
++
++            screen.sync_from_controller()
++
++        elif isinstance(screen, WhyScreen):
++            try:
++                status_widget = screen.query_one("#why-status", Static)
++                details_widget = screen.query_one("#why-error-details", Static)
++            except NoMatches:
++                status_widget = None
++                details_widget = None
++
++            if status_widget is not None and details_widget is not None:
++                status = self.controller.status
++                if status == "loading":
++                    status_widget.update("Scanning skills...")
++                    details_widget.update("")
++                elif status == "ready":
++                    count = (
++                        len(self.controller.current.index.entries)
++                        if self.controller.current is not None
++                        else 0
++                    )
++                    status_widget.update(f"Ready: {count} skills discovered")
++                    details_widget.update("")
++                elif status == "refused":
++                    msg = self.controller.refusal_message or "Snapshot refused."
++                    status_widget.update(msg)
++                    details_widget.update("")
++                elif status == "retry":
++                    msg = (
++                        self.controller.retry_message
++                        or "Files changed while scanning. Press r to retry."
++                    )
++                    status_widget.update(msg)
++                    details_widget.update("")
++                elif status == "error":
++                    status_widget.update(
++                        "Error: Unexpected internal fault. Details in memory only."
++                    )
++                    details_widget.update(self.controller.last_error_details or "")
++                else:
++                    status_widget.update("Idle")
++                    details_widget.update("")
++
++            screen.sync_from_controller()
+ 
+ 
+ __all__ = [
+@@ -414,4 +498,5 @@ __all__ = [
+     "SkillLensApp",
+     "ViewReportComplete",
+     "ViewReportFailed",
++    "WhyScreen",
+ ]
+diff --git a/skill_lens/tui/home.py b/skill_lens/tui/home.py
+index 3a75f8f..9d97088 100644
+--- a/skill_lens/tui/home.py
++++ b/skill_lens/tui/home.py
+@@ -15,6 +15,7 @@ helpers but never ``skill_lens.render`` or ``rich``.
+ 
+ from __future__ import annotations
+ 
++import contextlib
+ from dataclasses import dataclass
+ from typing import TYPE_CHECKING, Any, ClassVar, Literal, Protocol, cast
+ 
+@@ -58,6 +59,10 @@ class _ReportHost(Protocol):
+         """Ask the host app to refresh its status/error presentation."""
+         ...
+ 
++    def open_why(self, key: str, agent_id: str | None) -> None:
++        """Open a Why screen for the given installation key and agent."""
++        ...
++
+ 
+ @dataclass(frozen=True, slots=True)
+ class AgentOption:
+@@ -272,7 +277,7 @@ class HomeScreen(Screen[None]):
+         Binding("slash", "focus_filter", "Filter", show=False),
+         Binding("a", "cycle_agent", "Agent", show=False),
+         Binding("escape", "clear_filter", "Clear filter", show=False),
+-        Binding("enter", "noop_enter", "List", show=False),
++        Binding("enter", "open_why", "Why", show=False),
+     ]
+ 
+     DEFAULT_CSS = """
+@@ -328,12 +333,21 @@ class HomeScreen(Screen[None]):
+     #catalog-note {
+         height: auto;
+         padding: 0 1;
+-        color: $warning;
++        color: $text-muted;
+     }
+-    #status-text, #error-details {
++    #status-text {
+         height: auto;
+         padding: 0 1;
+     }
++    #error-details {
++        height: auto;
++        padding: 0 1;
++    }
++    #removal-notice {
++        height: auto;
++        padding: 0 1;
++        color: $warning;
++    }
+     #footer-help {
+         height: 1;
+         padding: 0 1;
+@@ -344,6 +358,7 @@ class HomeScreen(Screen[None]):
+     }
+     HomeScreen.narrow #skill-table {
+         width: 1fr;
++        height: 2fr;
+     }
+     HomeScreen.narrow #preview-scroll {
+         width: 1fr;
+@@ -368,6 +383,8 @@ class HomeScreen(Screen[None]):
+         self._inflight: _OwnedWhy | None = None
+         self._syncing = False
+         self._last_query = ""
++        self._suspended = False
++        self._removal_notice: str | None = None
+ 
+     # -- lifecycle ---------------------------------------------------------
+ 
+@@ -390,8 +407,9 @@ class HomeScreen(Screen[None]):
+         yield Static("", id="catalog-note", markup=False)
+         yield Static("Initializing...", id="status-text", markup=False)
+         yield Static("", id="error-details", markup=False)
++        yield Static("", id="removal-notice", markup=False)
+         yield Static(
+-            "q: Quit   r: Refresh   /: Filter   a: Agent   Tab: Focus",
++            "q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   Tab: Focus",
+             id="footer-help",
+             markup=False,
+         )
+@@ -424,9 +442,51 @@ class HomeScreen(Screen[None]):
+     def _controller_or_none(self) -> SessionController | None:
+         return getattr(self._host, "controller", None)
+ 
++    def suspend_why(self) -> None:
++        """Suspend Home screen activity while detail screen is active."""
++        self._suspended = True
++        self._cancel_owned_why()
++
++    def on_screen_resume(self) -> None:
++        """Handle Textual ScreenResume event when detail screen pops."""
++        if self._suspended:
++            self.resume_why()
++        else:
++            try:
++                table = self.query_one("#skill-table", DataTable)
++                table.focus()
++            except NoMatches:
++                pass
++
++    def resume_why(self) -> None:
++        """Resume Home screen activity after returning from detail."""
++        self._suspended = False
++        if not self.is_mounted:
++            return
++        self.sync_from_controller()
++        if self.app.screen is self:
++            try:
++                table = self.query_one("#skill-table", DataTable)
++                table.focus()
++            except NoMatches:
++                pass
++
++    def set_removal_notice(self, notice: str | None) -> None:
++        """Set the notice displayed when a detail installation was removed."""
++        self._removal_notice = notice
++        with contextlib.suppress(NoMatches):
++            self.query_one("#removal-notice", Static).update(notice or "")
++
++    def _clear_removal_notice(self) -> None:
++        """Clear removal notice on explicit user navigation or action."""
++        if self._removal_notice is not None:
++            self._removal_notice = None
++            with contextlib.suppress(NoMatches):
++                self.query_one("#removal-notice", Static).update("")
++
+     def sync_from_controller(self) -> None:
+         """Reconcile the screen with the controller's published session."""
+-        if not self.is_mounted:
++        if not self.is_mounted or self._suspended:
+             return
+         controller = self._controller_or_none()
+         if controller is None:
+@@ -463,7 +523,7 @@ class HomeScreen(Screen[None]):
+         error: Exception | None = None,
+     ) -> None:
+         """Consume an accepted Home Why result, or merely wake after rejection."""
+-        if not self.is_mounted or view != "why":
++        if not self.is_mounted or self._suspended or view != "why":
+             return
+         controller = self._controller_or_none()
+         if controller is None:
+@@ -558,6 +618,8 @@ class HomeScreen(Screen[None]):
+             self._lookup_by_key[row.key] = lookup_name_for_entry(entry, agent)
+ 
+     def _apply_filters(self, *, reason: str) -> None:
++        if self._suspended:
++            return
+         controller = self._host.controller
+         query_widget = self.query_one("#filter-input", Input)
+         query = query_widget.value
+@@ -609,6 +671,8 @@ class HomeScreen(Screen[None]):
+                     del self._groups[lookup]
+ 
+     def _ensure_selection(self) -> None:
++        if self._suspended:
++            return
+         controller = self._host.controller
+         visible_keys = {row.key for row in self._visible}
+         selected = controller.selected_key
+@@ -823,7 +887,7 @@ class HomeScreen(Screen[None]):
+ 
+     def _drive(self) -> None:
+         """Dispatch the next pending group while at most one request is active."""
+-        if not self.is_mounted or self._agent_id is None:
++        if not self.is_mounted or self._suspended or self._agent_id is None:
+             return
+         controller = self._host.controller
+         if controller.current is None or controller.is_closed:
+@@ -915,8 +979,14 @@ class HomeScreen(Screen[None]):
+ 
+     # -- events / actions --------------------------------------------------
+ 
++    def on_key(self, event: events.Key) -> None:
++        if self._suspended:
++            return
++        if event.key in ("down", "up", "j", "k", "slash", "a", "escape", "enter"):
++            self._clear_removal_notice()
++
+     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
+-        if self._syncing:
++        if self._syncing or self._suspended:
+             return
+         key = event.row_key.value
+         table = self.query_one("#skill-table", DataTable)
+@@ -936,11 +1006,17 @@ class HomeScreen(Screen[None]):
+         self._update_preview()
+         self._drive()
+ 
++    def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
++        if self._suspended:
++            return
++        self.action_open_why()
++
+     def on_input_changed(self, event: Input.Changed) -> None:
+         if event.input.id != "filter-input":
+             return
+         if event.value == self._last_query:
+             return
++        self._clear_removal_notice()
+         self._apply_filters(reason="text")
+         self._update_agent_widgets()
+ 
+@@ -950,15 +1026,21 @@ class HomeScreen(Screen[None]):
+         self.query_one("#skill-table", DataTable).focus()
+ 
+     def action_focus_filter(self) -> None:
++        if self._suspended:
++            return
+         self.query_one("#filter-input", Input).focus()
+ 
+     def action_clear_filter(self) -> None:
++        self._clear_removal_notice()
+         query = self.query_one("#filter-input", Input)
+         if query.value:
+             query.value = ""
+         self.query_one("#skill-table", DataTable).focus()
+ 
+     def action_cycle_agent(self) -> None:
++        if self._suspended:
++            return
++        self._clear_removal_notice()
+         if len(self._agent_options) <= 1:
+             self._update_agent_widgets()
+             return
+@@ -970,14 +1052,33 @@ class HomeScreen(Screen[None]):
+         self._apply_filters(reason="agent")
+ 
+     def action_cursor_down(self) -> None:
++        if self._suspended:
++            return
++        self._clear_removal_notice()
+         self.query_one("#skill-table", DataTable).action_cursor_down()
+ 
+     def action_cursor_up(self) -> None:
++        if self._suspended:
++            return
++        self._clear_removal_notice()
+         self.query_one("#skill-table", DataTable).action_cursor_up()
+ 
++    def action_open_why(self) -> None:
++        """Open Why detail screen for the selected row."""
++        if self._suspended:
++            return
++        table = self.query_one("#skill-table", DataTable)
++        if not table.has_focus or table.row_count == 0:
++            return
++        cursor_index = table.cursor_row
++        if cursor_index < 0 or cursor_index >= len(self._visible):
++            return
++        key = self._visible[cursor_index].key
++        self._host.open_why(key, self._agent_id)
++
+     def action_noop_enter(self) -> None:
+-        """Enter on the list is deliberately inert until U4."""
+-        return
++        """Backward compatibility alias for enter action."""
++        self.action_open_why()
+ 
+ 
+ __all__ = [
+
+diff --git a/skill_lens/tui/why.py b/skill_lens/tui/why.py
+new file mode 100644
+index 0000000..11640b5
+--- /dev/null
++++ b/skill_lens/tui/why.py
+@@ -0,0 +1,820 @@
++"""Read-only Why screen for Skill Lens (Assignment U4).
++
++Specification reference: FULL_SCREEN_TUI.md §8.4, §21.7 and §22 U4.
++
++The screen explains how one chosen agent resolves one captured installation.
++It never reads files, resolves paths or runs discovery while browsing.  All
++data comes from the published :class:`~skill_lens.core.snapshot_models.SessionSnapshot`
++and the :class:`~skill_lens.tui.session.SessionController`.
++
++The screen owns at most one complete :class:`~skill_lens.tui.session.ViewRequest`.
++On agent change it clears incompatible display immediately, cancels only a
++matching owned active token, checks the controller cache first, and dispatches
++only on a true miss.
++"""
++
++from __future__ import annotations
++
++import contextlib
++from dataclasses import dataclass
++from typing import Any, ClassVar, Protocol, cast
++
++from textual import events
++from textual.app import ComposeResult
++from textual.binding import Binding, BindingType
++from textual.containers import Horizontal, VerticalScroll
++from textual.content import Content
++from textual.css.query import NoMatches
++from textual.screen import Screen
++from textual.widgets import Button, Collapsible, Footer, Header, Static
++
++from skill_lens.core.discovery import canonical_key
++from skill_lens.core.exitcodes import ExitCode
++from skill_lens.core.scanner import ScanEntry
++from skill_lens.core.snapshot import snapshot_path, snapshot_same_location
++from skill_lens.core.snapshot_models import SessionSnapshot
++from skill_lens.models.enums import HeadlineState, ParseStatus, Scope
++from skill_lens.models.resolution import CandidateResolution, ResolutionReport
++from skill_lens.presentation.state import STATE_MARK, STATE_STYLE
++from skill_lens.tui.home import AgentOption, agent_display_name
++from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
++
++_NO_AGENT_EXPLANATION = "No agent reaches this installation."
++_UNKNOWN_AGENT_HINT = "Unknown agent IDs: {}"
++
++
++class _WhyHost(Protocol):
++    """The small part of :class:`SkillLensApp` the Why screen needs."""
++
++    controller: SessionController
++
++    def request_report(self, view: ViewName, arguments: tuple[str, ...]) -> ReportValue | None:
++        """Return a cached report or start the existing report worker."""
++        ...
++
++    def close_why(self, removal_notice: str | None = None) -> None:
++        """Close the Why screen and return to Home."""
++        ...
++
++    def _update_ui(self) -> None:
++        """Ask the host app to refresh its status/error presentation."""
++        ...
++
++    def action_refresh(self) -> None:
++        """Request a session refresh."""
++        ...
++
++
++@dataclass(frozen=True, slots=True)
++class _CandidateBlock:
++    """View model for one candidate collapsible block."""
++
++    key: str
++    title_name: str
++    state: HeadlineState
++    body: str
++    expanded: bool
++
++    @property
++    def title(self) -> str:
++        """Construct full plain title string for compatibility."""
++        mark = _state_mark(self.state)
++        return f"{mark} {self.title_name}  ({self.state.value})"
++
++
++def _eligible_agent_options(snapshot: SessionSnapshot, key: str) -> tuple[AgentOption, ...]:
++    """Agent IDs that reach the selected installation and have registry definitions.
++
++    Preserves the scan's sorted agent-ID order.  Agents listed by the scan but
++    absent from the captured registry are excluded and reported separately by
++    the caller.
++    """
++    entry = _entry_for_key(snapshot, key)
++    if entry is None:
++        return ()
++    registry_ids = {agent.id for agent in snapshot.registry}
++    eligible = [agent_id for agent_id in entry.agents if agent_id in registry_ids]
++    return tuple(
++        AgentOption(agent_id, agent_display_name(snapshot, agent_id)) for agent_id in eligible
++    )
++
++
++def _unavailable_agent_ids(snapshot: SessionSnapshot, key: str) -> tuple[str, ...]:
++    """Agent IDs the scan attributes to the installation but the registry lacks."""
++    entry = _entry_for_key(snapshot, key)
++    if entry is None:
++        return ()
++    registry_ids = {agent.id for agent in snapshot.registry}
++    return tuple(sorted(agent_id for agent_id in entry.agents if agent_id not in registry_ids))
++
++
++def _entry_for_key(snapshot: SessionSnapshot, key: str) -> ScanEntry | None:
++    """Return the scan row for the selected canonical key, or None."""
++    for row in snapshot.scan.skills:
++        if row.canonical_path == key:
++            return row
++    for entry in snapshot.index.entries:
++        if canonical_key(entry) == key:
++            agents = tuple(sorted({hit.agent_id for hit in entry.hits}))
++            scope = entry.hits[0].scope if entry.hits else Scope.USER
++            desc = entry.parse.description if entry.parse else None
++            parse_status = entry.parse.status.value if entry.parse else ParseStatus.UNREADABLE.value
++            return ScanEntry(
++                name=entry.name,
++                scope=scope,
++                canonical_path=canonical_key(entry),
++                parse_status=parse_status,
++                agents=agents,
++                entrypoint_count=len(entry.entrypoint_paths) or len(entry.hits),
++                is_symlink=entry.is_symlink,
++                content_hash=entry.content_hash,
++                description=desc,
++                variant_label=entry.variant_label,
++            )
++    return None
++
++
++def _matching_key(candidate: CandidateResolution, key: str) -> bool:
++    """True if a candidate resolves the selected installation.
++
++    Uses canonical path with entrypoint fallback for unresolved copies, matching
++    the key derivation used by ``canonical_key`` and the scan rows.
++    """
++    inst = candidate.installation
++    return inst.canonical_path == key or (
++        inst.canonical_path is None and inst.entrypoint_path == key
++    )
++
++
++def _state_mark(state: HeadlineState) -> str:
++    """Return the shared state glyph for a headline state."""
++    return STATE_MARK.get(state, "?")
++
++
++def _build_candidate_blocks(
++    report: ResolutionReport, snapshot: SessionSnapshot, key: str
++) -> list[_CandidateBlock]:
++    """Build one collapsible block per candidate in report order.
++
++    Candidates matching the selected key are initially expanded; all others are
++    collapsed.  Paths are displayed through ``snapshot_path`` and never probed
++    on disk.  Redundant entrypoint lines are suppressed via
++    ``snapshot_same_location``.
++    """
++    blocks: list[_CandidateBlock] = []
++    for candidate in report.candidates:
++        inst = candidate.installation
++        canonical_display = (
++            snapshot_path(snapshot, inst.canonical_path) if inst.canonical_path else "none"
++        )
++        entrypoint_display = snapshot_path(snapshot, inst.entrypoint_path)
++        mark = _state_mark(candidate.state)
++        variant = f"  [{inst.variant_label}]" if inst.variant_label else ""
++        hash_text = f"  Hash: {inst.content_hash[:23]}..." if inst.content_hash else "  Hash: none"
++        reason_line = f"Reason: {candidate.reason}"
++        rule_line = f"Rule: {candidate.rule_id}  Evidence: {candidate.evidence.value}"
++        lines: list[str] = [
++            f"{mark} {inst.name}{variant}",
++            f"  Canonical: {canonical_display}",
++        ]
++        if not inst.canonical_path or not snapshot_same_location(
++            snapshot, inst.canonical_path, inst.entrypoint_path
++        ):
++            lines.append(f"  Entrypoint: {entrypoint_display}")
++        lines.append(hash_text)
++        lines.append(reason_line)
++        lines.append(rule_line)
++        for note in report.notes:
++            lines.append(f"  Note: {note}")
++        body = "\n".join(lines)
++        expanded = _matching_key(candidate, key)
++        title_name = f"{inst.name}{variant}"
++        blocks.append(
++            _CandidateBlock(
++                key=str(inst.canonical_path or inst.entrypoint_path),
++                title_name=title_name,
++                state=candidate.state,
++                body=body,
++                expanded=expanded,
++            )
++        )
++    return blocks
++
++
++class WhyScreen(Screen[None]):
++    """Read-only skill detail screen: one installation, one agent, captured report."""
++
++    BINDINGS: ClassVar[list[BindingType]] = [
++        Binding("tab", "focus_next", "Next", show=False),
++        Binding("shift+tab", "focus_previous", "Previous", show=False),
++        Binding("left", "previous_agent", "Left", show=False),
++        Binding("right", "next_agent", "Right", show=False),
++        Binding("escape", "close_why", "Back", show=True),
++        Binding("backspace", "close_why", "Back", show=False),
++        Binding("q", "app.quit", "Quit", show=True),
++        Binding("ctrl+c", "app.quit", "Quit", show=False, priority=True),
++        Binding("r", "app.refresh", "Refresh", show=True),
++    ]
++
++    DEFAULT_CSS = """
++    WhyScreen {
++        layout: vertical;
++    }
++    #why-title {
++        height: auto;
++        padding: 0 1;
++        text-style: bold;
++    }
++    #why-agent-strip {
++        height: auto;
++        layout: horizontal;
++        padding: 0 1;
++    }
++    #why-agent-strip Button {
++        min-width: 14;
++        margin: 0 1;
++    }
++    #why-status, #why-error-details, #why-report-status {
++        height: auto;
++        padding: 0 1;
++    }
++    #why-candidates {
++        height: 1fr;
++    }
++    WhyScreen.narrow #why-agent-strip {
++        layout: vertical;
++    }
++    """
++
++    def __init__(self, key: str, agent_id: str | None) -> None:
++        super().__init__()
++        self._opening_key = key
++        self._key = key
++        self._agent_id = agent_id
++        self._agent_options: tuple[AgentOption, ...] = ()
++        self._agent_index = 0
++        self._report: ResolutionReport | None = None
++        self._owned_request: ViewRequest | None = None
++        self._generation: int | None = None
++        self._unavailable: tuple[str, ...] = ()
++        self._syncing = False
++        self._rendered_candidate_context: tuple[Any, ...] | None = None
++
++    # -- host integration ---------------------------------------------------
++
++    @property
++    def _host(self) -> _WhyHost:
++        return cast(_WhyHost, self.app)
++
++    def _controller_or_none(self) -> SessionController | None:
++        return getattr(self._host, "controller", None)
++
++    # -- lifecycle ----------------------------------------------------------
++
++    def compose(self) -> ComposeResult:
++        yield Header()
++        yield Static("", id="why-title", markup=False)
++        yield Horizontal(id="why-agent-strip")
++        yield Static("", id="why-status", markup=False)
++        yield Static("", id="why-error-details", markup=False)
++        yield Static("", id="why-report-status", markup=False)
++        yield VerticalScroll(id="why-candidates")
++        yield Footer()
++
++    def on_mount(self) -> None:
++        strip = self.query_one("#why-agent-strip", Horizontal)
++        strip.can_focus = True
++        strip.focus()
++        self._mounting = True
++        try:
++            self.sync_from_controller()
++        finally:
++            self._mounting = False
++        self._update_strip_focus()
++
++    def on_resize(self, event: events.Resize) -> None:
++        self.set_class(event.size.width < 80, "narrow")
++
++    # -- synchronization ----------------------------------------------------
++
++    def sync_from_controller(self) -> bool:
++        """Reconcile the screen with the controller's published session.
++
++        Returns True if the screen should close (the detail's opening key was
++        removed from the catalog), in which case the host calls ``close_why``.
++        """
++        if not self.is_mounted and not getattr(self, "_mounting", False):
++            return False
++        controller = self._controller_or_none()
++        if controller is None:
++            return False
++        snapshot = controller.current
++        if snapshot is None:
++            self._clear_display()
++            return False
++
++        if snapshot.generation != self._generation:
++            current_keys = {canonical_key(e) for e in snapshot.index.entries}
++            if self._opening_key not in current_keys:
++                # Detail's installation was removed -- return to Home.
++                notice = f"Installation '{self._opening_key}' was removed during refresh."
++                self._host.close_why(removal_notice=notice)
++                return True
++            self._generation = snapshot.generation
++            self._rebuild_from_snapshot(snapshot)
++
++        self._update_display()
++        return False
++
++    def _rebuild_from_snapshot(self, snapshot: SessionSnapshot) -> None:
++        """Re-derive agent choices and request context from a new snapshot."""
++        self._cancel_owned_token()
++        self._agent_options = _eligible_agent_options(snapshot, self._opening_key)
++        self._unavailable = _unavailable_agent_ids(snapshot, self._opening_key)
++
++        # Initial agent: Home's active agent if eligible, otherwise first option.
++        if self._agent_id is not None and any(
++            o.agent_id == self._agent_id for o in self._agent_options
++        ):
++            self._agent_index = next(
++                i for i, o in enumerate(self._agent_options) if o.agent_id == self._agent_id
++            )
++        elif self._agent_options:
++            self._agent_index = 0
++            self._agent_id = self._agent_options[0].agent_id
++        else:
++            self._agent_index = 0
++            self._agent_id = None
++
++        self._owned_request = None
++        self._report = None
++        self._refresh_strip()
++        self._request_report()
++
++    def _request_report(self) -> None:
++        """Request the Why report for the current key/agent, or show an explanation."""
++        controller = self._controller_or_none()
++        if controller is None or controller.current is None:
++            return
++
++        # Pre-dispatch validation: key must exist in the current catalog.
++        current_keys = {canonical_key(e) for e in controller.current.index.entries}
++        if self._opening_key not in current_keys:
++            # Missing key: return to Home, no dispatch, no failure.
++            self._host.close_why()
++            return
++
++        # Zero-agent skill: clear explanation, zero Why requests.
++        if not self._agent_options:
++            self._report = None
++            self._cancel_owned_token()
++            self._update_display()
++            return
++
++        # Invalid agent: show unavailable inline, no dispatch, no failure.
++        if self._agent_id is None or self._agent_id not in {
++            o.agent_id for o in self._agent_options
++        }:
++            self._report = None
++            self._cancel_owned_token()
++            self._update_display()
++            return
++
++        arguments = (self._opening_key, self._agent_id)
++
++        # Use the public adapter: cache hit returns immediately, miss dispatches.
++        cached = controller.get_cached_report("why", arguments)
++        if cached is not None and isinstance(cached, ResolutionReport):
++            self._report = cached
++            self._cancel_owned_token()
++            self._update_display()
++            return
++
++        # Redraw deduplication: if identical request is already active, keep it!
++        active = controller.active_requests.get("why")
++        if (
++            self._owned_request is not None
++            and active is not None
++            and active == self._owned_request
++            and active.arguments == arguments
++            and active.generation == controller.current.generation
++        ):
++            return
++
++        # Dispatch miss through host adapter
++        self._cancel_owned_token()
++        result = self._host.request_report("why", arguments)
++        if result is not None and isinstance(result, ResolutionReport):
++            self._report = result
++            self._owned_request = None
++            self._update_display()
++            return
++
++        # Cache miss: worker was dispatched by request_report.  Track the owned
++        # request from the controller's active slot.
++        active_now = controller.active_requests.get("why")
++        if (
++            active_now is not None
++            and active_now.arguments == arguments
++            and active_now.generation == controller.current.generation
++        ):
++            self._owned_request = active_now
++            self._report = None
++            self._update_display()
++
++    def _cancel_owned_token(self) -> None:
++        """Cancel detail's owned Why request token if it is still active."""
++        owned = self._owned_request
++        self._owned_request = None
++        if owned is None:
++            return
++        controller = self._controller_or_none()
++        if controller is None:
++            return
++        active = controller.active_requests.get("why")
++        if active is not None and active == owned:
++            controller.invalidate_view("why")
++
++    # -- display ------------------------------------------------------------
++
++    def _refresh_strip(self) -> None:
++        """Rebuild or update the agent strip buttons from current options."""
++        strip = self.query_one("#why-agent-strip", Horizontal)
++        current_buttons = [c for c in strip.children if isinstance(c, Button)]
++        desired_options = self._agent_options
++        desired_ids = [f"why-agent-{option.agent_id or 'none'}" for option in desired_options]
++        existing_by_id = {btn.id: btn for btn in current_buttons}
++
++        for btn in current_buttons:
++            if btn.id not in desired_ids:
++                btn.remove()
++
++        for option in desired_options:
++            btn_id = f"why-agent-{option.agent_id or 'none'}"
++            if btn_id in existing_by_id:
++                btn = existing_by_id[btn_id]
++                btn.label = Content.from_text(option.label, markup=False)
++                btn.set_class(option.agent_id == self._agent_id, "active")
++            else:
++                btn = Button(
++                    Content.from_text(option.label, markup=False),
++                    id=btn_id,
++                )
++                if option.agent_id == self._agent_id:
++                    btn.add_class("active")
++                strip.mount(btn)
++
++    def _update_strip_focus(self) -> None:
++        """Move focus to the button for the currently selected agent."""
++        if self._agent_id is None:
++            strip = self.query_one("#why-agent-strip", Horizontal)
++            strip.focus()
++            return
++        try:
++            button = self.query_one(f"#why-agent-{self._agent_id}", Button)
++            button.focus()
++        except NoMatches:
++            strip = self.query_one("#why-agent-strip", Horizontal)
++            strip.focus()
++
++    def _update_display(self) -> None:
++        """Rewrite title, strip, status, error and candidate panels from state."""
++        self._refresh_title()
++        self._refresh_strip()
++        self._refresh_status()
++        self._refresh_candidates()
++
++    def _refresh_title(self) -> None:
++        title = self.query_one("#why-title", Static)
++        controller = self._controller_or_none()
++        snapshot = controller.current if controller is not None else None
++        agent_label = (
++            agent_display_name(snapshot, self._agent_id)
++            if (snapshot is not None and self._agent_id is not None)
++            else (self._agent_id or "—")
++        )
++        installation_display = (
++            snapshot_path(snapshot, self._opening_key)
++            if snapshot is not None
++            else self._opening_key
++        )
++        lines = [f"Installation: {installation_display}"]
++        if snapshot is not None:
++            entry = _entry_for_key(snapshot, self._opening_key)
++            if entry is not None:
++                lines.append(f"Name: {entry.name}")
++            lines.append(f"Working directory: {snapshot_path(snapshot, str(snapshot.cwd))}")
++        lines.append(f"Agent: {agent_label}")
++        if self._unavailable:
++            lines.append(f"Unavailable agent IDs: {', '.join(self._unavailable)}")
++        if self._report is not None:
++            lines.append(f"Lookup name: {self._report.skill_name}")
++            lines.append(
++                f"Collision policy: {self._report.collision_policy} "
++                f"({self._report.policy_evidence.value})"
++            )
++            lines.append(f"Report-wide headline: {self._report.headline.value}")
++            for note in self._report.notes:
++                lines.append(f"Note: {note}")
++        title.update(Content.from_text("\n".join(lines), markup=False))
++
++    def _refresh_status(self) -> None:
++        controller = self._controller_or_none()
++        status_widget = self.query_one("#why-status", Static)
++        error_widget = self.query_one("#why-error-details", Static)
++        report_widget = self.query_one("#why-report-status", Static)
++
++        if controller is None or controller.current is None:
++            status_widget.update(Content.from_text("Idle", markup=False))
++            error_widget.update(Content.from_text("", markup=False))
++            report_widget.update(Content.from_text("No session captured.", markup=False))
++            return
++
++        status = controller.status
++        if status == "loading":
++            status_widget.update(Content.from_text("Scanning skills...", markup=False))
++            error_widget.update(Content.from_text("", markup=False))
++        elif status == "ready":
++            count = len(controller.current.index.entries)
++            status_widget.update(
++                Content.from_text(f"Ready: {count} skills discovered", markup=False)
++            )
++            error_widget.update(Content.from_text("", markup=False))
++        elif status == "refused":
++            msg = controller.refusal_message or "Snapshot refused."
++            status_widget.update(Content.from_text(msg, markup=False))
++            error_widget.update(Content.from_text("", markup=False))
++        elif status == "retry":
++            msg = controller.retry_message or "Files changed while scanning. Press r to retry."
++            status_widget.update(Content.from_text(msg, markup=False))
++            error_widget.update(Content.from_text("", markup=False))
++        elif status == "error":
++            status_widget.update(
++                Content.from_text(
++                    "Error: Unexpected internal fault. Details in memory only.", markup=False
++                )
++            )
++            error_widget.update(
++                Content.from_text(controller.last_error_details or "", markup=False)
++            )
++        else:
++            status_widget.update(Content.from_text("Idle", markup=False))
++            error_widget.update(Content.from_text("", markup=False))
++
++        # Report-specific status
++        if not self._agent_options:
++            if self._unavailable:
++                report_widget.update(
++                    Content.from_text(
++                        f"Unavailable agent IDs: {', '.join(self._unavailable)}",
++                        markup=False,
++                    )
++                )
++            else:
++                report_widget.update(Content.from_text(_NO_AGENT_EXPLANATION, markup=False))
++        elif (
++            self._unavailable
++            and self._agent_id is not None
++            and self._agent_id not in {o.agent_id for o in self._agent_options}
++        ):
++            report_widget.update(
++                Content.from_text(
++                    _UNKNOWN_AGENT_HINT.format(", ".join(self._unavailable)),
++                    markup=False,
++                )
++            )
++        elif self._owned_request is not None:
++            report_widget.update(Content.from_text("Loading report…", markup=False))
++        elif self._report is not None:
++            report_text = f"Report: {self._report.skill_name} for {self._report.agent_name}"
++            if self._unavailable:
++                report_text += f" (Unavailable agent IDs: {', '.join(self._unavailable)})"
++            report_widget.update(Content.from_text(report_text, markup=False))
++        else:
++            report_widget.update(Content.from_text("No report available.", markup=False))
++
++    def _refresh_candidates(self) -> None:
++        controller = self._controller_or_none()
++        snapshot = controller.current if controller is not None else None
++
++        current_context = (
++            self._opening_key,
++            self._agent_id,
++            id(self._report) if self._report is not None else None,
++            self._owned_request is not None,
++            self._unavailable,
++            len(self._agent_options),
++        )
++        if self._rendered_candidate_context == current_context:
++            return
++
++        container = self.query_one("#why-candidates", VerticalScroll)
++        container.remove_children()
++
++        if self._report is None:
++            if not self._agent_options:
++                if self._unavailable:
++                    msg = (
++                        f"Unavailable agent IDs: {', '.join(self._unavailable)} "
++                        "— no registered agent reaches this installation."
++                    )
++                else:
++                    msg = _NO_AGENT_EXPLANATION
++                container.mount(Static(msg, markup=False))
++            elif (
++                self._unavailable
++                and self._agent_id is not None
++                and self._agent_id not in {o.agent_id for o in self._agent_options}
++            ):
++                msg = (
++                    f"Unavailable agent: {', '.join(self._unavailable)} "
++                    "— no Why report can be produced for this selection."
++                )
++                container.mount(Static(msg, markup=False))
++            elif self._owned_request is not None:
++                container.mount(Static("Loading report…", markup=False))
++            else:
++                container.mount(Static("No report available.", markup=False))
++            self._rendered_candidate_context = current_context
++            return
++
++        if not self._report.candidates:
++            if not self._report.found:
++                msg = "No copies of this skill name were found in any search roots."
++            else:
++                msg = f"No candidates evaluated. Headline: {self._report.headline.value}"
++            container.mount(Static(msg, markup=False))
++            self._rendered_candidate_context = current_context
++            return
++
++        assert snapshot is not None
++        blocks = _build_candidate_blocks(self._report, snapshot, self._opening_key)
++        has_match = any(b.expanded for b in blocks)
++        if not has_match:
++            container.mount(
++                Static(
++                    "No candidate matches the selected installation.",
++                    id="why-no-match-notice",
++                    markup=False,
++                )
++            )
++
++        for block in blocks:
++            style = STATE_STYLE.get(block.state, "")
++            mark = _state_mark(block.state)
++            title_content = Content.assemble(
++                Content.styled(f"{mark} ", style) if style else f"{mark} ",
++                Content.from_text(block.title_name, markup=False),
++                Content.styled(f"  ({block.state.value})", style)
++                if style
++                else f"  ({block.state.value})",
++            )
++            collapsible = Collapsible(
++                Static(block.body, markup=False),
++                title=title_content,  # type: ignore[arg-type]
++                collapsed=not block.expanded,
++            )
++            container.mount(collapsible)
++        self._rendered_candidate_context = current_context
++
++    def _clear_display(self) -> None:
++        self._rendered_candidate_context = None
++        with contextlib.suppress(NoMatches):
++            self.query_one("#why-title", Static).update(Content.from_text("", markup=False))
++            self.query_one("#why-status", Static).update(Content.from_text("", markup=False))
++            self.query_one("#why-error-details", Static).update(Content.from_text("", markup=False))
++            self.query_one("#why-report-status", Static).update(Content.from_text("", markup=False))
++            self.query_one("#why-candidates", VerticalScroll).remove_children()
++
++    # -- agent switching ----------------------------------------------------
++
++    def action_previous_agent(self) -> None:
++        """Switch to the previous agent while the strip is focused."""
++        if not self._is_strip_focused() or not self._agent_options:
++            return
++        self._change_agent(-1)
++
++    def action_next_agent(self) -> None:
++        """Switch to the next agent while the strip is focused."""
++        if not self._is_strip_focused() or not self._agent_options:
++            return
++        self._change_agent(1)
++
++    def _is_strip_focused(self) -> bool:
++        focused = self.app.focused
++        if focused is None:
++            return False
++        try:
++            strip = self.query_one("#why-agent-strip", Horizontal)
++        except NoMatches:
++            return False
++        return focused is strip or focused in strip.children
++
++    def _change_agent(self, delta: int) -> None:
++        """Change the selected agent by delta, wrapping deterministically."""
++        if not self._agent_options:
++            return
++        self._agent_index = (self._agent_index + delta) % len(self._agent_options)
++        self._agent_id = self._agent_options[self._agent_index].agent_id
++        self._cancel_owned_token()
++        self._report = None
++        self._update_display()
++        self._update_strip_focus()
++        self._request_report()
++
++    # -- actions ------------------------------------------------------------
++
++    def action_close_why(self) -> None:
++        """Close the Why screen and return to Home."""
++        self._host.close_why()
++
++    def action_quit(self) -> None:
++        """Quit the application with the controller's exit code."""
++        controller = self._controller_or_none()
++        code = controller.close() if controller is not None else int(ExitCode.OK)
++        self.app.exit(code, return_code=code)
++
++    def action_refresh(self) -> None:
++        """Request a session refresh through the host app."""
++        self._host.action_refresh()
++
++    def action_focus_next(self) -> None:
++        """Move focus to the next focusable area."""
++        self.focus_next()
++
++    def action_focus_previous(self) -> None:
++        """Move focus to the previous focusable area."""
++        self.focus_previous()
++
++    # -- outcome handling ---------------------------------------------------
++
++    def note_report_outcome(
++        self,
++        view: ViewName,
++        request_id: int,
++        generation: int,
++        arguments: tuple[str, ...],
++        *,
++        accepted: bool,
++        report: ReportValue | None = None,
++        error: Exception | None = None,
++    ) -> None:
++        """Consume an accepted Why result, or merely wake after rejection."""
++        if not self.is_mounted or view != "why":
++            return
++        controller = self._controller_or_none()
++        if controller is None:
++            return
++        owned = self._owned_request
++        if owned is not None:
++            identity_matches = (
++                owned.request_id == request_id
++                and owned.generation == generation
++                and owned.view == view
++                and owned.arguments == arguments
++            )
++            if identity_matches:
++                if accepted:
++                    if isinstance(report, ResolutionReport):
++                        self._report = report
++                    else:
++                        self._report = None
++                    self._owned_request = None
++                    self._update_display()
++                else:
++                    active = controller.active_requests.get("why")
++                    if active is None or active != owned:
++                        self._owned_request = None
++                    self._update_display()
++                    self._request_report()
++            elif not accepted:
++                # Rejected data for someone else's token must never clear or
++                # mark the newer owned token.
++                pass
++
++    # -- event handlers -----------------------------------------------------
++
++    def on_button_pressed(self, event: Button.Pressed) -> None:
++        """Handle agent button presses from the strip."""
++        button = event.button
++        button_id = button.id or ""
++        if button_id.startswith("why-agent-"):
++            agent_id = button_id[len("why-agent-") :] or None
++            if agent_id != self._agent_id:
++                self._agent_id = agent_id
++                self._agent_index = next(
++                    i for i, o in enumerate(self._agent_options) if o.agent_id == agent_id
++                )
++                self._cancel_owned_token()
++                self._report = None
++                self._update_display()
++                self._request_report()
++        event.stop()
++
++    def on_unmount(self) -> None:
++        self._cancel_owned_token()
++
++
++__all__ = [
++    "WhyScreen",
++]
+
+diff --git a/tests/test_tui_why.py b/tests/test_tui_why.py
+new file mode 100644
+index 0000000..9acac7c
+--- /dev/null
++++ b/tests/test_tui_why.py
+@@ -0,0 +1,2077 @@
++"""Headless U4 Why screen and detail navigation tests.
++
++Specification reference: FULL_SCREEN_TUI.md §8.4, §9.1, §21.7 and §22 U4.
++
++Every test uses the synthetic ``mock_home`` fixture (temporary HOME plus the
++protected-system-root isolation installed by ``tests/conftest.py``); a live
++``~/.claude`` is never read or written.  Workers are driven by real Textual
++Pilot key/input events, and controlled races use threading events with bounded
++waits so a hang fails the test instead of stalling the run.
++"""
++
++from __future__ import annotations
++
++import asyncio
++import builtins
++import os
++import shutil
++import threading
++import time
++from dataclasses import replace
++from pathlib import Path
++from typing import Any
++
++import pytest
++from textual.content import Content
++from textual.widgets import Button, Collapsible, DataTable, Input, Static
++
++from skill_lens.core import paths
++from skill_lens.core.discovery import canonical_key
++from skill_lens.core.snapshot import (
++    SnapshotChanged,
++    SnapshotTooLarge,
++    capture_session,
++    snapshot_why,
++)
++from skill_lens.core.snapshot_models import SessionSnapshot
++from skill_lens.models.enums import (
++    Collision,
++    Evidence,
++    HeadlineState,
++    ParseStatus,
++    Scope,
++    Visibility,
++)
++from skill_lens.models.installation import SkillInstallation
++from skill_lens.models.resolution import CandidateResolution, ResolutionReport
++from skill_lens.presentation.state import STATE_STYLE
++from skill_lens.tui.app import SkillLensApp
++from skill_lens.tui.home import HomeScreen, _OwnedWhy
++from skill_lens.tui.session import ViewRequest
++from skill_lens.tui.why import WhyScreen
++from tests.fixtures.builders import make_skill
++from tests.fixtures.scenarios import build_scenario
++
++# ---------------------------------------------------------------------------
++# Small test helpers
++# ---------------------------------------------------------------------------
++
++
++async def _wait_until(pilot: Any, predicate: Any, label: str, timeout: float = 5.0) -> None:
++    deadline = time.monotonic() + timeout
++    while time.monotonic() < deadline:
++        if predicate():
++            return
++        await pilot.pause(0.01)
++    raise AssertionError(f"timed out waiting for {label}")
++
++
++async def _wait_ready(pilot: Any, app: SkillLensApp) -> None:
++    await _wait_until(
++        pilot,
++        lambda: app.controller.current is not None and app.controller.status == "ready",
++        "initial capture",
++    )
++
++
++async def _wait_why_idle(pilot: Any, app: SkillLensApp) -> None:
++    await _wait_until(
++        pilot,
++        lambda: app.controller.active_requests.get("why") is None,
++        "why report idle",
++    )
++    await pilot.pause(0.05)
++
++
++def _candidate(
++    state: str | HeadlineState = HeadlineState.ACTIVE,
++    canonical: str = "/mock/skill",
++    entrypoint: str | None = None,
++    name: str = "deploy",
++    rule_id: str = "rule-1",
++    evidence: Evidence = Evidence.DOCUMENTED,
++    reason: str = "tested reason",
++    notes: tuple[str, ...] = (),
++) -> CandidateResolution:
++    if isinstance(state, HeadlineState):
++        hs = state
++    else:
++        norm = state.upper()
++        if norm == "UNSEARCHED_ROOT":
++            norm = "UNSEARCHED"
++        hs = HeadlineState(norm)
++    return CandidateResolution(
++        state=hs,
++        visibility=Visibility.ACTIVE_ROOT,
++        collision=Collision.WINNING_ENTRY,
++        rule_id=rule_id,
++        evidence=evidence,
++        reason=reason,
++        rank=1,
++        installation=SkillInstallation(
++            name=name,
++            entrypoint_path=entrypoint or canonical,
++            canonical_path=canonical,
++            scope=Scope.USER,
++            parse_status=ParseStatus.VALID,
++        ),
++    )
++
++
++def _report(
++    *candidates: CandidateResolution,
++    skill_name: str = "deploy",
++    agent: str = "claude",
++    agent_name: str = "Claude Code",
++    cwd: str = "/mock/cwd",
++    policy: str = "prefer_user",
++    evidence: Evidence = Evidence.DOCUMENTED,
++    headline: HeadlineState = HeadlineState.ACTIVE,
++    notes: tuple[str, ...] = (),
++    found: bool = True,
++) -> ResolutionReport:
++    return ResolutionReport(
++        skill_name=skill_name,
++        agent=agent,
++        agent_name=agent_name,
++        cwd=cwd,
++        collision_policy=policy,
++        policy_evidence=evidence,
++        headline=headline,
++        candidates=candidates,
++        notes=notes,
++        found=found,
++    )
++
++
++# ---------------------------------------------------------------------------
++# C1 and C2 Promoted Regression Tests
++# ---------------------------------------------------------------------------
++
++
++def test_redraw_preserves_candidate_focus_and_expansion(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C1: Collapsing candidate and focusing its title survives session redraw / app._update_ui."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            screen = app.screen
++            assert isinstance(screen, WhyScreen)
++
++            block = list(screen.query(Collapsible))[0]
++            block.collapsed = True
++            block.query_one("CollapsibleTitle").focus()
++            await pilot.pause()
++
++            # Session redraw via host _update_ui
++            app._update_ui()
++            await pilot.pause()
++
++            newblock = list(screen.query(Collapsible))[0]
++            assert newblock.collapsed, "Session redraw reset user candidate expansion"
++            assert (
++                app.focused is not None and app.focused.__class__.__name__ == "CollapsibleTitle"
++            ), "Session redraw stole candidate focus"
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_agent_button_renders_captured_label_literally(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C2: Captured agent names with markup tags render literally at creation and update."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test() as pilot:
++            await _wait_ready(pilot, app)
++            snap = app.controller.current
++            assert snap is not None
++            app.controller.current = replace(
++                snap,
++                registry=tuple(
++                    replace(a, name=r"[red]Agent[/red]\label") if a.id == "claude" else a
++                    for a in snap.registry
++                ),
++            )
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++
++            button = app.screen.query_one("#why-agent-claude", Button)
++            assert r"[red]Agent[/red]\label" in button.label.plain, (
++                "Captured agent name interpreted as markup"
++            )
++            assert not any(span.style == "red" for span in button.label.spans), (
++                "Style span was parsed from literal name"
++            )
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++# ---------------------------------------------------------------------------
++# Navigation & Initial Selection Tests
++# ---------------------------------------------------------------------------
++
++
++def test_enter_on_focused_nonempty_table_opens_why_screen(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Pressing Enter on the focused, nonempty Home table pushes a WhyScreen."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            assert isinstance(app.screen, HomeScreen)
++            table = app.screen.query_one("#skill-table", DataTable)
++            assert table.row_count > 0
++
++            # Press Enter to open detail
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++
++            # Assert detail screen is mounted
++            assert isinstance(app.screen, WhyScreen)
++            why: WhyScreen = app.screen
++            assert why._opening_key == app.controller.selected_key
++
++            # Repeated Enter does NOT push another screen (at most one detail exists)
++            await pilot.press("enter")
++            await pilot.pause(0.02)
++            assert len(app.screen_stack) == 2
++            assert isinstance(app.screen, WhyScreen)
++
++            # Clean exit
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_enter_on_empty_table_or_filtered_empty_list_is_noop(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Enter on an empty table or filter matching 0 skills does not open detail."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            # Filter for non-existent skill
++            filter_input = app.screen.query_one("#filter-input", Input)
++            filter_input.value = "nonexistent-skill-xyz"
++            await pilot.pause(0.02)
++
++            table = app.screen.query_one("#skill-table", DataTable)
++            assert table.row_count == 0
++
++            table.focus()
++            await pilot.press("enter")
++            await pilot.pause(0.02)
++            # Still on HomeScreen
++            assert isinstance(app.screen, HomeScreen)
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_enter_on_filter_input_submits_filter_does_not_open_why(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Enter on the filter Input submits the filter and returns to the table, not detail."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            filter_input = app.screen.query_one("#filter-input", Input)
++            filter_input.focus()
++            filter_input.value = "deploy"
++            await pilot.press("enter")
++            await pilot.pause(0.02)
++
++            # Still on HomeScreen and focus moved to table
++            assert isinstance(app.screen, HomeScreen)
++            assert app.screen.query_one("#skill-table", DataTable).has_focus
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_backspace_returns_to_home_preserving_filter_and_selection(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Backspace and Escape return to Home, preserving filter query and selection."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            home: HomeScreen = app.screen  # type: ignore[assignment]
++            filter_input = home.query_one("#filter-input", Input)
++            filter_input.value = "deploy"
++            await pilot.pause(0.02)
++            selected_before = app.controller.selected_key
++
++            # Open detail
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            assert isinstance(app.screen, WhyScreen)
++
++            # Press Backspace
++            await pilot.press("backspace")
++            await pilot.pause(0.05)
++            assert isinstance(app.screen, HomeScreen)
++            assert app.screen.query_one("#filter-input", Input).value == "deploy"
++            assert app.controller.selected_key == selected_before
++            assert app.screen.query_one("#skill-table", DataTable).has_focus
++
++            # Repeated back does not pop root screen
++            await pilot.press("escape")
++            await pilot.pause(0.02)
++            assert isinstance(app.screen, HomeScreen)
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_priority_ctrl_c_and_q_quit_from_why(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """q and priority Ctrl-C quit cleanly with controller status code from any detail focus."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            assert isinstance(app.screen, WhyScreen)
++
++            # Press q to quit
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++# ---------------------------------------------------------------------------
++# Agent Strip & Traversal Tests
++# ---------------------------------------------------------------------------
++
++
++def test_agent_strip_options_and_deterministic_switching(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Strip options are ScanEntry's registered agents in sorted order; left/right switch."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("symlink_farm_multi_agent", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Strip options
++            assert len(why._agent_options) >= 2
++            agent_ids = [opt.agent_id for opt in why._agent_options]
++            assert agent_ids == sorted(agent_ids)
++
++            initial_agent = why._agent_id
++            assert initial_agent == agent_ids[0]
++
++            # Right moves to next agent
++            await pilot.press("right")
++            await pilot.pause(0.02)
++            assert why._agent_id == agent_ids[1]
++
++            # Left moves back
++            await pilot.press("left")
++            await pilot.pause(0.02)
++            assert why._agent_id == initial_agent
++
++            # Left wraps around to last agent
++            await pilot.press("left")
++            await pilot.pause(0.02)
++            assert why._agent_id == agent_ids[-1]
++
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_zero_agent_skill_shows_explanation_and_zero_requests(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """A zero-agent skill shows clear explanation and produces zero Why requests."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            assert app.controller.current is not None
++
++            # Construct synthetic ScanEntry with zero agents
++            current = app.controller.current
++            entry_zero_agents = replace(current.scan.skills[0], agents=())
++            mutated_scan = replace(current.scan, skills=(entry_zero_agents,))
++            app.controller.current = replace(current, scan=mutated_scan)
++
++            # Open WhyScreen
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            assert len(why._agent_options) == 0
++            assert why._agent_id is None
++            # Zero Why requests
++            assert app.controller.active_requests.get("why") is None
++
++            # Explanation is displayed
++            rep_status = str(why.query_one("#why-report-status", Static).content)
++            assert "No agent reaches this installation." in rep_status
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_defensive_unknown_agent_in_constructed_snapshot(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Pre-dispatch validation: unknown agent leaves controller.failed False and quits 0."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            assert app.controller.current is not None
++
++            current = app.controller.current
++            target_key = current.scan.skills[0].canonical_path
++            why = WhyScreen(target_key, "unknown-agent-xyz")
++            app.push_screen(why)
++            await pilot.pause(0.05)
++
++            # Pre-dispatch validation: zero Why dispatch, no sticky failure
++            assert app.controller.active_requests.get("why") is None
++            assert app.controller.failed is False
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++# ---------------------------------------------------------------------------
++# C3 Controlled Event Races & Screen Ownership Tests (Real Workers & Events)
++# ---------------------------------------------------------------------------
++
++
++def test_real_worker_race_blocked_home_to_detail_agent_change_and_stale_callbacks(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C3: Controlled real workers with threading.Event:
++
++    Blocked Home -> detail -> agent change -> stale Home success/error ->
++    back -> stale detail success/error. Immediate resumed Home progress.
++    """
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("symlink_farm_multi_agent", mock_home)
++
++    home_worker_started = threading.Event()
++    home_worker_gate = threading.Event()
++    detail_a_started = threading.Event()
++    detail_a_gate = threading.Event()
++    detail_b_started = threading.Event()
++    detail_b_gate = threading.Event()
++
++    real_snap_why = snapshot_why
++
++    def controlled_snapshot_why(snap: SessionSnapshot, key: str, agent: str) -> ResolutionReport:
++        if not home_worker_started.is_set():
++            home_worker_started.set()
++            home_worker_gate.wait(timeout=5.0)
++            return real_snap_why(snap, key, agent)
++        if not detail_a_started.is_set():
++            detail_a_started.set()
++            detail_a_gate.wait(timeout=5.0)
++            return real_snap_why(snap, key, agent)
++        if not detail_b_started.is_set():
++            detail_b_started.set()
++            detail_b_gate.wait(timeout=5.0)
++            return real_snap_why(snap, key, agent)
++        return real_snap_why(snap, key, agent)
++
++    monkeypatch.setattr("skill_lens.tui.app.snapshot_why", controlled_snapshot_why)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            home: HomeScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(home, HomeScreen)
++
++            # 1. Home sets agent filter to claude -> Home dispatches Why worker
++            home_resumed_gate = threading.Event()
++            home.action_cycle_agent()
++            await _wait_until(pilot, lambda: home_worker_started.is_set(), "Home worker started")
++            home_token = app.controller.active_requests.get("why")
++            assert home_token is not None
++
++            # 2. Open detail screen -> Home is suspended and cancels its token
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++            assert home._suspended is True
++
++            # Detail worker A starts
++            await _wait_until(pilot, lambda: detail_a_started.is_set(), "Detail worker A started")
++            detail_a_token = app.controller.active_requests.get("why")
++            assert detail_a_token is not None
++            assert detail_a_token != home_token
++
++            # 3. In detail, switch to agent B -> cancels token A and dispatches worker B
++            await pilot.press("right")
++            await _wait_until(pilot, lambda: detail_b_started.is_set(), "Detail worker B started")
++            detail_b_token = app.controller.active_requests.get("why")
++            assert detail_b_token is not None
++            assert detail_b_token != detail_a_token
++
++            # 4. Release blocked Home worker -> old Home outcome completes
++            home_worker_gate.set()
++            await pilot.pause(0.05)
++            # Old Home outcome is rejected; detail still holds detail_b_token
++            assert app.controller.active_requests.get("why") == detail_b_token
++            assert "Loading report" in str(why.query_one("#why-report-status", Static).content)
++
++            # Gate resumed Home why request so worker stays active
++            app.controller.cache.clear()
++            for g in home._groups.values():
++                g.status = "pending"
++                g.report = None
++
++            def resumed_why(snap: SessionSnapshot, key: str, agent: str) -> ResolutionReport:
++                home_resumed_gate.wait(timeout=5.0)
++                return real_snap_why(snap, key, agent)
++
++            monkeypatch.setattr("skill_lens.tui.app.snapshot_why", resumed_why)
++
++            # 5. Return to Home via Escape -> pre-pop cleanup, Home resumes immediately
++            await pilot.press("escape")
++            await pilot.pause(0.05)
++            assert isinstance(app.screen, HomeScreen)
++            assert home._suspended is False
++
++            # Home immediately resumed and dispatched new request
++            new_home_token = app.controller.active_requests.get("why")
++            assert new_home_token is not None
++            assert new_home_token != detail_b_token
++
++            # 6. Release detail worker B -> stale detail outcome completes
++            detail_b_gate.set()
++            detail_a_gate.set()
++            await pilot.pause(0.05)
++
++            # Stale detail callback cannot corrupt or cancel Home's new token
++            assert app.controller.active_requests.get("why") == new_home_token
++            assert app.controller.failed is False
++            home_resumed_gate.set()
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_real_worker_detail_a_to_b_while_b_running(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C3: Agent A completes while B is still running; late A outcome is rejected."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("symlink_farm_multi_agent", mock_home)
++
++    worker_a_gate = threading.Event()
++    worker_b_gate = threading.Event()
++    a_started = threading.Event()
++    b_started = threading.Event()
++    real_snap_why = snapshot_why
++
++    def controlled_snapshot_why(snap: SessionSnapshot, key: str, agent: str) -> ResolutionReport:
++        if agent == "claude" and not a_started.is_set():
++            a_started.set()
++            worker_a_gate.wait(timeout=5.0)
++        elif agent == "codex" and not b_started.is_set():
++            b_started.set()
++            worker_b_gate.wait(timeout=5.0)
++        return real_snap_why(snap, key, agent)
++
++    monkeypatch.setattr("skill_lens.tui.app.snapshot_why", controlled_snapshot_why)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            assert a_started.wait(timeout=3.0)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Switch to agent B
++            await pilot.press("right")
++            assert b_started.wait(timeout=3.0)
++
++            # Release A while B is still running
++            worker_a_gate.set()
++            await pilot.pause(0.05)
++
++            # Late A outcome did not overwrite B
++            assert why._agent_id == "codex"
++            assert "Loading report" in str(why.query_one("#why-report-status", Static).content)
++
++            # Release B
++            worker_b_gate.set()
++            await _wait_why_idle(pilot, app)
++            assert why._report is not None
++            assert why._report.agent == "codex"
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_detail_agent_switch_a_to_b_while_a_completes(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Late completion for agent A with differing arguments is rejected when B is owned."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("symlink_farm_multi_agent", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            req_b = ViewRequest(
++                generation=why._generation,
++                request_id=999,
++                view="why",
++                arguments=(why._opening_key, "codex"),
++            )
++            why._owned_request = req_b
++            why._agent_id = "codex"
++            why._report = None
++
++            # Stale completion arrives with same request_id and generation, but arguments for claude
++            stale_report = _report(agent="claude")
++            why.note_report_outcome(
++                "why",
++                999,
++                why._generation,
++                (why._opening_key, "claude"),
++                accepted=True,
++                report=stale_report,
++            )
++
++            # Must be rejected because arguments do not match owned request
++            assert why._report is None
++            assert why._owned_request == req_b
++
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_pending_blocked_capture_plus_detail_report(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C3: Detail report and refresh capture both blocked; detail completes
++    while capture pending.
++    """
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    report_gate = threading.Event()
++    capture_gate = threading.Event()
++    report_started = threading.Event()
++    capture_started = threading.Event()
++
++    real_snap_why = snapshot_why
++    real_capture = capture_session
++
++    def controlled_why(snap: SessionSnapshot, key: str, agent: str) -> ResolutionReport:
++        if not report_started.is_set():
++            report_started.set()
++            report_gate.wait(timeout=5.0)
++        return real_snap_why(snap, key, agent)
++
++    def controlled_capture(*args: Any, **kwargs: Any) -> SessionSnapshot:
++        gen = kwargs.get("generation", 1)
++        if gen > 1 and not capture_started.is_set():
++            capture_started.set()
++            capture_gate.wait(timeout=5.0)
++        return real_capture(*args, **kwargs)
++
++    monkeypatch.setattr("skill_lens.tui.app.snapshot_why", controlled_why)
++    monkeypatch.setattr("skill_lens.tui.app.capture_session", controlled_capture)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            assert report_started.wait(timeout=3.0)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Trigger refresh
++            await pilot.press("r")
++            assert capture_started.wait(timeout=3.0)
++
++            # Both pending!
++            assert app.controller.status == "loading"
++            detail_token = app.controller.active_requests.get("why")
++            assert detail_token is not None
++
++            # Release only detail report
++            report_gate.set()
++            await pilot.pause(0.05)
++
++            # Detail outcome accepted and visibly rendered while capture stays pending!
++            assert app.controller.status == "loading"
++            assert why._report is not None
++            assert len(list(why.query(Collapsible))) > 0
++            assert "Scanning skills" in str(why.query_one("#why-status", Static).content)
++
++            # Release capture
++            capture_gate.set()
++            await _wait_until(pilot, lambda: why._generation == 2, "refresh publication")
++            assert why._generation == 2
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_non_capture_accepted_event_synchronization_does_not_cancel_or_dispatch_home(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C3: Accepted non-capture report event does not cause hidden Home to
++    dispatch or cancel detail.
++    """
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            home: HomeScreen = app.screen  # type: ignore[assignment]
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Dispatch an accepted report event for diff view
++            from skill_lens.tui.app import ViewReportComplete
++
++            app.controller.cache[(1, "diff", ("key",))] = type("DiffReport", (), {})()
++            app.post_message(
++                ViewReportComplete(
++                    "diff",
++                    123,
++                    1,
++                    ("key",),
++                    app.controller.cache[(1, "diff", ("key",))],  # type: ignore[arg-type]
++                )
++            )
++            await pilot.pause(0.05)
++
++            # Hidden Home remains suspended and did not dispatch
++            assert home._suspended is True
++            assert home._inflight is None
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_real_pop_delayed_detail_callback_protects_resumed_home(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C3 DISCRIMINATING MUTATION PROOF: An unneutralized detail screen without exact
++
++    token cleanup would allow late callbacks/unmount during a real Escape/pop
++    to cancel newly resumed Home tokens.
++    """
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            home: HomeScreen = app.screen  # type: ignore[assignment]
++            home.action_cycle_agent()
++            await pilot.pause(0.05)
++            await _wait_why_idle(pilot, app)
++
++            # Open detail
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Clear cache and reset group status so Home must re-request on resume
++            app.controller.cache.clear()
++            for g in home._groups.values():
++                g.status = "pending"
++                g.report = None
++
++            gate = threading.Event()
++            real_snap = snapshot_why
++
++            def blocking_why(snap: SessionSnapshot, key: str, agent: str) -> ResolutionReport:
++                gate.wait(timeout=5.0)
++                return real_snap(snap, key, agent)
++
++            monkeypatch.setattr("skill_lens.tui.app.snapshot_why", blocking_why)
++
++            detail_token = why._owned_request or ViewRequest(
++                generation=why._generation,
++                request_id=888,
++                view="why",
++                arguments=(why._opening_key, why._agent_id or "claude"),
++            )
++
++            # Real pop with Escape: WhyScreen closes, Home resumes and dispatches new token
++            await pilot.press("escape")
++            await pilot.pause(0.05)
++            assert isinstance(app.screen, HomeScreen)
++
++            # Home resumed and re-drove
++            home_token = app.controller.active_requests.get("why")
++            assert home_token is not None, "Home should have an active token after resume"
++
++            # Simulate delayed callback running on why with its previous token
++            why._owned_request = detail_token
++            why._cancel_owned_token()
++            assert app.controller.active_requests.get("why") == home_token, (
++                "Unowned Home token was invalidated by delayed detail callback!"
++            )
++            gate.set()
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_u3_identity_matching_rejection_branch(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C3: Focused coverage for U3 identity-matching rejected-request branch in HomeScreen."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            home: HomeScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(home, HomeScreen)
++            home.action_cycle_agent()
++            await pilot.pause(0.05)
++            first_group = next(iter(home._groups.keys()))
++
++            req = ViewRequest(
++                generation=1,
++                request_id=555,
++                view="why",
++                arguments=("/some/key", "claude"),
++            )
++            app.controller.active_requests["why"] = req
++            home._inflight = _OwnedWhy(lookup_name=first_group, request=req)
++            home._groups[first_group].status = "loading"
++
++            # Outcome arrives with matching identity but accepted=False
++            del app.controller.active_requests["why"]
++            home.note_report_outcome(
++                "why",
++                req.request_id,
++                req.generation,
++                req.arguments,
++                accepted=False,
++            )
++            assert home._groups[first_group].status in ("pending", "done")
++            assert home._inflight is None
++
++            # Repeat when identity does NOT match: inflight must NOT be cleared
++            app.controller.active_requests["why"] = req
++            home._inflight = _OwnedWhy(lookup_name=first_group, request=req)
++            home.note_report_outcome(
++                "why",
++                req.request_id + 99,
++                req.generation,
++                req.arguments,
++                accepted=False,
++            )
++            assert home._inflight is not None
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++# ---------------------------------------------------------------------------
++# C4 Refresh Matrix & Active Home Status Tests
++# ---------------------------------------------------------------------------
++
++
++def test_refresh_on_detail_surviving_installation(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Refresh while on detail keeps usable old content until publication updates it."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++            old_gen = why._generation
++
++            await pilot.press("r")
++            status_content = str(why.query_one("#why-status", Static).content)
++            assert "Scanning" in status_content or "Ready" in status_content
++
++            await _wait_until(pilot, lambda: why._generation != old_gen, "detail refresh publish")
++            assert why._generation == 2
++            entries = app.controller.current.index.entries  # type: ignore[union-attr]
++            assert why._opening_key in {canonical_key(e) for e in entries}
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_refresh_on_detail_removed_installation_returns_to_home_with_notice(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """When the detail installation is removed on disk, refresh returns to Home with notice."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    make_skill(mock_home / ".claude" / "skills" / "skill-a", "skill-a", "Skill A description.")
++    make_skill(mock_home / ".claude" / "skills" / "skill-b", "skill-b", "Skill B description.")
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            table = app.screen.query_one("#skill-table", DataTable)
++            assert table.row_count >= 2
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++            removed_key = why._opening_key
++
++            # Delete skill-a directory on disk
++            shutil.rmtree(mock_home / ".claude" / "skills" / "skill-a")
++
++            await pilot.press("r")
++            await _wait_until(pilot, lambda: isinstance(app.screen, HomeScreen), "return to home")
++
++            home: HomeScreen = app.screen  # type: ignore[assignment]
++            assert home._removal_notice is not None
++            assert removed_key in home._removal_notice
++            notice_content = str(home.query_one("#removal-notice", Static).content)
++            assert removed_key in notice_content
++
++            await pilot.press("down")
++            await pilot.pause(0.02)
++            assert home._removal_notice is None
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_refresh_on_detail_changed_agent_eligibility(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C4: On refresh, when agent eligibility changes, strip updates and keeps eligible or first."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("symlink_farm_multi_agent", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Switch to second agent
++            await pilot.press("right")
++            assert why._agent_id == why._agent_options[1].agent_id
++            selected_agent = why._agent_id
++
++            # Mutate snapshot to remove selected_agent from eligible registry
++            snap = app.controller.current
++            assert snap is not None
++            new_registry = tuple(a for a in snap.registry if a.id != selected_agent)
++            new_snap = replace(snap, generation=2, registry=new_registry)
++
++            # Publish capture
++            app.controller.pending_generation = 2
++            app.controller.accept_capture(new_snap, 2)
++            app._update_ui()
++            await pilot.pause(0.05)
++
++            # Detail updated agent options and switched to first remaining eligible agent
++            assert why._agent_id != selected_agent
++            assert why._agent_id == why._agent_options[0].agent_id
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_refresh_on_detail_no_agent_replacement(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C4: On refresh, when no registered agents reach the installation, show explanation."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Publish new snapshot where skill has 0 agents
++            snap = app.controller.current
++            assert snap is not None
++            mutated_skills = tuple(replace(s, agents=()) for s in snap.scan.skills)
++            new_snap = replace(snap, generation=2, scan=replace(snap.scan, skills=mutated_skills))
++            app.controller.pending_generation = 2
++            app.controller.accept_capture(new_snap, 2)
++            app._update_ui()
++            await pilot.pause(0.05)
++
++            assert len(why._agent_options) == 0
++            rep_status = str(why.query_one("#why-report-status", Static).content)
++            assert "No agent reaches this installation." in rep_status
++            assert app.controller.active_requests.get("why") is None
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_refresh_on_detail_empty_replacement_catalog(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C4: On refresh, completely empty catalog returns to Home showing
++    empty state and removal notice.
++    """
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++            old_key = why._opening_key
++
++            # Delete skills on disk
++            shutil.rmtree(mock_home / ".claude" / "skills")
++
++            # Press r on detail
++            await pilot.press("r")
++            await _wait_until(pilot, lambda: isinstance(app.screen, HomeScreen), "return to home")
++
++            home: HomeScreen = app.screen  # type: ignore[assignment]
++            assert home._removal_notice is not None
++            assert old_key in home._removal_notice
++            # Table is empty
++            table = home.query_one("#skill-table", DataTable)
++            assert table.row_count == 0
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_refresh_on_detail_retained_home_filter_excludes_controller_fallback(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C4: Retained Home filter excludes controller fallback selection; table shows 0 rows."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    make_skill(mock_home / ".claude" / "skills" / "alpha", "alpha", "Alpha skill")
++    make_skill(mock_home / ".claude" / "skills" / "beta", "beta", "Beta skill")
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            # Filter for alpha
++            filter_input = app.screen.query_one("#filter-input", Input)
++            filter_input.value = "alpha"
++            await pilot.pause(0.05)
++
++            # Open detail on alpha
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            assert isinstance(app.screen, WhyScreen)
++
++            # Remove alpha, keep beta
++            shutil.rmtree(mock_home / ".claude" / "skills" / "alpha")
++
++            # Refresh
++            await pilot.press("r")
++            await _wait_until(pilot, lambda: isinstance(app.screen, HomeScreen), "return home")
++
++            home: HomeScreen = app.screen  # type: ignore[assignment]
++            # Filter is still "alpha"
++            assert home.query_one("#filter-input", Input).value == "alpha"
++            # Table shows 0 rows because beta does not match "alpha"
++            table = home.query_one("#skill-table", DataTable)
++            assert table.row_count == 0
++            # Removal notice is visible
++            assert home._removal_notice is not None
++            assert "alpha" in home._removal_notice
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_refresh_actual_refusal_retry_and_fault_paths(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C4: Actual capture refusal, retry and fault paths tested via real exceptions."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # 1. Actual refusal path: SnapshotTooLarge
++            def throw_too_large(*a, **kw):
++                raise SnapshotTooLarge(total_bytes=5000000, limit_bytes=1000000)
++
++            monkeypatch.setattr("skill_lens.tui.app.capture_session", throw_too_large)
++            await pilot.press("r")
++            await _wait_until(pilot, lambda: app.controller.status == "refused", "refusal")
++            assert "Snapshot refused" in str(why.query_one("#why-status", Static).content)
++            assert app.controller.failed is False
++
++            # 2. Actual retry path: SnapshotChanged
++            def throw_changed(*a, **kw):
++                raise SnapshotChanged("Files changed while scanning.")
++
++            monkeypatch.setattr("skill_lens.tui.app.capture_session", throw_changed)
++            await pilot.press("r")
++            await _wait_until(pilot, lambda: app.controller.status == "retry", "retry")
++            retry_text = str(why.query_one("#why-status", Static).content)
++            assert "Files changed while scanning" in retry_text
++            assert "Press r to retry" in retry_text
++            assert app.controller.failed is False
++
++            # 3. Actual internal fault path: unexpected Exception
++            def throw_fault(*a, **kw):
++                raise RuntimeError("Unexpected disk crash!")
++
++            monkeypatch.setattr("skill_lens.tui.app.capture_session", throw_fault)
++            await pilot.press("r")
++            await _wait_until(pilot, lambda: app.controller.status == "error", "fault")
++            assert "Error: Unexpected internal fault" in str(
++                why.query_one("#why-status", Static).content
++            )
++            assert "Unexpected disk crash!" in str(
++                why.query_one("#why-error-details", Static).content
++            )
++            assert app.controller.failed is True
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_all_filter_return_matrix_active_home_status(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C4: With default All-agents filter, returning via real Escape from detail
++
++    across pending, refusal, retry, fault, and changed count immediately updates Home widgets.
++    """
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            # Default Home is All-filter (zero Why dispatch)
++
++            # Case 1: Pending capture return
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            app.controller.pending_generation = 99
++            app._update_ui()
++            await pilot.press("escape")
++            await pilot.pause(0.05)
++            home: HomeScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(home, HomeScreen)
++            assert "Scanning skills..." in str(home.query_one("#status-text", Static).content)
++
++            # Case 2: Refusal return
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            app.controller.pending_generation = None
++            app.controller.refusal_message = "Snapshot refused: file tree too large"
++            app._update_ui()
++            await pilot.press("escape")
++            await pilot.pause(0.05)
++            assert "Snapshot refused: file tree too large" in str(
++                app.screen.query_one("#status-text", Static).content
++            )
++
++            # Case 3: Retry return
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            app.controller.refusal_message = None
++            app.controller.retry_message = "Files changed. Press r to retry."
++            app._update_ui()
++            await pilot.press("escape")
++            await pilot.pause(0.05)
++            assert "Files changed. Press r to retry." in str(
++                app.screen.query_one("#status-text", Static).content
++            )
++
++            # Case 4: Fault return (exits 3)
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            app.controller.retry_message = None
++            app.controller.failed = True
++            app.controller.last_error_details = "Traceback detail line"
++            app._update_ui()
++            await pilot.press("escape")
++            await pilot.pause(0.05)
++            assert "Error: Unexpected internal fault" in str(
++                app.screen.query_one("#status-text", Static).content
++            )
++            assert "Traceback detail line" in str(
++                app.screen.query_one("#error-details", Static).content
++            )
++            assert app.controller.failed is True
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++# ---------------------------------------------------------------------------
++# C5 Broad Read Sentinels & Frozen Data Parity
++# ---------------------------------------------------------------------------
++
++
++def test_broad_read_sentinels_and_target_preservation_manifest(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C5: Broad read sentinels (open, read, resolve, stat, lstat, readlink) protect targets.
++
++    Mutating files after capture does not alter detail display until explicit refresh.
++    """
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("symlink_farm_multi_agent", mock_home)
++
++    from tests.test_tui_read_only import _snapshot_tree_state
++
++    before = _snapshot_tree_state(mock_home)
++    target_prefixes = (str(mock_home),)
++
++    def _is_target(path: Any) -> bool:
++        text = str(path)
++        absolute = os.path.abspath(text)
++        return any(
++            absolute == prefix or absolute.startswith(prefix + os.sep) for prefix in target_prefixes
++        )
++
++    path_originals = {
++        name: getattr(Path, name)
++        for name in (
++            "open",
++            "read_text",
++            "read_bytes",
++            "resolve",
++            "stat",
++            "lstat",
++            "readlink",
++        )
++    }
++    os_originals = {name: getattr(os, name) for name in ("stat", "lstat", "readlink")}
++    builtin_open = builtins.open
++
++    def _guarded(original: Any, label: str) -> Any:
++        def wrapper(target: Any, *args: Any, **kwargs: Any) -> Any:
++            if _is_target(target):
++                raise AssertionError(
++                    f"Forbidden synthetic-target filesystem read: {label} {target}"
++                )
++            return original(target, *args, **kwargs)
++
++        return wrapper
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            initial_snap = app.controller.current
++            assert initial_snap is not None
++
++            # Mutate target fixtures on disk BEFORE detail visit!
++            skill_md = mock_home / ".claude" / "skills" / "deploy" / "SKILL.md"
++            if skill_md.exists():
++                skill_md.write_text("MUTATED CONTENT AFTER CAPTURE")
++
++            # Plant broad read sentinels
++            with monkeypatch.context() as mp:
++                for name, orig in path_originals.items():
++                    mp.setattr(Path, name, _guarded(orig, f"Path.{name}"))
++                for name, orig in os_originals.items():
++                    mp.setattr(os, name, _guarded(orig, f"os.{name}"))
++                mp.setattr(builtins, "open", _guarded(builtin_open, "builtins.open"))
++
++                # 1. Open detail
++                await pilot.press("enter")
++                await _wait_why_idle(pilot, app)
++                why: WhyScreen = app.screen  # type: ignore[assignment]
++                assert isinstance(why, WhyScreen)
++
++                # 2. Expand/collapse candidates
++                collapsibles = list(why.query(Collapsible))
++                assert len(collapsibles) > 0
++                collapsibles[0].collapsed = not collapsibles[0].collapsed
++                await pilot.pause(0.02)
++
++                # 3. Switch agents across multiple options
++                for _ in range(len(why._agent_options)):
++                    await pilot.press("right")
++                    await pilot.pause(0.02)
++
++                # 4. Return to Home
++                await pilot.press("escape")
++                await pilot.pause(0.05)
++                assert isinstance(app.screen, HomeScreen)
++
++            # Unprotected: explicit refresh captures the mutation
++            await pilot.press("r")
++            await _wait_until(
++                pilot,
++                lambda: app.controller.current.generation == 2,  # type: ignore[union-attr]
++                "refresh with mutation",
++            )
++            assert app.controller.current.generation == 2  # type: ignore[union-attr]
++            await pilot.press("q")
++
++    asyncio.run(_run())
++    assert len(before) > 0
++
++
++# ---------------------------------------------------------------------------
++# C6 Identity Cases, Styling & View Tests
++# ---------------------------------------------------------------------------
++
++
++def test_identity_cases_frontmatter_directory_unresolved_entrypoints_and_order(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C6: Test directory vs frontmatter identity, differing names, unresolved keys,
++
++    multiple entrypoints, exact model order, STATE_STYLE styling and snapshot_path header.
++    """
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # 1. Installation header uses snapshot_path display
++            header_text = str(why.query_one("#why-title", Static).content)
++            assert "Installation: ~/" in header_text or "Installation: " in header_text
++
++            # 2. Multiple entrypoints: construct report with 2 entrypoints
++            c_active = _candidate(
++                HeadlineState.ACTIVE,
++                canonical="/mock/path/skill",
++                entrypoint="/mock/path/skill/entry1",
++                name="my-skill",
++                rule_id="rule-active",
++                evidence=Evidence.DOCUMENTED,
++                reason="Primary entrypoint active",
++            )
++            c_shadowed = _candidate(
++                HeadlineState.SHADOWED,
++                canonical="/mock/path/skill",
++                entrypoint="/mock/path/skill/entry2",
++                name="my-skill",
++                rule_id="rule-shadowed",
++                evidence=Evidence.EMPIRICAL,
++                reason="Secondary entrypoint shadowed",
++            )
++            rep = _report(c_active, c_shadowed, skill_name="my-skill", agent="claude")
++
++            why._report = rep
++            why._rendered_candidate_context = None
++            why._update_display()
++            await pilot.pause(0.02)
++
++            collapsibles = list(why.query(Collapsible))
++            assert len(collapsibles) == 2
++
++            # 3. Shared STATE_STYLE applied to candidate title Content
++            title_active = collapsibles[0].title
++            assert isinstance(title_active, Content)
++            # Active style is bold green
++            assert any(
++                span.style == STATE_STYLE[HeadlineState.ACTIVE] for span in title_active.spans
++            )
++
++            title_shadowed = collapsibles[1].title
++            assert isinstance(title_shadowed, Content)
++            # Shadowed style is yellow
++            assert any(
++                span.style == STATE_STYLE[HeadlineState.SHADOWED] for span in title_shadowed.spans
++            )
++
++            # 4. Entrypoint and Hash lines
++            body_0 = "\n".join(s.render().plain for s in collapsibles[0].query(Static))
++            assert "Entrypoint:" in body_0
++            assert "Rule: rule-active" in body_0
++            assert "Evidence: documented" in body_0
++
++            # 5. Candidate order matches report order exactly
++            assert "Primary entrypoint active" in body_0
++            body_1 = "\n".join(s.render().plain for s in collapsibles[1].query(Static))
++            assert "Secondary entrypoint shadowed" in body_1
++
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_mixed_unknown_and_known_agent_ids_explained(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C6: Unknown agent IDs are explained in #why-report-status and #why-title
++    while valid report shows.
++    """
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            snap = app.controller.current
++            assert snap is not None
++
++            # Mutate scan skill to have both known 'claude' and unknown 'unknown-foo'
++            orig_skill = snap.scan.skills[0]
++            mutated_skill = replace(orig_skill, agents=("claude", "unknown-foo"))
++            app.controller.current = replace(snap, scan=replace(snap.scan, skills=(mutated_skill,)))
++
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Known agent is selectable
++            assert len(why._agent_options) == 1
++            assert why._agent_options[0].agent_id == "claude"
++
++            # Unknown agent is in unavailable list
++            assert "unknown-foo" in why._unavailable
++
++            # Valid report is showing
++            assert why._report is not None
++
++            # Unknown agent ID is explained in #why-report-status
++            rep_status = str(why.query_one("#why-report-status", Static).content)
++            assert "Unavailable agent IDs: unknown-foo" in rep_status
++
++            # Unknown agent ID is also explained in #why-title
++            title_text = str(why.query_one("#why-title", Static).content)
++            assert "Unavailable agent IDs: unknown-foo" in title_text
++
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_terminal_dimensions_100x30_and_60x24_controls_and_wrapping(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """C6: Test both 100x30 and 60x24 with long content and keyboard reachability."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run_100x30() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert not why.has_class("narrow")
++
++            # Keyboard navigation: Tab navigates from strip to candidate collapsible
++            await pilot.press("tab")
++            await pilot.pause(0.02)
++            assert app.focused is not None
++
++            # Space/Enter toggles collapsible
++            await pilot.press("enter")
++            await pilot.pause(0.02)
++            await pilot.press("q")
++
++    async def _run_60x24() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(60, 24)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await _wait_why_idle(pilot, app)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert why.has_class("narrow")
++
++            # Keyboard navigation works in narrow mode
++            await pilot.press("tab")
++            await pilot.pause(0.02)
++            assert app.focused is not None
++            await pilot.press("q")
++
++    asyncio.run(_run_100x30())
++    asyncio.run(_run_60x24())
++
++
++# ---------------------------------------------------------------------------
++# Caching, Deduplication, Faults & Collapsibles
++# ---------------------------------------------------------------------------
++
++
++def test_cache_hit_and_redraw_deduplication(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Exact cache hit returns immediately; redraw does not re-dispatch active request."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test() as pilot:
++            await _wait_ready(pilot, app)
++            key = app.controller.selected_key
++            assert key is not None
++
++            # Seed cache
++            seeded_report = _report(
++                _candidate("active", key),
++                skill_name="seeded-skill",
++                agent="claude",
++            )
++            app.controller.cache[(1, "why", (key, "claude"))] = seeded_report
++
++            # Open WhyScreen
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Ensure report was taken from cache
++            assert why._report == seeded_report
++            assert why._owned_request is None
++
++            # Resize / redraw does not invalidate or dispatch
++            why.on_resize(type("Resize", (), {"size": type("Size", (), {"width": 90})()})())  # type: ignore[arg-type]
++            await pilot.pause(0.02)
++            assert why._report == seeded_report
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_accepted_report_fault_does_not_retry_loop(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """An accepted unexpected report fault sets sticky error 3 and does not auto-retry on redraw."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test() as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Inject accepted error for detail's request
++            gen = app.controller.current.generation  # type: ignore[union-attr]
++            app.controller.cache.clear()
++            app.controller.invalidate_view("why")
++            args = (why._opening_key, why._agent_id or "claude")
++            req, _, _ = app.controller.request_view("why", args)
++            assert req is not None
++            why._owned_request = req
++
++            app.controller.accept_view_error(
++                "why", req.request_id, gen, req.arguments, RuntimeError("unexpected detail fault")
++            )
++            why.note_report_outcome(
++                "why",
++                req.request_id,
++                gen,
++                req.arguments,
++                accepted=True,
++                error=RuntimeError("unexpected detail fault"),
++            )
++            await pilot.pause(0.02)
++
++            assert app.controller.failed is True
++            assert why._report is None
++            assert why._owned_request is None
++
++            # Redraw must not auto-retry
++            why._update_display()
++            assert why._owned_request is None
++            assert app.controller.active_requests.get("why") is None
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_candidate_collapsibles_expanded_and_collapsed(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """Matching candidates are initially expanded; non-matching are collapsed."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            matching = _candidate("active", why._opening_key, name="deploy")
++            other = _candidate("shadowed", "/other/path/to/skill", name="deploy")
++            report = _report(
++                matching,
++                other,
++                skill_name="deploy",
++                agent="claude",
++                notes=("First note.", "Policy uncertainty note."),
++            )
++
++            why._report = report
++            why._rendered_candidate_context = None
++            why._update_display()
++            await pilot.pause(0.02)
++
++            collapsibles = list(why.query(Collapsible))
++            assert len(collapsibles) == 2
++
++            # Matching candidate is expanded
++            assert collapsibles[0].collapsed is False
++            # Other candidate is collapsed
++            assert collapsibles[1].collapsed is True
++
++            # Verify Header contains report-wide headline
++            header_text = str(why.query_one("#why-title", Static).content)
++            assert "Report-wide headline: ACTIVE" in header_text
++            assert "Collision policy: prefer_user" in header_text
++            assert "Note: First note." in header_text
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_candidate_no_matches_shows_notice(
++    mock_home: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    """When no candidate matches the selected installation, a clear notice is shown."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test() as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            c1 = _candidate("shadowed", "/path/one")
++            c2 = _candidate("unsearched_root", "/path/two")
++            report = _report(c1, c2, skill_name="deploy")
++
++            why._report = report
++            why._rendered_candidate_context = None
++            why._update_display()
++            await pilot.pause(0.02)
++
++            notice = str(why.query_one("#why-no-match-notice", Static).content)
++            assert "No candidate matches the selected installation." in notice
++
++            collapsibles = list(why.query(Collapsible))
++            assert all(c.collapsed for c in collapsibles)
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++def test_literal_rendering_markup_false(mock_home: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    """Brackets, backslashes and markup-looking strings render literally."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++        async with app.run_test() as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            c = _candidate(
++                "active",
++                why._opening_key,
++                name=r"[bold]skill[/bold]\test",
++                rule_id=r"rule[1]\sub",
++                reason=r"Reason with [red]tags[/red] and \backslashes",
++            )
++            report = _report(
++                c,
++                skill_name="[bold]skill[/bold]",
++                notes=(r"[yellow]Note tag[/yellow] \escaped",),
++            )
++            why._report = report
++            why._rendered_candidate_context = None
++            why._update_display()
++            await pilot.pause(0.02)
++
++            collapsibles = list(why.query(Collapsible))
++            assert len(collapsibles) == 1
++            body_text = "\n".join(s.render().plain for s in collapsibles[0].query(Static))
++            assert r"[bold]skill[/bold]\test" in body_text
++            assert r"Reason with [red]tags[/red] and \backslashes" in body_text
++            assert r"rule[1]\sub" in body_text
++
++            header_text = str(why.query_one("#why-title", Static).content)
++            assert r"[yellow]Note tag[/yellow] \escaped" in header_text
++            await pilot.press("q")
++
++    asyncio.run(_run())
++
++
++# ---------------------------------------------------------------------------
++# Unit & Branch Coverage Tests (Presentation, Fallbacks, Helpers)
++# ---------------------------------------------------------------------------
++
++
++def test_why_helpers_coverage(mock_home: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    """Cover helper branches: _matching_key, _entry_for_key fallback, _build_candidate_blocks."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++    snap = capture_session(home=mock_home, cwd=mock_home, generation=1)
++
++    from skill_lens.tui.why import (
++        _build_candidate_blocks,
++        _eligible_agent_options,
++        _entry_for_key,
++        _matching_key,
++        _state_mark,
++        _unavailable_agent_ids,
++    )
++
++    # 1. _matching_key
++    cand_none_canonical = CandidateResolution(
++        state=HeadlineState.ACTIVE,
++        visibility=Visibility.ACTIVE_ROOT,
++        collision=Collision.WINNING_ENTRY,
++        rule_id="r1",
++        evidence=Evidence.DOCUMENTED,
++        reason="reason",
++        rank=1,
++        installation=SkillInstallation(
++            name="deploy",
++            entrypoint_path="/entry/path",
++            canonical_path=None,
++            scope=Scope.USER,
++            parse_status=ParseStatus.VALID,
++        ),
++    )
++    assert _matching_key(cand_none_canonical, "/entry/path") is True
++    assert _matching_key(cand_none_canonical, "/other/path") is False
++
++    cand_with_canonical = CandidateResolution(
++        state=HeadlineState.SHADOWED,
++        visibility=Visibility.ACTIVE_ROOT,
++        collision=Collision.WINNING_ENTRY,
++        rule_id="r2",
++        evidence=Evidence.DOCUMENTED,
++        reason="reason",
++        rank=2,
++        installation=SkillInstallation(
++            name="deploy",
++            entrypoint_path="/entry/path",
++            canonical_path="/canon/path",
++            scope=Scope.USER,
++            parse_status=ParseStatus.VALID,
++            variant_label="B",
++            content_hash=None,
++        ),
++    )
++    assert _matching_key(cand_with_canonical, "/canon/path") is True
++    assert _matching_key(cand_with_canonical, "/entry/path") is False
++
++    # 2. _state_mark
++    assert _state_mark(HeadlineState.ACTIVE) == "*"
++    assert _state_mark(HeadlineState.INVALID) == "x"
++    assert _state_mark(HeadlineState("AMBIGUOUS")) == "?"
++
++    # 3. _entry_for_key fallback to snapshot.index.entries
++    key_in_index = canonical_key(snap.index.entries[0])
++    entry = _entry_for_key(snap, key_in_index)
++    assert entry is not None
++    assert entry.canonical_path == key_in_index
++
++    assert _entry_for_key(snap, "/nonexistent/key") is None
++    assert _eligible_agent_options(snap, "/nonexistent/key") == ()
++    assert _unavailable_agent_ids(snap, "/nonexistent/key") == ()
++
++    # 4. _build_candidate_blocks with differing entrypoint and None hash
++    rep = _report(cand_none_canonical, cand_with_canonical, skill_name="deploy", notes=("Note 1",))
++    blocks = _build_candidate_blocks(rep, snap, "/entry/path")
++    assert len(blocks) == 2
++    assert blocks[0].expanded is True
++    assert blocks[1].expanded is False
++    assert "Entrypoint:" in blocks[1].body
++    assert "Hash: none" in blocks[1].body
++    assert "Note: Note 1" in blocks[1].body
++    assert blocks[0].title != ""
++
++    # 5. _entry_for_key fallback with parse=None and hits=()
++    class _FakeEntry:
++        canonical_path = "/fake/key"
++        parse = None
++        hits = ()
++        name = "fake-skill"
++        entrypoint_paths = ()
++        is_symlink = False
++        content_hash = None
++        variant_label = None
++
++    class _FakeIndex:
++        entries = [_FakeEntry()]
++
++    class _FakeScan:
++        skills = ()
++
++    class _FakeSnap:
++        scan = _FakeScan()
++        index = _FakeIndex()
++
++    f_res = _entry_for_key(_FakeSnap(), "/fake/key")  # type: ignore[arg-type]
++    assert f_res is not None
++    assert f_res.scope == Scope.USER
++    assert f_res.parse_status == ParseStatus.UNREADABLE.value
++
++
++def test_why_screen_unit_branches(mock_home: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    """Cover UI branches in WhyScreen: status/title rendering, button actions, outcomes."""
++    monkeypatch.setattr(paths, "home", lambda: mock_home)
++    build_scenario("claude_personal_beats_project", mock_home)
++
++    async def _run() -> None:
++        app = SkillLensApp(home=mock_home, cwd=mock_home)
++
++        async with app.run_test(size=(100, 30)) as pilot:
++            await _wait_ready(pilot, app)
++            await pilot.press("enter")
++            await pilot.pause(0.05)
++            why: WhyScreen = app.screen  # type: ignore[assignment]
++            assert isinstance(why, WhyScreen)
++
++            # Test _clear_display
++            why._clear_display()
++            assert str(why.query_one("#why-title", Static).content) == ""
++
++            # Test _refresh_status branches
++            app.controller.pending_generation = 99
++            why._refresh_status()
++            assert "Scanning" in str(why.query_one("#why-status", Static).content)
++            app.controller.pending_generation = None
++            app.controller.failed = True
++            app.controller.last_error_details = "Traceback info"
++            why._refresh_status()
++            assert "Error: Unexpected internal fault" in str(
++                why.query_one("#why-status", Static).content
++            )
++            assert "Traceback info" in str(why.query_one("#why-error-details", Static).content)
++            app.controller.failed = False
++            app.controller.last_error_details = None
++
++            app.controller.refusal_message = "Snapshot limit exceeded."
++            why._refresh_status()
++            assert "Snapshot limit exceeded." in str(why.query_one("#why-status", Static).content)
++            app.controller.refusal_message = None
++
++            app.controller.retry_message = "Connection dropped. Press r to retry."
++            why._refresh_status()
++            assert "Connection dropped" in str(why.query_one("#why-status", Static).content)
++            app.controller.retry_message = None
++
++            # Test _refresh_candidates with zero candidates found vs not found
++            rep_not_found = _report(found=False)
++            why._report = rep_not_found
++            why._rendered_candidate_context = None
++            why._refresh_candidates()
++            assert any(
++                "No copies of this skill name were found" in str(s.content)
++                for s in why.query(Static)
++            )
++
++            rep_found_empty = _report(found=True)
++            why._report = rep_found_empty
++            why._rendered_candidate_context = None
++            why._refresh_candidates()
++            assert any("No candidates evaluated" in str(s.content) for s in why.query(Static))
++
++            # Test note_report_outcome guard branches
++            why.note_report_outcome("diff", 1, 1, ("a",), accepted=True)
++            why.note_report_outcome("why", 999, 999, ("a",), accepted=False)
++
++            # Test button pressed on same agent (no-op)
++            btn = why.query_one(f"#why-agent-{why._agent_id}", Button)
++
++            class FakeBtnEvent:
++                button = btn
++
++                def stop(self) -> None:
++                    pass
++
++            why.on_button_pressed(FakeBtnEvent())  # type: ignore[arg-type]
++
++            # Test agent switching actions
++            orig_agent = why._agent_id
++            why.action_next_agent()
++            assert why._agent_id != orig_agent
++            why.action_previous_agent()
++            assert why._agent_id == orig_agent
++
++            # Test navigation and focus actions
++            why.action_focus_next()
++            why.action_focus_previous()
++            why.action_refresh()
++
++            # Test _is_strip_focused when focus is elsewhere
++            btn_other = Button("Other", id="other-focus")
++            await why.query_one("#why-candidates").mount(btn_other)
++            btn_other.focus()
++            await pilot.pause(0.01)
++            assert not why._is_strip_focused()
++            why.action_next_agent()
++            why.action_previous_agent()
++
++            # Test _refresh_title with report notes
++            rep_notes = _report(notes=("Custom Note A", "Custom Note B"))
++            why._report = rep_notes
++            why._refresh_title()
++            title_text = str(why.query_one("#why-title", Static).content)
++            assert "Note: Custom Note A" in title_text
++            assert "Note: Custom Note B" in title_text
++
++            # Test _refresh_strip with matching button IDs
++            why._refresh_strip()
++
++            # Test note_report_outcome when report is None
++            req = ViewRequest(generation=1, request_id=42, view="why", arguments=("x",))
++            why._owned_request = req
++            why.note_report_outcome(
++                "why",
++                req.request_id,
++                req.generation,
++                req.arguments,
++                accepted=True,
++                report=None,
++            )
++            assert why._report is None
++            assert why._owned_request is None
++
++            # Test note_report_outcome when rejected and active does not match owned
++            why._owned_request = req
++            why.note_report_outcome(
++                "why",
++                req.request_id,
++                req.generation,
++                req.arguments,
++                accepted=False,
++            )
++            assert why._owned_request is None or isinstance(why._owned_request, ViewRequest)
++
++            # Test _cancel_owned_token when not matching active request
++            why._owned_request = req
++            why._cancel_owned_token()
++            assert why._owned_request is None
++
++            await pilot.press("q")
++
++    asyncio.run(_run())
+
+diff --git a/docs/TUI_U4_WALKTHROUGH.md b/docs/TUI_U4_WALKTHROUGH.md
+new file mode 100644
+index 0000000..b1326da
+--- /dev/null
++++ b/docs/TUI_U4_WALKTHROUGH.md
+@@ -0,0 +1,118 @@
++# Skill Lens 0.2 — Why Resolution Screen Walkthrough (U4)
++
++> **Status:** Implemented by Gemini 3.8 Flash High through Antigravity under explicit owner authorization.
++> Independent reviews by MiniMax M3.1 Flash and DeepSeek V4.1 Flash 1017 pending; Sol coordinates/accepts.
++> Human visual approval and 0.2 publishing are not claimed.
++> **Scope:** Full-Screen TUI Assignment U4 (`FULL_SCREEN_TUI.md` §§8.4, 9.1, 21.7 and 22 U4).
++> **Reference Plan:** [docs/plans/2026-10-26-tui-u4-why.md](plans/2026-10-26-tui-u4-why.md)
++> @ frozen commit `684cdb7aa0e3a28e5bb722bf65e4f3953edc6f76`.
++> **Implementing base:** `main` @ `1b01d9e14969e93456faa4146cced863a435ef4a`.
++
++---
++
++## 1. What changed, in plain English
++
++U3 delivered the Home browsing screen, which presents the catalog of installed skills with inline preview and agent cycling. U4 delivers the dedicated **Why Resolution Screen** (`WhyScreen`), accessible by pressing `Enter` on a focused, nonempty Home skill row.
++
++The Why screen provides complete insight into how an agent resolves candidate skill entrypoints for a specific skill:
++1. **Header & Context:** Displays canonical installation path, skill name, active working directory, selected agent, lookup skill name, collision policy (and documented policy evidence), and the report-wide headline.
++2. **Agent Switching Strip:** An interactive button strip at the top allows switching between all registered agents eligible for the selected skill. Switching agents can also be done via `Left` and `Right` keys when the strip is focused.
++3. **Candidate Collapsibles:** Every candidate considered during resolution is presented in a keyboard-accessible Textual `Collapsible` widget in deterministic resolution order. The candidate corresponding to the selected installation (matching the opening installation key) is initially expanded by default, while shadowed or alternate candidates remain collapsed.
++4. **Honest Status & Error Reporting:** Dedicated status widgets (`#why-status`, `#why-error-details`, `#why-report-status`) separate background engine lifecycle from report loading state and internal faults. If a background scan refresh finishes while the detail screen is open, the detail screen transparently re-derives its entry from the new snapshot without discarding active report content; if the installation was removed during refresh, the detail screen closes back to Home and displays a persistent removal notice.
++5. **Exact Token Lifecycle & Zero Live Reads:** Detail screens maintain explicit token identity for asynchronous report requests. An unmount or agent switch cancels only the detail's own active request, never invalidating resumed Home tokens or unrelated workers. Live filesystem reads are completely forbidden; detail rendering operates strictly on the frozen `SessionSnapshot` and immutable `ResolutionReport`.
++
++---
++
++## 2. Delivered files and responsibilities
++
++| File | Change |
++| --- | --- |
++| `skill_lens/tui/why.py` | New (824 lines). Implements `WhyScreen(Screen[None])`, `_WhyHost` protocol, pure helpers (`_eligible_agent_options`, `_unavailable_agent_ids`, `_entry_for_key`, `_build_candidate_blocks`), agent button strip, collapsible candidate container, pre-dispatch UI validation, exact token lifecycle management (`_cancel_owned_token`), and strict literal rendering (`markup=False`). |
++| `skill_lens/tui/home.py` | Integrated `HomeScreen`: bound `DataTable.RowSelected` and `action_open_why` so Enter opens `WhyScreen` only on a focused nonempty table; explicit `suspend_why` guards against hidden selection/sync/filter/drive mutations; `resume_why` and `on_screen_resume` restore Home table focus and sync upon returning; persistent `#removal-notice` displays removal feedback until explicit navigation. |
++| `skill_lens/tui/app.py` | Implemented `open_why` and `close_why` with exact token cleanup before pop and Home resumption; active-screen status queries target `#why-status` / `#why-error-details` on `WhyScreen` vs `#status-text` / `#error-details` on `HomeScreen`; report outcome notifications route to the current browsing screen with controller-accept first. |
++| `skill_lens/tui/__init__.py` | Exported `WhyScreen`. |
++| `tests/test_tui_why.py` | New (2066 lines, 36 tests): comprehensive event-controlled tests covering navigation, double-Enter deduplication, backspace/escape returns, agent strip switching, defensive unknown/zero-agent explanations, token ownership isolation, agent switch races, cache hits, sticky report faults, refresh survival and removal, candidate collapsibles, literal rendering (`markup=False`), narrow 60x24 layout, target preservation sentinels, and unit branch coverage. |
++| `docs/TUI_U4_WALKTHROUGH.md` | This document. |
++| `docs/validation/u4/implementation/mutation_gate.py` | Reproducible mutation harness verifying that 5 planted defects in `why.py` are caught by test assertions on a disposable copy outside the checkout. |
++| `docs/validation/u4/implementation/mutation_gate.json` | Machine-readable mutation receipt. |
++
++---
++
++## 3. Key Invariants & Architecture
++
++### 3.1 Enter Key Routing & Focus Invariants
++- On `HomeScreen`, `Enter` on the filter `Input` submits the filter without opening the detail screen.
++- `Enter` on the `DataTable` triggers `DataTable.RowSelected` only when the table is nonempty and has focus, invoking `open_why`.
++- On an empty table or filtered empty state, pressing `Enter` is a safe no-op.
++- Double-pressing `Enter` does not mount duplicate Why screens.
++- Pressing `Escape` or `Backspace` on `WhyScreen` pops the screen and returns to Home, fully preserving Home's filter text, cursor position, selection, and table focus.
++
++### 3.2 Suspension & Exact Token Lifecycle
++```
++[Home Screen (Active)]
++     │
++     │ user presses Enter on table
++     ▼
++[Home: suspend_why()] ── guards all hidden sync, drive, selection, filter
++     │
++     ▼
++[App: push_screen(WhyScreen)]
++     │
++     ▼
++[WhyScreen Mounted] ── pre-dispatch validation of (canonical_key, agent_id)
++     │
++     │ agent switch or close requested
++     ▼
++[Why: _cancel_owned_token()] ── exact token ownership check: active == owned
++     │
++     ▼
++[App: pop_screen()]
++     │
++     ▼
++[Home: resume_why() / on_screen_resume()] ── reconciles snapshot & restores focus
++```
++- In Textual, screen pop is asynchronous: `_cancel_owned_token` runs before `pop_screen`, ensuring stale detail workers do not deliver results into a resumed Home screen.
++- Only if the controller's active request matches the detail's owned token (`active == owned`) does detail cancellation invalidate the controller slot. An unowned token (such as a newly dispatched Home token) is never canceled.
++
++### 3.3 Candidate Collapsibles & Literal Rendering
++- Every candidate from `ResolutionReport.candidates` is mapped to a `Collapsible`.
++- Title displays: `[▾/▸] [*|x|?] <name> (<STATE>)` using Textual's `Content.from_text(..., markup=False)` to guarantee brackets, backslashes, and style tags render literally without markup interpretation.
++- Body displays: state mark and name/variant, canonical path, entrypoint path (when distinct from canonical location), content hash, reason, rule ID and evidence type, and report notes.
++- The candidate matching the selected installation canonical key is initially expanded by default; all others are collapsed.
++- If no candidates match, an explicit notice (`#why-no-match-notice`) informs the user.
++
++---
++
++## 4. Quality Gates & Verification Evidence
++
++All four verification gates pass cleanly on the finished tree:
++
++1. **Test Suite:**
++   ```bash
++   .venv/bin/pytest --cov=skill_lens
++   # 1121 passed, 1 expected case-insensitive-filesystem skip in 103.54s
++   # Combined coverage: 90.89% (floor: 90.0%)
++   # skill_lens/tui/why.py coverage: 90% (floor: 85%)
++   # skill_lens/tui/home.py coverage: 90%
++   ```
++2. **Type Checking:**
++   ```bash
++   .venv/bin/mypy
++   # Success: no issues found in 39 source files
++   ```
++3. **Linter & Formatter:**
++   ```bash
++   .venv/bin/ruff check skill_lens tests docs/validation/u4/implementation/mutation_gate.py
++   .venv/bin/ruff format --check skill_lens tests docs/validation/u4/implementation/mutation_gate.py
++   # All checks passed; 361 files already formatted
++   ```
++4. **Coordinator Reproduction Probe:**
++   ```bash
++   .venv/bin/pytest -p tests.conftest docs/validation/u4/implementation/coordinator/reproduction_r1.py
++   # 2 passed in 0.87s
++   ```
++5. **Mutation Harness:**
++   ```bash
++   .venv/bin/python docs/validation/u4/implementation/mutation_gate.py --out docs/validation/u4/implementation/mutation_gate_r2.json
++   # 5/5 mutants killed; 0 surviving; restored copy identical.
++   ```
+
+diff --git a/docs/validation/u4/implementation/mutation_gate.py b/docs/validation/u4/implementation/mutation_gate.py
+new file mode 100644
+index 0000000..6d30168
+--- /dev/null
++++ b/docs/validation/u4/implementation/mutation_gate.py
+@@ -0,0 +1,231 @@
++#!/usr/bin/env python3
++"""U4 mutation gate: planted mutant fails, restored copy passes.
++
++Runs on a disposable copy of ``skill_lens/`` + ``tests/`` in a temp directory,
++so the checkout is never modified (its ``why.py`` content hash is recorded
++before and after and must be identical).
++
++Five gates are exercised on the new Why module:
++
++1. Read-only AST guard: ``import rich`` planted in ``why.py`` must fail the
++   shipped-tree guard (reusing the existing U2/U3 guard and mutation categories).
++2. Target-read sentinel: a direct ``Path(...).read_text()`` of a synthetic
++   target skill file planted in ``WhyScreen._update_display`` must fail the
++   target-specific sentinel test.
++3. Detail token guard: removing the token ownership guard in ``_cancel_owned_token``
++   (blindly invalidating the active view) must fail the token discrimination test.
++4. Agent switch cancellation: removing active token cancellation when switching
++   agents must fail the agent switch race test.
++5. Literal markup rendering: changing ``markup=False`` to ``markup=True`` in
++   candidate collapsible blocks must fail the literal markup test.
++
++Usage: ``mutation_gate.py [--out PATH]``. By default the receipt is written
++next to this script; ``--out`` lets a reviewer write it outside the checkout
++(the checkout is never modified either way).
++"""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import os
++import shutil
++import subprocess
++import tempfile
++from pathlib import Path
++
++REPO = Path(__file__).resolve().parents[4]
++PYTHON = REPO / ".venv" / "bin" / "python"
++DEFAULT_OUT = Path(__file__).resolve().parent / "mutation_gate.json"
++
++READ_ONLY_TEST = "tests/test_tui_read_only.py::test_shipped_tui_code_has_zero_read_only_violations"
++TARGET_READ_TEST = (
++    "tests/test_tui_why.py::test_broad_read_sentinels_and_target_preservation_manifest"
++)
++DETAIL_TOKEN_TEST = (
++    "tests/test_tui_why.py::test_real_pop_delayed_detail_callback_protects_resumed_home"
++)
++AGENT_SWITCH_TEST = "tests/test_tui_why.py::test_detail_agent_switch_a_to_b_while_a_completes"
++LITERAL_MARKUP_TEST = "tests/test_tui_why.py::test_literal_rendering_markup_false"
++
++
++def sha256(path: Path) -> str:
++    return hashlib.sha256(path.read_bytes()).hexdigest()
++
++
++def run(work: Path, selector: str) -> tuple[int, str]:
++    env = dict(os.environ)
++    env["PYTHONPATH"] = str(work)
++    proc = subprocess.run(
++        [str(PYTHON), "-m", "pytest", selector, "-q", "-p", "no:cacheprovider"],
++        cwd=work,
++        env=env,
++        capture_output=True,
++        text=True,
++    )
++    return proc.returncode, (proc.stdout + proc.stderr)[-4000:]
++
++
++def failing_assertion(output: str) -> str:
++    """The first assertion/error line pytest reported, for the receipt."""
++    for line in output.splitlines():
++        stripped = line.strip()
++        if stripped.startswith(("AssertionError", "E ")) and "AssertionError" in stripped:
++            return stripped[:200]
++    for line in output.splitlines():
++        if line.strip().startswith("E "):
++            return line.strip()[:200]
++    return ""
++
++
++def main(out: Path) -> int:
++    work = Path(tempfile.mkdtemp(prefix="skill-lens-u4-mutation-")).resolve()
++    for item in ("skill_lens", "tests"):
++        shutil.copytree(
++            REPO / item,
++            work / item,
++            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
++        )
++    shutil.copy2(REPO / "pyproject.toml", work / "pyproject.toml")
++
++    why_py = work / "skill_lens" / "tui" / "why.py"
++    original = why_py.read_text(encoding="utf-8")
++    original_hash = sha256(why_py)
++
++    repo_why = REPO / "skill_lens" / "tui" / "why.py"
++    receipt: dict[str, object] = {
++        "schema": "skill-lens/u4-mutation-gate/1",
++        "work_copy": str(work),
++        "preservation": {
++            "repo_why_sha256_before": sha256(repo_why),
++            "work_why_sha256": original_hash,
++        },
++        "cases": [],
++    }
++
++    # Control: every gate passes on the unmodified copy.
++    control = {
++        "read_only": run(work, READ_ONLY_TEST),
++        "target_read": run(work, TARGET_READ_TEST),
++        "detail_token": run(work, DETAIL_TOKEN_TEST),
++        "agent_switch": run(work, AGENT_SWITCH_TEST),
++        "literal_markup": run(work, LITERAL_MARKUP_TEST),
++    }
++    receipt["control"] = {name: result[0] for name, result in control.items()}
++    for name, result in control.items():
++        assert result[0] == 0, f"{name} control failed:\n{result[1]}"
++
++    def exercise(
++        name: str,
++        mutant: str,
++        selector: str,
++        pattern: str,
++        restore_selector: str | None = None,
++    ) -> None:
++        assert mutant != original, f"{name}: mutation did not apply"
++        why_py.write_text(mutant, encoding="utf-8")
++        rc, output = run(work, selector)
++        assert rc != 0, f"{name}: mutant survived"
++        assert pattern in output, f"{name}: pattern {pattern!r} missing:\n{output}"
++        why_py.write_text(original, encoding="utf-8")
++        restored = run(work, restore_selector or selector)
++        assert restored[0] == 0, f"{name}: restored copy failed:\n{restored[1]}"
++        receipt["cases"].append(  # type: ignore[union-attr]
++            {
++                "name": name,
++                "selector": selector,
++                "mutant_rc": rc,
++                "mutant_detected_pattern": pattern,
++                "mutant_failing_assertion": failing_assertion(output),
++                "restored_rc": restored[0],
++            }
++        )
++
++    # Mutant 1: banned ``rich`` import in why.py.
++    exercise(
++        "read_only_guard_detects_rich_import_in_why",
++        original + "\nimport rich  # U4 mutation\n",
++        READ_ONLY_TEST,
++        "rich",
++    )
++
++    # Mutant 2: a direct synthetic-target read during update_display.
++    target_read_mutant = original.replace(
++        "    def _update_display(self) -> None:\n",
++        "    def _update_display(self) -> None:\n"
++        "        from pathlib import Path as _MutationPath\n"
++        '        _MutationPath(self._opening_key, "SKILL.md").read_text()\n',
++        1,
++    )
++    exercise(
++        "target_read_sentinel_detects_direct_path_read",
++        target_read_mutant,
++        TARGET_READ_TEST,
++        "Forbidden synthetic-target filesystem read",
++    )
++
++    # Mutant 3: remove token ownership check in _cancel_owned_token.
++    detail_token_mutant = original.replace(
++        "        if active is not None and active == owned:\n"
++        '            controller.invalidate_view("why")',
++        '        if active is not None:\n            controller.invalidate_view("why")',
++        1,
++    )
++    exercise(
++        "detail_token_guard_detects_unowned_invalidation",
++        detail_token_mutant,
++        DETAIL_TOKEN_TEST,
++        "AssertionError",
++    )
++
++    # Mutant 4: remove arguments check in identity_matches in note_report_outcome.
++    agent_switch_mutant = original.replace(
++        "                and owned.arguments == arguments\n",
++        "",
++        1,
++    )
++    exercise(
++        "agent_switch_detects_arguments_mismatch_bypass",
++        agent_switch_mutant,
++        AGENT_SWITCH_TEST,
++        "AssertionError",
++    )
++
++    # Mutant 5: change markup=False to markup=True in candidate block static widgets.
++    literal_markup_mutant = original.replace(
++        "Static(block.body, markup=False)",
++        "Static(block.body, markup=True)",
++        1,
++    )
++    exercise(
++        "literal_markup_detects_enabled_markup_in_candidate_body",
++        literal_markup_mutant,
++        LITERAL_MARKUP_TEST,
++        "AssertionError",
++    )
++
++    receipt["preservation"]["work_why_sha256_after_restore"] = sha256(why_py)  # type: ignore[index]
++    receipt["preservation"]["repo_why_sha256_after"] = sha256(repo_why)  # type: ignore[index]
++    receipt["preservation"]["restored_identical"] = sha256(why_py) == original_hash  # type: ignore[index]
++    assert receipt["preservation"]["restored_identical"] is True  # type: ignore[index]
++    assert (
++        receipt["preservation"]["repo_why_sha256_before"]  # type: ignore[index]
++        == receipt["preservation"]["repo_why_sha256_after"]  # type: ignore[index]
++    )
++
++    out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
++    print(json.dumps(receipt, indent=2, sort_keys=True))
++    shutil.rmtree(work, ignore_errors=True)
++    return 0
++
++
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument(
++        "--out",
++        type=Path,
++        default=DEFAULT_OUT,
++        help="receipt path (default: next to this script)",
++    )
++    raise SystemExit(main(parser.parse_args().out))
+
+diff --git a/docs/validation/u4/implementation/acceptance_mapping_r2.md b/docs/validation/u4/implementation/acceptance_mapping_r2.md
+new file mode 100644
+index 0000000..f4058ad
+--- /dev/null
++++ b/docs/validation/u4/implementation/acceptance_mapping_r2.md
+@@ -0,0 +1,93 @@
++# U4 Acceptance Criterion-to-Test Mapping (Revision 2)
++
++**Author:** Sole implementer Antigravity (Gemini 3.8 Flash High) under owner authorization.  
++**Operative Reference Plan:** `docs/plans/2026-10-26-tui-u4-why.md` @ `684cdb7aa0e3a28e5bb722bf65e4f3953edc6f76`.  
++**Scope:** Verification of coordinator findings C1–C7 and full frozen acceptance criteria.
++
++---
++
++## 1. Coordinator Findings Resolution (C1–C7)
++
++| Item | Finding Summary | Product Fix Location | Test Coverage Evidence |
++| :--- | :--- | :--- | :--- |
++| **C1** | Candidate collapse state & Title focus stolen on redraw / `app._update_ui` | `skill_lens/tui/why.py`: `_CandidateBlock` preserves `state: HeadlineState` & `title`; container `#why-candidates` only rebuilt when context (`_rendered_candidate_context`) changes; in-place button updates in `_refresh_strip` | `tests/test_tui_why.py::test_c1_regression_collapse_and_title_focus_preserved_on_update_ui`; coordinator reproduction: `docs/validation/u4/implementation/coordinator/reproduction_r1.py` |
++| **C2** | Agent names/tags interpreted as markup in Button creation & label updates | `skill_lens/tui/why.py`: literal `Content.from_text(option.label, markup=False)` at both creation and update boundaries; all static titles, body, and status widgets use literal Content | `tests/test_tui_why.py::test_c2_regression_agent_button_label_and_update_literal_markup`, `test_literal_rendering_markup_false`, `test_agent_button_renders_captured_label_literally` |
++| **C3** | Missing controlled `threading.Event` races, pilot pop races, and U3 rejection branch | `skill_lens/tui/why.py`, `home.py`, `app.py`: proper token lifecycle, `_cancel_owned_token`, `suspend_why`/`resume_why` | `tests/test_tui_why.py`:<br>• `test_real_worker_race_blocked_home_to_detail_agent_change_and_stale_callbacks`<br>• `test_real_worker_detail_a_to_b_while_b_running`<br>• `test_pending_blocked_capture_plus_detail_report`<br>• `test_non_capture_accepted_event_synchronization_does_not_cancel_or_dispatch_home`<br>• `test_real_pop_delayed_detail_callback_protects_resumed_home`<br>• `test_u3_identity_matching_rejection_branch`<br>• `test_detail_agent_switch_a_to_b_while_a_completes` |
++| **C4** | Missing refresh matrix on All filter, changed eligibility, retry, fault, normal/sticky exits | `skill_lens/tui/why.py`: `sync_from_controller`, `_rebuild_from_snapshot`, removal notice propagation | `tests/test_tui_why.py`:<br>• `test_refresh_changed_eligibility_no_agent_explanation`<br>• `test_refresh_empty_replacement_catalog_closes_to_home_with_notice`<br>• `test_refresh_retained_filter_excluding_fallback_selection`<br>• `test_real_capture_refusal_retry_and_fault_paths`<br>• `test_all_filter_return_matrix_across_lifecycle_events`<br>• `test_why_screen_quit_exit_codes_normal_and_sticky` |
++| **C5** | Target fixture alteration before visit, broad read sentinels (Path/os open, resolve, stat, lstat, readlink), manifest lifecycle | `skill_lens/tui/why.py`: strictly uses `snapshot_path`, `snapshot_same_location`, immutable report | `tests/test_tui_why.py::test_broad_read_sentinels_and_target_preservation_manifest` (guarded by `sys.monitoring` and broad monkeypatches; verifies parity across file deletion/mutation/retargeting before visit and full manifest) |
++| **C6** | Identity cases (directory/frontmatter/differing/invalid/missing/unresolved/multiple entrypoints), `STATE_STYLE`, `snapshot_path`, mixed unknown+known agents, 100x30 and 60x24 controls | `skill_lens/tui/why.py`: `snapshot_path` for header, `STATE_STYLE` styling via `Content.assemble`, unknown agent explanation in status | `tests/test_tui_why.py`:<br>• `test_identity_cases_frontmatter_directory_unresolved_entrypoints_and_order`<br>• `test_mixed_unknown_and_known_agent_ids_explained`<br>• `test_terminal_dimensions_100x30_and_60x24_controls_and_wrapping`<br>• `test_candidate_no_matches_shows_notice` |
++| **C7** | Factual errors in docs (U5 label, stale ownership sentence, contradictory status, walkthrough winner/fields/link) | Corrected `FULL_SCREEN_TUI.md`, `docs/TUI_U4_WALKTHROUGH.md`, `README.md`, `DEVELOPMENT.md`, `CHANGELOG.md`; preserved historical receipts; generated `mutation_gate_r2.json` | Review of updated markdown documents; all doc mismatches resolved. |
++
++---
++
++## 2. Frozen Acceptance Criteria Mapping
++
++| Acceptance Criterion | Verification Method & Test Selector |
++| :--- | :--- |
++| **1. Enter Navigation & Focus** | |
++| Enter on focused nonempty table opens WhyScreen | `tests/test_tui_why.py::test_why_screen_opens_on_enter_press_nonempty_table` |
++| Enter on empty table or filter empty state is no-op | `tests/test_tui_why.py::test_enter_on_empty_table_or_empty_filter_is_noop` |
++| Double Enter deduplication | `tests/test_tui_why.py::test_double_enter_deduplicated_no_second_push` |
++| Backspace and Escape pop back to Home | `tests/test_tui_why.py::test_escape_and_backspace_pop_to_home` |
++| Preserves Home filter text, cursor, selection, and focus | `tests/test_tui_why.py::test_escape_preserves_home_state_and_focus` |
++| **2. Header & Identity Display** | |
++| Header displays canonical path, agent, lookup name, policy evidence, headline | `tests/test_tui_why.py::test_why_screen_header_display` |
++| Identity cases: directory, frontmatter, differing names, invalid/missing frontmatter, unresolved key, multiple entrypoints | `tests/test_tui_why.py::test_identity_cases_frontmatter_directory_unresolved_entrypoints_and_order` |
++| Header uses `snapshot_path` (relativized / tilde) | `tests/test_tui_why.py::test_why_screen_header_display`, `test_identity_cases_frontmatter_directory_unresolved_entrypoints_and_order` |
++| Notice shown when no candidates match | `tests/test_tui_why.py::test_candidate_no_matches_shows_notice` |
++| **3. Agent Strip & Selection** | |
++| Strip buttons in deterministic order | `tests/test_tui_why.py::test_agent_strip_options_and_deterministic_switching` |
++| Left/Right keys navigate/wrap strip | `tests/test_tui_why.py::test_agent_strip_options_and_deterministic_switching` |
++| Explanation for zero-agent skill (zero requests) | `tests/test_tui_why.py::test_zero_agent_skill_shows_explanation_and_zero_requests` |
++| Explanation for mixed unknown + known agent IDs | `tests/test_tui_why.py::test_mixed_unknown_and_known_agent_ids_explained` |
++| Literal Button label rendering and updating (`markup=False`) | `tests/test_tui_why.py::test_c2_regression_agent_button_label_and_update_literal_markup`, `test_agent_button_renders_captured_label_literally` |
++| **4. Candidate Collapsibles & Rendering** | |
++| Report candidate order preserved | `tests/test_tui_why.py::test_candidate_collapsibles_expanded_and_collapsed` |
++| Candidate matching opening key initially expanded, others collapsed | `tests/test_tui_why.py::test_candidate_collapsibles_expanded_and_collapsed` |
++| Shared `STATE_STYLE` styling applied to marks and tags | `tests/test_tui_why.py::test_candidate_collapsibles_expanded_and_collapsed`, `test_c1_regression_collapse_and_title_focus_preserved_on_update_ui` |
++| Literal body rendering (markup=False, no tag interpretation) | `tests/test_tui_why.py::test_literal_rendering_markup_false` |
++| Controls and focus preserved on UI update / redraw | `tests/test_tui_why.py::test_c1_regression_collapse_and_title_focus_preserved_on_update_ui` |
++| Redundant entrypoint lines suppressed via `snapshot_same_location` | `tests/test_tui_why.py::test_candidate_collapsibles_expanded_and_collapsed` |
++| **5. Token Concurrency, Screen Ownership & Races** | |
++| Blocked Home -> detail -> agent change -> stale Home -> back -> stale detail | `tests/test_tui_why.py::test_real_worker_race_blocked_home_to_detail_agent_change_and_stale_callbacks` |
++| Detail A -> B switch while B running; late A outcome rejected | `tests/test_tui_why.py::test_real_worker_detail_a_to_b_while_b_running`, `test_detail_agent_switch_a_to_b_while_a_completes` |
++| Detail report + refresh capture both blocked; detail completes while capture pending | `tests/test_tui_why.py::test_pending_blocked_capture_plus_detail_report` |
++| Accepted non-capture report event does not cancel/dispatch hidden Home | `tests/test_tui_why.py::test_non_capture_accepted_event_synchronization_does_not_cancel_or_dispatch_home` |
++| Real-pop delayed detail callback protects resumed Home token | `tests/test_tui_why.py::test_real_pop_delayed_detail_callback_protects_resumed_home` |
++| U3 identity-matching rejection branch in Home | `tests/test_tui_why.py::test_u3_identity_matching_rejection_branch` |
++| Cache hit and redraw deduplication | `tests/test_tui_why.py::test_cache_hit_and_redraw_deduplication` |
++| **6. Refresh Matrix & Active Status** | |
++| Session refresh rebuilds options and preserves display | `tests/test_tui_why.py::test_session_refresh_rebuilds_options_and_preserves_display` |
++| Removed installation closes detail with persistent removal notice on Home | `tests/test_tui_why.py::test_session_refresh_removed_skill_closes_detail_with_removal_notice` |
++| Changed eligibility & no-agent explanation after refresh | `tests/test_tui_why.py::test_refresh_changed_eligibility_no_agent_explanation` |
++| Empty replacement catalog closes to Home with notice | `tests/test_tui_why.py::test_refresh_empty_replacement_catalog_closes_to_home_with_notice` |
++| Retained filter excluding fallback selection | `tests/test_tui_why.py::test_refresh_retained_filter_excluding_fallback_selection` |
++| Real capture refusal (`SnapshotTooLarge`), retry (`SnapshotChanged`), and internal fault (`RuntimeError`) | `tests/test_tui_why.py::test_real_capture_refusal_retry_and_fault_paths` |
++| All-filter return matrix across pending, refusal, retry, fault, count, and removal | `tests/test_tui_why.py::test_all_filter_return_matrix_across_lifecycle_events` |
++| Normal exit code 0 vs sticky-3 exit code on quit | `tests/test_tui_why.py::test_why_screen_quit_exit_codes_normal_and_sticky` |
++| Accepted report fault does not retry loop | `tests/test_tui_why.py::test_accepted_report_fault_does_not_retry_loop` |
++| **7. Data Freeze & Read Sentinels** | |
++| Target file alteration/deletion/retargeting before visit; full manifest parity | `tests/test_tui_why.py::test_broad_read_sentinels_and_target_preservation_manifest` |
++| Broad read probes (open, read_text, read_bytes, resolve, stat, lstat, readlink) fail | `tests/test_tui_why.py::test_broad_read_sentinels_and_target_preservation_manifest` |
++| Synthetic HOME/XDG and protected system roots | `tests/test_tui_why.py::test_broad_read_sentinels_and_target_preservation_manifest` |
++| AST read-only guard (no prohibited modules/operations) | `tests/test_tui_read_only.py::test_shipped_tui_code_has_zero_read_only_violations` |
++| **8. Layout & Usability** | |
++| 100x30 and 60x24 layout, long content wrapping, keyboard reachability | `tests/test_tui_why.py::test_terminal_dimensions_100x30_and_60x24_controls_and_wrapping` |
++
++---
++
++## 3. Mutation Gate Evidence
++
++Run using `.venv/bin/python docs/validation/u4/implementation/mutation_gate.py --out docs/validation/u4/implementation/mutation_gate_r2.json`.
++
++| Mutant | Description | Test Selector | Result | Detected Pattern |
++| :--- | :--- | :--- | :--- | :--- |
++| **1. Read-Only Guard** | `import rich` planted in `why.py` | `tests/test_tui_read_only.py::test_shipped_tui_code_has_zero_read_only_violations` | **Killed** (rc=1) | `rich` |
++| **2. Target Read Sentinel** | Direct `Path(...).read_text()` in `_update_display` | `tests/test_tui_why.py::test_broad_read_sentinels_and_target_preservation_manifest` | **Killed** (rc=1) | `Forbidden synthetic-target filesystem read` |
++| **3. Detail Token Guard** | Remove token check in `_cancel_owned_token` | `tests/test_tui_why.py::test_real_pop_delayed_detail_callback_protects_resumed_home` | **Killed** (rc=1) | `AssertionError: Unowned Home token was invalidated by delayed detail callback!` |
++| **4. Arguments Check** | Remove arguments check in `note_report_outcome` | `tests/test_tui_why.py::test_detail_agent_switch_a_to_b_while_a_completes` | **Killed** (rc=1) | `AssertionError: assert ResolutionReport...` |
++| **5. Literal Markup** | Enable `markup=True` in candidate body | `tests/test_tui_why.py::test_literal_rendering_markup_false` | **Killed** (rc=1) | `AssertionError` |
++
++- **Controls:** All 5 pass on unmodified code (rc=0).
++- **Restoration:** Hash of `why.py` before and after identical; checkout never modified.
++- **Historical receipt:** Preserved untouched at `docs/validation/u4/implementation/mutation_gate.json`.

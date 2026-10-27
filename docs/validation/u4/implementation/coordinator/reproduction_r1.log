@@ -1,0 +1,120 @@
+AFTER REDRAW: collapsed= False focus= Button(id='why-agent-claude', classes='-style-default active')
+FAGENT LABEL: Agent\label
+F
+=================================== FAILURES ===================================
+_____________ test_redraw_preserves_candidate_focus_and_expansion ______________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-1/test_redraw_preserves_candidat0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10794bc50>
+
+    def test_redraw_preserves_candidate_focus_and_expansion(mock_home,monkeypatch):
+        monkeypatch.setattr(paths,'home',lambda:mock_home)
+        build_scenario('claude_personal_beats_project',mock_home)
+        async def run():
+            app=SkillLensApp(home=mock_home,cwd=mock_home)
+            async with app.run_test(size=(100,30)) as pilot:
+                await _wait_ready(pilot,app)
+                await pilot.press('enter')
+                await _wait_why_idle(pilot,app)
+                screen=app.screen
+                block=list(screen.query(Collapsible))[0]
+                block.collapsed=True
+                block.query_one('CollapsibleTitle').focus()
+                await pilot.pause()
+                app._update_ui()
+                await pilot.pause()
+                newblock=list(screen.query(Collapsible))[0]
+                print('AFTER REDRAW: collapsed=',newblock.collapsed,'focus=',app.focused)
+                assert newblock.collapsed, 'Session redraw reset user candidate expansion'
+                assert app.focused is not None and app.focused.__class__.__name__=='CollapsibleTitle', 'Session redraw stole candidate focus'
+>       asyncio.run(run())
+
+/private/tmp/skill-lens-u4-probe/test_probe.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test(size=(100,30)) as pilot:
+            await _wait_ready(pilot,app)
+            await pilot.press('enter')
+            await _wait_why_idle(pilot,app)
+            screen=app.screen
+            block=list(screen.query(Collapsible))[0]
+            block.collapsed=True
+            block.query_one('CollapsibleTitle').focus()
+            await pilot.pause()
+            app._update_ui()
+            await pilot.pause()
+            newblock=list(screen.query(Collapsible))[0]
+            print('AFTER REDRAW: collapsed=',newblock.collapsed,'focus=',app.focused)
+>           assert newblock.collapsed, 'Session redraw reset user candidate expansion'
+E           AssertionError: Session redraw reset user candidate expansion
+E           assert False
+E            +  where False = Collapsible().collapsed
+
+/private/tmp/skill-lens-u4-probe/test_probe.py:27: AssertionError
+______________ test_agent_button_renders_captured_label_literally ______________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-1/test_agent_button_renders_capt0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107dce150>
+
+    def test_agent_button_renders_captured_label_literally(mock_home,monkeypatch):
+        monkeypatch.setattr(paths,'home',lambda:mock_home)
+        build_scenario('claude_personal_beats_project',mock_home)
+        async def run():
+            app=SkillLensApp(home=mock_home,cwd=mock_home)
+            async with app.run_test() as pilot:
+                await _wait_ready(pilot,app)
+                snap=app.controller.current
+                app.controller.current=replace(snap,registry=tuple(replace(a,name='[red]Agent[/red]\\label') if a.id=='claude' else a for a in snap.registry))
+                await pilot.press('enter')
+                await _wait_why_idle(pilot,app)
+                button=app.screen.query_one('#why-agent-claude',Button)
+                print('AGENT LABEL:',button.label)
+                assert '[red]Agent[/red]' in button.label.plain, 'Captured agent name interpreted as markup'
+>       asyncio.run(run())
+
+/private/tmp/skill-lens-u4-probe/test_probe.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            await _wait_ready(pilot,app)
+            snap=app.controller.current
+            app.controller.current=replace(snap,registry=tuple(replace(a,name='[red]Agent[/red]\\label') if a.id=='claude' else a for a in snap.registry))
+            await pilot.press('enter')
+            await _wait_why_idle(pilot,app)
+            button=app.screen.query_one('#why-agent-claude',Button)
+            print('AGENT LABEL:',button.label)
+>           assert '[red]Agent[/red]' in button.label.plain, 'Captured agent name interpreted as markup'
+E           AssertionError: Captured agent name interpreted as markup
+E           assert '[red]Agent[/red]' in 'Agent\\label'
+E            +  where 'Agent\\label' = Content('Agent\\label', spans=[Span(0, 5, style='red')]).plain
+E            +    where Content('Agent\\label', spans=[Span(0, 5, style='red')]) = Button(id='why-agent-claude', classes='-style-default active').label
+
+/private/tmp/skill-lens-u4-probe/test_probe.py:44: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../../../private/tmp/skill-lens-u4-probe/test_probe.py::test_redraw_preserves_candidate_focus_and_expansion
+FAILED ../../../../../private/tmp/skill-lens-u4-probe/test_probe.py::test_agent_button_renders_captured_label_literally
+2 failed in 0.72s
