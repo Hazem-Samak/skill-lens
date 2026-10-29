@@ -2,7 +2,7 @@
 
 Status: Agreed
 Authorization: On 2026-10-29 the owner requested U5 planning, with MiniMax 3.1 F / xhigh through MCode and GLM 5.3 / Max through Qoder as the planning council, orchestrated through Rex. The owner explicitly retained this OMP coordinator and its existing effort. Planning, review and the planning loop's two-commit freeze are in scope; product implementation and push are not authorized by this request.
-Reference: pending until freeze
+Reference: 5d84002ab700bf5fc4e643740938dc5a321c4666
 Surface: omp; external council processes launched and collected through Rex.
 Risk and review: High. Cross-screen report ownership and byte-exact public JSON parity are load-bearing behavior. Two fresh independent planning critics; future implementation requires its own authorized implementer and two final critics.
 Roster: Coordinator — current OMP openai-codex/gpt-6.1-sol, existing effort explicitly retained; runtime identifies the model but numeric effort is not exposed in the inspected launch arguments. Planning critics — MCode minimax/MiniMax-M3.1-Flash, xhigh; Qoder GLM-5.3, max. MCode's per-call `llm-call.json` confirms model and `thinkingLevel: xhigh`; its session-default `default` effort is not the run override. Qoder's startup hook records GLM-5.3 and its runtime-config records max; request logs use the internal alias `gmodel`. These are configured-route receipts, not upstream serving attestation. Advertised families are OpenAI, MiniMax and GLM; upstream family identity remains unverified. Implementer and final-review roster are unselected and must be named before their dispatch, not inherited from past missions.
