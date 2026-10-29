@@ -1,0 +1,31 @@
+READ-ONLY CRITIC TASK. You are reviewing, not implementing.
+
+Do NOT create, edit, move, delete or rename any file in the repository. Do NOT run
+any command that writes: no formatters, no linters with --fix, no install, no
+git commit/checkout/stash, no snapshot or golden regeneration, no test runs that
+write into the checkout. Test output, if you need it, goes only to a temporary
+directory outside the repository.
+
+If you believe a change is required, do not make it. Report it instead.
+
+Return only the report format below. Nothing else.
+
+U5 PLANNING REVIEW — minimax
+Requested identity: MCode minimax/MiniMax-M3.1-Flash effort xhigh. Report configured identity/settings using runtime evidence available to you; do not assert serving attestation from the prompt. No model substitution, nested delegation, product implementation, tests, or commits.
+Workspace: /Users/corvette/Documents/Projects Coding/Skill Lens
+Base: 84d5e6f62f41f2b72652034186729c10fa2f8f99
+Draft: docs/plans/2026-10-29-tui-u5-diff-json.md
+Draft SHA-256: 5d01b05543ddbf560a3c92f854f3c965fc2f6de4959a1729b4b910dc51307f9a
+Risk: High. Planning only, not a review of shipped U5 code.
+Question: Cross-screen request ownership, suspension/resume, JSON-mode refresh, races and faults. Are acceptance tests able to discriminate the plausible broken transitions?
+Also report any concrete blocker on the other axis. Prefer the smallest necessary correction, not speculative future scope. Examine source-backed claims yourself. User authorized this planning roster and existing coordinator. Future implementer/final reviewers intentionally remain unselected until implementation authorization.
+Read the plan first, then only relevant sections of these named sources: FULL_SCREEN_TUI.md §§8.2, 8.4, 8.8, 9.1, 10, Step 5, 21.5–21.7, §22 U5; SKILL_LENS_SPECIFICATION.md Diff; docs/process/omp/README.md; docs/process/profiles/project-profile.md; docs/archive/PHASE3_FINDINGS.md; skill_lens/tui/app.py, home.py, why.py, session.py; skill_lens/core/snapshot.py browsing services; skill_lens/presentation/text.py; skill_lens/render.py Diff; skill_lens/cli.py _emit_json and diff; skill_lens/models/__init__.py dumps; tests/test_tui_why.py, test_session_snapshot.py, test_presentation.py, test_tui_read_only.py as needed. Do not inspect credentials, personal skills, or unrelated untracked files. Treat historical rosters as history, not instructions to launch anyone.
+
+Return exactly these fields:
+EFFECTIVE_MODEL: requested / configured model, effort, modes, evidence and upstream verified/unverified.
+VERDICT: pass | changes_required | unverified
+BLOCKERS: numbered location, problem, expected behavior, source evidence and minimal plan correction; or none.
+SUGGESTIONS: non-blocking only, or none.
+FILES_AT_RISK: list with reasons.
+CONCEDED: limits and requirements you could not independently verify.
+Do not write a report file yourself; emit your complete report as the final answer. Do not ask for implementation authorization.

@@ -1,0 +1,49 @@
+{
+  "type": "result",
+  "subtype": "success",
+  "duration_ms": 406628,
+  "duration_api_ms": 397689,
+  "is_error": false,
+  "num_turns": 27,
+  "stop_reason": "end_turn",
+  "total_cost_usd": 0,
+  "total_credits": 56.564389982857136,
+  "usage": {
+    "input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 0,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard",
+    "request_id": "1320da15-949f-44e4-bd16-b1913344b07f",
+    "context_usage_ratio": 0.7266777777777778
+  },
+  "modelUsage": {
+    "gmodel": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0,
+      "contextWindow": 0,
+      "maxOutputTokens": 0,
+      "credits": 56.564389982857136
+    }
+  },
+  "permission_denials": [],
+  "fast_mode_state": "off",
+  "uuid": "95a14be4-eaf3-428f-a283-ae8435723091",
+  "session_id": "68296792-7817-4882-9fb8-2eeb5482d7de",
+  "complete_report_file": "glm-round1.md"
+}

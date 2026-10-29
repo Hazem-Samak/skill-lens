@@ -1,0 +1,130 @@
+{
+  "base": "84d5e6f62f41f2b72652034186729c10fa2f8f99",
+  "plan": "docs/plans/2026-10-29-tui-u5-diff-json.md",
+  "reviewed_draft_sha256": "5d01b05543ddbf560a3c92f854f3c965fc2f6de4959a1729b4b910dc51307f9a",
+  "rex_session": "session:01a18931-2ff1-7947-bc62-366a589a7454",
+  "orchestrator_block": "block:01a18931-ace7-779d-8fd6-7631af14f93f",
+  "critics": {
+    "minimax": {
+      "model": "minimax/MiniMax-M3.1-Flash",
+      "effort": "xhigh",
+      "block": "block:01a18941-85ec-7186-9e48-b0149bb76f4c",
+      "window": "window:01a18941-85f7-7858-b8bc-37f46f8312d6",
+      "session_id": "mvs_5128e0c3124b4f6ba80791f7b35c7e81",
+      "exit_code": 0,
+      "configured_evidence": {
+        "provider": "minimax",
+        "model": "MiniMax-M3.1-Flash",
+        "thinkingLevel": "xhigh",
+        "api": "anthropic-messages",
+        "source": "exact review session llm-call.json",
+        "upstream_attested": false
+      }
+    },
+    "glm": {
+      "model": "GLM-5.3",
+      "effort": "max",
+      "block": "block:01a18941-d8c7-71f0-8601-f9486d1faf10",
+      "window": "window:01a18941-d8d1-7a7f-ba29-802659a16654",
+      "session_id": "68296792-7817-4882-9fb8-2eeb5482d7de",
+      "exit_code": 0,
+      "configured_evidence": {
+        "startup_model": "GLM-5.3",
+        "runtime_model_alias": "gmodel",
+        "reasoningEffort": "max",
+        "generation_reasoning_effort": "max",
+        "sources": [
+          "exact review session startup hook",
+          "exact review session runtime-config records"
+        ],
+        "upstream_attested": false
+      }
+    }
+  },
+  "failed_launch": {
+    "block": "block:01a18941-85f9-75c8-8931-77e9be4d6d3c",
+    "exit_code": 1,
+    "reason": "Extra --thinking enabled flag required an unrequested token budget; relaunched with --reasoning-effort max alone, no model substitution."
+  },
+  "preflight": {
+    "block": "block:01a1893e-aab3-704e-81d7-1018cfc3a207",
+    "exit_code": 0
+  },
+  "baseline": {
+    "pytest_passed": 1128,
+    "pytest_skipped": 1,
+    "skip_reason": "Case-insensitive filesystem cannot provide two distinct dual-case physical files",
+    "coverage_percent": 90.78,
+    "mypy": "pass, 39 source files",
+    "ruff_check": "pass",
+    "ruff_format_check": "pass, 384 files",
+    "log_artifact": "artifact://29",
+    "smoke": {
+      "cli_exit": 0,
+      "copies": 2,
+      "group": "folder-key",
+      "json_bytes_with_final_lf": 2007,
+      "snapshot_unchanged_after_edit": true
+    },
+    "smoke_setup_correction": "Initial temporary /var alias did not equal canonical /private/var; canonicalized throwaway home and reran successfully. No product code changed."
+  },
+  "round1_manifest_unchanged": true,
+  "interrupted_followup": {
+    "minimax_block": "block:01a1894a-d9bc-73b9-811c-f2cf1edadcea",
+    "minimax_session": "mvs_454920f63a734af8a8db36f656874b20",
+    "minimax_status": "aborted",
+    "glm_block": "block:01a1894a-d9cc-7766-95e9-5b3c133163d5",
+    "glm_session": "d9243093-3a0a-4e12-a430-a74072c13c65",
+    "wait_results": "both blocks closed without terminal child exit receipt",
+    "pgrep_matches": 0,
+    "checkout_unchanged": true,
+    "cause": "unverified broader terminal closures; no failure verdict inferred"
+  },
+  "followup_retry": {
+    "minimax": {
+      "block": "block:01a1894c-9c02-757e-9ae5-9f532f055ce7",
+      "window": "window:01a1894c-9c0e-7845-9355-e40630a1b640",
+      "exit_code": 0,
+      "session_id": "mvs_b68cc4f68ccf43309d4cb65effb2709f",
+      "verdict": "pass",
+      "blockers": [],
+      "configured_evidence": {
+        "provider": "minimax",
+        "model": "MiniMax-M3.1-Flash",
+        "thinkingLevel": "xhigh",
+        "api": "anthropic-messages",
+        "source": "exact follow-up session llm-call.json",
+        "upstream_attested": false
+      }
+    },
+    "glm": {
+      "block": "block:01a1894c-9c0f-7bdf-ad7a-b4eb432a8cf9",
+      "window": "window:01a1894c-9c1a-7860-95b1-6185c6781a11",
+      "exit_code": 0,
+      "session_id": "5d59c843-1d4d-4422-add5-9be9dbe84d60",
+      "verdict": "pass",
+      "blockers": [],
+      "configured_evidence": {
+        "runtime_model_alias": "gmodel",
+        "reasoningEffort": "max",
+        "generation_reasoning_effort": "max",
+        "source": "exact follow-up session runtime-config",
+        "upstream_attested": false
+      }
+    },
+    "draft_sha256": "bcf362e2bfac164ef2cc54e39baf7bcdb30ae82e09290e36d92d5f470f7d2b3a",
+    "round": "same bounded follow-up, fresh contexts after interruption, not a third broad wave"
+  },
+  "round2_manifest_unchanged": true,
+  "round2_manifest_paths": 2397,
+  "round1_manifest_sha256": "d41b1506d5e595d3212bd10a9618198685344090217e88d4cc565d468f2cb828",
+  "round2_manifest_sha256": "3461717bff0ba25aaa206c9f2eb5914bbc39e25943b0f03b39f3d7f9ac9d57b8",
+  "review_decision": "Both bounded follow-ups pass, no blockers. Small non-blocking clarifications applied and wording/forwarding tests explicitly rejected; see plan Review decisions.",
+  "freeze": {
+    "operative_plan_commit": "5d84002ab700bf5fc4e643740938dc5a321c4666",
+    "reference_only_commit": "6dc6780e80ce605e782ad204282863b9967afaf8",
+    "product_implementation_authorized": false,
+    "push_authorized": false
+  },
+  "preservation": "Final comparison found changes only to the U5 plan and docs/validation/u5/planning; all pre-existing unrelated paths preserved."
+}
