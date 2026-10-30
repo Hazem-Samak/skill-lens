@@ -1,8 +1,8 @@
 # Plan: U5 — Diff and raw JSON views
 
 Status: Agreed
-Authorization: On 2026-10-29 the owner requested U5 planning, with MiniMax 3.1 F / xhigh through MCode and GLM 5.3 / Max through Qoder as the planning council, orchestrated through Rex. The owner explicitly retained this OMP coordinator and its existing effort. Planning, review and the planning loop's two-commit freeze are in scope; product implementation and push are not authorized by this request.
-Reference: 5d84002ab700bf5fc4e643740938dc5a321c4666
+Authorization: On 2026-10-29 the owner authorized U5 planning, its named planning council, and the two-commit freeze, retaining this OMP coordinator and existing effort. On 2026-10-30 the owner authorized the one-round manual implementation handoff described below, its workflow-only amendment and freeze without a new planning-review wave. Product scope is unchanged. No push is authorized.
+Reference: pending until amended freeze
 Surface: omp; external council processes launched and collected through Rex.
 Risk and review: High. Cross-screen report ownership and byte-exact public JSON parity are load-bearing behavior. Two fresh independent planning critics; future implementation requires its own authorized implementer and two final critics.
 Roster: Coordinator — current OMP openai-codex/gpt-6.1-sol, existing effort explicitly retained; runtime identifies the model but numeric effort is not exposed in the inspected launch arguments. Planning critics — MCode minimax/MiniMax-M3.1-Flash, xhigh; Qoder GLM-5.3, max. MCode's per-call `llm-call.json` confirms model and `thinkingLevel: xhigh`; its session-default `default` effort is not the run override. Qoder's startup hook records GLM-5.3 and its runtime-config records max; request logs use the internal alias `gmodel`. These are configured-route receipts, not upstream serving attestation. Advertised families are OpenAI, MiniMax and GLM; upstream family identity remains unverified. Implementer and final-review roster are unselected and must be named before their dispatch, not inherited from past missions.
@@ -85,7 +85,7 @@ The helpers consume supplied model objects, choose only these presentation branc
 - Refused/changed capture retains the last usable generation and existing messages; it must not silently clear it or mark an expected refusal as an internal fault. No automatic repeated capture loop.
 - Expected empty/no-agent states remain normal answers. Accepted unexpected report faults use the existing plain-English error/in-memory-details path, retain sticky failure and exit 3 on quit. Stale results/errors do not change the display or sticky failure. Normal q/Ctrl-C exits 0, cancels owned work and blocks late updates; thread cancellation is cooperative.
 
-## Implementation steps (not authorized to start yet)
+## Implementation and coordinator verification steps
 
 1. Verify frozen reference, authorized implementation roster, checkout baseline and source contracts. Build the focused synthetic fixtures and establish actual CLI/snapshot expected reports before blocking reads or mutating inputs.
 2. Implement Diff with existing snapshot worker, complete token ownership and shared plain helpers; wire Home/Why entry, explicit Why resume and ordered removal unwind. Extract only the renderer-only notices enumerated above and retain existing CLI snapshots without regeneration.
@@ -146,4 +146,16 @@ Coverage threshold remains 90% combined measurement with branch measurement enab
 
 ## Planning completion and delivery authority
 
-Required before freeze: resolved requirement questions and in-scope blockers, two substantive independent reports, verified unchanged reviewer checkout fingerprints, recorded configured identities and limits, all owned critic processes terminal, and the four local project gates. Freeze only the agreed plan in the planning loop's two commits; the second changes only `Reference:` to the full first commit hash. Keep review receipts as separate evidence, never stage unrelated paths. No push. A later explicit implementation instruction and owner-selected implementation/final-review roster are required before product code changes.
+The original planning freeze required resolved questions and blockers, two substantive independent reports, unchanged reviewer fingerprints, configured-identity records, terminal critic processes and four local project gates. These are recorded in the original planning evidence. The 2026-10-30 amendment below changes only this round's execution arrangements; the second freeze commit changes only `Reference:`. Preserve unrelated work. No push.
+
+## One-round execution exception — 30 October 2026
+
+This exception applies only to the initial U5 implementation handoff and its return to the existing implementation loop. It is not a standing workflow change and must not be reused for another phase, mission or implementation round. Shared process documents remain unchanged.
+
+- The owner launches and manages the implementation agent directly in the DeepSeek Harness desktop GUI. This coordinator does not launch, orchestrate, monitor or cancel that GUI agent. The owner selects its model/settings in the GUI; the handoff asks the agent to report visible configured identity/settings and explicitly mark unavailable evidence. Never infer identity from the application name.
+- Final-review models need not be selected before this manual implementation begins. The owner names any correction implementer when corrections are needed, and names both independent final reviewers before their dispatch. Existing High-risk family disclosure and acceptance requirements still apply then.
+- The GUI implementer reads the amended frozen contract and edits only its allowed product/test/documentation paths. It must not delegate, launch reviewers, run tests/gates/linters/formatters/runtime checks, stage, commit, push, install dependencies or alter settings. Existing edit-only implementer rules remain in force. No concurrent product writers.
+- The owner returns when the GUI agent finishes and supplies its final report, including identity/settings evidence, changed files, tests authored, checks not run, deviations and blockers. The coordinator then inspects the actual checkout and performs smoke checks, mutation verification and the four gates. Implementation steps 1 and 4–6 contain coordinator verification duties, not permission for the edit-only GUI agent to run checks.
+- The coordinator first resolves its own implementation findings through an owner-named correction implementer. After that inspection and verification pass, it starts the two owner-selected independent final reviews. Required acceptance criteria, independent review, correction/readback rules, final gates and coordinator-owned acceptance/commits are unchanged.
+- Passing planning results remain evidence for the unchanged product contract, not evidence that U5 has been implemented or accepted. The owner explicitly authorized freezing this workflow-only amendment without a fresh planning council wave.
+- This exception ends when the manual handoff rejoins the normal coordinator inspection/verification loop. Later corrections and final review use the ordinary loop, with the roster supplied at their respective stages as authorized above. Future implementation rounds use the original process without this exception.
