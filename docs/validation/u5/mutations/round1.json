@@ -1,0 +1,571 @@
+{
+  "root": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67",
+  "control": {
+    "label": "control",
+    "exit": 0,
+    "seconds": 17.55,
+    "tests": [
+      "tests/test_models.py::test_dumps_is_canonical",
+      "tests/test_tui_diff.py::test_cache_hit_diff_does_not_disturb_another_views_request",
+      "tests/test_tui_diff.py::test_character_budget_truncation_never_claims_zero_omitted_lines",
+      "tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change",
+      "tests/test_tui_diff.py::test_leaving_diff_cancels_only_its_own_token",
+      "tests/test_tui_diff.py::test_literal_text_stays_literal_in_the_diff_body",
+      "tests/test_tui_diff.py::test_pending_why_report_is_requested_again_after_diff",
+      "tests/test_tui_diff.py::test_refresh_published_while_why_is_covered_rebinds_on_return",
+      "tests/test_tui_diff.py::test_removal_under_diff_over_home_shows_the_removal_notice",
+      "tests/test_tui_diff.py::test_removal_under_diff_over_why_returns_home_with_notice",
+      "tests/test_tui_diff.py::test_stale_diff_result_and_error_are_rejected",
+      "tests/test_tui_diff.py::test_supplied_report_never_prints_binary_payload_or_hunkless_noise",
+      "tests/test_tui_diff.py::test_why_d_uses_folder_name_for_diff_and_translated_name_for_why",
+      "tests/test_tui_home.py::test_early_capture_is_reconciled_by_the_mount_itself",
+      "tests/test_tui_json.py::test_diff_json_is_the_exact_report_document",
+      "tests/test_tui_json.py::test_diff_json_keyboard_traversal_and_return",
+      "tests/test_tui_json.py::test_diff_json_never_mixes_old_document_with_a_new_generation",
+      "tests/test_tui_json.py::test_home_json_is_the_full_captured_scan_even_under_filters",
+      "tests/test_tui_json.py::test_unchanged_diff_json_publication_preserves_scroll",
+      "tests/test_tui_json.py::test_unchanged_home_json_publication_preserves_scroll",
+      "tests/test_tui_json.py::test_why_json_blocks_hidden_agent_navigation_and_diff",
+      "tests/test_tui_json.py::test_why_json_is_the_selected_agents_report_with_the_translated_name"
+    ],
+    "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/control.log",
+    "output": "......................                                                   [100%]\n22 passed in 17.27s\n"
+  },
+  "cases": [
+    {
+      "label": "M01_wrong_diff_identity",
+      "exit": 1,
+      "seconds": 6.98,
+      "tests": [
+        "tests/test_tui_diff.py::test_why_d_uses_folder_name_for_diff_and_translated_name_for_why"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M01_wrong_diff_identity.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/why.py",
+          "function": "action_open_diff",
+          "old": "self._host.open_diff(self._opening_key)",
+          "new": "self._host.open_diff(self._report.skill_name if self._report is not None else self._opening_key)"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_______ test_why_d_uses_folder_name_for_diff_and_translated_name_for_why _______\ntests/test_tui_diff.py:343: in test_why_d_uses_folder_name_for_diff_and_translated_name_for_why\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:328: in _run\n    diff = await _wait_diff_report(pilot, app)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:85: in _wait_diff_report\n    await _wait_until(\ntests/test_tui_diff.py:64: in _wait_until\n    raise AssertionError(f\"timed out waiting for {label}\")\nE   AssertionError: timed out waiting for diff report accepted\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_why_d_uses_folder_name_for_diff_and_translated_name_for_why - AssertionError: timed out waiting for diff report accepted\n1 failed in 6.81s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M02_live_diff_collection",
+      "exit": 1,
+      "seconds": 6.97,
+      "tests": [
+        "tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M02_live_diff_collection.log",
+      "changes": [
+        {
+          "path": "skill_lens/core/snapshot.py",
+          "function": "snapshot_diff",
+          "old": "captured_files=snapshot.files,",
+          "new": "captured_files=None,"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________ test_first_diff_visit_is_frozen_after_captured_inputs_change _________\ntests/test_tui_diff.py:1488: in test_first_diff_visit_is_frozen_after_captured_inputs_change\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:1452: in _run\n    diff = await _wait_diff_report(pilot, app)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:85: in _wait_diff_report\n    await _wait_until(\ntests/test_tui_diff.py:64: in _wait_until\n    raise AssertionError(f\"timed out waiting for {label}\")\nE   AssertionError: timed out waiting for diff report accepted\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change - AssertionError: timed out waiting for diff report accepted\n1 failed in 6.81s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M03_stale_diff_result",
+      "exit": 1,
+      "seconds": 0.56,
+      "tests": [
+        "tests/test_tui_diff.py::test_stale_diff_result_and_error_are_rejected"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M03_stale_diff_result.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/session.py",
+          "function": "accept_view_result",
+          "old": "active.request_id != request_id",
+          "new": "False"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________________ test_stale_diff_result_and_error_are_rejected _________________\ntests/test_tui_diff.py:1110: in test_stale_diff_result_and_error_are_rejected\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:1105: in _run\n    assert report is not None and report.skill_name == \"deploy\"\nE   AssertionError: assert (DiffReport(skill_name='foreign', home='/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pyt...f_result_and_err0/home/project', found=True, baseline_path=None, copies=(), truncated=False, omitted_chars=0, notes=()) is not None and 'foreign' == 'deploy'\nE     \nE     - deploy\nE     + foreign)\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_stale_diff_result_and_error_are_rejected - AssertionError: assert (DiffReport(skill_name='foreign', home='/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pyt...f_result_and_err0/home/project', found=True, baseline_path=None, copies=(), truncated=False, omitted_chars=0, notes=()) is not None and 'foreign' == 'deploy'\n  \n  - deploy\n  + foreign)\n1 failed in 0.46s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M04_stale_diff_error",
+      "exit": 1,
+      "seconds": 5.43,
+      "tests": [
+        "tests/test_tui_diff.py::test_stale_diff_result_and_error_are_rejected"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M04_stale_diff_error.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/session.py",
+          "function": "accept_view_error",
+          "old": "active.request_id != request_id",
+          "new": "False"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________________ test_stale_diff_result_and_error_are_rejected _________________\ntests/test_tui_diff.py:1110: in test_stale_diff_result_and_error_are_rejected\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:1101: in _run\n    assert app.controller.failed is False\nE   AssertionError: assert True is False\nE    +  where True = <skill_lens.tui.session.SessionController object at 0x108f702d0>.failed\nE    +    where <skill_lens.tui.session.SessionController object at 0x108f702d0> = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'nocolor', 'focus', 'dark'}).controller\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_stale_diff_result_and_error_are_rejected - AssertionError: assert True is False\n +  where True = <skill_lens.tui.session.SessionController object at 0x108f702d0>.failed\n +    where <skill_lens.tui.session.SessionController object at 0x108f702d0> = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'nocolor', 'focus', 'dark'}).controller\n1 failed in 5.33s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M05_cancel_foreign_owner",
+      "exit": 0,
+      "seconds": 1.49,
+      "tests": [
+        "tests/test_tui_diff.py::test_leaving_diff_cancels_only_its_own_token",
+        "tests/test_tui_diff.py::test_cache_hit_diff_does_not_disturb_another_views_request"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M05_cancel_foreign_owner.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/diff.py",
+          "function": "_cancel_owned_token",
+          "old": "if active is not None and active == owned:",
+          "new": "if active is not None:"
+        }
+      ],
+      "status": "survived",
+      "output": "..                                                                       [100%]\n2 passed in 1.36s\n",
+      "coordinator_disposition": "survived"
+    },
+    {
+      "label": "M06_hidden_why_continues",
+      "exit": 0,
+      "seconds": 1.39,
+      "tests": [
+        "tests/test_tui_diff.py::test_pending_why_report_is_requested_again_after_diff",
+        "tests/test_tui_diff.py::test_refresh_published_while_why_is_covered_rebinds_on_return"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M06_hidden_why_continues.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/why.py",
+          "function": "suspend_detail",
+          "old": null,
+          "new": "        return\n"
+        }
+      ],
+      "status": "survived",
+      "output": "..                                                                       [100%]\n2 passed in 1.25s\n",
+      "coordinator_disposition": "survived"
+    },
+    {
+      "label": "M07_no_why_resume_request",
+      "exit": 1,
+      "seconds": 5.81,
+      "tests": [
+        "tests/test_tui_diff.py::test_pending_why_report_is_requested_again_after_diff"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M07_no_why_resume_request.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/why.py",
+          "function": "resume_detail",
+          "old": "        self._request_report()\n",
+          "new": "        # MUTANT: no same-generation resume re-request\n"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n____________ test_pending_why_report_is_requested_again_after_diff _____________\ntests/test_tui_diff.py:428: in test_pending_why_report_is_requested_again_after_diff\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:420: in _run\n    await _wait_until(pilot, lambda: why._report is not None, \"why report after resume\")\ntests/test_tui_diff.py:64: in _wait_until\n    raise AssertionError(f\"timed out waiting for {label}\")\nE   AssertionError: timed out waiting for why report after resume\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_pending_why_report_is_requested_again_after_diff - AssertionError: timed out waiting for why report after resume\n1 failed in 5.70s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M08_wrong_removal_unwind",
+      "exit": 1,
+      "seconds": 5.74,
+      "tests": [
+        "tests/test_tui_diff.py::test_removal_under_diff_over_why_returns_home_with_notice"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M08_wrong_removal_unwind.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/app.py",
+          "function": "close_diff",
+          "old": "        self.pop_screen()\n",
+          "new": "        if removal_notice is not None and isinstance(prev_screen, WhyScreen):\n            self.close_why(removal_notice=removal_notice)\n            return\n        self.pop_screen()\n"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________ test_removal_under_diff_over_why_returns_home_with_notice ___________\ntests/test_tui_diff.py:1319: in test_removal_under_diff_over_why_returns_home_with_notice\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:1305: in _run\n    await _wait_until(pilot, lambda: isinstance(app.screen, HomeScreen), \"return to home\")\ntests/test_tui_diff.py:64: in _wait_until\n    raise AssertionError(f\"timed out waiting for {label}\")\nE   AssertionError: timed out waiting for return to home\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_removal_under_diff_over_why_returns_home_with_notice - AssertionError: timed out waiting for return to home\n1 failed in 5.63s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M09_no_home_removal_notice",
+      "exit": 1,
+      "seconds": 0.71,
+      "tests": [
+        "tests/test_tui_diff.py::test_removal_under_diff_over_home_shows_the_removal_notice"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M09_no_home_removal_notice.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/app.py",
+          "function": "close_diff",
+          "old": "prev_screen.set_removal_notice(removal_notice)",
+          "new": "pass  # MUTANT: lost direct-Home removal notice"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________ test_removal_under_diff_over_home_shows_the_removal_notice __________\ntests/test_tui_diff.py:1346: in test_removal_under_diff_over_home_shows_the_removal_notice\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:1341: in _run\n    assert home._removal_notice is not None\nE   assert None is not None\nE    +  where None = PlaceholderHomeScreen()._removal_notice\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_removal_under_diff_over_home_shows_the_removal_notice - assert None is not None\n +  where None = PlaceholderHomeScreen()._removal_notice\n1 failed in 0.61s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M10_filtered_home_json",
+      "exit": 1,
+      "seconds": 1.0,
+      "tests": [
+        "tests/test_tui_json.py::test_home_json_is_the_full_captured_scan_even_under_filters"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M10_filtered_home_json.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/home.py",
+          "function": "_json_document",
+          "old": "return dumps(controller.current.scan.to_dict())",
+          "new": "return dumps({**controller.current.scan.to_dict(), \"skills\": [row for row in controller.current.scan.to_dict()[\"skills\"] if row[\"canonical_path\"] in {visible.key for visible in self._visible}]})"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________ test_home_json_is_the_full_captured_scan_even_under_filters __________\ntests/test_tui_json.py:227: in test_home_json_is_the_full_captured_scan_even_under_filters\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_json.py:217: in _run\n    assert view.document == expected\nE   assert '{\\n  \"cwd\": ...dable\": []\\n}' == '{\\n  \"cwd\": ...dable\": []\\n}'\nE     \nE     Skipping 1585 identical leading characters in diff, use -v to show\nE        \"B\"\nE     -     },\nE     -     {\nE     -       \"agents\": [\nE     -         \"claude\",\nE     -         \"opencode\"\nE     -       ],\nE     -       \"canonical_path\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-68/test_home_json_is_the_full_cap0/home/.claude/skills/other\",\nE     -       \"content_hash\": \"sha256:fa75c20a82e7ee082e81e686a3f083dfa8dc35427c8eac1e173f95698fa6dac7\",\nE     -       \"description\": \"Other skill.\",\nE     -       \"entrypoint_count\": 1,\nE     -       \"error_reason\": null,\nE     -       \"health_status\": \"ok\",\nE     -       \"is_symlink\": false,\nE     -       \"name\": \"other\",\nE     -       \"parse_status\": \"valid\",\nE     -       \"scope\": \"user\",\nE     -       \"traversal_complete\": true,\nE     -       \"variant_label\": \"A\"\nE           }\nE         ],\nE         \"summary\": {\nE           \"canonical_skill_count\": 2,\nE           \"detected_agents\": [\nE             \"claude\",\nE             \"opencode\"\nE           ],\nE           \"plugin_skills\": 0,\nE           \"project_skills\": 1,\nE           \"symlink_entrypoints\": 0,\nE           \"system_skills\": 0,\nE           \"total_skills\": 3,\nE           \"user_skills\": 2\nE         },\nE         \"unreadable\": []\nE       }\n=========================== short test summary info ============================\nFAILED tests/test_tui_json.py::test_home_json_is_the_full_captured_scan_even_under_filters - assert '{\\n  \"cwd\": ...dable\": []\\n}' == '{\\n  \"cwd\": ...dable\": []\\n}'\n  \n  Skipping 1585 identical leading characters in diff, use -v to show\n     \"B\"\n  -     },\n  -     {\n  -       \"agents\": [\n  -         \"claude\",\n  -         \"opencode\"\n  -       ],\n  -       \"canonical_path\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-68/test_home_json_is_the_full_cap0/home/.claude/skills/other\",\n  -       \"content_hash\": \"sha256:fa75c20a82e7ee082e81e686a3f083dfa8dc35427c8eac1e173f95698fa6dac7\",\n  -       \"description\": \"Other skill.\",\n  -       \"entrypoint_count\": 1,\n  -       \"error_reason\": null,\n  -       \"health_status\": \"ok\",\n  -       \"is_symlink\": false,\n  -       \"name\": \"other\",\n  -       \"parse_status\": \"valid\",\n  -       \"scope\": \"user\",\n  -       \"traversal_complete\": true,\n  -       \"variant_label\": \"A\"\n        }\n      ],\n      \"summary\": {\n        \"canonical_skill_count\": 2,\n        \"detected_agents\": [\n          \"claude\",\n          \"opencode\"\n        ],\n        \"plugin_skills\": 0,\n        \"project_skills\": 1,\n        \"symlink_entrypoints\": 0,\n        \"system_skills\": 0,\n        \"total_skills\": 3,\n        \"user_skills\": 2\n      },\n      \"unreadable\": []\n    }\n1 failed in 0.90s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M11_wrong_agent_json",
+      "exit": 1,
+      "seconds": 0.77,
+      "tests": [
+        "tests/test_tui_json.py::test_why_json_is_the_selected_agents_report_with_the_translated_name"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M11_wrong_agent_json.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/why.py",
+          "function": "_json_document",
+          "old": "return dumps(report.to_dict())",
+          "new": "return dumps({**report.to_dict(), \"agent\": \"foreign-agent\"})"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_____ test_why_json_is_the_selected_agents_report_with_the_translated_name _____\ntests/test_tui_json.py:274: in test_why_json_is_the_selected_agents_report_with_the_translated_name\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_json.py:265: in _run\n    assert view.document == expected\nE   assert '{\\n  \"agent\"...lared-key\"\\n}' == '{\\n  \"agent\"...lared-key\"\\n}'\nE     \nE       {\nE     -   \"agent\": \"codex\",\nE     +   \"agent\": \"foreign-agent\",\nE         \"agent_name\": \"OpenAI Codex\",\nE         \"candidates\": [\nE           {\nE             \"collision\": \"winning_entry\",\nE             \"evidence\": \"empirical\",\nE             \"installation\": {\nE               \"agent_entrypoints\": [\nE                 \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/project/.agents/skills/folder-key\"\nE               ],\nE               \"canonical_path\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/project/.agents/skills/folder-key\",\nE               \"content_hash\": \"sha256:cf5698baea01064dd1847a9b65f8ae23791efd0a66e35265a4ee1648c7a86532\",\nE               \"description\": \"Project copy.\",\nE               \"entrypoint_path\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/project/.agents/skills/folder-key\",\nE               \"errors\": [],\nE               \"frontmatter_name\": \"declared-key\",\nE               \"is_symlink\": false,\nE               \"name\": \"folder-key\",\nE               \"parse_status\": \"valid\",\nE               \"scope\": \"project\",\nE               \"variant_label\": \"A\"\nE             },\nE             \"invocation\": \"all\",\nE             \"loadability\": \"loadable\",\nE             \"permission\": \"allow\",\nE             \"rank\": 90,\nE             \"reason\": \"Highest-priority copy (Project copy.).\",\nE             \"rule_id\": \"codex_project_ancestor_walk\",\nE             \"state\": \"ACTIVE\",\nE             \"visibility\": \"active_root\"\nE           },\nE           {\nE             \"collision\": \"coexisting_merged\",\nE             \"evidence\": \"empirical\",\nE             \"installation\": {\nE               \"agent_entrypoints\": [\nE                 \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/.codex/skills/folder-key\"\nE               ],\nE               \"canonical_path\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/.codex/skills/folder-key\",\nE               \"content_hash\": \"sha256:67e84b10b896cdea6304c305ad2306d4568216c73e0b2c10607bdbfd752052ab\",\nE               \"description\": \"Global copy.\",\nE               \"entrypoint_path\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/.codex/skills/folder-key\",\nE               \"errors\": [],\nE               \"frontmatter_name\": \"declared-key\",\nE               \"is_symlink\": false,\nE               \"name\": \"folder-key\",\nE               \"parse_status\": \"valid\",\nE               \"scope\": \"user\",\nE               \"variant_label\": \"B\"\nE             },\nE             \"invocation\": \"all\",\nE             \"loadability\": \"loadable\",\nE             \"permission\": \"allow\",\nE             \"rank\": 85,\nE             \"reason\": \"Listed alongside a higher-priority copy; OpenAI Codex merges all roots with no documented winner.\",\nE             \"rule_id\": \"codex_global_skills\",\nE             \"state\": \"COEXISTS\",\nE             \"visibility\": \"active_root\"\nE           }\nE         ],\nE         \"collision_policy\": \"Unverified / Merged\",\nE         \"cwd\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/project\",\nE         \"found\": true,\nE         \"headline\": \"COEXISTS\",\nE         \"notes\": [],\nE         \"policy_evidence\": \"empirical\",\nE         \"skill_name\": \"declared-key\"\nE       }\n=========================== short test summary info ============================\nFAILED tests/test_tui_json.py::test_why_json_is_the_selected_agents_report_with_the_translated_name - assert '{\\n  \"agent\"...lared-key\"\\n}' == '{\\n  \"agent\"...lared-key\"\\n}'\n  \n    {\n  -   \"agent\": \"codex\",\n  +   \"agent\": \"foreign-agent\",\n      \"agent_name\": \"OpenAI Codex\",\n      \"candidates\": [\n        {\n          \"collision\": \"winning_entry\",\n          \"evidence\": \"empirical\",\n          \"installation\": {\n            \"agent_entrypoints\": [\n              \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/project/.agents/skills/folder-key\"\n            ],\n            \"canonical_path\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/project/.agents/skills/folder-key\",\n            \"content_hash\": \"sha256:cf5698baea01064dd1847a9b65f8ae23791efd0a66e35265a4ee1648c7a86532\",\n            \"description\": \"Project copy.\",\n            \"entrypoint_path\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/project/.agents/skills/folder-key\",\n            \"errors\": [],\n            \"frontmatter_name\": \"declared-key\",\n            \"is_symlink\": false,\n            \"name\": \"folder-key\",\n            \"parse_status\": \"valid\",\n            \"scope\": \"project\",\n            \"variant_label\": \"A\"\n          },\n          \"invocation\": \"all\",\n          \"loadability\": \"loadable\",\n          \"permission\": \"allow\",\n          \"rank\": 90,\n          \"reason\": \"Highest-priority copy (Project copy.).\",\n          \"rule_id\": \"codex_project_ancestor_walk\",\n          \"state\": \"ACTIVE\",\n          \"visibility\": \"active_root\"\n        },\n        {\n          \"collision\": \"coexisting_merged\",\n          \"evidence\": \"empirical\",\n          \"installation\": {\n            \"agent_entrypoints\": [\n              \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/.codex/skills/folder-key\"\n            ],\n            \"canonical_path\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/.codex/skills/folder-key\",\n            \"content_hash\": \"sha256:67e84b10b896cdea6304c305ad2306d4568216c73e0b2c10607bdbfd752052ab\",\n            \"description\": \"Global copy.\",\n            \"entrypoint_path\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/.codex/skills/folder-key\",\n            \"errors\": [],\n            \"frontmatter_name\": \"declared-key\",\n            \"is_symlink\": false,\n            \"name\": \"folder-key\",\n            \"parse_status\": \"valid\",\n            \"scope\": \"user\",\n            \"variant_label\": \"B\"\n          },\n          \"invocation\": \"all\",\n          \"loadability\": \"loadable\",\n          \"permission\": \"allow\",\n          \"rank\": 85,\n          \"reason\": \"Listed alongside a higher-priority copy; OpenAI Codex merges all roots with no documented winner.\",\n          \"rule_id\": \"codex_global_skills\",\n          \"state\": \"COEXISTS\",\n          \"visibility\": \"active_root\"\n        }\n      ],\n      \"collision_policy\": \"Unverified / Merged\",\n      \"cwd\": \"/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-69/test_why_json_is_the_selected_0/home/project\",\n      \"found\": true,\n      \"headline\": \"COEXISTS\",\n      \"notes\": [],\n      \"policy_evidence\": \"empirical\",\n      \"skill_name\": \"declared-key\"\n    }\n1 failed in 0.66s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M12_old_generation_json",
+      "exit": 1,
+      "seconds": 5.66,
+      "tests": [
+        "tests/test_tui_json.py::test_diff_json_never_mixes_old_document_with_a_new_generation"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M12_old_generation_json.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/diff.py",
+          "function": "_refresh_json",
+          "old": "        controller = self._controller_or_none()\n",
+          "new": "        if view.document is not None:\n            return\n        controller = self._controller_or_none()\n"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________ test_diff_json_never_mixes_old_document_with_a_new_generation _________\ntests/test_tui_json.py:667: in test_diff_json_never_mixes_old_document_with_a_new_generation\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_json.py:648: in _run\n    await _wait_until(\ntests/test_tui_json.py:73: in _wait_until\n    raise AssertionError(f\"timed out waiting for {label}\")\nE   AssertionError: timed out waiting for new generation document\n=========================== short test summary info ============================\nFAILED tests/test_tui_json.py::test_diff_json_never_mixes_old_document_with_a_new_generation - AssertionError: timed out waiting for new generation document\n1 failed in 5.55s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M13_noncanonical_serialization",
+      "exit": 1,
+      "seconds": 0.79,
+      "tests": [
+        "tests/test_models.py::test_dumps_is_canonical",
+        "tests/test_tui_json.py::test_diff_json_is_the_exact_report_document"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M13_noncanonical_serialization.log",
+      "changes": [
+        {
+          "path": "skill_lens/models/__init__.py",
+          "function": "dumps",
+          "old": "sort_keys=True, indent=2",
+          "new": "sort_keys=True, indent=4"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n___________________________ test_dumps_is_canonical ____________________________\ntests/test_models.py:100: in test_dumps_is_canonical\n    assert output == json.dumps(installation.to_dict(), sort_keys=True, indent=2)\nE   assert '{\\n    \"agen...abel\": \"A\"\\n}' == '{\\n  \"agent_...abel\": \"A\"\\n}'\nE     \nE       {\nE     -   \"agent_entrypoints\": [\nE     +     \"agent_entrypoints\": [\nE     ? ++\nE     -     \"/home/.claude/skills/deploy\"\nE     +         \"/home/.claude/skills/deploy\"\nE     ? ++++\nE     -   ],\nE     +     ],\nE     ? ++\nE     -   \"canonical_path\": \"/home/.agents/skills/deploy\",\nE     +     \"canonical_path\": \"/home/.agents/skills/deploy\",\nE     ? ++\nE     -   \"content_hash\": \"sha256:abc\",\nE     +     \"content_hash\": \"sha256:abc\",\nE     ? ++\nE     -   \"description\": \"Deploy things.\",\nE     +     \"description\": \"Deploy things.\",\nE     ? ++\nE     -   \"entrypoint_path\": \"/home/.claude/skills/deploy\",\nE     +     \"entrypoint_path\": \"/home/.claude/skills/deploy\",\nE     ? ++\nE     -   \"errors\": [],\nE     +     \"errors\": [],\nE     ? ++\nE     -   \"frontmatter_name\": null,\nE     +     \"frontmatter_name\": null,\nE     ? ++\nE     -   \"is_symlink\": true,\nE     +     \"is_symlink\": true,\nE     ? ++\nE     -   \"name\": \"deploy\",\nE     +     \"name\": \"deploy\",\nE     ? ++\nE     -   \"parse_status\": \"valid\",\nE     +     \"parse_status\": \"valid\",\nE     ? ++\nE     -   \"scope\": \"user\",\nE     +     \"scope\": \"user\",\nE     ? ++\nE     -   \"variant_label\": \"A\"\nE     +     \"variant_label\": \"A\"\nE     ? ++\nE       }\n=========================== short test summary info ============================\nFAILED tests/test_models.py::test_dumps_is_canonical - assert '{\\n    \"agen...abel\": \"A\"\\n}' == '{\\n  \"agent_...abel\": \"A\"\\n}'\n  \n    {\n  -   \"agent_entrypoints\": [\n  +     \"agent_entrypoints\": [\n  ? ++\n  -     \"/home/.claude/skills/deploy\"\n  +         \"/home/.claude/skills/deploy\"\n  ? ++++\n  -   ],\n  +     ],\n  ? ++\n  -   \"canonical_path\": \"/home/.agents/skills/deploy\",\n  +     \"canonical_path\": \"/home/.agents/skills/deploy\",\n  ? ++\n  -   \"content_hash\": \"sha256:abc\",\n  +     \"content_hash\": \"sha256:abc\",\n  ? ++\n  -   \"description\": \"Deploy things.\",\n  +     \"description\": \"Deploy things.\",\n  ? ++\n  -   \"entrypoint_path\": \"/home/.claude/skills/deploy\",\n  +     \"entrypoint_path\": \"/home/.claude/skills/deploy\",\n  ? ++\n  -   \"errors\": [],\n  +     \"errors\": [],\n  ? ++\n  -   \"frontmatter_name\": null,\n  +     \"frontmatter_name\": null,\n  ? ++\n  -   \"is_symlink\": true,\n  +     \"is_symlink\": true,\n  ? ++\n  -   \"name\": \"deploy\",\n  +     \"name\": \"deploy\",\n  ? ++\n  -   \"parse_status\": \"valid\",\n  +     \"parse_status\": \"valid\",\n  ? ++\n  -   \"scope\": \"user\",\n  +     \"scope\": \"user\",\n  ? ++\n  -   \"variant_label\": \"A\"\n  +     \"variant_label\": \"A\"\n  ? ++\n    }\n1 failed, 1 passed in 0.66s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M14_missing_final_line_feed",
+      "exit": 1,
+      "seconds": 0.77,
+      "tests": [
+        "tests/test_tui_json.py::test_diff_json_is_the_exact_report_document"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M14_missing_final_line_feed.log",
+      "changes": [
+        {
+          "path": "skill_lens/cli.py",
+          "function": "_emit_json",
+          "old": "console.print(dumps(payload), soft_wrap=True, markup=False, highlight=False)",
+          "new": "console.print(dumps(payload), soft_wrap=True, markup=False, highlight=False, end=\"\")"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________ test_diff_json_is_the_exact_report_document __________________\ntests/test_tui_json.py:315: in test_diff_json_is_the_exact_report_document\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_json.py:310: in _run\n    assert view.document + \"\\n\" == emitted\nE   assert '{\\n  \"baseli...\": false\\n}\\n' == '{\\n  \"baseli...ed\": false\\n}'\nE     \nE     Skipping 2271 identical leading characters in diff, use -v to show\nE       d\": false\nE     - }\nE     + }\n=========================== short test summary info ============================\nFAILED tests/test_tui_json.py::test_diff_json_is_the_exact_report_document - assert '{\\n  \"baseli...\": false\\n}\\n' == '{\\n  \"baseli...ed\": false\\n}'\n  \n  Skipping 2271 identical leading characters in diff, use -v to show\n    d\": false\n  - }\n  + }\n1 failed in 0.66s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M15_markup_interpretation",
+      "exit": 1,
+      "seconds": 0.51,
+      "tests": [
+        "tests/test_tui_diff.py::test_literal_text_stays_literal_in_the_diff_body"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M15_markup_interpretation.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/diff.py",
+          "function": "_hunk_line",
+          "old": null,
+          "new": "    return Content.from_markup(text)\n"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_______________ test_literal_text_stays_literal_in_the_diff_body _______________\ntests/test_tui_diff.py:865: in test_literal_text_stays_literal_in_the_diff_body\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:858: in _run\n    assert literal_line in text\nE   AssertionError: assert '[bold red]not markup[/bold red] C:\\\\temp\\\\path \u00fcn\u00efcode \u2713' in 'Copies: 2\\nBaseline: ~/project/.claude/skills/literal (Variant A)\\n= ~/project/.claude/skills/literal [Variant A] (pr...\\n \\n  body.txt modified\\n--- body.txt\\n+++ body.txt\\n@@ -1 +1 @@\\n-not markup C:\\\\temp\\\\path \u00fcn\u00efcode \u2713\\n+plain line\\n'\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_literal_text_stays_literal_in_the_diff_body - AssertionError: assert '[bold red]not markup[/bold red] C:\\\\temp\\\\path \u00fcn\u00efcode \u2713' in 'Copies: 2\\nBaseline: ~/project/.claude/skills/literal (Variant A)\\n= ~/project/.claude/skills/literal [Variant A] (pr...\\n \\n  body.txt modified\\n--- body.txt\\n+++ body.txt\\n@@ -1 +1 @@\\n-not markup C:\\\\temp\\\\path \u00fcn\u00efcode \u2713\\n+plain line\\n'\n1 failed in 0.40s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M16_binary_payload_display",
+      "exit": 1,
+      "seconds": 0.52,
+      "tests": [
+        "tests/test_tui_diff.py::test_supplied_report_never_prints_binary_payload_or_hunkless_noise"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M16_binary_payload_display.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/diff.py",
+          "function": "_file_lines",
+          "old": "notice = file_notice(file)",
+          "new": "notice = None if file.is_binary else file_notice(file)"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n______ test_supplied_report_never_prints_binary_payload_or_hunkless_noise ______\ntests/test_tui_diff.py:614: in test_supplied_report_never_prints_binary_payload_or_hunkless_noise\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:607: in _run\n    assert \"SECRET-BINARY-PAYLOAD\" not in text\nE   AssertionError: assert 'SECRET-BINARY-PAYLOAD' not in 'Copies: 2\\n...e content.\\n'\nE     \nE     'SECRET-BINARY-PAYLOAD' is contained here:\nE       -0 +0 @@\nE       +SECRET-BINARY-PAYLOAD\nE         quiet.txt added\nE           No printable content.\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_supplied_report_never_prints_binary_payload_or_hunkless_noise - AssertionError: assert 'SECRET-BINARY-PAYLOAD' not in 'Copies: 2\\n...e content.\\n'\n  \n  'SECRET-BINARY-PAYLOAD' is contained here:\n    -0 +0 @@\n    +SECRET-BINARY-PAYLOAD\n      quiet.txt added\n        No printable content.\n1 failed in 0.42s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M17_lost_character_only_notice",
+      "exit": 1,
+      "seconds": 0.5,
+      "tests": [
+        "tests/test_tui_diff.py::test_character_budget_truncation_never_claims_zero_omitted_lines"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M17_lost_character_only_notice.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/diff.py",
+          "function": "_copy_content",
+          "old": "truncation = copy_truncation_notice(copy)",
+          "new": "truncation = copy_truncation_notice(copy) if copy.omitted_lines else None"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_______ test_character_budget_truncation_never_claims_zero_omitted_lines _______\ntests/test_tui_diff.py:836: in test_character_budget_truncation_never_claims_zero_omitted_lines\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:829: in _run\n    assert \"part of this diff was omitted\" in text\nE   AssertionError: assert 'part of this diff was omitted' in 'Copies: 2\\nBaseline: ~/project/.claude/skills/wide (Variant A)\\n= ~/project/.claude/skills/wide [Variant A] (project,...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\nTruncated: 3006 characters of diff body were omitted to keep this report readable.\\n'\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_character_budget_truncation_never_claims_zero_omitted_lines - AssertionError: assert 'part of this diff was omitted' in 'Copies: 2\\nBaseline: ~/project/.claude/skills/wide (Variant A)\\n= ~/project/.claude/skills/wide [Variant A] (project,...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\nTruncated: 3006 characters of diff body were omitted to keep this report readable.\\n'\n1 failed in 0.40s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M18_json_navigation_guard",
+      "exit": 1,
+      "seconds": 0.93,
+      "tests": [
+        "tests/test_tui_json.py::test_why_json_blocks_hidden_agent_navigation_and_diff"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M18_json_navigation_guard.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/why.py",
+          "function": "action_open_diff",
+          "old": "if self._suspended or self._json_mode:",
+          "new": "if self._suspended:"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n____________ test_why_json_blocks_hidden_agent_navigation_and_diff _____________\ntests/test_tui_json.py:431: in test_why_json_blocks_hidden_agent_navigation_and_diff\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_json.py:419: in _run\n    assert app.screen is why\nE   AssertionError: assert DiffScreen() is WhyScreen(classes='json-mode')\nE    +  where DiffScreen() = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'nocolor', 'dark', 'focus'}).screen\n=========================== short test summary info ============================\nFAILED tests/test_tui_json.py::test_why_json_blocks_hidden_agent_navigation_and_diff - AssertionError: assert DiffScreen() is WhyScreen(classes='json-mode')\n +  where DiffScreen() = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'nocolor', 'dark', 'focus'}).screen\n1 failed in 0.82s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M19_json_back_pops_screen",
+      "exit": 1,
+      "seconds": 4.02,
+      "tests": [
+        "tests/test_tui_json.py::test_diff_json_keyboard_traversal_and_return"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M19_json_back_pops_screen.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/diff.py",
+          "function": "action_back",
+          "old": null,
+          "new": "        self._host.close_diff()\n"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________ test_diff_json_keyboard_traversal_and_return _________________\ntests/test_tui_json.py:1028: in test_diff_json_keyboard_traversal_and_return\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_json.py:1013: in _run\n    assert app.screen is diff\nE   AssertionError: assert PlaceholderHomeScreen(classes='narrow') is DiffScreen(classes='json-mode')\nE    +  where PlaceholderHomeScreen(classes='narrow') = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'focus', 'nocolor', 'dark'}).screen\n=========================== short test summary info ============================\nFAILED tests/test_tui_json.py::test_diff_json_keyboard_traversal_and_return - AssertionError: assert PlaceholderHomeScreen(classes='narrow') is DiffScreen(classes='json-mode')\n +  where PlaceholderHomeScreen(classes='narrow') = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'focus', 'nocolor', 'dark'}).screen\n1 failed in 3.88s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M20_json_focus_leak",
+      "exit": 1,
+      "seconds": 1.74,
+      "tests": [
+        "tests/test_tui_json.py::test_diff_json_keyboard_traversal_and_return"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M20_json_focus_leak.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/diff.py",
+          "function": "enter_json_mode",
+          "old": "body.can_focus = False",
+          "new": "body.can_focus = True"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________ test_diff_json_keyboard_traversal_and_return _________________\ntests/test_tui_json.py:1028: in test_diff_json_keyboard_traversal_and_return\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_json.py:991: in _run\n    assert body not in app.screen.focus_chain, \"collapsed metadata must not be a Tab stop\"\nE   AssertionError: collapsed metadata must not be a Tab stop\nE   assert VerticalScroll(id='diff-body') not in [VerticalScroll(id='diff-body'), JsonView(id='diff-json')]\nE    +  where [VerticalScroll(id='diff-body'), JsonView(id='diff-json')] = DiffScreen(classes='json-mode').focus_chain\nE    +    where DiffScreen(classes='json-mode') = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'dark', 'focus', 'nocolor'}).screen\n=========================== short test summary info ============================\nFAILED tests/test_tui_json.py::test_diff_json_keyboard_traversal_and_return - AssertionError: collapsed metadata must not be a Tab stop\nassert VerticalScroll(id='diff-body') not in [VerticalScroll(id='diff-body'), JsonView(id='diff-json')]\n +  where [VerticalScroll(id='diff-body'), JsonView(id='diff-json')] = DiffScreen(classes='json-mode').focus_chain\n +    where DiffScreen(classes='json-mode') = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'dark', 'focus', 'nocolor'}).screen\n1 failed in 1.62s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M21_mount_guard_regression",
+      "exit": 1,
+      "seconds": 5.38,
+      "tests": [
+        "tests/test_tui_home.py::test_early_capture_is_reconciled_by_the_mount_itself"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M21_mount_guard_regression.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/home.py",
+          "function": "sync_from_controller",
+          "old": "if not self.is_mounted and not self._mounting:",
+          "new": "if not self.is_mounted:"
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_____________ test_early_capture_is_reconciled_by_the_mount_itself _____________\ntests/test_tui_home.py:1743: in test_early_capture_is_reconciled_by_the_mount_itself\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_home.py:1728: in _run\n    await _wait_until(\ntests/test_tui_home.py:134: in _wait_until\n    raise AssertionError(f\"timed out waiting for {label}\")\nE   AssertionError: timed out waiting for mount-time reconciliation populated the table\n=========================== short test summary info ============================\nFAILED tests/test_tui_home.py::test_early_capture_is_reconciled_by_the_mount_itself - AssertionError: timed out waiting for mount-time reconciliation populated the table\n1 failed in 5.28s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    },
+    {
+      "label": "M22_json_scroll_regression",
+      "exit": 1,
+      "seconds": 3.37,
+      "tests": [
+        "tests/test_tui_json.py::test_unchanged_home_json_publication_preserves_scroll",
+        "tests/test_tui_json.py::test_unchanged_diff_json_publication_preserves_scroll"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M22_json_scroll_regression.log",
+      "changes": [
+        {
+          "path": "skill_lens/tui/json_view.py",
+          "function": "show_document",
+          "old": "        if self._document == document:\n            return\n",
+          "new": ""
+        }
+      ],
+      "status": "needs_failure_inspection",
+      "output": "FF                                                                       [100%]\n=================================== FAILURES ===================================\n____________ test_unchanged_home_json_publication_preserves_scroll _____________\ntests/test_tui_json.py:755: in test_unchanged_home_json_publication_preserves_scroll\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_json.py:736: in _run\n    assert view.scroll_offset.y == offset\nE   AssertionError: assert 0 == 78\nE    +  where 0 = Offset(x=0, y=0).y\nE    +    where Offset(x=0, y=0) = JsonView(id='home-json').scroll_offset\n____________ test_unchanged_diff_json_publication_preserves_scroll _____________\ntests/test_tui_json.py:851: in test_unchanged_diff_json_publication_preserves_scroll\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_json.py:833: in _run\n    assert view.scroll_offset.y == offset\nE   AssertionError: assert 0 == 315\nE    +  where 0 = Offset(x=0, y=0).y\nE    +    where Offset(x=0, y=0) = JsonView(id='diff-json').scroll_offset\n=========================== short test summary info ============================\nFAILED tests/test_tui_json.py::test_unchanged_home_json_publication_preserves_scroll - AssertionError: assert 0 == 78\n +  where 0 = Offset(x=0, y=0).y\n +    where Offset(x=0, y=0) = JsonView(id='home-json').scroll_offset\nFAILED tests/test_tui_json.py::test_unchanged_diff_json_publication_preserves_scroll - AssertionError: assert 0 == 315\n +  where 0 = Offset(x=0, y=0).y\n +    where Offset(x=0, y=0) = JsonView(id='diff-json').scroll_offset\n2 failed in 3.23s\n",
+      "coordinator_disposition": "detected_by_intended_behavior"
+    }
+  ],
+  "restored_control": {
+    "label": "restored-control",
+    "exit": 0,
+    "seconds": 17.21,
+    "tests": [
+      "tests/test_models.py::test_dumps_is_canonical",
+      "tests/test_tui_diff.py::test_cache_hit_diff_does_not_disturb_another_views_request",
+      "tests/test_tui_diff.py::test_character_budget_truncation_never_claims_zero_omitted_lines",
+      "tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change",
+      "tests/test_tui_diff.py::test_leaving_diff_cancels_only_its_own_token",
+      "tests/test_tui_diff.py::test_literal_text_stays_literal_in_the_diff_body",
+      "tests/test_tui_diff.py::test_pending_why_report_is_requested_again_after_diff",
+      "tests/test_tui_diff.py::test_refresh_published_while_why_is_covered_rebinds_on_return",
+      "tests/test_tui_diff.py::test_removal_under_diff_over_home_shows_the_removal_notice",
+      "tests/test_tui_diff.py::test_removal_under_diff_over_why_returns_home_with_notice",
+      "tests/test_tui_diff.py::test_stale_diff_result_and_error_are_rejected",
+      "tests/test_tui_diff.py::test_supplied_report_never_prints_binary_payload_or_hunkless_noise",
+      "tests/test_tui_diff.py::test_why_d_uses_folder_name_for_diff_and_translated_name_for_why",
+      "tests/test_tui_home.py::test_early_capture_is_reconciled_by_the_mount_itself",
+      "tests/test_tui_json.py::test_diff_json_is_the_exact_report_document",
+      "tests/test_tui_json.py::test_diff_json_keyboard_traversal_and_return",
+      "tests/test_tui_json.py::test_diff_json_never_mixes_old_document_with_a_new_generation",
+      "tests/test_tui_json.py::test_home_json_is_the_full_captured_scan_even_under_filters",
+      "tests/test_tui_json.py::test_unchanged_diff_json_publication_preserves_scroll",
+      "tests/test_tui_json.py::test_unchanged_home_json_publication_preserves_scroll",
+      "tests/test_tui_json.py::test_why_json_blocks_hidden_agent_navigation_and_diff",
+      "tests/test_tui_json.py::test_why_json_is_the_selected_agents_report_with_the_translated_name"
+    ],
+    "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/restored-control.log",
+    "output": "......................                                                   [100%]\n22 passed in 16.96s\n"
+  },
+  "source_fingerprints": {
+    "skill_lens/tui/__init__.py": "37f3903518a6be163f2d5794a78d048659e3efeae4def5787dfb44101477743a",
+    "skill_lens/tui/_textual_compat.py": "cae83f7dd4e1271a80624845f5537dd318842939a1fc0cf94b3feebc60c81d95",
+    "skill_lens/tui/app.py": "d9df38486a9536f18de7f1d2bd8329942cb6061eb18c3c7e1911f79fbdc4ba79",
+    "skill_lens/tui/diff.py": "451328d1ca16cda0aca70bd689e7774ccf43df0f2749f88593928723416290d1",
+    "skill_lens/tui/home.py": "4c67df00803ded55c71ff1cbf3632d150ef43c1b4572d4c5c76d48191cc27d05",
+    "skill_lens/tui/json_view.py": "362bd13bbac0ecddeae338064a41a577c78a776d62143ca9133101dcc2c198d9",
+    "skill_lens/tui/session.py": "8e276dbbe9a1045c00ac56fa2483f6664a706ca1384e2b0cd9f54f0b1d6a997a",
+    "skill_lens/tui/why.py": "b407513911b91a78ad1e583154f53ede2780c29c972a04c65e2a1ed8283cf704",
+    "tests/test_presentation.py": "598c8680b13e1b57f130a35338d5831593fe9ff83b11715947de97a46f035c76",
+    "tests/test_tui_diff.py": "53a6218e33db5749fe2ede65427c5c9d11a46313214fbcd3715206baafcd4c4a",
+    "tests/test_tui_home.py": "6677ec176072bd0359c37cd995401d8bf45ff4f42b6a9f50bb00d91b1d56854b",
+    "tests/test_tui_json.py": "ff946f2437f006a358bc94281bd83c7eb1a3bc7b84026a581e8087f1a3bdd840",
+    "tests/test_tui_read_only.py": "cdba93635853cd4ccee14af8ac2d9b2e97191a647fca671a6b5c89faaf737ea6"
+  },
+  "broader_survivor_checks": [
+    {
+      "mutant": "M05_cancel_foreign_owner",
+      "exit": 0,
+      "tests": [
+        "tests/test_tui_diff.py",
+        "tests/test_tui_json.py",
+        "tests/test_tui_home.py",
+        "tests/test_tui_why.py",
+        "tests/test_tui_app.py",
+        "tests/test_tui_session.py"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M05_cancel_foreign_owner-broad.log",
+      "output": "........................................................................ [ 40%]\n........................................................................ [ 80%]\n...................................                                      [100%]\n179 passed in 103.86s (0:01:43)\n"
+    },
+    {
+      "mutant": "M06_hidden_why_continues",
+      "exit": 0,
+      "tests": [
+        "tests/test_tui_diff.py",
+        "tests/test_tui_json.py",
+        "tests/test_tui_home.py",
+        "tests/test_tui_why.py",
+        "tests/test_tui_app.py",
+        "tests/test_tui_session.py"
+      ],
+      "log": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-mutations-t1wcmd67/M06_hidden_why_continues-broad.log",
+      "output": "........................................................................ [ 40%]\n........................................................................ [ 80%]\n...................................                                      [100%]\n179 passed in 103.86s (0:01:43)\n"
+    }
+  ],
+  "source_checkout_preserved": true,
+  "supplemental_traversal_check": {
+    "label": "M23_target_traversal_no_diff",
+    "exit": 0,
+    "command": [
+      "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "--tb=short",
+      "tests/test_tui_read_only.py::test_synthetic_target_preservation_across_lifecycle"
+    ],
+    "mutation": "HomeScreen.action_open_diff returns without opening Diff",
+    "output": ".                                                                        [100%]\n1 passed in 4.34s\n"
+  }
+}

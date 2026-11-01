@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "type": "exec.result",
+  "runId": "exec_turn_mvy7qxzp_enk89y",
+  "sessionId": "mvs_0e361de053834f78bd4988a5ad4cd1fc",
+  "turnId": "turn_mvy7qxzp_enk89y",
+  "status": "succeeded",
+  "model": {
+    "providerId": "minimax",
+    "modelId": "MiniMax-M3.1-Flash",
+    "variant": "thinking",
+    "providerSource": "provider",
+    "providerKind": "minimax-managed"
+  },
+  "usage": {
+    "inputTokens": 96974,
+    "outputTokens": 37070,
+    "cacheReadTokens": 2245632,
+    "totalTokens": 134044
+  },
+  "usageSource": "completed_responses",
+  "usageIncomplete": false,
+  "durationMs": 420801,
+  "complete_report_file": "minimax-report.md"
+}

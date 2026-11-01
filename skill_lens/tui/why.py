@@ -26,6 +26,7 @@ from textual.containers import Horizontal, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
+from textual.widget import Widget
 from textual.widgets import Button, Collapsible, Footer, Header, Static
 
 from skill_lens.core.discovery import canonical_key
@@ -33,10 +34,12 @@ from skill_lens.core.exitcodes import ExitCode
 from skill_lens.core.scanner import ScanEntry
 from skill_lens.core.snapshot import snapshot_path, snapshot_same_location
 from skill_lens.core.snapshot_models import SessionSnapshot
+from skill_lens.models import dumps
 from skill_lens.models.enums import HeadlineState, ParseStatus, Scope
 from skill_lens.models.resolution import CandidateResolution, ResolutionReport
 from skill_lens.presentation.state import STATE_MARK, STATE_STYLE
 from skill_lens.tui.home import AgentOption, agent_display_name
+from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
 
 _NO_AGENT_EXPLANATION = "No agent reaches this installation."
@@ -54,6 +57,10 @@ class _WhyHost(Protocol):
 
     def close_why(self, removal_notice: str | None = None) -> None:
         """Close the Why screen and return to Home."""
+        ...
+
+    def open_diff(self, key: str) -> None:
+        """Open the Diff screen for one canonical installation key."""
         ...
 
     def _update_ui(self) -> None:
@@ -211,6 +218,8 @@ class WhyScreen(Screen[None]):
         Binding("right", "next_agent", "Right", show=False),
         Binding("escape", "close_why", "Back", show=True),
         Binding("backspace", "close_why", "Back", show=False),
+        Binding("d", "open_diff", "Diff", show=True),
+        Binding("J", "toggle_json", "JSON", show=True),
         Binding("q", "app.quit", "Quit", show=True),
         Binding("ctrl+c", "app.quit", "Quit", show=False, priority=True),
         Binding("r", "app.refresh", "Refresh", show=True),
@@ -252,6 +261,21 @@ class WhyScreen(Screen[None]):
     WhyScreen.narrow #why-agent-strip {
         layout: vertical;
     }
+    #why-json {
+        display: none;
+    }
+    WhyScreen.json-mode #why-json {
+        display: block;
+    }
+    WhyScreen.json-mode #why-title,
+    WhyScreen.json-mode #why-agent-strip,
+    WhyScreen.json-mode #why-report-status,
+    WhyScreen.json-mode #why-candidates {
+        display: none;
+    }
+    WhyScreen.json-mode #why-body {
+        height: auto;
+    }
     """
 
     def __init__(self, key: str, agent_id: str | None) -> None:
@@ -268,6 +292,11 @@ class WhyScreen(Screen[None]):
         self._syncing = False
         self._rendered_candidate_context: tuple[Any, ...] | None = None
         self._captured_name: str | None = None
+        self._suspended = False
+        self._detail_focus: Widget | None = None
+        self._json_mode = False
+        self._json_previous_focus: Widget | None = None
+        self._json_previous_scroll = 0
 
     # -- host integration ---------------------------------------------------
 
@@ -289,6 +318,7 @@ class WhyScreen(Screen[None]):
             yield Static("", id="why-error-details", markup=False)
             yield Static("", id="why-report-status", markup=False)
             yield VerticalScroll(id="why-candidates", can_focus=False)
+        yield JsonView(id="why-json")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -305,6 +335,72 @@ class WhyScreen(Screen[None]):
     def on_resize(self, event: events.Resize) -> None:
         self.set_class(event.size.width < 80, "narrow")
 
+    # -- cover / reveal lifecycle -------------------------------------------
+
+    def on_screen_suspend(self) -> None:
+        """Textual reports that another screen now covers this detail."""
+        self.suspend_detail()
+
+    def on_screen_resume(self) -> None:
+        """Textual reports that this detail is the active screen again."""
+        self.resume_detail()
+
+    def suspend_detail(self) -> None:
+        """Stop report activity while a covering screen is active.
+
+        Only this screen's own token is cancelled: another screen's request is
+        never touched, and the accepted report is kept so returning is instant.
+        """
+        if self._suspended:
+            return
+        self._suspended = True
+        self._detail_focus = self.app.focused
+        self._cancel_owned_token()
+
+    def resume_detail(self) -> None:
+        """Reconcile after the covering screen closes and re-request if needed.
+
+        Idempotent: a second call (Textual's resume event and the host's explicit
+        resume) reconciles the same generation without rebuilding candidates or
+        dispatching a duplicate request, because both paths go through the
+        existing cache/owned-token guard in :meth:`_request_report`. While this
+        detail is not the active screen it stays suspended, so a resume that
+        arrives too early cannot leave report activity stranded.
+        """
+        if not self.is_mounted:
+            self._suspended = False
+            return
+        try:
+            topmost = self.app.screen is self
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        if not topmost:
+            return
+        self._suspended = False
+        if self.sync_from_controller():
+            return
+        self._update_display()
+        self._request_report()
+        self._restore_detail_focus()
+
+    def _restore_detail_focus(self) -> None:
+        """Restore the originating control, idempotently across both resume routes.
+
+        ``close_diff`` resumes this detail explicitly and Textual also delivers
+        ``ScreenResume``, so one return can resume twice. The remembered control
+        therefore has to survive the first restore: a redundant resume re-focuses
+        the same still-valid widget instead of falling back to the agent strip and
+        overriding it. The reference is dropped once it is no longer usable (a
+        refresh rebuilt the candidates, or the control is hidden), which keeps the
+        ordinary fallback for a genuinely stale remembered widget.
+        """
+        previous = self._detail_focus
+        if previous is not None and previous.can_focus and previous.is_mounted and previous.display:
+            previous.focus()
+            return
+        self._detail_focus = None
+        self._update_strip_focus()
+
     # -- synchronization ----------------------------------------------------
 
     def sync_from_controller(self) -> bool:
@@ -314,6 +410,8 @@ class WhyScreen(Screen[None]):
         removed from the catalog), in which case the host calls ``close_why``.
         """
         if not self.is_mounted and not getattr(self, "_mounting", False):
+            return False
+        if self._suspended:
             return False
         controller = self._controller_or_none()
         if controller is None:
@@ -348,6 +446,9 @@ class WhyScreen(Screen[None]):
     def _rebuild_from_snapshot(self, snapshot: SessionSnapshot) -> None:
         """Re-derive agent choices and request context from a new snapshot."""
         self._cancel_owned_token()
+        # Candidate widgets are rebuilt from this generation, so a control
+        # remembered from the previous one must never be resurrected.
+        self._detail_focus = None
         if entry := _entry_for_key(snapshot, self._opening_key):
             self._captured_name = entry.name
         self._agent_options = _eligible_agent_options(snapshot, self._opening_key)
@@ -374,6 +475,8 @@ class WhyScreen(Screen[None]):
 
     def _request_report(self) -> None:
         """Request the Why report for the current key/agent, or show an explanation."""
+        if self._suspended:
+            return
         controller = self._controller_or_none()
         if controller is None or controller.current is None:
             return
@@ -528,6 +631,121 @@ class WhyScreen(Screen[None]):
         self._refresh_strip()
         self._refresh_status()
         self._refresh_candidates()
+        self._refresh_json()
+
+    # -- raw JSON mode -----------------------------------------------------
+
+    @property
+    def json_mode(self) -> bool:
+        """True while this detail shows raw JSON instead of its widgets."""
+        return self._json_mode
+
+    def _json_document(self) -> str | None:
+        """The accepted report for the *current* agent, or ``None``.
+
+        The controller cache is the authority: its key carries the generation,
+        the opening installation and the agent, so a previous agent's report can
+        never be serialized after a switch or a refresh.
+        """
+        controller = self._controller_or_none()
+        if controller is None or controller.current is None or self._agent_id is None:
+            return None
+        report = controller.get_cached_report("why", (self._opening_key, self._agent_id))
+        if isinstance(report, ResolutionReport):
+            return dumps(report.to_dict())
+        return None
+
+    def _json_explanation(self) -> str:
+        """What to say instead of a document, in this screen's own terms."""
+        controller = self._controller_or_none()
+        if controller is None:
+            return "No session captured."
+        if controller.current is None:
+            return session_explanation(controller)
+        if not self._agent_options:
+            if self._unavailable:
+                return (
+                    f"Unavailable agent IDs: {', '.join(self._unavailable)} — no registered "
+                    "agent reaches this installation."
+                )
+            return _NO_AGENT_EXPLANATION
+        if self._agent_id is None:
+            return "No agent selected."
+        if self._owned_request is not None:
+            return "Loading report…"
+        return "No report available."
+
+    def _refresh_json(self) -> None:
+        """Bind the raw view to the accepted report of the selected agent."""
+        view = self.query_one("#why-json", JsonView)
+        document = self._json_document()
+        if document is None:
+            view.show_explanation(self._json_explanation())
+        else:
+            view.show_document(document)
+
+    def action_toggle_json(self) -> None:
+        """Toggle between the ordinary detail and the agent's canonical JSON."""
+        if self._suspended:
+            return
+        if self._json_mode:
+            self.leave_json_mode()
+        else:
+            self.enter_json_mode()
+
+    def enter_json_mode(self) -> None:
+        """Show raw JSON, remembering the ordinary focus and scroll position."""
+        if self._json_mode:
+            return
+        body = self._body_or_none()
+        self._json_previous_focus = self.app.focused
+        self._json_previous_scroll = body.scroll_offset.y if body is not None else 0
+        self._json_mode = True
+        self.add_class("json-mode")
+        if body is not None:
+            # The collapsed detail area stays visible for the status line, but it
+            # must not become a Tab stop between the reader and the JSON pane.
+            body.can_focus = False
+        self._update_display()
+        view = self._json_view_or_none()
+        if view is not None:
+            # Focus lands after the stylesheet has hidden the ordinary widgets.
+            self.call_after_refresh(view.focus)
+
+    def _json_view_or_none(self) -> JsonView | None:
+        try:
+            return self.query_one("#why-json", JsonView)
+        except NoMatches:
+            return None
+
+    def leave_json_mode(self) -> None:
+        """Return to the ordinary detail, restoring a valid focus and scroll."""
+        if not self._json_mode:
+            return
+        self._json_mode = False
+        self.remove_class("json-mode")
+        body = self._body_or_none()
+        if body is not None:
+            body.can_focus = True
+        previous = self._json_previous_focus
+        self._json_previous_focus = None
+        if previous is not None and previous.can_focus and previous.is_mounted and previous.display:
+            previous.focus()
+        else:
+            self._update_strip_focus()
+        if self._json_previous_scroll:
+            self.call_after_refresh(self._restore_body_scroll, self._json_previous_scroll)
+
+    def _restore_body_scroll(self, offset: int) -> None:
+        body = self._body_or_none()
+        if body is not None:
+            body.scroll_to(y=offset, animate=False)
+
+    def _body_or_none(self) -> VerticalScroll | None:
+        try:
+            return self.query_one("#why-body", VerticalScroll)
+        except NoMatches:
+            return None
 
     def _refresh_title(self) -> None:
         title = self.query_one("#why-title", Static)
@@ -735,12 +953,16 @@ class WhyScreen(Screen[None]):
 
     def action_previous_agent(self) -> None:
         """Switch to the previous agent while the strip is focused."""
+        if self._suspended or self._json_mode:
+            return
         if not self._is_strip_focused() or not self._agent_options:
             return
         self._change_agent(-1)
 
     def action_next_agent(self) -> None:
         """Switch to the next agent while the strip is focused."""
+        if self._suspended or self._json_mode:
+            return
         if not self._is_strip_focused() or not self._agent_options:
             return
         self._change_agent(1)
@@ -770,8 +992,22 @@ class WhyScreen(Screen[None]):
     # -- actions ------------------------------------------------------------
 
     def action_close_why(self) -> None:
-        """Close the Why screen and return to Home."""
+        """Esc/Backspace restore the ordinary detail first, then close it."""
+        if self._json_mode:
+            self.leave_json_mode()
+            return
         self._host.close_why()
+
+    def action_open_diff(self) -> None:
+        """Open the Diff screen for this detail's opening installation.
+
+        The opening canonical key is used on purpose: ``diff`` groups copies by
+        folder name, so the agent's translated lookup name would be the wrong
+        argument here.
+        """
+        if self._suspended or self._json_mode:
+            return
+        self._host.open_diff(self._opening_key)
 
     def action_quit(self) -> None:
         """Quit the application with the controller's exit code."""
@@ -805,7 +1041,7 @@ class WhyScreen(Screen[None]):
         error: Exception | None = None,
     ) -> None:
         """Consume an accepted Why result, or merely wake after rejection."""
-        if not self.is_mounted or view != "why":
+        if not self.is_mounted or self._suspended or view != "why":
             return
         controller = self._controller_or_none()
         if controller is None:
@@ -841,6 +1077,9 @@ class WhyScreen(Screen[None]):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle agent button presses from the strip."""
+        if self._suspended or self._json_mode:
+            event.stop()
+            return
         button = event.button
         button_id = button.id or ""
         if button_id.startswith("why-agent-"):

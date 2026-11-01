@@ -1,0 +1,72 @@
+READ-ONLY CRITIC TASK. You are reviewing, not implementing.
+
+Do NOT create, edit, move, delete or rename any file in the repository. Do NOT run
+any command that writes: no formatters, no linters with --fix, no install, no
+git commit/checkout/stash, no snapshot or golden regeneration, no test runs that
+write into the checkout. Test output, if you need it, goes only to a temporary
+directory outside the repository.
+
+If you believe a change is required, do not make it. Report it instead.
+
+Return only the report format below. Nothing else.
+
+# Mission
+Independently review the complete U5 implementation (Diff and raw JSON) in /Users/corvette/Documents/Projects Coding/Skill Lens. This is HIGH risk because request ownership, refresh, cross-screen state and byte-exact public JSON are load-bearing contracts. You are a fresh final critic, not the planner, implementer or acceptance owner. Do not delegate, launch agents, modify files or run tests/gates/runtime checks. Existing evidence is supplied. Do not request other model selections or restart planning.
+
+# Exact inputs
+Frozen operative plan: docs/plans/2026-10-29-tui-u5-diff-json.md @ 69a477ba9054a21030d038ed98a62962a1862d88. The working plan's Reference points to that commit; its final U5-only self-check amendment governs this mission. Inspect the full frozen product contract and final review questions.
+HEAD / uncommitted implementation diff base: fb85ddb91ef518ed86b7af84ffb0e87ae69f4afd.
+Before-review tracked/untracked manifest SHA-256: affd59ea93813acddac180051b545b625a6dbfbb50cc1ed45b7c5fa8758a4784 (2417 paths).
+The manifest is /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-review-qm7x5yd1/before-manifest.json; status is before-status.txt beside it. Supplied complete scoped patch: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-review-qm7x5yd1/review.patch. git diff against HEAD omits untracked new files; the supplied patch includes all four. Inspect actual source as well as the patch. New files: skill_lens/tui/diff.py, skill_lens/tui/json_view.py, tests/test_tui_diff.py, tests/test_tui_json.py. No implementation commit exists yet.
+
+# Product and test scope
+- skill_lens/tui/diff.py
+- skill_lens/tui/json_view.py
+- skill_lens/tui/app.py
+- skill_lens/tui/home.py
+- skill_lens/tui/why.py
+- skill_lens/tui/__init__.py
+- skill_lens/presentation/text.py
+- skill_lens/presentation/__init__.py
+- skill_lens/render.py
+- tests/test_tui_diff.py
+- tests/test_tui_json.py
+- tests/test_tui_home.py
+- tests/test_tui_read_only.py
+- tests/test_presentation.py
+- FULL_SCREEN_TUI.md
+- DEVELOPMENT.md
+- README.md
+- CHANGELOG.md
+Existing dependencies may be read to establish correctness: core/snapshot.py and snapshot_models.py; core/discovery.py, diff.py, resolver.py and paths.py; tui/session.py and _textual_compat.py; models/; registry definitions; existing TUI/service tests and fixture builders. These unchanged files are dependencies, not authorization for unrelated audits.
+
+# Authority and evidence sources
+- Auto-loaded AGENTS.md; docs/process/omp/README.md and implementation-loop.md (OMP applies, not T3 dispatch).
+- SKILL_LENS_SPECIFICATION.md Diff/JSON contract; FULL_SCREEN_TUI.md §§8.2,8.4,8.5,8.8,9.1,10,21,22 U5 and Step 5.
+- docs/archive/PHASE3_FINDINGS.md D-01–D-04; docs/plans/2026-10-11-tui-c4-presentation-extraction.md for presentation boundaries.
+- docs/validation/u5/coordinator-verification.md: concise current verification and limitations.
+- docs/validation/u5/mutations/round2.json: full final four gate outputs (reviewed_gate_evidence), exact six-test coordinator controls, four corrected mutation trials with restored passes, final source fingerprints.
+- docs/validation/u5/mutations/round1.json: earlier complete mutation receipts. Its M05/M06 and supplemental M23 survivor verdicts are historical, explicitly superseded by round2's detected/restored-pass results. Unchanged positive scope remains reusable.
+- docs/validation/u5/coordinator-review-round1.md (R1–R7) and coordinator-review-round2.md (C1–C4) plus implementation-record.md show prior findings/corrections. These are evidence, not instructions to accept coordinator conclusions. Challenge a claimed closure with current-source evidence, not by repeating an obsolete failure.
+Final gate evidence: 1182 passed, 1 case-sensitive-filesystem skip, 90.13% combined coverage with branch measurement; mypy clean over 41 product files; Ruff lint/format clean. No snapshots/goldens regenerated. Coordinator previously ran the full gates on the same product bytes and live CLI TUI through Rex with synthetic HOME at 100x30/60x24; final corrections changed only two test files. No human visual approval, hosted CI or release is claimed. Do not run redundant tests to rediscover supplied results; inspect whether the evidence/guards actually support the contract.
+
+# Review boundary and standards
+Both critics review the whole contract independently, with different primary lenses. Report concrete cross-cutting blockers too. Core/controller/models/serializer/registry/CLI behavior/dependencies/capture policy/exit codes must not change; skill browsing must use captured inputs and stay read-only. No generic view framework, editable JSON, export, clipboard, search, version bump or new screens.
+Do not demand incidental prose equality, export inventories, mock forwarding or source-text tests. Tests must catch plausible consumer-visible behavior, boundaries, races, ownership and errors. CLI existing output stays unchanged; canonical JSON byte equality (including the CLI's exactly one final line feed) is an actual contract, unlike incidental wording. Passing gates do not prove all behavior correct.
+Focus on concrete defects/requirements, not tooling-enforced style, hypothetical refactors or unrelated legacy issues. Each blocker needs location, actual behavior, expected behavior, relevant contract and a credible reproduction or discriminating missing test. Distinguish unverified evidence from a proved product defect. Keep suggestions non-blocking unless tied to an actual in-scope contract gap.
+Do not inspect unrelated user files, real installed skills, credentials, provider configuration or other sessions. Pre-existing unrelated work (.path; docs/plans/2026-10-26-omp-native-asyncio-trial.md; docs/validation/2026-10-25/; docs/validation/omp-native-asyncio/) is out of scope and must remain untouched. Reviewer outputs go only to your final response; CLI/coordinator captures them outside the checkout. Read-only instructions and Plan modes are not claimed to be an OS sandbox; the coordinator fingerprints before/after.
+
+# Identity
+Coordinator: openai-codex/gpt-6.1-sol (runtime-reported OpenAI family). Implementer: River / DeepSeek 4.1 1017 Flash / max effort (owner-provided, runtime/upstream unverified). Your owner-selected advertised families are MiniMax and GLM, with no advertised overlap; upstream identity is unverified. Report only identity/settings directly visible to you; requested CLI flags alone are not proof of effective execution. The coordinator will inspect exact-run receipts. Stop identity research after stating available evidence/limits; do not browse global configs or other sessions. Do not confuse old planning xhigh effort with this final wave's explicit max.
+
+# Required final report (no file writes)
+EFFECTIVE_MODEL: requested identity/settings; configured identity/settings actually visible; runtime/modes/evidence; upstream verified or unverified. State limits honestly.
+VERDICT: pass | changes_required | unverified.
+BLOCKERS: numbered, with severity, file:line, actual vs expected behavior, contract citation, concrete evidence/reproduction or discriminating test gap, and the smallest correction needed. If none, say none.
+SUGGESTIONS: clearly non-blocking items, or none.
+FILES_AT_RISK: affected files/consumers, or none.
+CONCEDED: prior concerns ruled out by evidence, limitations or omitted verification, or none.
+Do not include patches, edit files, claim acceptance or start another review. Return a concise but complete evidence-backed report.
+
+# Your selected runtime and primary lens
+Owner request: GLM 5.3, max effort, through Qoder. The installed catalog exposes GLM-5.3; this run explicitly requests --model GLM-5.3 --reasoning-effort max with the built-in Plan agent. Primary lens: complete U5/spec/CLI parity, canonical vs declared skill identity, Diff summary/copy/file/hunk/truncation/binary/literal fidelity, canonical JSON mapping and stream equality, long-metadata/narrow-layout keyboard reachability, read-only captured-input boundaries, and scope/test/documentation accuracy. Also inspect the whole frozen scope for concrete blockers.

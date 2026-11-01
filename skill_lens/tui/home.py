@@ -26,16 +26,19 @@ from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
+from textual.widget import Widget
 from textual.widgets import DataTable, Footer, Header, Input, Static
 from textual.widgets.data_table import CellDoesNotExist
 
 from skill_lens.core.discovery import DiscoveredEntry, canonical_key
 from skill_lens.core.resolver import lookup_name_for_entry
 from skill_lens.core.snapshot_models import SessionSnapshot
+from skill_lens.models import dumps
 from skill_lens.models.enums import ParseStatus
 from skill_lens.models.resolution import ResolutionReport
 from skill_lens.presentation.state import SCOPE_LABEL
 from skill_lens.registry.loader import AgentDefinition
+from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
 
 if TYPE_CHECKING:
@@ -61,6 +64,10 @@ class _ReportHost(Protocol):
 
     def open_why(self, key: str, agent_id: str | None) -> None:
         """Open a Why screen for the given installation key and agent."""
+        ...
+
+    def open_diff(self, key: str) -> None:
+        """Open the Diff screen for one canonical installation key."""
         ...
 
 
@@ -277,7 +284,10 @@ class HomeScreen(Screen[None]):
         Binding("slash", "focus_filter", "Filter", show=False),
         Binding("a", "cycle_agent", "Agent", show=False),
         Binding("escape", "clear_filter", "Clear filter", show=False),
+        Binding("backspace", "back", "Back", show=False),
         Binding("enter", "open_why", "Why", show=False),
+        Binding("d", "open_diff", "Diff", show=False),
+        Binding("J", "toggle_json", "JSON", show=False),
     ]
 
     DEFAULT_CSS = """
@@ -353,6 +363,19 @@ class HomeScreen(Screen[None]):
         padding: 0 1;
         color: $text-muted;
     }
+    #home-json {
+        display: none;
+    }
+    HomeScreen.json-mode #home-json {
+        display: block;
+    }
+    HomeScreen.json-mode #filter-strip,
+    HomeScreen.json-mode #legend,
+    HomeScreen.json-mode #home-body,
+    HomeScreen.json-mode #empty-state,
+    HomeScreen.json-mode #catalog-note {
+        display: none;
+    }
     HomeScreen.narrow #home-body {
         layout: vertical;
     }
@@ -384,6 +407,9 @@ class HomeScreen(Screen[None]):
         self._last_query = ""
         self._suspended = False
         self._removal_notice: str | None = None
+        self._json_mode = False
+        self._json_previous_focus: Widget | None = None
+        self._mounting = False
 
     # -- lifecycle ---------------------------------------------------------
 
@@ -404,11 +430,13 @@ class HomeScreen(Screen[None]):
                 yield Static("", id="preview-pane", markup=False)
         yield Static("", id="empty-state", markup=False)
         yield Static("", id="catalog-note", markup=False)
+        yield JsonView(id="home-json")
         yield Static("Initializing...", id="status-text", markup=False)
         yield Static("", id="error-details", markup=False)
         yield Static("", id="removal-notice", markup=False)
         yield Static(
-            "q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   Tab: Focus",
+            "q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff"
+            "   J: JSON   Tab: Focus",
             id="footer-help",
             markup=False,
         )
@@ -419,7 +447,16 @@ class HomeScreen(Screen[None]):
         table.cursor_type = "row"
         table.focus()
         self._apply_width(self.size.width)
-        self.sync_from_controller()
+        # ``is_mounted`` only flips after this handler returns (Textual sets it in
+        # the mount routine's ``finally``), so the first reconcile needs the same
+        # mount flag the Why screen uses. Without it an early capture that won the
+        # mount race was only reconciled by the deferred host update, which made
+        # the first table build depend on callback timing.
+        self._mounting = True
+        try:
+            self.sync_from_controller()
+        finally:
+            self._mounting = False
         self.call_after_refresh(self._host._update_ui)
 
     def on_resize(self, event: events.Resize) -> None:
@@ -450,7 +487,7 @@ class HomeScreen(Screen[None]):
         """Handle Textual ScreenResume event when detail screen pops."""
         if self._suspended:
             self.resume_why()
-        else:
+        elif not self._json_mode:
             try:
                 table = self.query_one("#skill-table", DataTable)
                 table.focus()
@@ -463,12 +500,93 @@ class HomeScreen(Screen[None]):
         if not self.is_mounted:
             return
         self.sync_from_controller()
-        if self.app.screen is self:
+        if self.app.screen is self and not self._json_mode:
             try:
                 table = self.query_one("#skill-table", DataTable)
                 table.focus()
             except NoMatches:
                 pass
+
+    # -- raw JSON mode -----------------------------------------------------
+
+    @property
+    def json_mode(self) -> bool:
+        """True while Home shows the full captured scan instead of its widgets."""
+        return self._json_mode
+
+    def _json_document(self) -> str | None:
+        """The exact ``scan --json`` document for the published session, if any."""
+        controller = self._controller_or_none()
+        if controller is None or controller.current is None:
+            return None
+        return dumps(controller.current.scan.to_dict())
+
+    def _json_explanation(self) -> str:
+        """What to say when the full scan cannot be serialized honestly."""
+        controller = self._controller_or_none()
+        if controller is None:
+            return "No session captured."
+        return session_explanation(controller)
+
+    def _refresh_json(self) -> None:
+        """Bind the raw view to the whole captured scan, never to the filters."""
+        view = self.query_one("#home-json", JsonView)
+        document = self._json_document()
+        if document is None:
+            view.show_explanation(self._json_explanation())
+        else:
+            view.show_document(document)
+
+    def action_toggle_json(self) -> None:
+        """Toggle raw JSON while the skill table holds focus."""
+        if self._suspended:
+            return
+        if self._json_mode:
+            self.leave_json_mode()
+            return
+        table = self.query_one("#skill-table", DataTable)
+        if not table.has_focus:
+            return
+        self.enter_json_mode()
+
+    def enter_json_mode(self) -> None:
+        """Show the full scan JSON, remembering the ordinary focus."""
+        if self._json_mode:
+            return
+        self._json_previous_focus = self.app.focused
+        self._json_mode = True
+        self.add_class("json-mode")
+        self._refresh_json()
+        view = self._json_view_or_none()
+        if view is not None:
+            # Focus is moved after the stylesheet has hidden the ordinary
+            # widgets, so the JSON pane is a legal focus target when it lands.
+            self.call_after_refresh(view.focus)
+
+    def _json_view_or_none(self) -> JsonView | None:
+        try:
+            return self.query_one("#home-json", JsonView)
+        except NoMatches:
+            return None
+
+    def leave_json_mode(self) -> None:
+        """Return to the ordinary Home view with a valid focus target."""
+        if not self._json_mode:
+            return
+        self._json_mode = False
+        self.remove_class("json-mode")
+        previous = self._json_previous_focus
+        self._json_previous_focus = None
+        if previous is not None and previous.can_focus and previous.is_mounted and previous.display:
+            previous.focus()
+            return
+        with contextlib.suppress(NoMatches):
+            self.query_one("#skill-table", DataTable).focus()
+
+    def action_back(self) -> None:
+        """Backspace leaves raw JSON; in the ordinary view it does nothing."""
+        if self._json_mode:
+            self.leave_json_mode()
 
     def set_removal_notice(self, notice: str | None) -> None:
         """Set the notice displayed when a detail installation was removed."""
@@ -489,13 +607,18 @@ class HomeScreen(Screen[None]):
 
     def sync_from_controller(self) -> None:
         """Reconcile the screen with the controller's published session."""
-        if not self.is_mounted or self._suspended:
+        if not self.is_mounted and not self._mounting:
+            return
+        if self._suspended:
             return
         controller = self._controller_or_none()
         if controller is None:
             return
         self._controller = controller
         snapshot = controller.current
+        if self._json_mode:
+            # The full scan switches atomically: one snapshot, one document.
+            self._refresh_json()
         if snapshot is None:
             self._visible = ()
             self._rows = ()
@@ -989,7 +1112,7 @@ class HomeScreen(Screen[None]):
             self._clear_removal_notice()
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
-        if self._syncing or self._suspended:
+        if self._syncing or self._suspended or self._json_mode:
             return
         key = event.row_key.value
         table = self.query_one("#skill-table", DataTable)
@@ -1010,12 +1133,12 @@ class HomeScreen(Screen[None]):
         self._drive()
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
-        if self._suspended:
+        if self._suspended or self._json_mode:
             return
         self.action_open_why()
 
     def on_input_changed(self, event: Input.Changed) -> None:
-        if self._suspended:
+        if self._suspended or self._json_mode:
             return
         if event.input.id != "filter-input":
             return
@@ -1026,19 +1149,23 @@ class HomeScreen(Screen[None]):
         self._update_agent_widgets()
 
     def on_input_submitted(self, event: Input.Submitted) -> None:
-        if self._suspended:
+        if self._suspended or self._json_mode:
             return
         if event.input.id != "filter-input":
             return
         self.query_one("#skill-table", DataTable).focus()
 
     def action_focus_filter(self) -> None:
-        if self._suspended:
+        if self._suspended or self._json_mode:
             return
         self.query_one("#filter-input", Input).focus()
 
     def action_clear_filter(self) -> None:
+        """Esc restores the ordinary view first; clearing the filter comes second."""
         if self._suspended:
+            return
+        if self._json_mode:
+            self.leave_json_mode()
             return
         self._clear_removal_notice()
         query = self.query_one("#filter-input", Input)
@@ -1047,7 +1174,7 @@ class HomeScreen(Screen[None]):
         self.query_one("#skill-table", DataTable).focus()
 
     def action_cycle_agent(self) -> None:
-        if self._suspended:
+        if self._suspended or self._json_mode:
             return
         self._clear_removal_notice()
         if len(self._agent_options) <= 1:
@@ -1061,20 +1188,20 @@ class HomeScreen(Screen[None]):
         self._apply_filters(reason="agent")
 
     def action_cursor_down(self) -> None:
-        if self._suspended:
+        if self._suspended or self._json_mode:
             return
         self._clear_removal_notice()
         self.query_one("#skill-table", DataTable).action_cursor_down()
 
     def action_cursor_up(self) -> None:
-        if self._suspended:
+        if self._suspended or self._json_mode:
             return
         self._clear_removal_notice()
         self.query_one("#skill-table", DataTable).action_cursor_up()
 
     def action_open_why(self) -> None:
         """Open Why detail screen for the selected row."""
-        if self._suspended:
+        if self._suspended or self._json_mode:
             return
         table = self.query_one("#skill-table", DataTable)
         if not table.has_focus or table.row_count == 0:
@@ -1084,6 +1211,18 @@ class HomeScreen(Screen[None]):
             return
         key = self._visible[cursor_index].key
         self._host.open_why(key, self._agent_id)
+
+    def action_open_diff(self) -> None:
+        """Open the Diff screen for the selected canonical installation."""
+        if self._suspended or self._json_mode:
+            return
+        table = self.query_one("#skill-table", DataTable)
+        if not table.has_focus or table.row_count == 0:
+            return
+        cursor_index = table.cursor_row
+        if cursor_index < 0 or cursor_index >= len(self._visible):
+            return
+        self._host.open_diff(self._visible[cursor_index].key)
 
     def action_noop_enter(self) -> None:
         """Backward compatibility alias for enter action."""

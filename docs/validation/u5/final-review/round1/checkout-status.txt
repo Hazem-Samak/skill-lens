@@ -1,0 +1,27 @@
+ M CHANGELOG.md
+ M DEVELOPMENT.md
+ M FULL_SCREEN_TUI.md
+ M README.md
+ M skill_lens/presentation/__init__.py
+ M skill_lens/presentation/text.py
+ M skill_lens/render.py
+ M skill_lens/tui/__init__.py
+ M skill_lens/tui/app.py
+ M skill_lens/tui/home.py
+ M skill_lens/tui/why.py
+ M tests/test_presentation.py
+ M tests/test_tui_home.py
+ M tests/test_tui_read_only.py
+?? .path
+?? docs/plans/2026-10-26-omp-native-asyncio-trial.md
+?? docs/validation/2026-10-25/
+?? docs/validation/omp-native-asyncio/
+?? docs/validation/u5/coordinator-review-round1.md
+?? docs/validation/u5/coordinator-review-round2.md
+?? docs/validation/u5/coordinator-verification.md
+?? docs/validation/u5/implementation-record.md
+?? docs/validation/u5/mutations/
+?? skill_lens/tui/diff.py
+?? skill_lens/tui/json_view.py
+?? tests/test_tui_diff.py
+?? tests/test_tui_json.py

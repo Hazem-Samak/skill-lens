@@ -1702,6 +1702,47 @@ def test_home_state_cell_suppresses_only_expected_stale_row(mock_home: Path) -> 
     asyncio.run(_run())
 
 
+def test_early_capture_is_reconciled_by_the_mount_itself(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """R1 regression: the mount reconcile must not depend on the deferred update.
+
+    ``is_mounted`` is still false while ``on_mount`` runs, so a screen that only
+    guards on it silently skips the first reconciliation and leaves the table to
+    a later host callback. This suppresses that callback entirely: the table still
+    has to be populated by the mount-time reconcile.
+    """
+    _claude_skills(mock_home, "alpha")
+    home = paths.home()
+    snapshot = capture_session(generation=1, home=home, cwd=home)
+
+    def instant_capture(*, generation: int, **_: Any) -> Any:
+        return replace(snapshot, generation=generation)
+
+    monkeypatch.setattr("skill_lens.tui.app.capture_session", instant_capture)
+    monkeypatch.setattr(HomeScreen, "call_after_refresh", lambda self, *args, **kwargs: False)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=home, cwd=home)
+        async with app.run_test(size=(100, 30)) as pilot:
+            await _wait_until(
+                pilot,
+                lambda: (
+                    isinstance(app.screen, HomeScreen)
+                    and app.screen.is_mounted
+                    and _table(app).row_count == 1
+                ),
+                "mount-time reconciliation populated the table",
+            )
+            assert app.controller.current is not None
+            assert _row_texts(app)[0][0] == "alpha"
+            assert app.controller.selected_key is not None
+            await pilot.press("q")
+            assert app.return_code == int(ExitCode.OK)
+
+    asyncio.run(_run())
+
+
 def test_initial_capture_completing_before_home_mount_still_populates_table(
     mock_home: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -1741,11 +1782,14 @@ def test_initial_capture_completing_before_home_mount_still_populates_table(
                 ),
                 "ready Home mounted",
             )
-            await pilot.pause(0.05)
+            await _wait_until(
+                pilot,
+                lambda: _table(app).row_count == 1,
+                "early capture reconciled into the Home table",
+            )
             assert mount_statuses == ["ready"], (
                 "test no longer exercises the early-capture ordering"
             )
-            assert _table(app).row_count == 1
             assert _row_texts(app)[0][0] == "alpha"
             await pilot.press("q")
             assert app.return_code == int(ExitCode.OK)

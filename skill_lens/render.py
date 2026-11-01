@@ -24,14 +24,24 @@ from skill_lens.models.doctor import DoctorReport
 from skill_lens.models.enums import CompareRelation, Severity
 from skill_lens.models.resolution import ResolutionReport
 from skill_lens.presentation import (
+    BASELINE_LABEL,
+    BINARY_MARKER,
+    COPIES_LABEL,
+    NOTE_LABEL,
     SCOPE_LABEL,
     STATE_MARK,
     STATE_STYLE,
+    NoticeParts,
+    baseline_text,
+    copy_body,
     copy_heading,
+    copy_truncation_notice,
+    file_notice,
     needs_listing,
     no_differences_message,
+    not_found_message,
+    report_truncation_notice,
     unified_text,
-    unreadable_reason,
 )
 from skill_lens.registry.loader import AgentDefinition
 
@@ -186,13 +196,13 @@ def _copy_heading(copy: DiffCopy, *, baseline_exists: bool) -> str:
 
 
 def _render_file(file: DiffFile, console: Console) -> None:
-    kind = " [red]binary[/red]" if file.is_binary else ""
+    kind = f" [red]{BINARY_MARKER}[/red]" if file.is_binary else ""
     console.print(f"  [bold]{escape(file.path)}[/bold] [yellow]{file.change.value}[/yellow]{kind}")
-    if file.is_binary:
-        console.print("    [dim]Binary content differs and is never printed.[/dim]")
-        return
-    if not file.hunks:
-        console.print("    [dim]No printable content.[/dim]")
+    notice = file_notice(file)
+    if notice is not None:
+        # A binary payload and a text file with no printable hunk both stop here:
+        # the notice says why, and the content is never printed.
+        console.print(f"    [dim]{escape(notice)}[/dim]")
         return
     # ``Syntax`` hands the body to Pygments and never parses Rich markup, so file
     # content cannot inject markup -- the guarantee ``escape()`` provides for the
@@ -218,9 +228,15 @@ def _no_differences_message(report: DiffReport) -> str:
     return f"[{notice.style}]{escape(notice.label)}[/{notice.style}]{escape(notice.body)}"
 
 
+def _notice_line(notice: NoticeParts, *, indent: str = "") -> str:
+    """One notice banner, styled by its part and never parsing its body."""
+    label = f"[{notice.style}]{escape(notice.label)}[/{notice.style}]"
+    return f"{indent}{label}{escape(notice.body)}"
+
+
 def _print_notes(report: DiffReport, console: Console) -> None:
     for note in report.notes:
-        console.print(f"[yellow]Note:[/yellow] {escape(note)}")
+        console.print(f"[yellow]{NOTE_LABEL}[/yellow] {escape(note)}")
 
 
 def render_diff(report: DiffReport, console: Console | None = None) -> None:
@@ -234,20 +250,15 @@ def render_diff(report: DiffReport, console: Console | None = None) -> None:
     if not report.found:
         # The model's note says the same thing for ``--json`` consumers, where it
         # travels with the data; printing it here as well would just repeat this.
-        console.print(
-            f"[yellow]No copies of '{escape(report.skill_name)}' were found in any "
-            "search root.[/yellow]"
-        )
+        console.print(f"[yellow]{escape(not_found_message(report))}[/yellow]")
         return
 
     baseline = next((copy for copy in report.copies if copy.is_baseline), None)
-    if baseline is None:
-        baseline_text = "none (no copy passed validation)"
-    else:
-        variant = f" (Variant {baseline.variant_label})" if baseline.variant_label else ""
-        baseline_text = f"{paths.display(baseline.path)}{variant}"
+    baseline_display = paths.display(baseline.path) if baseline is not None else None
     header = (
-        f"[bold]Copies:[/bold] {len(report.copies)}\n[bold]Baseline:[/bold] {escape(baseline_text)}"
+        f"[bold]{COPIES_LABEL}[/bold] {len(report.copies)}\n"
+        f"[bold]{BASELINE_LABEL}[/bold] "
+        f"{escape(baseline_text(baseline, display_path=baseline_display))}"
     )
     console.print(
         Panel(
@@ -274,38 +285,20 @@ def render_diff(report: DiffReport, console: Console | None = None) -> None:
     baseline_exists = report.baseline_path is not None
     for copy in report.copies:
         console.print(_copy_heading(copy, baseline_exists=baseline_exists))
-        if copy.is_baseline:
-            console.print("  [dim]Reference copy; every diff below is against it.[/dim]")
-        elif not copy.is_readable:
-            console.print(
-                f"  [dim]No content to compare ({escape(unreadable_reason(copy))}).[/dim]"
-            )
-        elif not copy.files:
-            if baseline_exists:
-                console.print("  [dim]No differences from the baseline.[/dim]")
-            else:
-                console.print("  [dim]Not compared: there is no baseline.[/dim]")
+        body = copy_body(copy, baseline_exists=baseline_exists)
+        if body is not None:
+            console.print(f"  [dim]{escape(body)}[/dim]")
         else:
             for file in copy.files:
                 _render_file(file, console)
-        if copy.omitted_lines:
-            console.print(
-                f"  [yellow]Truncated:[/yellow] {copy.omitted_lines} changed lines omitted."
-            )
-        elif copy.truncated:
-            # Only the character budget bit, so quoting a line count would read as
-            # "0 changed lines omitted" -- which is worse than saying nothing.
-            console.print(
-                "  [yellow]Truncated:[/yellow] part of this diff was omitted; see the "
-                "report total below."
-            )
+        truncation = copy_truncation_notice(copy)
+        if truncation is not None:
+            console.print(_notice_line(truncation, indent="  "))
         console.print()
 
-    if report.truncated:
-        console.print(
-            f"[yellow]Truncated:[/yellow] {report.omitted_chars} characters of diff body "
-            "were omitted to keep this report readable."
-        )
+    truncation = report_truncation_notice(report)
+    if truncation is not None:
+        console.print(_notice_line(truncation))
     if show_notes:
         _print_notes(report, console)
 

@@ -1,0 +1,329 @@
+{
+  "root": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-recheck-kv2s67g_",
+  "prior_receipt": "docs/validation/u5/mutations/round1.json",
+  "source_fingerprints": {
+    "skill_lens/__init__.py": "9a28b63fb5739821ee586a89a9f5e3cbed3301bce372c5bac68482d67ae14331",
+    "skill_lens/cli.py": "614505b16b9d8dfaae954223b7ec8b487d14fe76be83efd3073f036c8207a600",
+    "skill_lens/core/__init__.py": "76a4e462ec07249f731adb2dbea898d80e70fc347a340d54a9c953a9484fec26",
+    "skill_lens/core/cancellation.py": "a57076cdca9e5925c46c79c2a3d552ac375f75066265e346e7995d779890a0ca",
+    "skill_lens/core/compare.py": "bdaf0d90e10eb96dc128d37f0bc27c084d39f032be4b7ecd82b285a13a920943",
+    "skill_lens/core/config.py": "d9512792c23d38f49f44c1f2e09175c2a330d7141217cfcc0f3246e174dd212b",
+    "skill_lens/core/diff.py": "22747cdb2870afc0c1d522d922c5aac522e2545e209d130c9ba3006f6891b702",
+    "skill_lens/core/discovery.py": "cb683cbf74e60b20479f41fe4ff7a8aae5eaf98bd727d20871468e7fa2c6a6c6",
+    "skill_lens/core/doctor.py": "c3cb9346ed25b4cb3658726bff8d3095a838c76248a0520aa1073d540de74e67",
+    "skill_lens/core/exitcodes.py": "8c5dc8242f36e8e8aaf2316a4d6a2070eff543049f70e4f0ff06e925ecab0cbf",
+    "skill_lens/core/hasher.py": "7fd755adf9d4bced1b7f4f5c6b2e5a931681868368ae974ab0a82d69e0113c64",
+    "skill_lens/core/health.py": "fa825463ec849da7ef40c7fc249adfaa32f398723cab51ddd032b204fd05e33b",
+    "skill_lens/core/parser.py": "b67193bed3bbf833aaf1c94af7c84fbb69b965ac4b3165f4bb5905614ce7a4b7",
+    "skill_lens/core/paths.py": "dfe829ac6f162171c5b84d2abd2e64ac2aa5d430d1eadda07feac5f8eff7c771",
+    "skill_lens/core/resolver.py": "dfa3524e863b7cc7f28e3788b80d466f116cc37485a504e349b9e7c31727b73e",
+    "skill_lens/core/scanner.py": "0db7ed3a2779d71caf2c3cbc38524ba3502489777d22669648291a55c17f1070",
+    "skill_lens/core/snapshot.py": "c8ff8a51302c3374b34fd01ec76505967eb2ed178c6894ccba2b0d4e2a57e305",
+    "skill_lens/core/snapshot_models.py": "3d4724984d8cb98537f913f31293ad7f510e4f8ecd1a1a77cf5f3f549ab076d4",
+    "skill_lens/core/system.py": "adafb6258f7e60df5cbf191bb03bb22a49dbb38374e48df06c45294b64bbec28",
+    "skill_lens/models/__init__.py": "62bd092a8c62ae40e1e806b67f06606b208c7701729bcb6a0d75e9c3f081a542",
+    "skill_lens/models/compare.py": "1c25334cb15f2002dd124ee3573a90d32e6af37c4e93bcab9bead90a9f75390c",
+    "skill_lens/models/diff.py": "8368ff0828bca1071606a9e41499c7a5524876f8ad3ee65c40e513591344982a",
+    "skill_lens/models/doctor.py": "fe41b83b9fc617ebdd63c04e83d81db99765a2859906effcd1a3bfde306bc56b",
+    "skill_lens/models/enums.py": "062dcc38a98b396c516f3d1e6567623d73b7421c4e09dcc7f1091bc301a02fe9",
+    "skill_lens/models/installation.py": "473e2be85ea21367e6faac3c8c93a4fedd137abf0faeaaa57b9e0b48fc2641be",
+    "skill_lens/models/parsing.py": "90ada782f6ab0face5dfdaf9ea0b0ecc8abc394858b879155f6a3012d95d35cb",
+    "skill_lens/models/resolution.py": "7a351a7a34d725ece4aa14ec68689d87b2c021927261d9b20cbfc0d1ce551285",
+    "skill_lens/presentation/__init__.py": "58d6941599976292075bcd2e2fd8a2662784f697e43d4dd530734a69653a12b1",
+    "skill_lens/presentation/state.py": "ca69980592554da82eab0cfd2efff6f9e69e95de917d1b2377243360ce260876",
+    "skill_lens/presentation/text.py": "b7459f74745b82f5e477e705816293e522c4ee10291763366f63aa4899028a64",
+    "skill_lens/registry/__init__.py": "59ab3d1d7ef79c8523f581a859427af827f3f6f748eae70044f4ee87f404cf33",
+    "skill_lens/registry/loader.py": "c34d87bb865ce246289ea1cb79adc17a8bd5bf3007f7f2095f34018096813f60",
+    "skill_lens/render.py": "5ae6b974f012e0d49e18e208bb72e2831492ba5419f54b9cbcd75704eafd9bf4",
+    "skill_lens/tui/__init__.py": "37f3903518a6be163f2d5794a78d048659e3efeae4def5787dfb44101477743a",
+    "skill_lens/tui/_textual_compat.py": "cae83f7dd4e1271a80624845f5537dd318842939a1fc0cf94b3feebc60c81d95",
+    "skill_lens/tui/app.py": "d9df38486a9536f18de7f1d2bd8329942cb6061eb18c3c7e1911f79fbdc4ba79",
+    "skill_lens/tui/diff.py": "451328d1ca16cda0aca70bd689e7774ccf43df0f2749f88593928723416290d1",
+    "skill_lens/tui/home.py": "4c67df00803ded55c71ff1cbf3632d150ef43c1b4572d4c5c76d48191cc27d05",
+    "skill_lens/tui/json_view.py": "362bd13bbac0ecddeae338064a41a577c78a776d62143ca9133101dcc2c198d9",
+    "skill_lens/tui/session.py": "8e276dbbe9a1045c00ac56fa2483f6664a706ca1384e2b0cd9f54f0b1d6a997a",
+    "skill_lens/tui/why.py": "b407513911b91a78ad1e583154f53ede2780c29c972a04c65e2a1ed8283cf704",
+    "tests/__init__.py": "ea26aaf900d5c72d367bf79dd6f672370e858b46ab0919ca0a0ee561ad73de0f",
+    "tests/conftest.py": "1dfb10f284d68ea753a39bc13def766a7d6e5dcc966bcb2bd58b1b55bfa44c5a",
+    "tests/fixtures/__init__.py": "ef028fdf3fea364953c3ba6a86ce2a719c20138b9453996053d48a498fcc9e0c",
+    "tests/fixtures/builders.py": "ba9b4c036183635dc92166af6138465e03e397563fd0dce53ea78d7615275aaf",
+    "tests/fixtures/discovery.py": "73818b4e366c12559dc0c0eb954102c5e32e1d46b6a586585eb3fe163d852d14",
+    "tests/fixtures/farm.py": "389043de727e9b9c2a766c0265168555c7697caed62ff073c98415bef551193f",
+    "tests/fixtures/scenarios.py": "01c34b794a72bd89e863220d41d6c4c42550ed182a010a55c2467db62426ec4b",
+    "tests/test_cli.py": "d2b7f272231d21552f3f89ccac94388c8f5015daf17f83d3de2754cac41fe592",
+    "tests/test_compare.py": "c4eef41ec9d544f406dfaaf1c8c28d865d86203d85059a01dc007bab3e344ffa",
+    "tests/test_discovery.py": "4c4941e944c1b8b5e0d21b57ea66e0b1ce30d1aa5e02d0f0f7d947e90487662a",
+    "tests/test_doctor.py": "c53ee08b36db9ade8c7e26b7ad586bc1335e616844627a68a3b7a1c78eb01262",
+    "tests/test_fixtures.py": "584d79a2a03ef9071d44ed61eead4e6d22934b762a7c7287f703542a92bdd6aa",
+    "tests/test_hasher.py": "e13165b29f0cd782c984695133e44866b98edad95bb848949c775922717a19dd",
+    "tests/test_incomplete_tree.py": "7499311e3b36a5fd7dd83fd600b979b5be48bb662b464383b37a13f3070707ca",
+    "tests/test_live_system_root.py": "2622722c6ccf2077583e3bd401e0c4c8908c47414d353a307aecfbe4850d9895",
+    "tests/test_models.py": "b320370296d433585c080c83f6bd9463850f69405cc0527542694107426d6e16",
+    "tests/test_parser.py": "40c71e13da823632dae0629e62e88bf6b3c154fb75c41cfd7222d26c3ce5bb02",
+    "tests/test_paths.py": "4cea3649d185250ddc973e42860e732a20ac97dcb3575ddc7f404531da3b3bd9",
+    "tests/test_phase0_gate.py": "86da200b8a3cca27d23b7336d7c0aae75a438316939ba11c3ccbcd3c2164c4a9",
+    "tests/test_phase1_gate.py": "5dc2667da64d38e25000ca268566ada59421a8925c848699b3dfff312a62ae6d",
+    "tests/test_phase2_gate.py": "08c3168c1cb1bf4fa2ff9b89f0ac27c09f584d2f696257bb0a60001da70f9d55",
+    "tests/test_phase3_gate.py": "a5a10714f6fe27b06e84be2c0f965f898a4ca49f120f2b0cb415388ff0d28b17",
+    "tests/test_phase4_gate.py": "636b7890fbd4f91255c8ccda52ef725c7707d0f9a80885c04f838e34340bcde8",
+    "tests/test_phase5_gate.py": "3197b2b72a5fb5952393c9107c299594c4f44b06d2f47c3a9d5df25fb4474527",
+    "tests/test_phase6_gate.py": "9c443974f4a114b058e44c134afa9bbf2d844ec9f7a01aae7365837ef16f3c35",
+    "tests/test_presentation.py": "598c8680b13e1b57f130a35338d5831593fe9ff83b11715947de97a46f035c76",
+    "tests/test_registry.py": "9a008feb453f906d9fcd69bb9b667e91f766b95206609b1f5c463dd6febc2b26",
+    "tests/test_render_snapshots.py": "ebd303161bcd080c134d9c2eff807da03b944d5e798527eae21ed58a1269fd56",
+    "tests/test_session_snapshot.py": "4cc7eb101cdef54b3836c82577752a74f4668be7f058ee506013a424bde66352",
+    "tests/test_snapshot_budget.py": "ec06ba5f7fbbf7f68a5a40ad20b43a5523e60d325782d766ee6115d2fcc86ceb",
+    "tests/test_snapshot_inputs.py": "583ed1ce8c33aab89008e1331cd8a42819272d12e3e216379da0e95e1c460b46",
+    "tests/test_stage_c_repairs.py": "253a848a052027fc3e1ec74766a19f9f620dce4e42df8322c66ae18fb4099efc",
+    "tests/test_stage_d_repairs.py": "2906685f43c306b86ac8e12436164da562863a4bd71c0cbde2b9212007cae4e5",
+    "tests/test_stage_e_repairs.py": "f8e820ae2061f0f699365ee38b7cb0587dad7ab1c2d86f065c8f9fa9ef0d7039",
+    "tests/test_stage_f_repairs.py": "4da21e1fbd95d5db38c4b6d752b766120c4ee822f018c1aa2bba61c62d77bb47",
+    "tests/test_stage_g_repairs.py": "6114342946a5f76fc9daac4b20508662aefe8408387ba83b72164c141a486898",
+    "tests/test_tui_app.py": "92634c8ae38aebede1ca392fc9197de90df2fe0ec7311242eedd67c11ce035b4",
+    "tests/test_tui_diff.py": "caa2d8951da94b0786833a6ebbf7697b69fb6782de1d6377946ea53029768934",
+    "tests/test_tui_home.py": "6677ec176072bd0359c37cd995401d8bf45ff4f42b6a9f50bb00d91b1d56854b",
+    "tests/test_tui_json.py": "ff946f2437f006a358bc94281bd83c7eb1a3bc7b84026a581e8087f1a3bdd840",
+    "tests/test_tui_packaging.py": "d46a79a26c69e836bdbf6d94214519cd291ed8df85fad4ffda217db863aba2dc",
+    "tests/test_tui_read_only.py": "b51ad2ce06dbeb8686552bbab7be3d956bb58690f6e3cc4c0f8a5eae463655f8",
+    "tests/test_tui_routing.py": "93f6afcf5d5b9f2b7129f39cac4c122bf67b443d2d92f1cda6a426399d4ff102",
+    "tests/test_tui_session.py": "b3042202567a9c702317114ee0b0ba7ac18d4630a4726a00d0c308a2a344eb7d",
+    "tests/test_tui_why.py": "9694683aa7e8c04b28a2c902232fbcaffd3c2cdaf724f061058b1743b5439b3a"
+  },
+  "control": {
+    "label": "control",
+    "command": [
+      "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "--tb=short",
+      "tests/test_tui_diff.py::test_covered_why_is_suspended_and_its_stale_result_rejected",
+      "tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change",
+      "tests/test_tui_diff.py::test_leaving_diff_cancels_only_its_own_token",
+      "tests/test_tui_diff.py::test_old_diff_screen_cleanup_cannot_cancel_a_newer_owner",
+      "tests/test_tui_diff.py::test_older_capture_completing_last_cannot_replace_the_newer_generation",
+      "tests/test_tui_read_only.py::test_synthetic_target_preservation_across_lifecycle"
+    ],
+    "exit": 0,
+    "tests": [
+      "tests/test_tui_diff.py::test_covered_why_is_suspended_and_its_stale_result_rejected",
+      "tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change",
+      "tests/test_tui_diff.py::test_leaving_diff_cancels_only_its_own_token",
+      "tests/test_tui_diff.py::test_old_diff_screen_cleanup_cannot_cancel_a_newer_owner",
+      "tests/test_tui_diff.py::test_older_capture_completing_last_cannot_replace_the_newer_generation",
+      "tests/test_tui_read_only.py::test_synthetic_target_preservation_across_lifecycle"
+    ],
+    "output": "......                                                                   [100%]\n6 passed in 8.84s\n"
+  },
+  "cases": [
+    {
+      "label": "M02_live_diff_collection",
+      "changes": [
+        {
+          "path": "skill_lens/core/snapshot.py",
+          "function": "snapshot_diff",
+          "old": "captured_files=snapshot.files,",
+          "new": "captured_files=None,"
+        }
+      ],
+      "mutant": {
+        "label": "M02_live_diff_collection",
+        "command": [
+          "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "--tb=short",
+          "tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change"
+        ],
+        "exit": 1,
+        "tests": [
+          "tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change"
+        ],
+        "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________ test_first_diff_visit_is_frozen_after_captured_inputs_change _________\ntests/test_tui_diff.py:1769: in test_first_diff_visit_is_frozen_after_captured_inputs_change\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:1708: in _run\n    diff = await _wait_diff_report(pilot, app)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:86: in _wait_diff_report\n    await _wait_until(\ntests/test_tui_diff.py:65: in _wait_until\n    raise AssertionError(f\"timed out waiting for {label}\")\nE   AssertionError: timed out waiting for diff report accepted\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change - AssertionError: timed out waiting for diff report accepted\n1 failed in 5.60s\n"
+      },
+      "restored": {
+        "label": "M02_live_diff_collection-restored",
+        "command": [
+          "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "--tb=short",
+          "tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change"
+        ],
+        "exit": 0,
+        "tests": [
+          "tests/test_tui_diff.py::test_first_diff_visit_is_frozen_after_captured_inputs_change"
+        ],
+        "output": ".                                                                        [100%]\n1 passed in 2.14s\n"
+      },
+      "coordinator_disposition": "detected_by_intended_behavior_and_restored_pass"
+    },
+    {
+      "label": "M05_cancel_foreign_owner",
+      "changes": [
+        {
+          "path": "skill_lens/tui/diff.py",
+          "function": "_cancel_owned_token",
+          "old": "if active is not None and active == owned:",
+          "new": "if active is not None:"
+        }
+      ],
+      "mutant": {
+        "label": "M05_cancel_foreign_owner",
+        "command": [
+          "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "--tb=short",
+          "tests/test_tui_diff.py::test_old_diff_screen_cleanup_cannot_cancel_a_newer_owner"
+        ],
+        "exit": 1,
+        "tests": [
+          "tests/test_tui_diff.py::test_old_diff_screen_cleanup_cannot_cancel_a_newer_owner"
+        ],
+        "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n___________ test_old_diff_screen_cleanup_cannot_cancel_a_newer_owner ___________\ntests/test_tui_diff.py:1388: in test_old_diff_screen_cleanup_cannot_cancel_a_newer_owner\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:1362: in _run\n    assert app.controller.active_requests.get(\"diff\") == token_b, (\nE   AssertionError: old-owner cleanup removed the newer owner's request\nE   assert None == ViewRequest(generation=1, request_id=2, view='diff', arguments=('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-100/test_old_diff_screen_cleanup_c0/home/.claude/skills/deploy',))\nE    +  where None = <built-in method get of dict object at 0x1077a5ec0>('diff')\nE    +    where <built-in method get of dict object at 0x1077a5ec0> = {}.get\nE    +      where {} = <skill_lens.tui.session.SessionController object at 0x10800f250>.active_requests\nE    +        where <skill_lens.tui.session.SessionController object at 0x10800f250> = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'dark', 'nocolor', 'focus'}).controller\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_old_diff_screen_cleanup_cannot_cancel_a_newer_owner - AssertionError: old-owner cleanup removed the newer owner's request\nassert None == ViewRequest(generation=1, request_id=2, view='diff', arguments=('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-100/test_old_diff_screen_cleanup_c0/home/.claude/skills/deploy',))\n +  where None = <built-in method get of dict object at 0x1077a5ec0>('diff')\n +    where <built-in method get of dict object at 0x1077a5ec0> = {}.get\n +      where {} = <skill_lens.tui.session.SessionController object at 0x10800f250>.active_requests\n +        where <skill_lens.tui.session.SessionController object at 0x10800f250> = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'dark', 'nocolor', 'focus'}).controller\n1 failed in 0.52s\n"
+      },
+      "restored": {
+        "label": "M05_cancel_foreign_owner-restored",
+        "command": [
+          "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "--tb=short",
+          "tests/test_tui_diff.py::test_old_diff_screen_cleanup_cannot_cancel_a_newer_owner"
+        ],
+        "exit": 0,
+        "tests": [
+          "tests/test_tui_diff.py::test_old_diff_screen_cleanup_cannot_cancel_a_newer_owner"
+        ],
+        "output": ".                                                                        [100%]\n1 passed in 0.67s\n"
+      },
+      "coordinator_disposition": "detected_by_intended_behavior_and_restored_pass"
+    },
+    {
+      "label": "M06_hidden_why_continues",
+      "changes": [
+        {
+          "path": "skill_lens/tui/why.py",
+          "function": "suspend_detail",
+          "old": null,
+          "new": "        return\n"
+        }
+      ],
+      "mutant": {
+        "label": "M06_hidden_why_continues",
+        "command": [
+          "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "--tb=short",
+          "tests/test_tui_diff.py::test_covered_why_is_suspended_and_its_stale_result_rejected"
+        ],
+        "exit": 1,
+        "tests": [
+          "tests/test_tui_diff.py::test_covered_why_is_suspended_and_its_stale_result_rejected"
+        ],
+        "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________ test_covered_why_is_suspended_and_its_stale_result_rejected __________\ntests/test_tui_diff.py:533: in test_covered_why_is_suspended_and_its_stale_result_rejected\n    asyncio.run(_run())\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_tui_diff.py:494: in _run\n    assert why._suspended is True, \"covered Why must be suspended\"\nE   AssertionError: covered Why must be suspended\nE   assert False is True\nE    +  where False = WhyScreen()._suspended\n=========================== short test summary info ============================\nFAILED tests/test_tui_diff.py::test_covered_why_is_suspended_and_its_stale_result_rejected - AssertionError: covered Why must be suspended\nassert False is True\n +  where False = WhyScreen()._suspended\n1 failed in 5.32s\n"
+      },
+      "restored": {
+        "label": "M06_hidden_why_continues-restored",
+        "command": [
+          "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "--tb=short",
+          "tests/test_tui_diff.py::test_covered_why_is_suspended_and_its_stale_result_rejected"
+        ],
+        "exit": 0,
+        "tests": [
+          "tests/test_tui_diff.py::test_covered_why_is_suspended_and_its_stale_result_rejected"
+        ],
+        "output": ".                                                                        [100%]\n1 passed in 0.63s\n"
+      },
+      "coordinator_disposition": "detected_by_intended_behavior_and_restored_pass"
+    },
+    {
+      "label": "M23_target_traversal_no_diff",
+      "changes": [
+        {
+          "path": "skill_lens/tui/home.py",
+          "function": "action_open_diff",
+          "old": null,
+          "new": "        return\n"
+        }
+      ],
+      "mutant": {
+        "label": "M23_target_traversal_no_diff",
+        "command": [
+          "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "--tb=short",
+          "tests/test_tui_read_only.py::test_synthetic_target_preservation_across_lifecycle"
+        ],
+        "exit": 1,
+        "tests": [
+          "tests/test_tui_read_only.py::test_synthetic_target_preservation_across_lifecycle"
+        ],
+        "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_____________ test_synthetic_target_preservation_across_lifecycle ______________\ntests/test_tui_read_only.py:966: in test_synthetic_target_preservation_across_lifecycle\n    code = tui.run(mock_home, mock_home, headless=True, auto_pilot=full_lifecycle)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nskill_lens/tui/__init__.py:77: in run\n    code = app.run(\n/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/lib/python3.11/site-packages/textual/app.py:2362: in run\n    return loop.run_until_complete(run_app())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/lib/python3.11/site-packages/textual/app.py:2336: in run_app\n    return await self.run_async(\n/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/lib/python3.11/site-packages/textual/app.py:2297: in run_async\n    await auto_pilot_task\n/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/lib/python3.11/site-packages/textual/app.py:2269: in run_auto_pilot\n    await auto_pilot(pilot)\ntests/test_tui_read_only.py:873: in full_lifecycle\n    await wait_for(\ntests/test_tui_read_only.py:843: in wait_for\n    raise AssertionError(f\"lifecycle traversal stalled: {label}\")\nE   AssertionError: lifecycle traversal stalled: accepted Diff report\n=========================== short test summary info ============================\nFAILED tests/test_tui_read_only.py::test_synthetic_target_preservation_across_lifecycle - AssertionError: lifecycle traversal stalled: accepted Diff report\n1 failed in 5.71s\n"
+      },
+      "restored": {
+        "label": "M23_target_traversal_no_diff-restored",
+        "command": [
+          "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "--tb=short",
+          "tests/test_tui_read_only.py::test_synthetic_target_preservation_across_lifecycle"
+        ],
+        "exit": 0,
+        "tests": [
+          "tests/test_tui_read_only.py::test_synthetic_target_preservation_across_lifecycle"
+        ],
+        "output": ".                                                                        [100%]\n1 passed in 5.11s\n"
+      },
+      "coordinator_disposition": "detected_by_intended_behavior_and_restored_pass"
+    }
+  ],
+  "source_checkout_preserved": true,
+  "frozen_reference": "69a477ba9054a21030d038ed98a62962a1862d88",
+  "previous_evidence": "docs/validation/u5/mutations/round1.json",
+  "reviewed_gate_evidence": {
+    "pytest": {
+      "command": ".venv/bin/pytest --cov=skill_lens",
+      "provenance": "Implementer final-tree output inspected by coordinator; not rerun merely to confirm",
+      "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0\nrootdir: /Users/corvette/Documents/Projects Coding/Skill Lens\nconfigfile: pyproject.toml\ntestpaths: tests\nplugins: platformdirs-4.13.0, cov-7.1.0\ncollected 1183 items\n\ntests/test_cli.py .................................                      [  2%]\ntests/test_compare.py ......................                             [  4%]\ntests/test_discovery.py ....................                             [  6%]\ntests/test_doctor.py ...........................                         [  8%]\ntests/test_fixtures.py ................................................. [ 12%]\n..................                                                       [ 14%]\ntests/test_hasher.py .......................                             [ 16%]\ntests/test_incomplete_tree.py ..................                         [ 17%]\ntests/test_live_system_root.py ...                                       [ 18%]\ntests/test_models.py .......                                             [ 18%]\ntests/test_parser.py .........................                           [ 20%]\ntests/test_paths.py .............                                        [ 21%]\ntests/test_phase0_gate.py ...                                            [ 22%]\ntests/test_phase1_gate.py .............................................. [ 25%]\n                                                                         [ 25%]\ntests/test_phase2_gate.py .............................................. [ 29%]\n......................................                                   [ 33%]\ntests/test_phase3_gate.py ..................................             [ 35%]\ntests/test_phase4_gate.py ..........                                     [ 36%]\ntests/test_phase5_gate.py ...................                            [ 38%]\ntests/test_phase6_gate.py ...........................................    [ 42%]\ntests/test_presentation.py .......................                       [ 43%]\ntests/test_registry.py ..................................                [ 46%]\ntests/test_render_snapshots.py ...................                       [ 48%]\ntests/test_session_snapshot.py ...............s.                         [ 49%]\ntests/test_snapshot_budget.py .................                          [ 51%]\ntests/test_snapshot_inputs.py ................                           [ 52%]\ntests/test_stage_c_repairs.py ...................................        [ 55%]\ntests/test_stage_d_repairs.py .......................................... [ 59%]\n.....................                                                    [ 60%]\ntests/test_stage_e_repairs.py .....................................      [ 64%]\ntests/test_stage_f_repairs.py ....................                       [ 65%]\ntests/test_stage_g_repairs.py ..............                             [ 66%]\ntests/test_tui_app.py .............................                      [ 69%]\ntests/test_tui_diff.py ................................                  [ 72%]\ntests/test_tui_home.py ...................................               [ 75%]\ntests/test_tui_json.py .................                                 [ 76%]\ntests/test_tui_packaging.py ..........................                   [ 78%]\ntests/test_tui_read_only.py ............................................ [ 82%]\n........................................................................ [ 88%]\n.....................                                                    [ 90%]\ntests/test_tui_routing.py .............................................. [ 94%]\n.                                                                        [ 94%]\ntests/test_tui_session.py ..........................                     [ 96%]\ntests/test_tui_why.py ..........................................         [100%]\n\n================================ tests coverage ================================\n______________ coverage: platform darwin, python 3.11.16-final-0 _______________\n\nName                                  Stmts   Miss Branch BrPart  Cover   Missing\n---------------------------------------------------------------------------------\nskill_lens/__init__.py                    1      0      0      0   100%\nskill_lens/cli.py                       212      4     56      2    98%   109, 196-197, 276->278, 392\nskill_lens/core/__init__.py               0      0      0      0   100%\nskill_lens/core/cancellation.py           7      0      2      0   100%\nskill_lens/core/compare.py               95      2     42      2    97%   92, 168\nskill_lens/core/config.py               622     74    368     51    86%   65, 67, 86->93, 96->114, 101-103, 105-108, 110-111, 115-116, 193->192, 197, 218, 226, 243, 309, 314->318, 315->314, 318->323, 326, 329-330, 351, 380, 385, 438-443, 462, 525, 527->534, 532, 596, 619->618, 636, 665-666, 713-714, 718-719, 735-736, 741-742, 746->745, 759, 766, 769->771, 775->777, 792-793, 798-799, 809-810, 827-828, 833-834, 846-860, 993, 1056->1058, 1058->1061, 1070, 1074, 1105, 1115\nskill_lens/core/diff.py                 275     13    110      6    95%   99-107, 117-123, 157-158, 162, 248, 290->292, 419->437, 481\nskill_lens/core/discovery.py            474     59    218     25    86%   63, 104, 239, 321-323, 343-344, 360-361, 377, 379, 383-384, 391, 410-411, 431-432, 435->416, 440->416, 442-448, 451-452, 467->exit, 508-509, 522, 535-536, 538-539, 549-552, 588-589, 595-597, 599-600, 602->590, 620-621, 623-624, 634-637, 644->646, 661-664, 670->672, 737, 796-798, 889->887\nskill_lens/core/doctor.py               211     12     96      9    93%   139, 222, 246-253, 265, 290-291, 301, 376->371, 419, 519\nskill_lens/core/exitcodes.py             36      0      4      0   100%\nskill_lens/core/hasher.py               133     10     32      2    92%   44, 77-80, 136, 138-143, 146, 178-183\nskill_lens/core/health.py                43      2     24      2    94%   56, 93\nskill_lens/core/parser.py               124      7     42      3    94%   80, 98, 304-305, 334-335, 344\nskill_lens/core/paths.py                 62      1     16      1    97%   73\nskill_lens/core/resolver.py             453     45    262     26    87%   111, 135, 190, 235, 293->295, 375, 416, 447, 449, 452, 454, 491, 493, 514, 539, 543, 579, 587, 589, 591, 688, 711-730, 825->845, 831-836, 849->852, 855->845, 870->874\nskill_lens/core/scanner.py               80      0      8      0   100%\nskill_lens/core/snapshot.py             341     31    132      9    92%   187-193, 224-232, 285->283, 327, 329-334, 349, 351, 355, 369, 382-387, 390, 412-413, 420->431, 427-428, 432, 435, 469, 547, 552\nskill_lens/core/snapshot_models.py       42      0      0      0   100%\nskill_lens/core/system.py                39      6      2      0    80%   70-77\nskill_lens/models/__init__.py            13      0      0      0   100%\nskill_lens/models/compare.py             37      0      2      0   100%\nskill_lens/models/diff.py                70      0      0      0   100%\nskill_lens/models/doctor.py              36      0      2      0   100%\nskill_lens/models/enums.py               69      0      0      0   100%\nskill_lens/models/installation.py        23      0      0      0   100%\nskill_lens/models/parsing.py             55      2      6      0    97%   56, 59\nskill_lens/models/resolution.py          40      0      0      0   100%\nskill_lens/presentation/__init__.py       4      0      0      0   100%\nskill_lens/presentation/state.py          6      0      0      0   100%\nskill_lens/presentation/text.py         100      0     36      0   100%\nskill_lens/registry/__init__.py           4      0      0      0   100%\nskill_lens/registry/loader.py            74      0      6      0   100%\nskill_lens/render.py                    178      8     58      8    92%   79-80, 98-100, 136->138, 144, 149->151, 239, 280->282, 348\nskill_lens/tui/__init__.py               44      3     10      2    91%   87, 93, 95\nskill_lens/tui/_textual_compat.py        31      1     18      1    96%   48\nskill_lens/tui/app.py                   290     23     96     20    89%   209->exit, 217, 219->221, 227, 232->exit, 246, 253, 264, 274->exit, 287->296, 332, 336, 340, 343, 381->390, 405->414, 419-425, 443-444, 484-485, 497-499, 501->534, 531-532, 536->exit\nskill_lens/tui/diff.py                  372     50    124     29    83%   88, 137, 242->244, 262, 265, 268-270, 300, 312, 315-316, 334, 339-342, 345->352, 362, 383, 399-403, 404->exit, 436-438, 450, 452, 613-614, 620-621, 627, 634, 640->644, 646->exit, 653-654, 659, 663->665, 667, 675-677, 680-682, 687-688, 701-703, 707\nskill_lens/tui/home.py                  774     64    286     57    88%   235->233, 489, 490->exit, 494-495, 501, 503->exit, 507-508, 528, 543, 545-546, 549, 555, 561->exit, 569-570, 575, 583-584, 588->exit, 599, 613, 616, 656, 669->672, 674->677, 682->686, 683->685, 687->691, 727, 735, 739, 743, 748, 778, 795, 797, 801, 815-817, 893, 896, 908, 930, 1020, 1037-1040, 1056, 1062->1067, 1064->1067, 1086->1088, 1098, 1110, 1120, 1123, 1137, 1142, 1144, 1146, 1153, 1155, 1166, 1172->1174, 1208, 1211, 1218, 1224, 1229, 1233-1238\nskill_lens/tui/json_view.py              57      6     14      2    89%   34, 43, 90, 95, 129-131\nskill_lens/tui/session.py               194      6     74      8    95%   109->112, 260, 262, 296, 298, 314, 330->exit, 346\nskill_lens/tui/why.py                   616     55    228     39    89%   371-372, 403, 405, 408, 411-412, 439->441, 466, 469, 475-476, 489-492, 519-522, 527->exit, 544, 591->599, 594->592, 649, 651, 660, 677, 679, 686, 692->696, 698->exit, 705-706, 711, 715->717, 722, 724, 727-729, 734-735, 752->757, 754->756, 778-781, 811-812, 830, 879-883, 960, 963-964, 970, 1001-1003, 1035, 1054->1056, 1068-1069, 1072->1084\n---------------------------------------------------------------------------------\nTOTAL                                  6337    484   2374    304    90%\nRequired test coverage of 90.0% reached. Total coverage: 90.13%\n=========================== short test summary info ============================\nSKIPPED [1] tests/test_session_snapshot.py:1979: Filesystem is case-insensitive; dual distinct physical files unsupported.\n================= 1182 passed, 1 skipped in 188.94s (0:03:08) ==================\nEXIT=0\n"
+    },
+    "mypy": {
+      "command": ".venv/bin/mypy",
+      "provenance": "Implementer final-tree output inspected by coordinator; not rerun merely to confirm",
+      "output": "Success: no issues found in 41 source files\nEXIT=0\n"
+    },
+    "ruff_check": {
+      "command": ".venv/bin/ruff check .",
+      "provenance": "Implementer final-tree output inspected by coordinator; not rerun merely to confirm",
+      "output": "All checks passed!\nEXIT=0\n"
+    },
+    "ruff_format": {
+      "command": ".venv/bin/ruff format --check .",
+      "provenance": "Implementer final-tree output inspected by coordinator; not rerun merely to confirm",
+      "output": "396 files already formatted\nEXIT=0\n"
+    }
+  },
+  "prior_scope_comparison": {
+    "changed_python_files": [
+      "tests/test_tui_diff.py",
+      "tests/test_tui_read_only.py"
+    ],
+    "product_python_unchanged": true,
+    "previous_coordinator_gates_and_live_smoke_reused_for_unchanged_product": true
+  }
+}

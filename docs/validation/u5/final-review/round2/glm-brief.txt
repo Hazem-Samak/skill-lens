@@ -1,0 +1,59 @@
+READ-ONLY CRITIC TASK. You are reviewing, not implementing.
+
+Do NOT create, edit, move, delete or rename any file in the repository. Do NOT run
+any command that writes: no formatters, no linters with --fix, no install, no
+git commit/checkout/stash, no snapshot or golden regeneration, no test runs that
+write into the checkout. Test output, if you need it, goes only to a temporary
+directory outside the repository.
+
+If you believe a change is required, do not make it. Report it instead.
+
+Return only the report format below. Nothing else.
+
+# Fresh targeted final-review follow-up — U5, round 2
+You are a fresh independent critic in /Users/corvette/Documents/Projects Coding/Skill Lens. The owner selected MiniMax M3.1 Flash/max through MCode and GLM-5.3/max through Qoder for this mission, including targeted follow-ups. Do not delegate, run tests/gates/runtime checks, write reports/files, launch workers or restart planning. Return the report in your final response only.
+
+# Exact contract and state
+Frozen plan: docs/plans/2026-10-29-tui-u5-diff-json.md @ 69a477ba9054a21030d038ed98a62962a1862d88.
+HEAD / implementation diff base: fb85ddb91ef518ed86b7af84ffb0e87ae69f4afd. Product changes remain uncommitted.
+Current complete tracked/untracked manifest fingerprint: cf1584f34c43be32695c8baee96d1c473d97fc37686098ae9156dae35502fe50 (2428 paths), at /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/before-manifest.json. Status: before-status.txt beside it.
+Verified correction-only patch against the exact first-final-review bytes: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/correction.patch. The coordinator reconstructed the old versions from the recorded round-1 patch and verified their SHA-256 against the old manifest before generating this focused diff.
+ONLY changed Python files since that full council: skill_lens/tui/why.py; tests/test_tui_diff.py; tests/test_tui_json.py. Implementation-record appendix also changed; no other product code changed. Unchanged positive full-review/mutation scope remains valid. This is not a third broad review or a repeat of the entire spec audit.
+
+# Required reading
+- docs/validation/u5/final-review/round1/disposition.md: the original blocker, four-case coordinator reproduction, accepted FR2 suggestion and explicit rejected/deferred items.
+- Both original final reports in that same directory. MiniMax found FR1; GLM passed but its claim that the topmost guard prevented double resume was contradicted by the coordinator's observed defect. Do not treat either verdict as proof or a vote; verify the corrected mechanism.
+- The focused correction patch, current affected functions/tests, and relevant source dependencies: tui/app.py close_diff, Why suspend/resume/rebuild/request paths, Textual lifecycle/focus semantics as needed; json_view.py/Home snapshot-refusal path for FR2. Read the corresponding frozen plan navigation/lifecycle/JSON clauses. Do not flood context with the old full patch or unrelated repo history.
+- /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/correction-evidence.json: complete final gate outputs, red/green summaries and coordinator's original four-case after-fix smoke. The original full before-fix log was lost with OS temporary files; its inspected 8/8 focus failures and green evidence are retained in this recovered JSON and the permanent implementer appendix.
+- docs/validation/u5/implementation-record.md final correction appendix (implementer report, not acceptance).
+
+# What to decide
+FR1 product fix: _restore_detail_focus now retains the remembered widget while can_focus/is_mounted/display remain valid, instead of clearing it after the first restore; _rebuild_from_snapshot clears the old reference on generation replacement. App's explicit resume and Textual ScreenResume both remain. Does this actually make focus restoration idempotent without stale-widget resurrection, wrong focus fallback, changed expansion/scroll/agent state, duplicate requests, cancelled newer ownership or broken covered-refresh/removal behavior?
+FR1 tests: 8 parameter rows (candidate-title/body x 100x30/60x24 x Esc/Backspace), two actual push/pop trips per row, real Tab navigation, actual focus identity after lifecycle/deferred work, retained ordinary state and worker count. A companion covered-refresh test verifies stale focus is dropped and a valid ordinary target receives focus. Ensure assertions discriminate the real original bug, not mock echoes or source text. Lifecycle counters establish exercised ordering but do not replace behavioral focus assertions.
+FR2: tiny positive capture budget refuses the initial capture. Home J must display a meaningful refusal with document=None, no fabricated ScanReport or false loading, no sticky unexpected fault and normal quit. Confirm the test reaches the real refused state and observes the actual screen, with safe synthetic HOME; no new product semantics were added for this test.
+
+# Evidence and limits
+Final implementer gates, inspected by coordinator: 1192 passed, 1 existing case-sensitive-filesystem skip; 90.15% combined coverage with branch measurement; mypy clean over 41 product files; Ruff lint/format clean. Logs retained in correction-evidence.json. Eight focus regressions failed before the fix at the originating-widget identity assertion and passed afterward. Coordinator separately reran the original real-key smoke: candidate/body focus at both terminal sizes is now preserved in all four cases (exit 0); the original same smoke failed all four before. No coordinator product/test edits.
+Previous unchanged full council and mutation evidence: docs/validation/u5/coordinator-verification.md and mutations/round1.json, round2.json. Do not rerun gates or the entire campaign. No physical-terminal or human visual approval is claimed for the implementer's latest headless checks; coordinator has real terminal smoke from the previous product tree and will exercise the corrected path separately. Source evidence is not proof of upstream model identity.
+
+# Boundaries
+High-risk review policy and exact guard apply. No unrelated audit, speculative framework/counter/state-summary redesign, cosmetic removal-notice change, dead-quit cleanup or export-inventory test reinstatement. These were explicitly adjudicated as outside this correction. A concrete newly introduced in-scope blocker can still be reported with source/contract evidence. Do not require incidental wording, wiring, mock-forwarding or source-text assertions. Preserve .path and the unrelated native-asyncio/2026-10-25 work; never inspect real installed skills, credentials, global configs or unrelated sessions.
+The coordinator owns before/after full-tree fingerprints; you need not re-hash unrelated historical artifacts. Plan/read-only instructions are not an OS sandbox guarantee.
+
+# Identity and required report
+Same advertised MiniMax/GLM families as owner-approved round 1; no advertised overlap with the OpenAI coordinator or owner-identified DeepSeek implementer. Upstream serving identity unverified. This session explicitly requests max effort; do not confuse it with historical planning xhigh. State only visible configured evidence, then stop identity research. The coordinator checks exact-run runtime receipts separately.
+
+Return:
+EFFECTIVE_MODEL: requested/configured model, effort, modes, evidence and upstream limits.
+VERDICT: pass | changes_required | unverified.
+BLOCKERS: none, or numbered severity/file:line/actual-vs-expected/contract/evidence/smallest correction. A missing gate is not a product defect; distinguish evidence limits.
+SUGGESTIONS: non-blocking and within the correction scope, or none.
+FILES_AT_RISK: affected consumers/files, or none.
+CONCEDED: FR1/FR2 disposition and prior concerns ruled out, checks not run and evidence limits.
+Concise, evidence-backed, no patches or file writes. If FR1/FR2 are resolved and no concrete new blocker exists, say pass. Do not invent busywork to produce findings.
+
+
+# Interrupted attempt recovery
+The 2026-10-31 targeted attempts stopped mid-tool-call with NO final verdict. Both old process IDs are absent and the GLM pane is gone; the old MiniMax pane is now the coordinator pane and is never to be touched. This is a fresh retry of the same targeted follow-up, NOT a third broad wave. Full checkout fingerprint still exactly matches the original 2428-entry pre-wave fingerprint. Supplied gate evidence was recovered losslessly from the Qoder transcript read result, not recreated or fabricated. Some original temporary log/probe paths no longer exist. Do not rerun them or treat missing cleaned scratch files as product defects.
+
+Your requested route: GLM-5.3, max, Qoder built-in Plan

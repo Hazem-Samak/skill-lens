@@ -1,0 +1,158 @@
+{
+  "exit_code": 0,
+  "cases": [
+    {
+      "size": [
+        100,
+        30
+      ],
+      "origin": "candidate",
+      "return_key": "escape",
+      "round_trips": 2,
+      "preserved": true,
+      "driver": "LinuxDriver",
+      "terminal_size_receipt": {
+        "columns": 100,
+        "rows": 30,
+        "cell_width_px": 8,
+        "cell_height_px": 16,
+        "owner": null,
+        "desired": []
+      }
+    },
+    {
+      "size": [
+        100,
+        30
+      ],
+      "origin": "candidate",
+      "return_key": "backspace",
+      "round_trips": 2,
+      "preserved": true,
+      "driver": "LinuxDriver",
+      "terminal_size_receipt": {
+        "columns": 100,
+        "rows": 30,
+        "cell_width_px": 8,
+        "cell_height_px": 16,
+        "owner": null,
+        "desired": []
+      }
+    },
+    {
+      "size": [
+        100,
+        30
+      ],
+      "origin": "body",
+      "return_key": "escape",
+      "round_trips": 2,
+      "preserved": true,
+      "driver": "LinuxDriver",
+      "terminal_size_receipt": {
+        "columns": 100,
+        "rows": 30,
+        "cell_width_px": 8,
+        "cell_height_px": 16,
+        "owner": null,
+        "desired": []
+      }
+    },
+    {
+      "size": [
+        100,
+        30
+      ],
+      "origin": "body",
+      "return_key": "backspace",
+      "round_trips": 2,
+      "preserved": true,
+      "driver": "LinuxDriver",
+      "terminal_size_receipt": {
+        "columns": 100,
+        "rows": 30,
+        "cell_width_px": 8,
+        "cell_height_px": 16,
+        "owner": null,
+        "desired": []
+      }
+    },
+    {
+      "size": [
+        60,
+        24
+      ],
+      "origin": "candidate",
+      "return_key": "escape",
+      "round_trips": 2,
+      "preserved": true,
+      "driver": "LinuxDriver",
+      "terminal_size_receipt": {
+        "columns": 60,
+        "rows": 24,
+        "cell_width_px": 8,
+        "cell_height_px": 16,
+        "owner": null,
+        "desired": []
+      }
+    },
+    {
+      "size": [
+        60,
+        24
+      ],
+      "origin": "candidate",
+      "return_key": "backspace",
+      "round_trips": 2,
+      "preserved": true,
+      "driver": "LinuxDriver",
+      "terminal_size_receipt": {
+        "columns": 60,
+        "rows": 24,
+        "cell_width_px": 8,
+        "cell_height_px": 16,
+        "owner": null,
+        "desired": []
+      }
+    },
+    {
+      "size": [
+        60,
+        24
+      ],
+      "origin": "body",
+      "return_key": "escape",
+      "round_trips": 2,
+      "preserved": true,
+      "driver": "LinuxDriver",
+      "terminal_size_receipt": {
+        "columns": 60,
+        "rows": 24,
+        "cell_width_px": 8,
+        "cell_height_px": 16,
+        "owner": null,
+        "desired": []
+      }
+    },
+    {
+      "size": [
+        60,
+        24
+      ],
+      "origin": "body",
+      "return_key": "backspace",
+      "round_trips": 2,
+      "preserved": true,
+      "driver": "LinuxDriver",
+      "terminal_size_receipt": {
+        "columns": 60,
+        "rows": 24,
+        "cell_width_px": 8,
+        "cell_height_px": 16,
+        "owner": null,
+        "desired": []
+      }
+    }
+  ],
+  "human_visual_approval": false
+}

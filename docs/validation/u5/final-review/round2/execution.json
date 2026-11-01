@@ -1,0 +1,278 @@
+{
+  "round": 2,
+  "attempt": 2,
+  "scope": "Fresh targeted FR1/FR2 final council retry after interruption, not a third broad wave",
+  "base": "fb85ddb91ef518ed86b7af84ffb0e87ae69f4afd",
+  "frozen_reference": "69a477ba9054a21030d038ed98a62962a1862d88",
+  "root": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd",
+  "before_fingerprint": "cf1584f34c43be32695c8baee96d1c473d97fc37686098ae9156dae35502fe50",
+  "manifest_paths": 2428,
+  "previous_attempt": {
+    "status": "interrupted; no final report from either critic",
+    "minimax_session": "mvs_7f4295536ed14506bc7a3f04f44d5869",
+    "glm_session": "e4679054-eb05-488e-9ae4-f87b84ee170b",
+    "process_ids": [
+      47285,
+      47299
+    ],
+    "process_absence_verified": true,
+    "temp_packet_removed": true,
+    "checkout_unchanged_since_original_before_manifest": true
+  },
+  "requested_roster": {
+    "minimax": {
+      "runtime": "mcode",
+      "model": "minimax/MiniMax-M3.1-Flash",
+      "effort": "max"
+    },
+    "glm": {
+      "runtime": "qodercli",
+      "model": "GLM-5.3",
+      "effort": "max"
+    }
+  },
+  "launches": {
+    "minimax": {
+      "at": "2026-11-01T19:18:44.151169+00:00",
+      "argv": [
+        "/Users/corvette/.minimax-code/bin/mcode",
+        "exec",
+        "--cwd",
+        "/Users/corvette/Documents/Projects Coding/Skill Lens",
+        "--model",
+        "minimax/MiniMax-M3.1-Flash",
+        "--effort",
+        "max",
+        "--permission",
+        "full",
+        "--timeout",
+        "20m",
+        "--output-format",
+        "json",
+        "--diagnostics-dir",
+        "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/minimax-diagnostics",
+        "--output-last-message",
+        "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/minimax-report.md",
+        "--append-system-prompt-file",
+        "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/guard.txt",
+        "READ-ONLY CRITIC TASK. You are reviewing, not implementing.\n\nDo NOT create, edit, move, delete or rename any file in the repository. Do NOT run\nany command that writes: no formatters, no linters with --fix, no install, no\ngit commit/checkout/stash, no snapshot or golden regeneration, no test runs that\nwrite into the checkout. Test output, if you need it, goes only to a temporary\ndirectory outside the repository.\n\nIf you believe a change is required, do not make it. Report it instead.\n\nReturn only the report format below. Nothing else.\n\n# Fresh targeted final-review follow-up \u2014 U5, round 2\nYou are a fresh independent critic in /Users/corvette/Documents/Projects Coding/Skill Lens. The owner selected MiniMax M3.1 Flash/max through MCode and GLM-5.3/max through Qoder for this mission, including targeted follow-ups. Do not delegate, run tests/gates/runtime checks, write reports/files, launch workers or restart planning. Return the report in your final response only.\n\n# Exact contract and state\nFrozen plan: docs/plans/2026-10-29-tui-u5-diff-json.md @ 69a477ba9054a21030d038ed98a62962a1862d88.\nHEAD / implementation diff base: fb85ddb91ef518ed86b7af84ffb0e87ae69f4afd. Product changes remain uncommitted.\nCurrent complete tracked/untracked manifest fingerprint: cf1584f34c43be32695c8baee96d1c473d97fc37686098ae9156dae35502fe50 (2428 paths), at /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/before-manifest.json. Status: before-status.txt beside it.\nVerified correction-only patch against the exact first-final-review bytes: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/correction.patch. The coordinator reconstructed the old versions from the recorded round-1 patch and verified their SHA-256 against the old manifest before generating this focused diff.\nONLY changed Python files since that full council: skill_lens/tui/why.py; tests/test_tui_diff.py; tests/test_tui_json.py. Implementation-record appendix also changed; no other product code changed. Unchanged positive full-review/mutation scope remains valid. This is not a third broad review or a repeat of the entire spec audit.\n\n# Required reading\n- docs/validation/u5/final-review/round1/disposition.md: the original blocker, four-case coordinator reproduction, accepted FR2 suggestion and explicit rejected/deferred items.\n- Both original final reports in that same directory. MiniMax found FR1; GLM passed but its claim that the topmost guard prevented double resume was contradicted by the coordinator's observed defect. Do not treat either verdict as proof or a vote; verify the corrected mechanism.\n- The focused correction patch, current affected functions/tests, and relevant source dependencies: tui/app.py close_diff, Why suspend/resume/rebuild/request paths, Textual lifecycle/focus semantics as needed; json_view.py/Home snapshot-refusal path for FR2. Read the corresponding frozen plan navigation/lifecycle/JSON clauses. Do not flood context with the old full patch or unrelated repo history.\n- /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/correction-evidence.json: complete final gate outputs, red/green summaries and coordinator's original four-case after-fix smoke. The original full before-fix log was lost with OS temporary files; its inspected 8/8 focus failures and green evidence are retained in this recovered JSON and the permanent implementer appendix.\n- docs/validation/u5/implementation-record.md final correction appendix (implementer report, not acceptance).\n\n# What to decide\nFR1 product fix: _restore_detail_focus now retains the remembered widget while can_focus/is_mounted/display remain valid, instead of clearing it after the first restore; _rebuild_from_snapshot clears the old reference on generation replacement. App's explicit resume and Textual ScreenResume both remain. Does this actually make focus restoration idempotent without stale-widget resurrection, wrong focus fallback, changed expansion/scroll/agent state, duplicate requests, cancelled newer ownership or broken covered-refresh/removal behavior?\nFR1 tests: 8 parameter rows (candidate-title/body x 100x30/60x24 x Esc/Backspace), two actual push/pop trips per row, real Tab navigation, actual focus identity after lifecycle/deferred work, retained ordinary state and worker count. A companion covered-refresh test verifies stale focus is dropped and a valid ordinary target receives focus. Ensure assertions discriminate the real original bug, not mock echoes or source text. Lifecycle counters establish exercised ordering but do not replace behavioral focus assertions.\nFR2: tiny positive capture budget refuses the initial capture. Home J must display a meaningful refusal with document=None, no fabricated ScanReport or false loading, no sticky unexpected fault and normal quit. Confirm the test reaches the real refused state and observes the actual screen, with safe synthetic HOME; no new product semantics were added for this test.\n\n# Evidence and limits\nFinal implementer gates, inspected by coordinator: 1192 passed, 1 existing case-sensitive-filesystem skip; 90.15% combined coverage with branch measurement; mypy clean over 41 product files; Ruff lint/format clean. Logs retained in correction-evidence.json. Eight focus regressions failed before the fix at the originating-widget identity assertion and passed afterward. Coordinator separately reran the original real-key smoke: candidate/body focus at both terminal sizes is now preserved in all four cases (exit 0); the original same smoke failed all four before. No coordinator product/test edits.\nPrevious unchanged full council and mutation evidence: docs/validation/u5/coordinator-verification.md and mutations/round1.json, round2.json. Do not rerun gates or the entire campaign. No physical-terminal or human visual approval is claimed for the implementer's latest headless checks; coordinator has real terminal smoke from the previous product tree and will exercise the corrected path separately. Source evidence is not proof of upstream model identity.\n\n# Boundaries\nHigh-risk review policy and exact guard apply. No unrelated audit, speculative framework/counter/state-summary redesign, cosmetic removal-notice change, dead-quit cleanup or export-inventory test reinstatement. These were explicitly adjudicated as outside this correction. A concrete newly introduced in-scope blocker can still be reported with source/contract evidence. Do not require incidental wording, wiring, mock-forwarding or source-text assertions. Preserve .path and the unrelated native-asyncio/2026-10-25 work; never inspect real installed skills, credentials, global configs or unrelated sessions.\nThe coordinator owns before/after full-tree fingerprints; you need not re-hash unrelated historical artifacts. Plan/read-only instructions are not an OS sandbox guarantee.\n\n# Identity and required report\nSame advertised MiniMax/GLM families as owner-approved round 1; no advertised overlap with the OpenAI coordinator or owner-identified DeepSeek implementer. Upstream serving identity unverified. This session explicitly requests max effort; do not confuse it with historical planning xhigh. State only visible configured evidence, then stop identity research. The coordinator checks exact-run runtime receipts separately.\n\nReturn:\nEFFECTIVE_MODEL: requested/configured model, effort, modes, evidence and upstream limits.\nVERDICT: pass | changes_required | unverified.\nBLOCKERS: none, or numbered severity/file:line/actual-vs-expected/contract/evidence/smallest correction. A missing gate is not a product defect; distinguish evidence limits.\nSUGGESTIONS: non-blocking and within the correction scope, or none.\nFILES_AT_RISK: affected consumers/files, or none.\nCONCEDED: FR1/FR2 disposition and prior concerns ruled out, checks not run and evidence limits.\nConcise, evidence-backed, no patches or file writes. If FR1/FR2 are resolved and no concrete new blocker exists, say pass. Do not invent busywork to produce findings.\n\n\n# Interrupted attempt recovery\nThe 2026-10-31 targeted attempts stopped mid-tool-call with NO final verdict. Both old process IDs are absent and the GLM pane is gone; the old MiniMax pane is now the coordinator pane and is never to be touched. This is a fresh retry of the same targeted follow-up, NOT a third broad wave. Full checkout fingerprint still exactly matches the original 2428-entry pre-wave fingerprint. Supplied gate evidence was recovered losslessly from the Qoder transcript read result, not recreated or fabricated. Some original temporary log/probe paths no longer exist. Do not rerun them or treat missing cleaned scratch files as product defects.\n\nYour requested route: minimax/MiniMax-M3.1-Flash, max, MCode\n"
+      ],
+      "rex": {
+        "window_id": "window:01a1988c-c2b4-7d9c-bb9c-05fd9ec18647",
+        "block_ids": [
+          "block:01a1988c-c2b1-7aa2-9beb-243f16967ab3"
+        ],
+        "revision": 51
+      },
+      "requested_session": null,
+      "completion": {
+        "exit_code": 0,
+        "no_child": true,
+        "process": {
+          "last_exit": {
+            "exit_code": 0
+          },
+          "home": "/Users/corvette"
+        },
+        "observed_at": "2026-11-01T19:27:08.549880+00:00"
+      },
+      "duration_ms": 420801,
+      "usage": {
+        "inputTokens": 96974,
+        "outputTokens": 37070,
+        "cacheReadTokens": 2245632,
+        "totalTokens": 134044
+      },
+      "owned_terminal_closed": true
+    },
+    "glm": {
+      "at": "2026-11-01T19:18:44.175741+00:00",
+      "argv": [
+        "/Users/corvette/.local/bin/qodercli",
+        "--print",
+        "--cwd",
+        "/Users/corvette/Documents/Projects Coding/Skill Lens",
+        "--model",
+        "GLM-5.3",
+        "--reasoning-effort",
+        "max",
+        "--agent",
+        "Plan",
+        "--permission-mode",
+        "bypass_permissions",
+        "--session-id",
+        "91a0edeb-4e6b-487e-8755-70e1cbdc4cb4",
+        "--output-format",
+        "json",
+        "--append-system-prompt",
+        "READ-ONLY CRITIC TASK. You are reviewing, not implementing.\n\nDo NOT create, edit, move, delete or rename any file in the repository. Do NOT run\nany command that writes: no formatters, no linters with --fix, no install, no\ngit commit/checkout/stash, no snapshot or golden regeneration, no test runs that\nwrite into the checkout. Test output, if you need it, goes only to a temporary\ndirectory outside the repository.\n\nIf you believe a change is required, do not make it. Report it instead.\n\nReturn only the report format below. Nothing else.\n",
+        "--",
+        "READ-ONLY CRITIC TASK. You are reviewing, not implementing.\n\nDo NOT create, edit, move, delete or rename any file in the repository. Do NOT run\nany command that writes: no formatters, no linters with --fix, no install, no\ngit commit/checkout/stash, no snapshot or golden regeneration, no test runs that\nwrite into the checkout. Test output, if you need it, goes only to a temporary\ndirectory outside the repository.\n\nIf you believe a change is required, do not make it. Report it instead.\n\nReturn only the report format below. Nothing else.\n\n# Fresh targeted final-review follow-up \u2014 U5, round 2\nYou are a fresh independent critic in /Users/corvette/Documents/Projects Coding/Skill Lens. The owner selected MiniMax M3.1 Flash/max through MCode and GLM-5.3/max through Qoder for this mission, including targeted follow-ups. Do not delegate, run tests/gates/runtime checks, write reports/files, launch workers or restart planning. Return the report in your final response only.\n\n# Exact contract and state\nFrozen plan: docs/plans/2026-10-29-tui-u5-diff-json.md @ 69a477ba9054a21030d038ed98a62962a1862d88.\nHEAD / implementation diff base: fb85ddb91ef518ed86b7af84ffb0e87ae69f4afd. Product changes remain uncommitted.\nCurrent complete tracked/untracked manifest fingerprint: cf1584f34c43be32695c8baee96d1c473d97fc37686098ae9156dae35502fe50 (2428 paths), at /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/before-manifest.json. Status: before-status.txt beside it.\nVerified correction-only patch against the exact first-final-review bytes: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/correction.patch. The coordinator reconstructed the old versions from the recorded round-1 patch and verified their SHA-256 against the old manifest before generating this focused diff.\nONLY changed Python files since that full council: skill_lens/tui/why.py; tests/test_tui_diff.py; tests/test_tui_json.py. Implementation-record appendix also changed; no other product code changed. Unchanged positive full-review/mutation scope remains valid. This is not a third broad review or a repeat of the entire spec audit.\n\n# Required reading\n- docs/validation/u5/final-review/round1/disposition.md: the original blocker, four-case coordinator reproduction, accepted FR2 suggestion and explicit rejected/deferred items.\n- Both original final reports in that same directory. MiniMax found FR1; GLM passed but its claim that the topmost guard prevented double resume was contradicted by the coordinator's observed defect. Do not treat either verdict as proof or a vote; verify the corrected mechanism.\n- The focused correction patch, current affected functions/tests, and relevant source dependencies: tui/app.py close_diff, Why suspend/resume/rebuild/request paths, Textual lifecycle/focus semantics as needed; json_view.py/Home snapshot-refusal path for FR2. Read the corresponding frozen plan navigation/lifecycle/JSON clauses. Do not flood context with the old full patch or unrelated repo history.\n- /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/correction-evidence.json: complete final gate outputs, red/green summaries and coordinator's original four-case after-fix smoke. The original full before-fix log was lost with OS temporary files; its inspected 8/8 focus failures and green evidence are retained in this recovered JSON and the permanent implementer appendix.\n- docs/validation/u5/implementation-record.md final correction appendix (implementer report, not acceptance).\n\n# What to decide\nFR1 product fix: _restore_detail_focus now retains the remembered widget while can_focus/is_mounted/display remain valid, instead of clearing it after the first restore; _rebuild_from_snapshot clears the old reference on generation replacement. App's explicit resume and Textual ScreenResume both remain. Does this actually make focus restoration idempotent without stale-widget resurrection, wrong focus fallback, changed expansion/scroll/agent state, duplicate requests, cancelled newer ownership or broken covered-refresh/removal behavior?\nFR1 tests: 8 parameter rows (candidate-title/body x 100x30/60x24 x Esc/Backspace), two actual push/pop trips per row, real Tab navigation, actual focus identity after lifecycle/deferred work, retained ordinary state and worker count. A companion covered-refresh test verifies stale focus is dropped and a valid ordinary target receives focus. Ensure assertions discriminate the real original bug, not mock echoes or source text. Lifecycle counters establish exercised ordering but do not replace behavioral focus assertions.\nFR2: tiny positive capture budget refuses the initial capture. Home J must display a meaningful refusal with document=None, no fabricated ScanReport or false loading, no sticky unexpected fault and normal quit. Confirm the test reaches the real refused state and observes the actual screen, with safe synthetic HOME; no new product semantics were added for this test.\n\n# Evidence and limits\nFinal implementer gates, inspected by coordinator: 1192 passed, 1 existing case-sensitive-filesystem skip; 90.15% combined coverage with branch measurement; mypy clean over 41 product files; Ruff lint/format clean. Logs retained in correction-evidence.json. Eight focus regressions failed before the fix at the originating-widget identity assertion and passed afterward. Coordinator separately reran the original real-key smoke: candidate/body focus at both terminal sizes is now preserved in all four cases (exit 0); the original same smoke failed all four before. No coordinator product/test edits.\nPrevious unchanged full council and mutation evidence: docs/validation/u5/coordinator-verification.md and mutations/round1.json, round2.json. Do not rerun gates or the entire campaign. No physical-terminal or human visual approval is claimed for the implementer's latest headless checks; coordinator has real terminal smoke from the previous product tree and will exercise the corrected path separately. Source evidence is not proof of upstream model identity.\n\n# Boundaries\nHigh-risk review policy and exact guard apply. No unrelated audit, speculative framework/counter/state-summary redesign, cosmetic removal-notice change, dead-quit cleanup or export-inventory test reinstatement. These were explicitly adjudicated as outside this correction. A concrete newly introduced in-scope blocker can still be reported with source/contract evidence. Do not require incidental wording, wiring, mock-forwarding or source-text assertions. Preserve .path and the unrelated native-asyncio/2026-10-25 work; never inspect real installed skills, credentials, global configs or unrelated sessions.\nThe coordinator owns before/after full-tree fingerprints; you need not re-hash unrelated historical artifacts. Plan/read-only instructions are not an OS sandbox guarantee.\n\n# Identity and required report\nSame advertised MiniMax/GLM families as owner-approved round 1; no advertised overlap with the OpenAI coordinator or owner-identified DeepSeek implementer. Upstream serving identity unverified. This session explicitly requests max effort; do not confuse it with historical planning xhigh. State only visible configured evidence, then stop identity research. The coordinator checks exact-run runtime receipts separately.\n\nReturn:\nEFFECTIVE_MODEL: requested/configured model, effort, modes, evidence and upstream limits.\nVERDICT: pass | changes_required | unverified.\nBLOCKERS: none, or numbered severity/file:line/actual-vs-expected/contract/evidence/smallest correction. A missing gate is not a product defect; distinguish evidence limits.\nSUGGESTIONS: non-blocking and within the correction scope, or none.\nFILES_AT_RISK: affected consumers/files, or none.\nCONCEDED: FR1/FR2 disposition and prior concerns ruled out, checks not run and evidence limits.\nConcise, evidence-backed, no patches or file writes. If FR1/FR2 are resolved and no concrete new blocker exists, say pass. Do not invent busywork to produce findings.\n\n\n# Interrupted attempt recovery\nThe 2026-10-31 targeted attempts stopped mid-tool-call with NO final verdict. Both old process IDs are absent and the GLM pane is gone; the old MiniMax pane is now the coordinator pane and is never to be touched. This is a fresh retry of the same targeted follow-up, NOT a third broad wave. Full checkout fingerprint still exactly matches the original 2428-entry pre-wave fingerprint. Supplied gate evidence was recovered losslessly from the Qoder transcript read result, not recreated or fabricated. Some original temporary log/probe paths no longer exist. Do not rerun them or treat missing cleaned scratch files as product defects.\n\nYour requested route: GLM-5.3, max, Qoder built-in Plan\n"
+      ],
+      "rex": {
+        "window_id": "window:01a1988c-c2cd-7d07-833f-29cfc34dd19f",
+        "block_ids": [
+          "block:01a1988c-c2cc-7cb5-b404-52a1f5814503"
+        ],
+        "revision": 53
+      },
+      "requested_session": "91a0edeb-4e6b-487e-8755-70e1cbdc4cb4",
+      "completion": {
+        "exit_code": 0,
+        "no_child": true,
+        "process": {
+          "last_exit": {
+            "exit_code": 0
+          },
+          "home": "/Users/corvette"
+        },
+        "observed_at": "2026-11-01T19:27:08.568216+00:00"
+      },
+      "duration_ms": 480130,
+      "usage": {
+        "input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 0,
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "",
+        "iterations": [],
+        "speed": "standard",
+        "request_id": "b4c8ec0e-203c-480d-9a1b-faf10c37ce11",
+        "context_usage_ratio": 0.5050944444444444
+      },
+      "owned_terminal_closed": true
+    }
+  },
+  "family_disclosure": "Owner-approved advertised MiniMax/GLM families; no advertised overlap with OpenAI coordinator or owner-identified DeepSeek implementer. Upstream identity unverified.",
+  "processes": {
+    "minimax": 10793,
+    "glm": 10806
+  },
+  "opened_run_logs": {
+    "minimax": [
+      "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u5-final-followup-retry-o54c1jmd/minimax-diagnostics/progress.jsonl"
+    ],
+    "glm": [
+      "/Users/corvette/.qoder/logs/runs/2026-11-01T21-18-44-349+02-00-8lopap-p10806/qodercli.log",
+      "/Users/corvette/.qoder/logs/sessions/-Users-corvette-Documents-Projects-Coding-Skill-Lens/91a0edeb-4e6b-487e-8755-70e1cbdc4cb4/segments/2026-11-01T21-18-44-349+02-00-8lopap-p10806.jsonl"
+    ]
+  },
+  "configured_identity": {
+    "minimax": {
+      "source": "/Users/corvette/.minimax/v2/sessions/2026/11/01/19-18-46-910-session_bXZzXzBlMzYxZGUwNTM4MzRmNzhiZDQ5ODhhNWFkNGNkMWZj/llm-call.json",
+      "receipt": {
+        "provider": "minimax",
+        "model": "MiniMax-M3.1-Flash",
+        "thinkingLevel": "max",
+        "api": "anthropic-messages"
+      }
+    },
+    "glm": {
+      "configured_model": "GLM-5.3",
+      "run_log": "/Users/corvette/.qoder/logs/runs/2026-11-01T21-18-44-349+02-00-8lopap-p10806/qodercli.log",
+      "segment_log": "/Users/corvette/.qoder/logs/sessions/-Users-corvette-Documents-Projects-Coding-Skill-Lens/91a0edeb-4e6b-487e-8755-70e1cbdc4cb4/segments/2026-11-01T21-18-44-349+02-00-8lopap-p10806.jsonl",
+      "runtime_config_lines": [
+        "2026-11-01T21:18:48.185+02:00 INFO  debug.message [session.runtime_config] transcript.recorded session=91a0edeb-4e6b-487e-8755-70e1cbdc4cb4 model=gmodel reasoning_effort=max context_window=none reason=headless_writer_created"
+      ]
+    },
+    "upstream_attestation": "unavailable; exact configured receipts only"
+  },
+  "terminal_smoke": {
+    "launch": {
+      "window_id": "window:01a1988e-8081-7445-a087-5f45fb202f13",
+      "block_ids": [
+        "block:01a1988e-807f-7e5f-aaf8-6cf48768a207"
+      ],
+      "revision": 66
+    },
+    "source": "focus-terminal-smoke.py",
+    "scope": "Actual LinuxDriver on Rex PTY, two focus origins, two return keys, two sizes, two repeated round trips",
+    "exit_code": 0,
+    "cases": 8,
+    "round_trips": 16,
+    "all_preserved": true,
+    "driver": "LinuxDriver",
+    "human_visual_approval": false,
+    "closed_owned_block": true,
+    "source_sha256": "d2a3fe680f581f96f7ec0f4d4bbcc226fb47b815f8d12e78bb004de887d07cfb",
+    "screen_captures": [
+      "100x30-body-backspace.screen.txt",
+      "100x30-body-escape.screen.txt",
+      "100x30-candidate-backspace.screen.txt",
+      "100x30-candidate-escape.screen.txt",
+      "60x24-body-backspace.screen.txt",
+      "60x24-body-escape.screen.txt",
+      "60x24-candidate-backspace.screen.txt",
+      "60x24-candidate-escape.screen.txt"
+    ]
+  },
+  "integrity": {
+    "before_fingerprint": "cf1584f34c43be32695c8baee96d1c473d97fc37686098ae9156dae35502fe50",
+    "after_fingerprint": "cf1584f34c43be32695c8baee96d1c473d97fc37686098ae9156dae35502fe50",
+    "paths": 2428,
+    "all_files_identical": true,
+    "git_status_identical": true,
+    "scope": "Complete tracked and nonignored untracked files, modes, symlink targets, additions/deletions"
+  },
+  "nonzero_scroll_smoke": {
+    "launch": {
+      "window_id": "window:01a19894-9355-77c8-8348-5103bfeb8546",
+      "block_ids": [
+        "block:01a19894-9353-79df-92a2-082397339974"
+      ],
+      "revision": 69
+    },
+    "results": {
+      "exit_code": 0,
+      "cases": [
+        {
+          "size": [
+            60,
+            24
+          ],
+          "return_key": "escape",
+          "scroll_before": 8,
+          "scroll_after": 8,
+          "focus_preserved": true,
+          "driver": "LinuxDriver"
+        },
+        {
+          "size": [
+            60,
+            24
+          ],
+          "return_key": "backspace",
+          "scroll_before": 8,
+          "scroll_after": 8,
+          "focus_preserved": true,
+          "driver": "LinuxDriver"
+        }
+      ]
+    },
+    "scope": "Optional suggestion from both critics; real End key sets positive ordinary body offset before Diff, preserved through Esc and Backspace",
+    "source_sha256": "3eb7acfd6eec493f3112526ba0107df59f8e49eb097627a517068ab06a336559",
+    "owned_terminal_closed": true
+  },
+  "disposition": {
+    "minimax": "pass",
+    "glm": "pass",
+    "blockers": [],
+    "suggestions": {
+      "nonzero_scroll_precondition": "Non-blocking test suggestion; positive nonzero scroll and preserved focus proved in supplemental real-terminal smoke, no product/test correction required.",
+      "resume_counter": "No change required: critic verified the only two actual call sites."
+    },
+    "expected_substantive_followups": 2,
+    "actual_attempt_launches": 4,
+    "interrupted_attempts": 2,
+    "successful_attempts": 2
+  }
+}

@@ -23,8 +23,9 @@ release (the optional `[tui]` browsing layer), not 0.1.2 — do not rename this
 heading to 0.1.2.
 
 The current development branch ships six line-oriented CLI commands plus an
-optional, additive, read-only TUI through U4 Why resolution
-(C1–C5 and U1–U4 technically accepted in development). U5–U9 screens and 0.2 publishing remain
+optional, additive, read-only TUI through U5 Diff and raw JSON
+(C1–C5 and U1–U5 technically accepted in development after coordinator
+verification and independent review). U6–U9 screens and 0.2 publishing remain
 separate future work. Earlier local gate evidence is recorded under
 `docs/validation/assessment-repairs/h/` and `docs/validation/u3/`. The later
 [overnight CI repair](docs/validation/overnight/2026-10-24/acceptance.md) passed
@@ -43,10 +44,18 @@ This is development verification, not a release.
   codes are unchanged; the line-oriented CLI remains the primary interface.
   This overturns the v1 "no full-screen TUI" rule for 0.2. **Partial status:**
   C1–C5 (byte/hash helpers, captured engine inputs, capture and cancellation,
-  presentation extraction, Step 0 audit) and U1–U3 (optional install, worker
-  controller and Home browsing screen) are complete as development work
-  on the current branch; U4–U9 screens remain future work. The full
-  design lives in
+  presentation extraction, Step 0 audit) and U1–U4 (optional install, worker
+  controller, Home browsing and Why resolution) are accepted development work on
+  the current branch. U5 (read-only unified Diff from Home and Why, plus the raw
+  JSON mode of Home, Why and Diff) is **technically accepted in development**:
+  final local gate evidence records 1192 passed, 1 skipped, 90.15% combined
+  coverage with branch measurement, mypy and Ruff clean. Coordinator mutation
+  rechecks closed the former survivors; both independent final-review follow-ups
+  passed after the Why focus correction. Real-terminal smoke preserved focus in
+  sixteen round trips and retained a positive ordinary scroll offset.
+  See [U5 acceptance](docs/validation/u5/acceptance.md).
+  U6–U9 screens remain future work.
+  The full design lives in
   [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
 
 ### Development documentation and resource measurements (Stage H)

@@ -1,0 +1,27 @@
+{
+  "exit_code": 0,
+  "cases": [
+    {
+      "size": [
+        60,
+        24
+      ],
+      "return_key": "escape",
+      "scroll_before": 8,
+      "scroll_after": 8,
+      "focus_preserved": true,
+      "driver": "LinuxDriver"
+    },
+    {
+      "size": [
+        60,
+        24
+      ],
+      "return_key": "backspace",
+      "scroll_before": 8,
+      "scroll_after": 8,
+      "focus_preserved": true,
+      "driver": "LinuxDriver"
+    }
+  ]
+}

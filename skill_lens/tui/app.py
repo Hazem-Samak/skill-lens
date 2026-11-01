@@ -38,6 +38,7 @@ from skill_lens.core.snapshot import (
 )
 from skill_lens.core.snapshot_models import SessionSnapshot
 from skill_lens.tui._textual_compat import record_unhandled_fault
+from skill_lens.tui.diff import DiffScreen
 from skill_lens.tui.home import HomeScreen
 from skill_lens.tui.session import (
     ReportValue,
@@ -234,6 +235,46 @@ class SkillLensApp(App[int]):
             prev_screen.resume_why()
             self._update_ui()
 
+    def open_diff(self, key: str) -> None:
+        """Open the Diff screen for one canonical installation key.
+
+        Exactly one Diff is ever pushed: asking again while a Diff is active is a
+        no-op, so repeated ``d`` presses cannot stack duplicates. The origin is
+        suspended first so a covered screen cannot keep requesting reports.
+        """
+        if isinstance(self.screen, DiffScreen):
+            return
+        origin = self.screen
+        if isinstance(origin, HomeScreen):
+            origin.suspend_why()
+        elif isinstance(origin, WhyScreen):
+            origin.suspend_detail()
+        else:
+            return
+        self.push_screen(DiffScreen(key))
+
+    def close_diff(self, removal_notice: str | None = None) -> None:
+        """Close the Diff screen and reconcile the screen it revealed.
+
+        The revealed screen stays the only screen allowed to act on its own
+        missing key: Home receives the removal notice this screen captured, and a
+        revealed Why re-derives itself and closes with its own notice.
+        """
+        if not isinstance(self.screen, DiffScreen):
+            return
+        diff = self.screen
+        diff._cancel_owned_token()
+        prev_screen = self.screen_stack[-2] if len(self.screen_stack) >= 2 else None
+        self.pop_screen()
+        if isinstance(prev_screen, HomeScreen):
+            if removal_notice is not None:
+                prev_screen.set_removal_notice(removal_notice)
+            prev_screen.resume_why()
+            self._update_ui()
+        elif isinstance(prev_screen, WhyScreen):
+            prev_screen.resume_detail()
+            self._update_ui()
+
     def request_report(self, view: ViewName, arguments: tuple[str, ...]) -> ReportValue | None:
         """Adapter method for Why/Diff/Compare report computation.
 
@@ -337,7 +378,7 @@ class SkillLensApp(App[int]):
             message.report,
         )
         screen = self.screen
-        if isinstance(screen, (HomeScreen, WhyScreen)):
+        if isinstance(screen, (HomeScreen, WhyScreen, DiffScreen)):
             screen.note_report_outcome(
                 message.view,
                 message.request_id,
@@ -361,7 +402,7 @@ class SkillLensApp(App[int]):
             message.error,
         )
         screen = self.screen
-        if isinstance(screen, (HomeScreen, WhyScreen)):
+        if isinstance(screen, (HomeScreen, WhyScreen, DiffScreen)):
             screen.note_report_outcome(
                 message.view,
                 message.request_id,
@@ -492,10 +533,16 @@ class SkillLensApp(App[int]):
 
             screen.sync_from_controller()
 
+        elif isinstance(screen, DiffScreen):
+            # The Diff screen owns its own status line, so one synchronization
+            # call keeps its widgets and the controller's published state in step.
+            screen.sync_from_controller()
+
 
 __all__ = [
     "CaptureComplete",
     "CaptureFailed",
+    "DiffScreen",
     "PlaceholderHomeScreen",
     "SkillLensApp",
     "ViewReportComplete",

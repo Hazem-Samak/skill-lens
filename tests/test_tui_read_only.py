@@ -22,12 +22,16 @@ import ast
 import os
 import shutil
 from pathlib import Path
+from typing import Any
 
 import pytest
 from textual.pilot import Pilot
 
 import skill_lens.tui as tui
 from skill_lens.core.exitcodes import ExitCode
+from skill_lens.tui.diff import DiffScreen
+from skill_lens.tui.home import HomeScreen
+from skill_lens.tui.why import WhyScreen
 from tests.fixtures.scenarios import build_scenario
 
 # TUI_DIR resolves dynamically from the imported skill_lens.tui package.
@@ -829,6 +833,94 @@ def test_synthetic_target_preservation_across_lifecycle(mock_home: Path) -> None
                 break
             await pilot.pause(0.02)
         assert app.controller.current is not None, "Current snapshot must be available"
+
+        # 1a. Home must be populated before any U5 view is entered.
+        async def wait_for(predicate: Any, label: str) -> None:
+            for _ in range(300):
+                if predicate():
+                    return
+                await pilot.pause(0.01)
+            raise AssertionError(f"lifecycle traversal stalled: {label}")
+
+        await wait_for(
+            lambda: (
+                isinstance(app.screen, HomeScreen)
+                and app.screen.query_one("#skill-table").row_count > 0
+            ),
+            "populated Home table",
+        )
+
+        # 1b. Home raw JSON: a real document, scrolled, then back to the table.
+        await pilot.press("J")
+        await wait_for(
+            lambda: (
+                isinstance(app.screen, HomeScreen)
+                and app.screen.json_mode
+                and app.screen.query_one("#home-json").document is not None
+            ),
+            "Home JSON document",
+        )
+        await pilot.press("end")
+        await pilot.pause()
+        await pilot.press("escape")
+        await wait_for(
+            lambda: isinstance(app.screen, HomeScreen) and not app.screen.json_mode,
+            "Home JSON exit",
+        )
+
+        # 1c. Diff: the screen itself, its accepted report, its JSON document.
+        await pilot.press("d")
+        await wait_for(
+            lambda: isinstance(app.screen, DiffScreen) and app.screen.report is not None,
+            "accepted Diff report",
+        )
+        diff = app.screen
+        assert isinstance(diff, DiffScreen)
+        assert diff.opening_key, "Diff must be opened for a canonical installation"
+        await pilot.press("J")
+        await wait_for(
+            lambda: (
+                isinstance(app.screen, DiffScreen)
+                and app.screen.json_mode
+                and app.screen.query_one("#diff-json").document is not None
+            ),
+            "Diff JSON document",
+        )
+        await pilot.press("end")
+        await pilot.pause()
+        await pilot.press("escape")
+        await wait_for(
+            lambda: isinstance(app.screen, DiffScreen) and not app.screen.json_mode,
+            "Diff JSON exit",
+        )
+        await pilot.press("escape")
+        await wait_for(lambda: isinstance(app.screen, HomeScreen), "return from Diff")
+
+        # 1d. Why: the screen, its accepted report, its JSON document, and return.
+        await pilot.press("enter")
+        await wait_for(
+            lambda: isinstance(app.screen, WhyScreen) and app.screen._report is not None,
+            "accepted Why report",
+        )
+        await pilot.press("J")
+        await wait_for(
+            lambda: (
+                isinstance(app.screen, WhyScreen)
+                and app.screen.json_mode
+                and app.screen.query_one("#why-json").document is not None
+            ),
+            "Why JSON document",
+        )
+        await pilot.press("home")
+        await pilot.pause()
+        await pilot.press("escape")
+        await wait_for(
+            lambda: isinstance(app.screen, WhyScreen) and not app.screen.json_mode,
+            "Why JSON exit",
+        )
+        await pilot.press("escape")
+        await wait_for(lambda: isinstance(app.screen, HomeScreen), "return from Why")
+
         # 2. Home text filter, agent filter (queues Why work) and navigation
         await pilot.press("slash")
         await pilot.press(*"deploy")

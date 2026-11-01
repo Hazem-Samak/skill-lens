@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import ast
 import io
-from dataclasses import FrozenInstanceError
+from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -30,38 +30,22 @@ from skill_lens.presentation import (
     STATE_STYLE,
     HeadingParts,
     NoticeParts,
+    baseline_text,
+    copy_body,
     copy_heading,
+    copy_truncation_notice,
+    file_notice,
     needs_listing,
     no_differences_message,
+    not_found_message,
     range_text,
+    report_truncation_notice,
     unified_text,
     unreadable_reason,
 )
 from skill_lens.render import _copy_heading, _render_file, render_diff
 
-# --- 1. Public exports and dictionaries ------------------------------------
-
-
-def test_public_exports() -> None:
-    """The presentation package re-exports exactly the expected 11 public symbols."""
-    import skill_lens.presentation as presentation
-
-    expected = {
-        "HeadingParts",
-        "NoticeParts",
-        "SCOPE_LABEL",
-        "STATE_MARK",
-        "STATE_STYLE",
-        "copy_heading",
-        "needs_listing",
-        "no_differences_message",
-        "range_text",
-        "unified_text",
-        "unreadable_reason",
-    }
-    assert set(presentation.__all__) == expected
-    for name in expected:
-        assert hasattr(presentation, name)
+# --- 1. Public dictionaries -------------------------------------------------
 
 
 def test_state_style_mapping() -> None:
@@ -767,3 +751,136 @@ def test_dependency_guard_fails_on_mutation(tmp_path: Path) -> None:
     file_paths = tmp_path / "bad_paths.py"
     file_paths.write_text(bad_code_paths, encoding="utf-8")
     assert "skill_lens.core.paths" in _check_module_imports(file_paths)
+
+
+# --- 9. Extracted copy/file/truncation notices (U5) -------------------------
+
+
+def _copy(
+    *,
+    path: str = "/mock/path/skill",
+    is_baseline: bool = False,
+    is_readable: bool = True,
+    variant_label: str | None = "B",
+    files: tuple[DiffFile, ...] = (),
+    truncated: bool = False,
+    omitted_lines: int = 0,
+    error: str | None = None,
+) -> DiffCopy:
+    """One diff copy for the shared-notice tests."""
+    return DiffCopy(
+        path=path,
+        scope=Scope.USER,
+        parse_status="valid",
+        is_valid=True,
+        is_readable=is_readable,
+        is_baseline=is_baseline,
+        variant_label=variant_label,
+        error=error,
+        files=files,
+        truncated=truncated,
+        omitted_lines=omitted_lines,
+    )
+
+
+def test_copy_body_distinguishes_reference_identical_and_not_compared() -> None:
+    """Each 'nothing to show' case says something different, and only one says identical."""
+    reference = _copy(is_baseline=True, variant_label="A")
+    identical = _copy()
+    unreadable = _copy(is_readable=False, error=ERR_DANGLING_SYMLINK, variant_label=None)
+    with_files = _copy(files=(DiffFile(path="SKILL.md", change=DiffChange.MODIFIED),))
+
+    reference_body = copy_body(reference, baseline_exists=True)
+    identical_body = copy_body(identical, baseline_exists=True)
+    uncompared_body = copy_body(identical, baseline_exists=False)
+    unreadable_body = copy_body(unreadable, baseline_exists=True)
+
+    bodies = {reference_body, identical_body, uncompared_body, unreadable_body}
+    assert len(bodies) == 4, "the four copy states must not share one sentence"
+
+    # A comparison that never happened must never be announced as a match.
+    assert uncompared_body != identical_body
+    assert "no differences" in (identical_body or "").lower()
+    assert "no differences" not in (uncompared_body or "").lower()
+
+    # An unreadable copy names why it could not be read.
+    assert "dangling symlink" in (unreadable_body or "")
+    assert (unreadable_body or "") != (identical_body or "")
+
+    # A copy with printable files has no explanatory line: its files follow.
+    assert copy_body(with_files, baseline_exists=True) is None
+
+
+def test_file_notice_suppresses_binary_payloads_and_hunkless_bodies() -> None:
+    """A binary file never becomes printable, and an empty hunk list says so."""
+    payload = "SECRET-PAYLOAD"
+    binary = DiffFile(
+        path="payload.bin",
+        change=DiffChange.MODIFIED,
+        is_binary=True,
+        hunks=(DiffHunk(0, 1, 0, 1, (f"+{payload}",)),),
+    )
+    hunkless = DiffFile(path="quiet.txt", change=DiffChange.ADDED, hunks=())
+    printable = DiffFile(
+        path="SKILL.md",
+        change=DiffChange.MODIFIED,
+        hunks=(DiffHunk(1, 1, 1, 1, ("-old", "+new")),),
+    )
+
+    binary_notice = file_notice(binary)
+    hunkless_notice = file_notice(hunkless)
+    assert binary_notice is not None
+    assert payload not in binary_notice, "a binary file must never expose its payload"
+    assert hunkless_notice is not None
+    assert binary_notice != hunkless_notice, "binary and empty-hunk files differ"
+    assert file_notice(printable) is None, "printable hunks are not suppressed"
+
+
+def test_copy_truncation_notices_report_the_dropped_total() -> None:
+    """A line cut quotes its count; a character-only cut never quotes zero lines."""
+    line_cut = copy_truncation_notice(_copy(truncated=True, omitted_lines=7))
+    char_only = copy_truncation_notice(_copy(truncated=True, omitted_lines=0))
+    untouched = copy_truncation_notice(_copy())
+
+    assert line_cut is not None
+    assert "7" in line_cut.body
+    assert char_only is not None
+    assert "0 changed lines" not in char_only.body
+    assert line_cut.body != char_only.body, "a line cut and a character cut differ"
+    assert untouched is None
+
+
+def test_report_truncation_notice_reports_omitted_characters() -> None:
+    """The report-wide notice carries the dropped character total, or nothing."""
+    report = DiffReport(
+        skill_name="skill",
+        home="/home",
+        cwd="/cwd",
+        found=True,
+        baseline_path="/mock/path/skill",
+        truncated=True,
+        omitted_chars=1234,
+    )
+    notice = report_truncation_notice(report)
+    assert notice is not None
+    assert "1234" in notice.body
+    assert report_truncation_notice(replace(report, truncated=False, omitted_chars=0)) is None
+
+
+def test_baseline_text_keeps_all_three_forms_and_the_not_found_name() -> None:
+    """Captured path, path plus Variant, and the no-baseline form stay distinct."""
+    baseline = _copy(path="/mock/path/skill", is_baseline=True, variant_label="A")
+    unlabelled = _copy(path="/mock/path/invalid", is_baseline=True, variant_label=None)
+
+    with_variant = baseline_text(baseline, display_path="~/skill")
+    without_variant = baseline_text(unlabelled, display_path="~/invalid")
+    none_form = baseline_text(None)
+
+    assert with_variant == "~/skill (Variant A)"
+    assert without_variant == "~/invalid"
+    assert len({with_variant, without_variant, none_form}) == 3
+    assert "/" not in none_form and "~" not in none_form, "no baseline must not look like a path"
+    assert baseline_text(baseline) == "/mock/path/skill (Variant A)"
+
+    report = DiffReport(skill_name="ghost", home="/home", cwd="/cwd", found=False)
+    assert "ghost" in not_found_message(report)

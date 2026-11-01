@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "type": "exec.result",
+  "runId": "exec_turn_mvvd01bk_q9ldcs",
+  "sessionId": "mvs_55bb9ef829b24b608cb8921275570d93",
+  "turnId": "turn_mvvd01bk_q9ldcs",
+  "status": "succeeded",
+  "model": {
+    "providerId": "minimax",
+    "modelId": "MiniMax-M3.1-Flash",
+    "variant": "thinking",
+    "providerSource": "provider",
+    "providerKind": "minimax-managed"
+  },
+  "usage": {
+    "inputTokens": 303719,
+    "outputTokens": 70063,
+    "cacheReadTokens": 7615872,
+    "totalTokens": 373782
+  },
+  "usageSource": "completed_responses",
+  "usageIncomplete": true,
+  "durationMs": 828325,
+  "complete_report_file": "minimax-report.md",
+  "report_payload_sha256": "4f0841b7d1d6e47359e7767ece60d432bf1a53b724af15b3df4efcd41b4d0e5a",
+  "coordinator_note": "Complete output payload stored separately without rewriting the reviewer report."
+}

@@ -4,9 +4,10 @@
 > C1–C5 (byte/hash helpers, captured engine inputs, capture and cancellation,
 > presentation extraction, Step 0 audit) and U1–U3 (optional install, worker
 > controller and Home browsing screen) are complete and accepted development work
-> on the current branch. U4 (Why detail screen) is technically accepted in
-> development after independent review and directly verified final test corrections.
-> See [U4 acceptance](docs/validation/u4/acceptance.md). U5–U9 screens and 0.2 publishing remain separate future work.
+> on the current branch. U4 (Why detail screen) and U5 (Diff and raw JSON) are
+> technically accepted in development after independent review and verified corrections.
+> See [U4 acceptance](docs/validation/u4/acceptance.md) and
+> [U5 acceptance](docs/validation/u5/acceptance.md). U6–U9 and 0.2 publishing remain future work.
 > No TUI extra is released: published PyPI 0.1.1 contains no TUI package and no `[tui]` extra.
 > It overturns a v1 rule ("no full-screen TUI"), so it is deliberately detailed:
 > the point of the plan is that the next person can scaffold the work without
@@ -16,7 +17,7 @@
 > **Supersedes:** the "NO full-screen TUI" rule in `AGENTS.md` §1.5 and
 > `SKILL_LENS_SPECIFICATION.md` §5.
 > **Author:** maintainer, 2026-10-04.
-> **Current revision:** 2026-10-19. Original readiness finding dated 2026-10-04
+> **Current revision:** 2026-11-01. Original readiness finding dated 2026-10-04
 > (checked against source, temporary crash reproductions and published dependency
 > metadata at that date) remains a historical record. U3 Home is technically
 > accepted with independent review and local gates:
@@ -27,7 +28,7 @@
 > retained for its limited fixture result. Findings and prerequisite records are
 > in §20; [earlier review history](docs/archive/TUI_PLAN_REVIEWS.md) is retained
 > separately. Step 0 implementation (C1–C5) is complete under §21;
-> U1–U4 are technically accepted in development; U5–U9 assignments (§22) remain future work.
+> U1–U5 are technically accepted in development; U6–U9 assignments (§22) remain future work.
 
 > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
 > Catalog, skill contents, settings and diagnostic inputs remain fixed until
@@ -37,9 +38,9 @@
 > **Implementer handoff:** [§21](#21-step-0-implementation-contract) specifies
 > Step 0 types, function signatures, files and acceptance tests.
 > [§22](#22-assignments-for-the-implementer) is the ordered assignment list.
-> Current next assignment: **U5 (Diff and JSON)**, per §22 order, after separate
-> authorization. U4 local technical acceptance is recorded above; no new phase is started.
-> Prerequisites (P1→P2→P3, C1–C5, U1–U4) are complete and technically accepted; U5–U9 remain future work.
+> Current next assignment: **U6 (Agents and Compare)**, per §22 order, after separate
+> authorization. U5 local technical acceptance is recorded above; no new phase is started.
+> Prerequisites (P1→P2→P3, C1–C5, U1–U5) are complete and technically accepted; U6–U9 remain future work.
 
 ---
 
@@ -438,6 +439,17 @@ Home (Skill list)
 | `r` | Request a new catalog/session |
 | `?` | Help overlay |
 | `q` / `Ctrl-C` | Quit |
+
+**Implemented so far (development, U1–U5):** Home (`Enter`, `/`, `a`, `Tab`),
+the Why detail screen (`←`/`→`, `Tab`, `Esc`/`Backspace`) and, since U5, `d` and
+`J`. `d` opens one Diff over Home (focused, nonempty skill table) or over an
+ordinary Why screen — the whole Why screen is the current detail view, so its
+opening installation key is used and repeated `d` presses never stack a second
+Diff. `J` toggles raw JSON on Home (skill table focused), ordinary Why and
+Diff; `Esc`/`Backspace` leaves JSON mode first and only then acts on the screen.
+`c`, `?` and the Agents, Compare and Doctor screens are not implemented yet.
+U5 is technically accepted in development after coordinator verification and
+both independent final-review follow-ups; see [acceptance](docs/validation/u5/acceptance.md).
 
 ### 8.3 Home screen layout
 
@@ -946,6 +958,14 @@ data for 600+ skills). The §21 full-capture contract is affirmed before C1–C5
 - **Gate:** diff view obeys the same truncation/binary/escaping rules as
   `render.py`; no report mixes old hashes with newly read text; each screen's
   JSON is byte-identical to CLI serialization for the same arguments and inputs.
+- **Status (U5, development):** implemented for Home, Why and Diff. The shared
+  plain copy/file/truncation notices live in `skill_lens/presentation/text.py`
+  and both `render.py` and the TUI consume them; the existing CLI snapshots pass
+  unchanged. Final gate evidence, coordinator inspection, terminal smoke and
+  mutation rechecks are recorded in `docs/validation/u5/coordinator-verification.md`.
+  The Step 5 gate is **technically accepted in development**, with both independent
+  follow-ups and the corrected real-terminal focus checks recorded in
+  [U5 acceptance](docs/validation/u5/acceptance.md). No release or human visual approval is claimed.
 
 ### Step 6 — Agents and Compare
 - Agents screen reading the registry definitions.

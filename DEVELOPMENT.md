@@ -58,7 +58,7 @@ and the build proceeds by phase:
   managed-skills folder was ranked **above** the folders that should win. All 10
   agents now cite a source, and an enforced invariant guarantees it.
 - [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope, partially
-  implemented through U4; U5–U9 planned.* An optional, additive, read-only
+  implemented through U5; U6–U9 planned.* An optional, additive, read-only
   browsing layer built on the existing frozen models, shipped as the opt-in
   `[tui]` extra so the base install gains nothing. Overturns the v1 "no
   full-screen TUI" rule for 0.2. The complete plan — vision, screens, phasing
@@ -66,8 +66,12 @@ and the build proceeds by phase:
   **Status:** C1–C5 (byte/hash helpers, captured engine inputs, capture and
   cancellation, presentation extraction, Step 0 audit) and U1–U3 (optional install, worker controller, Home browsing screen) are
   accepted; U4 Why resolution screen is technically accepted in development
-  with independent review and directly verified final test corrections. U5–U9 screens and 0.2
-  publishing remain future work. The 2026-10-04 readiness review recorded two
+  with independent review and directly verified final test corrections.
+  U5 (the read-only unified Diff screen and the raw JSON mode of Home, Why and
+  Diff) is **technically accepted in development** after coordinator verification,
+  mutation rechecks and both independent final-review follow-ups. Final evidence:
+  [`docs/validation/u5/acceptance.md`](docs/validation/u5/acceptance.md).
+  U6–U9 screens and 0.2 publishing remain future work. The 2026-10-04 readiness review recorded two
   engine fixes required before Step 0: P1 (non-object settings robustness) and
   P2 (lock decoding robustness). Both have been implemented and verified with
   regression tests. P3 cost and capture-scope review measured full capture vs
@@ -97,15 +101,16 @@ and the build proceeds by phase:
   [`2026-10-11-tui-c5-step0-audit.md`](docs/plans/2026-10-11-tui-c5-step0-audit.md),
   [`2026-10-11-tui-u1-optional-install.md`](docs/plans/2026-10-11-tui-u1-optional-install.md),
   [`2026-10-12-tui-u2-controller-skeleton.md`](docs/plans/2026-10-12-tui-u2-controller-skeleton.md),
-  [`2026-10-19-tui-u3-home.md`](docs/plans/2026-10-19-tui-u3-home.md).
+  [`2026-10-19-tui-u3-home.md`](docs/plans/2026-10-19-tui-u3-home.md),
+  [`2026-10-29-tui-u5-diff-json.md`](docs/plans/2026-10-29-tui-u5-diff-json.md).
 
   **Historical Stage H reconciliation (2026-10-16):** at that date, C1–C5
   and U1–U2 were shipped development work (TUI entrypoint/controller/skeleton),
   with U3–U9 screens and 0.2 publishing remaining future work. Published PyPI
   0.1.1 has no TUI extra; do not recommend released `skill-lens-cli[tui]`.
 
-Latest dated verification: [U4 acceptance, 27 October 2026](docs/validation/u4/acceptance.md).
-It records Home browsing, independent review and the four local gates; coverage is the combined score
+Latest dated verification: [U5 acceptance, 1 November 2026](docs/validation/u5/acceptance.md).
+It records Diff/raw JSON, independent review and the four local gates; coverage is the combined score
 with branch measurement enabled, not the branch-only percentage. Earlier
 [Stage G acceptance](docs/validation/assessment-repairs/g/acceptance.md) retains
 its packaging and installed-wheel evidence. Unexecuted CI lanes are not claimed.
@@ -114,8 +119,11 @@ Historical Stage H closed the assessment repairs with status documentation and
 [synthetic byte-heavy capture/refresh measurements](docs/validation/assessment-repairs/h/resource-risk.md).
 Stage H itself added no resource policy. Later R01 added the default 256 MiB
 captured skill-payload budget; discovery still parses source files before that
-measurement. U3 now supplies the Home table, filters and metadata preview.
-U5–U9 and 0.2 publishing remain a separate feature/release campaign.
+measurement. U3 supplies the Home table, filters and metadata preview, U4 the
+Why detail screen, and U5 adds the Diff screen plus the raw JSON mode of Home,
+Why and Diff (technically accepted after coordinator verification, mutation
+rechecks and both independent final-review follow-ups).
+U6–U9 and 0.2 publishing remain a separate feature/release campaign.
 
 > The Phase 6 plan is
 > [`PHASE6_PLAN.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_PLAN.md);
