@@ -7,7 +7,7 @@ loops for this phase only. The owner explicitly chose comparison of any two
 known agents, including agents with no installed skills. The owner subsequently
 approved freezing/committing and specified owner-managed implementation in a new
 Luna session, without delegation from this planner.
-Reference: Pending first freeze commit; filled by the reference-only commit.
+Reference: `17f92ab0bebcf64e2ec8bf46950613649da06aec` (operative frozen plan; subsequent reference-only commit changes this line only).
 Baseline: `198f56e83cb698f4d34f5c8ef736278986cd3bf9` on `main`.
 
 ## Outcome
