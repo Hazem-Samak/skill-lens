@@ -33,6 +33,17 @@ all eight Ubuntu/macOS Python 3.11–3.14 jobs and the packaging job in
 [run 40136543801](https://github.com/Hazem-Samak/skill-lens/actions/runs/40136543801).
 This is development verification, not a release.
 
+### Workflow documentation
+
+- Corrected T3 Nightly model readback, delegated worktree isolation, and launch
+  request IDs against the installed API. Shared policy now routes explicitly to
+  T3, Herdr, BB, and Rex without leaking one host's permission or lifecycle rules
+  into another.
+- Repaired Herdr status fields, parent report addresses, blocked-answer handling,
+  existing-worker display, and per-terminal cleanup. Added native BB and Rex
+  adapters covering explicit checkout selection, complete evidence, waits,
+  messaging, optional workflow capabilities, and ownership-safe cleanup.
+
 ### Planned
 
 - **0.2 — an interactive full-screen TUI (major surface change).** A new,

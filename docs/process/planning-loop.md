@@ -1,10 +1,10 @@
 # The Planning Loop
 
-> **Surface: T3 Code (active).** This T3 workflow remains unchanged. In OMP / Oh My Pi, use the separate [OMP entry](./omp/README.md) and [OMP planning loop](./omp/planning-loop.md). OMP policy takes precedence only on OMP.
+> **Sequence shared by all four surfaces; command examples use T3 Code.** Keep the steps, review risk, and two-commit freeze below. Replace only host-specific dispatch, catalog, permissions, waiting, and cleanup with [BB](./bb.md), [Rex](./rex.md), or [Herdr](./herdr.md) mechanics when running there.
 
 How a request becomes a reviewed, frozen plan before implementation. The coordinator drives; review roles and risk levels are defined in [council.md](./council.md).
 
-Read [project-profile.md](./profiles/project-profile.md) for correctness, gates, and sensitive areas. Before dispatch, read council §§1–4 for model choices, Full access preflight, the exact critic guard, reports, and task lifecycle. Consult [machine-profile.md](./profiles/machine-profile.md) when provider or workspace facts need checking.
+Read [project-profile.md](./profiles/project-profile.md) for correctness, gates, and sensitive areas. Before dispatch, read council §§1–4 for model choices, permissions, the exact critic guard, reports, and task lifecycle. On T3, consult [machine-profile.md](./profiles/machine-profile.md) for provider or workspace facts; elsewhere use the host adapter above. Do not call T3-only tools from another host.
 
 ## Start-Planning Prompt
 
@@ -70,9 +70,9 @@ For the chosen risk level:
 
 1. Check applicable draft fields, references/links, and source-backed claims before dispatch.
 2. Reuse the roster the user named for this mission and any fallback they already authorized. If an entry is missing, use the council's live-catalog ask-once procedure; choose no model yourself and waive no family disclosure-and-acceptance duty (council §1).
-3. Verify the coordinator's active Full access mode. Prepare each critic's compact, evidence-first brief under [council §6](./council.md#6-review-efficiency-without-weaker-acceptance), including the verbatim guard and report schema.
-4. Capture status/fingerprints and dispatch all critics in the wave before waiting. Use `delegate_task` with explicit user-selected target/options, `runtimeMode=full-access`, `interactionMode=plan`, `role=review`, `mode=async`, and a stable request ID distinct per round.
-5. Track task/run identity and follow council §3 for waiting, readback, cancellation, and cleanup. Collect every report and verify that critics left the files unchanged.
+3. On T3, verify the coordinator's active Full access mode; elsewhere verify the host's native permissions. Prepare each critic's evidence-first brief under [council §6](./council.md#6-review-efficiency-without-weaker-acceptance), including the verbatim guard and report schema.
+4. Capture status/fingerprints before dispatch. Launch the whole wave before waiting. On T3, use `delegate_task` with explicit user-selected target/options, `runtimeMode=full-access`, `interactionMode=plan`, `role=review`, `mode=async`, `isolation="shared"` for an uncommitted draft, and a stable request ID distinct per round. On other hosts use the adapter's native launch.
+5. Track task/run identity and use council §3 on T3, or the active host adapter elsewhere, for waiting, readback, cancellation, and cleanup. Collect every report and verify that critics left the files unchanged.
 
 Low risk needs no critic dispatch. Every other level needs its required independent review before freeze.
 
@@ -115,6 +115,6 @@ Append-only execution records may log authorized session roster choices, review/
 - [ ] Requirements and all in-scope blockers resolved; acceptance is observable.
 - [ ] Risk justified, required independent reviews complete, and decisions recorded.
 - [ ] Authorization verified; two-commit freeze complete; exact reference checked.
-- [ ] All child tasks terminal with `hasPendingChildRuns=false`; cleanup follows council §3.
+- [ ] All dispatched work settled and owned resources handled. On T3: child tasks terminal with `hasPendingChildRuns=false`, cleanup under council §3. Other hosts: verify native completion and cleanup under their adapter.
 
 Only then proceed to [implementation-loop.md](./implementation-loop.md).

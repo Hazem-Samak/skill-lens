@@ -1,10 +1,10 @@
 # The Implementation Loop
 
-> **Surface: T3 Code (active).** This T3 workflow remains unchanged. In OMP / Oh My Pi, use the separate [OMP entry](./omp/README.md) and [OMP implementation loop](./omp/implementation-loop.md). OMP policy takes precedence only on OMP.
+> **Sequence shared by all four surfaces; command examples use T3 Code.** Keep baseline, verification, rework, and acceptance below. Replace host-specific dispatch, permissions, waiting, and cleanup with [BB](./bb.md), [Rex](./rex.md), or [Herdr](./herdr.md) mechanics when running there.
 
 How a frozen plan becomes verified, committed work, one phase at a time. The implementer named by the user writes product code and tests. The coordinator inspects, verifies, obtains independent review, accepts, and commits; small administrative corrections follow [council §6](./council.md#6-review-efficiency-without-weaker-acceptance).
 
-Read [project-profile.md](./profiles/project-profile.md) for project constraints and gates, council §§1–4 before dispatch, and [machine-profile.md §5](./profiles/machine-profile.md#5-workspace-and-worktree-handling) before workspace preparation. Council §6 defines compact briefs, batched corrections, and execution receipts.
+Read [project-profile.md](./profiles/project-profile.md) for project constraints and gates, and council §§1–4 before dispatch. On T3, read [machine-profile.md §5](./profiles/machine-profile.md#5-workspace-and-worktree-handling) before workspace preparation; elsewhere use the host adapter. Council §6 defines briefs, batched corrections, and execution receipts.
 
 ## Start-Implementation Prompt
 
@@ -24,7 +24,7 @@ If a roster entry is missing or a named model is unavailable, ask once; substitu
 
 ## Step 1 — Baseline
 
-Inspect `git status --porcelain`, current commit, and the caller's actual checkout binding. Preserve pre-existing user work. A clean root checkout needs no new worktree; an already-bound checkout remains the working location. If isolation is needed, follow the machine profile's handoff/setup procedure before dispatch.
+Inspect `git status --porcelain`, current commit, and the host's actual checkout binding. Preserve pre-existing user work. A clean root checkout needs no new worktree; an already-bound checkout remains the working location. On T3, child isolation uses `delegate_task.isolation:"worktree"`; moving the coordinator itself uses the machine profile's handoff procedure. Fresh worktrees exclude uncommitted edits, so share the inspected checkout when a critic needs to review those edits.
 
 Verify `Authorization:` and the plan's `Reference:` against [planning-loop.md Step 5](./planning-loop.md#step-5--freeze-two-commit-procedure). Both coordinator and implementer must confirm that the referenced frozen commit contains every approved operative amendment. Later roster/acceptance records cannot override it.
 
@@ -51,9 +51,9 @@ Send one coherent phase, with:
 | Plan reference | Plan path and exact frozen commit hash |
 | Commit owner | Coordinator; workers do not commit |
 
-Use the compact briefing rules in council §6. Verify active coordinator Full access mode, then call `delegate_task` with the `providerInstanceId`, `model`, and `options` the user named for this mission ([council §1](./council.md#1-the-roster-and-roles)), plus `runtimeMode=full-access`, `interactionMode=default`, `role=implementation`, `mode=async`, and a stable request ID for that task. Verify the running identity against that naming before work starts.
+Use council §6's briefing rules. On T3, verify active coordinator Full access mode, then call `delegate_task` with the user-named `providerInstanceId`, `model`, and `options` ([council §1](./council.md#1-the-roster-and-roles)), plus `runtimeMode=full-access`, `interactionMode=default`, `role=implementation`, `mode=async`, the deliberately chosen `isolation`, and a stable request ID. Verify configured identity against the roster. Other hosts use their native adapter and record equivalent evidence.
 
-Retain `taskId` and nullable `childRunId`; refresh an initially null run ID by status readback. Follow council §3 for reactive waiting, task identity, questions, terminal states, and pending-child checks. Do not duplicate active work.
+On T3, retain `taskId` and nullable `childRunId`; refresh an initially null run ID after a wake/readback. Follow council §3 for task identity, questions, terminal states, and pending-child checks. Other hosts retain their returned native IDs and completion evidence. Do not duplicate active work.
 
 ## Step 3 — Implement
 
@@ -76,7 +76,7 @@ Provide current gate evidence to critics. If the verified files or environment c
 
 Use the risk level from the plan and [council §5](./council.md#5-review-risk-levels-and-escalation): zero critics for genuinely Low risk, one for Normal, two for High.
 
-Follow council §§1–4 and §6: reuse the user-named roster, disclose each reviewer's model family and record the user's acceptance (council §1), preflight Full access, supply evidence-first briefs with the exact guard/report schema, capture status/fingerprints, dispatch the whole wave, and collect all reports. Each review round is a fresh `delegate_task` with a distinct stable request ID; never continue reviews through the backing child thread.
+Follow council §§1–4 and §6: reuse the user-named roster, disclose each reviewer's model family and record the user's acceptance, verify host permissions, supply the exact guard/report schema, capture status/fingerprints before dispatch, launch the whole wave, and collect all reports. Every review round needs a fresh context and the original brief plus prior findings. On T3 use a fresh `delegate_task` and distinct stable request ID, not the backing child thread; on other hosts follow their adapter's fresh-review mechanism.
 
 Point reviewers to the frozen plan, exact diff base/current revision, relevant files, and gate logs. Supply the complete diff through one source rather than duplicating it inline and on disk. Critics must be able to inspect all relevant dependencies.
 
@@ -99,7 +99,7 @@ Accept only when:
 - [ ] Required independent reviews complete; every in-scope blocker resolved.
 - [ ] Only allowed files changed; planned documentation is updated.
 - [ ] Implementer report agrees with observed results; execution receipt is recorded.
-- [ ] Every child task is terminal (`completed`, `failed`, `cancelled`, or `interrupted`) with `hasPendingChildRuns=false`.
+- [ ] All owned work has settled under the native host's lifecycle rules. On T3 every child task is terminal (`completed`, `failed`, `cancelled`, or `interrupted`) with `hasPendingChildRuns=false`.
 
 An unchanged final tree with valid gate/review evidence needs no duplicate verification wave. If evidence is invalidated by a change, repeat the affected review and required final checks.
 
@@ -110,7 +110,7 @@ git add <allowed paths>
 git commit -m "<type>(<scope>): <summary of change>"
 ```
 
-Complete council §3 cleanup: confirm terminal/no-pending task states, and remove only owned, unused worktrees after checking bindings and preserving user edits. Report what changed, why, verification, commit, and any remaining decision in plain English.
+Complete the active host's cleanup procedure (council §3 on T3). Remove only owned, unused worktrees after checking bindings and preserving user edits. Report what changed, why, verification, commit, and any remaining decision in plain English.
 
 ## Plan-Change Table
 

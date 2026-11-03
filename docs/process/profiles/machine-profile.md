@@ -1,59 +1,125 @@
-# Machine Profile — this Mac
+# Machine Profile — T3 Code on this Mac
 
-Environment and provider facts for T3 Code on this computer. [council.md](../council.md) owns role, model-selection, permission, review, and task-lifecycle rules; the loop documents own the sequence of work.
-
-Live discovery wins over this snapshot: use `orchestrator_capabilities` for installed providers/models/options and `t3_thread_configuration` for active model/options/modes.
+This is the **T3 adapter**, not a model roster. [Council policy](../council.md) and the
+[shared loops](../planning-loop.md) own roles and acceptance. For other hosts use
+[BB](../bb.md), [Rex](../rex.md), or [Herdr](../herdr.md).
 
 ## 1. T3 Code Orchestrator
 
-Observed build: `0.0.46-nightly.20261010.2935`. Recheck after upgrades.
+Checked **2026-11-03** against the installed `/Applications/T3 Code (Nightly).app`:
 
-The active workflow uses native T3 orchestration. The [Orca process archive](../../archive/orca-process-2026-10-10/README.md) preserves earlier repository instructions; it does not imply the external Orca app was removed. The [dated migration plan](../../plans/2026-10-10-t3-orchestrator-v2-migration.md) retains session history and its accepted exceptions.
+- Version: `0.1.7-nightly.20261102.4080`; packaged source commit `47f2c8d29e98`.
+- Evidence: `Contents/Resources/app.asar:package.json` and the bundled server MCP
+  definitions. Archive member notation here means a file inside `app.asar`.
+- `apps/server/dist/server-IjwUrgAx.mjs` defines `t3_thread_configure` and
+  `t3_thread_launch`; `ManagedEndpointRuntime-DBOrUhfY.mjs` contains the delegation
+  contracts. Hashed chunk names change on upgrades; rediscover them, do not assume
+  an old filename still exists.
+
+Live tool schemas and readback win over this snapshot. Recheck after upgrades.
+A source inspection proves the API contract, not a successful live delegation.
 
 ## 2. Models and Providers
 
-**This profile binds no role to any model.** The user names the roster for each mission ([council §1](../council.md#1-the-roster-and-roles)). What follows is only what this machine can run.
+Call `orchestrator_capabilities` before the first dispatch; discover the user's
+provider instance, exact model ID, and supported options there. Repeat after a
+relevant catalog error or provider change. A built-in provider driver is not
+proof that a configured instance is authenticated or available.
 
-Provider IDs observed in this build: `codex`, `antigravity`, `pi`, `grok`, `opencode`. This is a capability snapshot, not a suggestion. Use `orchestrator_capabilities` for what is selectable now; installed models change between upgrades.
+The user names every role's provider/model/effort for the mission. No catalog
+default, old roster, template, or remembered project selection chooses it for them.
+Record requested, configured, and provider-confirmed/unverified identity separately.
 
-Effort or option values from any past session — a coordinator override, a reviewer maximum, or a named model in a dated receipt — are historical evidence only. Nothing from a previous mission is a default for the next one.
+For configured evidence, call **`t3_thread_configure` without `modelSelection`**:
 
-For actual execution evidence use [council §4](../council.md#4-report-formats): distinguish requested, configured, and provider-confirmed/unverified values. Catalog defaults do not prove what a task ran.
+```json
+{}
+```
+
+This reads the current thread. For a local child, pass the delegation receipt's
+`childThreadId` as the tool's `threadId`. For a remote child, use the receipt's
+`remoteChild.threadId` and `remoteChild.environmentId`; its local `childThreadId`
+can be null. The result includes `modelSelection`, `runtimeMode`, and
+`interactionMode`. Supplying `modelSelection` changes settings; a readback must omit it.
 
 ## 3. Permission Modes and Preflight
 
-Follow [council §2](../council.md#2-read-only-protection-and-permissions) before dispatch: Hazem's standing preference is Full access for coordinator and workers; critics retain the exact report-only guard, fingerprint detection, and automatic-review limits.
+The existing T3 Full access authorization is in [council §2](../council.md#2-read-only-protection-and-permissions).
+Verify the caller's active mode before dispatch. `runtimeMode` supports
+`approval-required`, `auto-accept-edits`, `auto`, and `full-access`;
+`interactionMode` supports `default` and `plan`. Requested child modes cannot
+exceed the caller's permitted modes.
 
-Observed narrower-parent rejection:
+If the caller is too narrow, have the user activate the authorized mode in the
+composer, then verify readback on the next turn. Do not change permissions through
+an unrelated tool or silently substitute another mode.
 
-```text
-runtime_mode_escalation_denied / Child runtime mode full-access is broader than parent mode auto
-```
-
-Composer selection applies on the subsequent turn. If activation is needed, reuse existing authorization, then verify active mode by `t3_thread_configuration` readback. Plan mode and worktrees do not enforce file-write prevention.
+Plan mode, role labels, and worktrees are not enforced read-only boundaries.
+Critics retain the exact guard, report schema, and before/after fingerprints.
+`hasPendingQuestion` and `pendingApproval` are different: answer questions through
+`t3_pending_request`; permission approval belongs to the user/native app controls.
 
 ## 4. Provider Policy and Source Mapping Evidence
 
-These are static observations from build `0.0.46-nightly.20261010.2935`, not adversarial security proof. Re-derive bundle mappings after upgrades; enforced adversarial write prevention remains unverified.
+Use the [official permission guide](https://github.com/pingdotgg/t3code/blob/47f2c8d29e98/docs/user/permission-modes.md)
+for provider-specific limits. Full access is not a promise that every provider
+suppresses every approval or safety rejection; Auto also differs by provider.
+The old 2026-10-10 bundle mappings are not current security evidence.
 
-- **OpenCode:** Supervised (`approval-required`) maps reads to `allow` and edits/bash to `ask`. Always-allowed tools: `question`, `read`, `glob`, `grep`, `lsp`, `todowrite`, `task`, `skill`. Restricted: `bash`, `edit`, `webfetch`, `websearch`, `codesearch`, `external_directory`, `doom_loop`.
-- **Codex:** Supervised maps untrusted approvals with a `readOnly` sandbox.
-- **Pi:** `PI_T3_MCP_EXTENSION_SOURCE` shows deferred-tool/`tool_search` discovery and native allowance for `read`, `grep`, `find`, `ls`; other tools can prompt even in Auto.
-- **Grok:** `grokAcpSpawnArgs` maps Supervised to `[--permission-mode, default, agent, stdio]`, Auto to `[--permission-mode, auto, agent, stdio]`, and Full access to `[agent, --always-approve, stdio]`.
-
-Pi/Grok source for that build: `/Applications/T3 Code (Nightly).app/Contents/Resources/app.asar!/apps/server/dist/binCli-DBAO6Yxt.mjs`. The former temporary inspection receipt is not retained or authoritative.
+For an operational claim, prefer the current tool schema, then configured
+readback, then the provider's actual banner or result. Record missing execution
+or adversarial write-prevention evidence as unverified. Never infer served model
+identity or family diversity from catalog labels alone.
 
 ## 5. Workspace and Worktree Handling
 
-The migration observed root checkout `main`, `worktreePath: null`; this is history, not a permanent binding. Inspect the caller with `t3_worktree_status`. Inspect child branch/worktree metadata with `t3_thread_read`. Respect existing bindings; a clean root needs no new worktree. Delegated children share the caller's checkout.
+Inspect the caller with `t3_worktree_status`; inspect child branch/worktree metadata
+with `t3_thread_read`. A clean root needs no new worktree. Preserve existing bindings
+and user edits; shell `cd` and `git worktree add` do not bind a T3 thread.
 
-If the calling thread needs isolation:
+Choose the right native operation:
 
-1. Inspect caller status and the project setup script before `t3_worktree_handoff`. Handoff moves the caller; an already-attached thread cannot handoff.
-2. Pass explicit `branch`, `baseRef`, and `startFromOrigin`: false for local parent commits, true when fetching/starting from origin. Uncommitted edits are not copied.
-3. Pass `runSetupScript: true` explicitly. The observed tool description says setup runs by default; its schema field does not declare a default.
-4. Include `continuationPrompt` and make handoff the last tool action of the turn. After resumption, check setup and continuation outcomes; stop/report either failure.
+| Need | Native operation | Important boundary |
+|---|---|---|
+| Delegate on the inspected checkout | `delegate_task` with `isolation:"shared"` | Default; includes current uncommitted files. Use for review of an uncommitted diff. |
+| Give a child its own checkout | `delegate_task` with `isolation:"worktree"` | Prepared from the parent commit; uncommitted edits stay out. Record the returned branch/path and setup outcome. |
+| Move this coordinator into a worktree | `t3_worktree_handoff` | Ends this live session; `continuationPrompt` resumes next turn. |
+| User-requested new top-level conversation | `t3_thread_launch` | Explicit `workspaceStrategy`; not a substitute for delegation. |
 
-For a user-requested separate top-level conversation, use `t3_thread_launch` with explicit `workspaceStrategy` (`root`, `worktree`, or `existing_worktree`). Omission chooses project root, not caller binding. It has no idempotency key: retain `threadId`, inspect preparation via `t3_thread_read`/`t3_thread_wait`, and check `t3_thread_list` before retrying a lost response. `create_threads` is only for an explicitly requested batch sharing the caller's checkout; it has no workspace override. A prompt's `cd` or `git worktree add` does not change T3 binding.
+For caller handoff, inspect status and the setup script first. Pass explicit
+`branch`, `baseRef`, `startFromOrigin` (`false` for local parent commits), and
+`runSetupScript:true`. Include `continuationPrompt` and call handoff last in the
+turn. It fails if the caller already has a worktree. Verify setup and continuation
+after resumption; preserve a failure instead of claiming success.
 
-Worktrees survive thread deletion. Follow council §3 cleanup: remove only owned, unused worktrees after checking bindings and uncommitted user edits.
+For `t3_thread_launch`, `workspaceStrategy` is an **object**, for example:
+
+```json
+{"type":"root"}
+```
+
+```json
+{"type":"worktree","baseRef":"<local-parent-ref>","startFromOrigin":false}
+```
+
+```json
+{"type":"existing_worktree","worktreePath":"<absolute-project-worktree-path>"}
+```
+
+Omission selects the project root, not the caller's worktree. Supply a stable
+`clientRequestId`; after an error or lost reply, retry the same call with the same
+ID, not a new key. Retain `threadId` and inspect with `t3_thread_read` or
+`t3_thread_wait`. `create_threads` is a user-requested top-level batch inheriting
+the caller's checkout; it has no per-thread workspace override.
+
+Worktrees survive thread deletion. Remove only owned, unused worktrees after
+checking bindings, setup outcomes, and uncommitted user work. Apply or merge a
+child's accepted work deliberately; a child finishing is not integration.
+
+## Sources and capability discovery
+
+- [Official source at the installed commit](https://github.com/pingdotgg/t3code/tree/47f2c8d29e98).
+- [Delegation schemas](https://github.com/pingdotgg/t3code/blob/47f2c8d29e98/packages/contracts/src/orchestratorMcp.ts): targets, isolation, task receipts, questions, and cancellation.
+- [Worktree handoff contract](https://github.com/pingdotgg/t3code/blob/47f2c8d29e98/packages/contracts/src/worktreeMcp.ts).
+- [Outside agents and host CLI](https://github.com/pingdotgg/t3code/blob/47f2c8d29e98/docs/user/outside-agents.md): external MCP access needs user-approved authentication. Do not configure it as a fallback without authorization.
+- Native linked-environment tools (`t3_environment_links`, and user-authorized `t3_environment_link`) support another machine. Preserve returned environment IDs, query its catalog, and pass `target.environmentId` for a remote delegate; local provider availability does not prove remote availability.
