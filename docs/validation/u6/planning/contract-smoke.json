@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-03",
+  "kind": "existing-service planning smoke; U6 unimplemented",
+  "isolation": "canonical temporary HOME/project, synthetic XDG, paths.set_sandbox; temporary fixture removed",
+  "registry_count": 10,
+  "detected_agents": [],
+  "compare_pair": [
+    "claude",
+    "codex"
+  ],
+  "compare_entries": 0,
+  "summary_keys": [
+    "collision_policy",
+    "id",
+    "name",
+    "policy_evidence",
+    "roots"
+  ],
+  "summary_ids": [
+    "antigravity",
+    "claude",
+    "codex",
+    "dsh",
+    "grok",
+    "omp",
+    "opencode",
+    "pi",
+    "qoder",
+    "windsurf"
+  ],
+  "validation_errors": {
+    "claude/claude": "cannot compare agent 'claude' with itself",
+    "unknown-u6-agent/codex": "unknown agent 'unknown-u6-agent'. Known agents: antigravity, claude, codex, dsh, grok, omp, opencode, pi, qoder, windsurf"
+  },
+  "assertions_passed": true
+}
