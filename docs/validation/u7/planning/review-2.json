@@ -1,0 +1,30 @@
+{
+  "pass": 2,
+  "focus": "Fresh adversarial acceptance pass: keyboard/error/raw states, test oracles and handoff completeness",
+  "input_plan_sha256": "e920024ca2ad355d9735a45197b02761f55737fa8d80b4ee0b09a4f699f44a8c",
+  "output_plan_sha256": "3350c7a1d15e4f4d60d5861b0a0c5eaa171a70d6af9cd8936ec94d6edc88ad56",
+  "findings": [
+    {
+      "id": "R2-1",
+      "issue": "Saved detail scroll could override reset after finding removal during JSON mode.",
+      "resolution": "Bind saved scroll to finding identity; invalidate it after changed/removed finding and test the raw-mode transition."
+    },
+    {
+      "id": "R2-2",
+      "issue": "Real captures may not exercise duplicate/ambiguous data, and helper-derived test expectations can conceal defects.",
+      "resolution": "Require literal fixture oracles, synthetic duplicate/ambiguity cases, delayed first capture and controlled event ordering."
+    },
+    {
+      "id": "R2-3",
+      "issue": "A reverse display dictionary could silently discard colliding paths.",
+      "resolution": "Require every reverse match and retain ambiguity as an explicit non-jump outcome."
+    },
+    {
+      "id": "R2-4",
+      "issue": "Resume wording needed to name both lifecycle entry paths explicitly.",
+      "resolution": "Name both ScreenResume and explicit close resume; neither may apply a jump only after pop."
+    }
+  ],
+  "existing_api_probe": "contract-probe.log: 1 passed; initial probe used the wrong existing finding code missing_description; corrected to actual malformed_frontmatter without product edits. Original failed output retained.",
+  "remaining_blockers": []
+}

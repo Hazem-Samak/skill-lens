@@ -1,0 +1,24 @@
+{
+  "pass": 1,
+  "focus": "Source contracts, captured identity, ownership and scope",
+  "input_plan_sha256": "4565528fa815ef114141a7826c8973cb2bfc22eacad531878a33631576096a79",
+  "output_plan_sha256": "e920024ca2ad355d9735a45197b02761f55737fa8d80b4ee0b09a4f699f44a8c",
+  "findings": [
+    {
+      "id": "R1-1",
+      "issue": "Numeric table events can outlive report generation replacement.",
+      "resolution": "Generation-bound full finding/duplicate row identities and active-instance guards required."
+    },
+    {
+      "id": "R1-2",
+      "issue": "Home generation reset can overwrite desired jump; ScreenResume runs within pop.",
+      "resolution": "Consume queued handoff in common resume path and apply target after generation rebuild, before final cursor/preview synchronization."
+    },
+    {
+      "id": "R1-3",
+      "issue": "Doctor could accidentally be routed as a computed report screen.",
+      "resolution": "Explicit sync-only app integration; no worker messages or controller/report type expansion."
+    }
+  ],
+  "remaining_blockers": []
+}

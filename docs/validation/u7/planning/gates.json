@@ -1,0 +1,69 @@
+{
+  "baseline": "01748933f7108703b796c01e15e85bd0918cc6d7",
+  "checks": [
+    {
+      "name": "pytest",
+      "command": [
+        ".venv/bin/pytest",
+        "--cov=skill_lens"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 256.13,
+      "log": "pytest.log",
+      "output_sha256": "4d234e25f7866753c365326e30d957efbf6d454b31a9d0fa617d7faf78fc3c7c",
+      "accepted": true,
+      "passed": 1220,
+      "skipped": 1,
+      "observed_combined_coverage_percent": 90.09,
+      "required_coverage_percent": 90.0,
+      "coverage_gate_passed": true
+    },
+    {
+      "name": "mypy",
+      "command": [
+        ".venv/bin/mypy"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.57,
+      "log": "mypy.log",
+      "output_sha256": "522d7b3a15704213950b7053c882b6ddd0c41149631300ce6c1933d21b5971c3",
+      "accepted": true
+    },
+    {
+      "name": "ruff-check",
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.19,
+      "log": "ruff-check.log",
+      "output_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "accepted": true
+    },
+    {
+      "name": "ruff-format-check",
+      "command": [
+        ".venv/bin/ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.02,
+      "log": "ruff-format-check.log",
+      "output_sha256": "303c3673eee2351414e3fe0c23320c0ede79ab1ecb5f20caac59ae398fe6da0d",
+      "accepted": true
+    }
+  ],
+  "contract_probe": {
+    "command": "PYTHONPATH=\"$PWD\" .venv/bin/pytest -q -o addopts='' <temporary-probe-directory>/test_contract_probe.py",
+    "exit_code": 0,
+    "result": "1 passed in 0.06s",
+    "log": "contract-probe.log",
+    "source": "contract-probe.py.txt",
+    "fixture_setup": "Copy baseline tests/conftest.py beside the temporary probe; use its mock_home and system-root guard.",
+    "initial_failure": "Probe looked for nonexistent finding code missing_description; existing producer emits malformed_frontmatter. Corrected the probe only; original failure retained in contract-probe-first.log."
+  }
+}

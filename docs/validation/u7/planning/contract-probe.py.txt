@@ -1,0 +1,45 @@
+"""Planning-only probes of existing captured Doctor contracts; no U7 implementation."""
+from pathlib import Path
+from typer.testing import CliRunner
+from skill_lens.cli import app
+from skill_lens.core.snapshot import capture_session, snapshot_path, snapshot_same_location
+from skill_lens.core.discovery import canonical_key
+from skill_lens.models import dumps
+from skill_lens.models.doctor import DoctorReport
+from skill_lens.models.enums import Severity
+from tests.fixtures.builders import write_skill, relative_symlink
+
+
+def test_captured_doctor_inputs_support_planned_navigation_and_json(mock_home: Path, monkeypatch):
+    target = mock_home / '.agents/skills/bad'
+    doc = write_skill(target, '---\nname: bad\n---\n# [literal]\n')
+    alias = mock_home / '.claude/skills/alias'
+    relative_symlink(target, alias)
+    broken = mock_home / '.claude/skills/broken'
+    relative_symlink(mock_home / 'absent', broken)
+    snapshot = capture_session(generation=1, home=mock_home, cwd=mock_home)
+    expected = dumps(snapshot.doctor.to_dict())
+    live = CliRunner().invoke(app, ['doctor','--cwd',str(mock_home),'--json'])
+    assert live.exit_code == 0, live.output
+    assert live.stdout == expected + '\n'
+    invalid = next(f for f in snapshot.doctor.findings if f.code == 'malformed_frontmatter')
+    assert invalid.path is not None and invalid.path.startswith('~/')
+    raw = [p for p, shown in snapshot.display_paths.items() if shown == invalid.path]
+    assert raw, 'captured reverse display lookup must cover real finding paths'
+    entry = next(e for e in snapshot.index.entries if e.canonical_path == str(target.resolve()))
+    assert canonical_key(entry) == str(target.resolve())
+    assert snapshot_same_location(snapshot, str(alias), canonical_key(entry))
+    assert snapshot_path(snapshot, str(alias)) == '~/.claude/skills/alias'
+    broken_finding = next(f for f in snapshot.doctor.findings if f.code == 'dangling_symlink')
+    broken_entry = next(e for e in snapshot.index.entries if e.entrypoint_path == str(broken))
+    assert snapshot_path(snapshot, canonical_key(broken_entry)) == broken_finding.path
+    doc.unlink()
+    alias.unlink()
+    monkeypatch.setenv('HOME', str(mock_home / 'different-home'))
+    assert dumps(snapshot.doctor.to_dict()) == expected
+    assert snapshot_path(snapshot, str(alias)) == '~/.claude/skills/alias'
+    assert snapshot_same_location(snapshot, str(alias), canonical_key(entry))
+    assert DoctorReport(home='h', cwd='c').healthy
+    infos = tuple(f for f in snapshot.doctor.findings if f.severity is Severity.INFO)
+    assert infos
+    assert DoctorReport(home='h', cwd='c', findings=infos).healthy
