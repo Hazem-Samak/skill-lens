@@ -11,7 +11,9 @@
 > implemented and locally technically verified; see
 > [U6 parent verification](docs/validation/u6/coordinator/verification.md) and
 > [implementer report](docs/validation/u6/implementation/implementation-report.md).
-> U7–U9 and 0.2 publishing remain future work.
+> U7 (Doctor) is implemented and locally technically verified; see
+> [U7 parent verification](docs/validation/u7/coordinator/verification.md).
+> U8–U9 and 0.2 publishing remain future work.
 > No TUI extra is released: published PyPI 0.1.1 contains no TUI package and no `[tui]` extra.
 > It overturns a v1 rule ("no full-screen TUI"), so it is deliberately detailed:
 > the point of the plan is that the next person can scaffold the work without
@@ -34,7 +36,8 @@
 > separately. Step 0 implementation (C1–C5) is complete under §21;
 > U1–U5 are technically accepted in development. U6 implementation and parent
 > technical verification are complete in development.
-> U7–U9 remain future assignments.
+> U7 implementation and parent technical verification are complete in the
+> current tree. U8–U9 remain future assignments.
 
 > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
 > Catalog, skill contents, settings and diagnostic inputs remain fixed until
@@ -46,9 +49,12 @@
 > [§22](#22-assignments-for-the-implementer) is the ordered assignment list.
 > U5 local technical acceptance is recorded above. U6 parent verification is in
 > `docs/validation/u6/coordinator/verification.md`; it is not a release or Git
-> delivery. The next assignment is **U7 (Doctor)**, per §22 and separate
-> authorization. Prerequisites P1→P2→P3, C1–C5 and U1–U6 are technically
-> accepted; U7–U9 remain future work.
+> delivery. Prerequisites P1→P2→P3 and C1–C5 are complete; U1–U6 are technically
+> accepted. U7 (Doctor) is implemented locally; see
+> [`docs/validation/u7/implementation/implementation-report.md`](docs/validation/u7/implementation/implementation-report.md).
+> [Parent verification](docs/validation/u7/coordinator/verification.md) passed.
+> The next assignment is U8, under separate
+> authorization; U8–U9 remain future work.
 
 ---
 
@@ -442,6 +448,7 @@ Home (Skill list)
 | `/` | Filter the current list |
 | `a` | Cycle the agent filter |
 | `d` | Open diff for the selected skill |
+| `h` | Open Doctor |
 | `g` | Open Agents |
 | `c` | Open compare |
 | `J` | Toggle raw JSON for the current view |
@@ -449,7 +456,7 @@ Home (Skill list)
 | `?` | Help overlay |
 | `q` / `Ctrl-C` | Quit |
 
-**Implemented so far (development, U1–U6):** Home (`Enter`, `/`, `a`, `Tab`,
+**Implemented so far (development, U1–U7):** Home (`Enter`, `/`, `a`, `Tab`,
 `g`, `c`), the Agents and Compare screens, the Why detail screen (`←`/`→`,
 `Tab`, `Esc`/`Backspace`) and, since U5, `d` and `J`. `d` opens one Diff over
 Home (focused, nonempty skill table) or over an
@@ -458,8 +465,12 @@ opening installation key is used and repeated `d` presses never stack a second
 Diff. `J` toggles raw JSON on Home (skill table focused), ordinary Why and
 Diff, Agents and Compare; Agents uses the agents array and Compare uses the
 accepted ordered-pair report. `Esc`/`Backspace` leaves JSON mode first and only
-then acts on the screen.
-`?` and Doctor are not implemented yet. U5 is technically accepted in development
+then acts on the screen. Home `h` opens Doctor when the skill table has focus;
+it remains ordinary filter text while the filter input is active. Doctor reads
+the published report, supports exact raw JSON, and offers only frozen in-app
+catalog selection. Its local technical verification passed; see
+[U7 parent verification](docs/validation/u7/coordinator/verification.md).
+`?` is not implemented yet. U5 is technically accepted in development
 after coordinator verification and both independent final-review follow-ups; see
 [U5 acceptance](docs/validation/u5/acceptance.md). U6 implementation checks are
 recorded in [`docs/validation/u6/implementation/`](docs/validation/u6/implementation/);
@@ -1007,6 +1018,11 @@ human visual approval, hosted CI acceptance or release.
   [§8.6](#86-doctor--what-jump-to-path-actually-does) — in-app selection only.
 - **Gate:** severity ordering and message text match the model; a finding whose
   path is not in the catalog explains itself instead of crashing.
+- **Implementation status:** U7 is implemented in the current tree. Local tests,
+  mutation evidence and full repository checks are recorded in
+  [`docs/validation/u7/implementation/implementation-report.md`](docs/validation/u7/implementation/implementation-report.md).
+  [Parent verification](docs/validation/u7/coordinator/verification.md) passed.
+  This is not human visual approval, hosted CI acceptance or a release.
 
 ### Step 8 — Polish, help, docs
 - Help overlay, final keymap, empty/error states.

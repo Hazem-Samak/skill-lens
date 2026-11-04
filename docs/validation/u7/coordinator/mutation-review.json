@@ -1,0 +1,511 @@
+{
+  "cases": [
+    {
+      "name": "accept_stale_generation_with_valid_key",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "4c7c69470fad621b5f81d67c6a50214225eb1d3c9386c7ccf59b0858f3a7a53e",
+          "file": "docs/validation/u7/implementation/mutations/accept_stale_generation_with_valid_key/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "8f7b9962b9b4be252f9091f0fe7c991070f2a99b7a5c06f0c22a286fb7ba2edf",
+          "file": "docs/validation/u7/implementation/mutations/accept_stale_generation_with_valid_key/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "2990a1cdcab85392b4e0fb4bff868c8c0e0d70fa19660a1853b2833d1ad9fc8c",
+          "file": "docs/validation/u7/implementation/mutations/accept_stale_generation_with_valid_key/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">       asyncio.run(_run())",
+        ">           assert not app.jump_from_doctor(screen, 1, key)",
+        "E           AssertionError: assert not True",
+        "E            +  where True = jump_from_doctor(DoctorScreen(), 1, '/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-301/test_stale_generation_with_val0/home/.agents/skills/target')",
+        "E            +    where jump_from_doctor = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'nocolor', 'focus', 'dark'}).jump_from_doctor",
+        "FAILED tests/test_tui_doctor.py::test_stale_generation_with_valid_catalog_key_does_not_jump"
+      ]
+    },
+    {
+      "name": "allow_hidden_enter_in_json",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "b78f11b395c39698943c1a681f5795f173921268b2163a7d010d30d0761d73b1",
+          "file": "docs/validation/u7/implementation/mutations/allow_hidden_enter_in_json/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "7aea911206012f3c9b2ed84a98af9125023707cd952c36e71f89302c4126f480",
+          "file": "docs/validation/u7/implementation/mutations/allow_hidden_enter_in_json/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "0f5afb16533339a1f256166feb1f9128ce6dbdf2181ae34eb6b63061f91da20e",
+          "file": "docs/validation/u7/implementation/mutations/allow_hidden_enter_in_json/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        "E            +  where PlaceholderHomeScreen() = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'nocolor', 'focus', 'dark'}).screen",
+        ">       asyncio.run(run())",
+        ">           assert app.screen is doctor,'hidden Enter must not jump'",
+        "E           AssertionError: hidden Enter must not jump",
+        "E           assert PlaceholderHomeScreen(classes='narrow') is DoctorScreen(classes='json-mode narrow')",
+        "E            +  where PlaceholderHomeScreen(classes='narrow') = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'nocolor', 'focus', 'dark'}).screen",
+        "FAILED tests/test_independent_u7.py::test_parent_first_open_frozen_alias_jump_clears_filters[size0]",
+        "FAILED tests/test_independent_u7.py::test_parent_first_open_frozen_alias_jump_clears_filters[size1]"
+      ]
+    },
+    {
+      "name": "alter_evidence",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "ceb867e2b17e83a6697e644a4f127dcc69df1f1675e91ddeae1011a384f7f58e",
+          "file": "docs/validation/u7/implementation/mutations/alter_evidence/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "593c7adc944053e7afd73fc42a193576c28bcc77c3b7219f6bd3baebbc24f77c",
+          "file": "docs/validation/u7/implementation/mutations/alter_evidence/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "1060668fe8ddc7b7c692a5c1e7938b5fb2b0e0f83459183170b5728d003a04ad",
+          "file": "docs/validation/u7/implementation/mutations/alter_evidence/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">       asyncio.run(_run((100, 30)))",
+        ">           assert \"Evidence: documented\" in detail",
+        "E           AssertionError: assert 'Evidence: documented' in 'Severity: error\\nCode: literal_path\\nMessage: [red]message[/red] mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm... detail line\\nlong detail line\\nlong detail line\\nlong detail line\\n\\nRule ID: [rule]literal[/rule]\\nEvidence: unknown'",
+        "FAILED tests/test_tui_doctor.py::test_doctor_shows_literal_fields_and_full_detail_at_both_widths"
+      ]
+    },
+    {
+      "name": "disable_reverse_display_path",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "56a11874375b1041f72623899ddbdfc627acf6b356618dddea1bc018ad8f066b",
+          "file": "docs/validation/u7/implementation/mutations/disable_reverse_display_path/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "86a9d4218daa141f1046314536d1e1f6ef542787d5ed140cb07c3acd1e4b92d5",
+          "file": "docs/validation/u7/implementation/mutations/disable_reverse_display_path/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "56a11874375b1041f72623899ddbdfc627acf6b356618dddea1bc018ad8f066b",
+          "file": "docs/validation/u7/implementation/mutations/disable_reverse_display_path/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">       assert finding_catalog_keys(snapshot, _finding(path=displayed)) == (first_key,)",
+        "E       AssertionError: assert () == ('/private/va...s/same-name',)",
+        "E         ",
+        "E         Right contains one more item: '/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-272/test_finding_catalog_keys_use_0/home/.claude/skills/same-name'",
+        "E         Use -v to get more diff",
+        "FAILED tests/test_tui_doctor.py::test_finding_catalog_keys_use_only_exact_captured_identity"
+      ]
+    },
+    {
+      "name": "drop_detail",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "05c7ba92dfc7ba7b0337fa5dd23292b5783263f1ff60ea8999b3bef80f1033cf",
+          "file": "docs/validation/u7/implementation/mutations/drop_detail/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "16c468afd13ea00fdf7d54d9067aa7ae661bf7cdfaf1e3f54c4840e8a632c143",
+          "file": "docs/validation/u7/implementation/mutations/drop_detail/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "9ecdd1435f4aa48b38e51798b51de42e1c7f43aedac585e8089e16cf977d84aa",
+          "file": "docs/validation/u7/implementation/mutations/drop_detail/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">       asyncio.run(_run((100, 30)))",
+        ">           assert long_text in detail",
+        "E           AssertionError: assert '[bold]literal[/bold] long detail line\\nlong detail line\\nlong detail line\\nlong detail line\\nlong detail line\\nlong d...ail line\\nlong detail line\\nlong detail line\\nlong detail line\\nlong detail line\\nlong detail line\\nlong detail line\\n' in 'Severity: error\\nCode: literal_path\\nMessage: [red]message[/red] mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm...ppppppppppppppppppppppppppppppppppppppppppppppppp\\nDetail: (none)\\nRule ID: [rule]literal[/rule]\\nEvidence: documented'",
+        "FAILED tests/test_tui_doctor.py::test_doctor_shows_literal_fields_and_full_detail_at_both_widths"
+      ]
+    },
+    {
+      "name": "drop_message",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "8727ff4d76876185c40dac8751b8efe1141dc38268cd6455eea70f4723a67bf2",
+          "file": "docs/validation/u7/implementation/mutations/drop_message/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "4c0936b698a534f6f6c468f760d44e457a4383ba285f309a9879bac6137ff45f",
+          "file": "docs/validation/u7/implementation/mutations/drop_message/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "be09b38c96a7662a87801092cd4624cd9898a601a4876ac145637d14648a6bac",
+          "file": "docs/validation/u7/implementation/mutations/drop_message/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">       asyncio.run(_run())",
+        ">           assert _table_rows(table) == [",
+        "E           assert [['error', 'd...'', '(none)']] == [['error', 'd....', '(none)']]",
+        "E             ",
+        "E             At index 0 diff: ['error', 'dangling_symlink', '', '~/.claude/skills/ghost'] != ['error', 'dangling_symlink', \"'~/.claude/skills/ghost' links to a target that does not exist -- claude, opencode cannot load 'ghost'.\", '~/.claude/skills/ghost']",
+        "E             Use -v to get more diff",
+        "FAILED tests/test_tui_doctor.py::test_real_captured_findings_keep_model_order_and_cli_json"
+      ]
+    },
+    {
+      "name": "invalidate_newer_owned_request_on_stale_rejection",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "e5c0c88b33d76113d4d7117bc9c9f0602cbe60ca840b2d1337f9a5cf95d367b3",
+          "file": "docs/validation/u7/implementation/mutations/invalidate_newer_owned_request_on_stale_rejection/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "894d9c66ee7a06c6828b95527bccf9ed400e56e20cd4d758915f1db9f3afde68",
+          "file": "docs/validation/u7/implementation/mutations/invalidate_newer_owned_request_on_stale_rejection/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "e5c0c88b33d76113d4d7117bc9c9f0602cbe60ca840b2d1337f9a5cf95d367b3",
+          "file": "docs/validation/u7/implementation/mutations/invalidate_newer_owned_request_on_stale_rejection/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">           asyncio.run(_run())",
+        ">           assert app.controller.active_requests.get(\"why\") == second_request",
+        "E           AssertionError: assert None == ViewRequest(generation=1, request_id=2, view='why', arguments=('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-291/test_doctor_entry_suspends_hom0/home/.claude/skills/one', 'claude'))",
+        "E            +  where None = <built-in method get of dict object at 0x1095f9600>('why')",
+        "E            +    where <built-in method get of dict object at 0x1095f9600> = {}.get",
+        "E            +      where {} = <skill_lens.tui.session.SessionController object at 0x10959d010>.active_requests",
+        "E            +        where <skill_lens.tui.session.SessionController object at 0x10959d010> = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'dark', 'focus', 'nocolor'}).controller",
+        "FAILED tests/test_tui_doctor.py::test_doctor_entry_suspends_home_why_and_old_completion_keeps_new_owner"
+      ]
+    },
+    {
+      "name": "match_by_basename",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "56a11874375b1041f72623899ddbdfc627acf6b356618dddea1bc018ad8f066b",
+          "file": "docs/validation/u7/implementation/mutations/match_by_basename/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "9cab82cf2781b0231abb786676a18f67f8161a5ed753a91d0b7de5effcc58d92",
+          "file": "docs/validation/u7/implementation/mutations/match_by_basename/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "3f5fe2e1690536e6c1b59abf1ce84497c23c42bc189e70c364529e49c7e780ee",
+          "file": "docs/validation/u7/implementation/mutations/match_by_basename/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">           assert finding_catalog_keys(snapshot, _finding(path=path)) == (first_key,)",
+        "E           AssertionError: assert ('/private/va...ls/same-name') == ('/private/va...s/same-name',)",
+        "E             ",
+        "E             Left contains one more item: '/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-275/test_finding_catalog_keys_use_0/home/.codex/skills/same-name'",
+        "E             Use -v to get more diff",
+        "FAILED tests/test_tui_doctor.py::test_finding_catalog_keys_use_only_exact_captured_identity"
+      ]
+    },
+    {
+      "name": "recompute_doctor",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "aeb4d6401ffa97f2c61777bbd616054e5023825ada23dea27f0e7725d442d8bf",
+          "file": "docs/validation/u7/implementation/mutations/recompute_doctor/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "61256f9c3e9eb00c81260dc5adf497047d1d3e7dc93cc4c8433dc29194d17970",
+          "file": "docs/validation/u7/implementation/mutations/recompute_doctor/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "d34865c50b2316ea32819086911816bf93152363810e500dff7fe01e7beacb85",
+          "file": "docs/validation/u7/implementation/mutations/recompute_doctor/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">           assert screen.selected_finding is not None",
+        "E           assert None is not None",
+        "E            +  where None = DoctorScreen().selected_finding",
+        ">       asyncio.run(_run())",
+        ">       lambda *a, **kw: (_ for _ in ()).throw(AssertionError(\"doctor recomputed\")),",
+        "E   AssertionError: doctor recomputed",
+        "FAILED tests/test_tui_doctor.py::test_doctor_first_visit_stays_frozen_after_synthetic_tree_changes"
+      ]
+    },
+    {
+      "name": "retain_blocking_agent_filter",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "caeb4ca6091b22aee92d75de5cff7cb48458711f41f80bff072f25c22d08c0ed",
+          "file": "docs/validation/u7/implementation/mutations/retain_blocking_agent_filter/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "3a8a980a91391c8d7d893cf2413b4d41e1ff4f7f7c389629d224f47d7e444f52",
+          "file": "docs/validation/u7/implementation/mutations/retain_blocking_agent_filter/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "2eb789b2358f8b024f848817f17f2e6b1513def326dc5f07f43c6f6909f82cff",
+          "file": "docs/validation/u7/implementation/mutations/retain_blocking_agent_filter/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        "E           AssertionError: assert 'codex' is None",
+        "E            +  where 'codex' = PlaceholderHomeScreen()._agent_id",
+        ">       asyncio.run(run())",
+        ">           assert home._agent_id is None",
+        "E           AssertionError: assert 'codex' is None",
+        "E            +  where 'codex' = PlaceholderHomeScreen(classes='narrow')._agent_id",
+        "FAILED tests/test_independent_u7.py::test_parent_first_open_frozen_alias_jump_clears_filters[size0]",
+        "FAILED tests/test_independent_u7.py::test_parent_first_open_frozen_alias_jump_clears_filters[size1]"
+      ]
+    },
+    {
+      "name": "retain_blocking_text_filter",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "aeb4d6401ffa97f2c61777bbd616054e5023825ada23dea27f0e7725d442d8bf",
+          "file": "docs/validation/u7/implementation/mutations/retain_blocking_text_filter/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "b3baf200df40054e809f8581b957db93fe66b895391c84091f21bfeb5e493954",
+          "file": "docs/validation/u7/implementation/mutations/retain_blocking_text_filter/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "61c837a185068c1bcdca4c07423f2a74c544594a8ca26c89b27ae8265317a6dc",
+          "file": "docs/validation/u7/implementation/mutations/retain_blocking_text_filter/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">       asyncio.run(_run())",
+        ">           assert app.controller.selected_key == key",
+        "E           AssertionError: assert None == '/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-281/test_doctor_first_visit_stays_0/home/.claude/skills/frozen'",
+        "E            +  where None = <skill_lens.tui.session.SessionController object at 0x10813d350>.selected_key",
+        "E            +    where <skill_lens.tui.session.SessionController object at 0x10813d350> = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'dark', 'nocolor', 'focus'}).controller",
+        "FAILED tests/test_tui_doctor.py::test_doctor_first_visit_stays_frozen_after_synthetic_tree_changes"
+      ]
+    },
+    {
+      "name": "retain_stale_doctor_and_json_on_refresh",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "db541edd31e9137321a4c5248057cfc4f6ac4d0f2e72d4302f0d9e93a21424b6",
+          "file": "docs/validation/u7/implementation/mutations/retain_stale_doctor_and_json_on_refresh/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "848dfdc29c1812a10ee8cdcd1a9af5d31d492f8e540b0e408d02ea176604e88c",
+          "file": "docs/validation/u7/implementation/mutations/retain_stale_doctor_and_json_on_refresh/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "90432a30bec87bdae5d4d994390898a8735026b7549821265a1cc815d68f6022",
+          "file": "docs/validation/u7/implementation/mutations/retain_stale_doctor_and_json_on_refresh/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">       asyncio.run(_run())",
+        ">       raise AssertionError(f\"timed out waiting for {label}\")",
+        "E       AssertionError: timed out waiting for raw Doctor refresh",
+        "FAILED tests/test_tui_doctor.py::test_doctor_refresh_preserves_duplicate_occurrence_and_replaces_raw_document"
+      ]
+    },
+    {
+      "name": "reverse_findings",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "a07c3cd745bb669a18842ce054346d49afa0b64d0c6c7ae23953c7a71dce33c7",
+          "file": "docs/validation/u7/implementation/mutations/reverse_findings/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "bba091ff446b419014df5bdb6c83e08eb3090e4b9fad29f83ab380ca0334c434",
+          "file": "docs/validation/u7/implementation/mutations/reverse_findings/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "d3118c02362ef919fae5e2aa84de6f9e592a79fa8e1ffc2675406270acbc3a0a",
+          "file": "docs/validation/u7/implementation/mutations/reverse_findings/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">       asyncio.run(_run())",
+        ">           assert _table_rows(table) == [",
+        "E           assert [['info', 'sy...kills/ghost']] == [['error', 'd....', '(none)']]",
+        "E             ",
+        "E             At index 0 diff: ['info', 'symlink_farm', \"1 skills are shared through symlink farms (3 links point into one library) -- that is the installer's normal layout, not a defect.\", '(none)'] != ['error', 'dangling_symlink', \"'~/.claude/skills/ghost' links to a target that does not exist -- claude, opencode cannot load 'ghost'.\", '~/.claude/skills/ghost']",
+        "E             Use -v to get more diff",
+        "FAILED tests/test_tui_doctor.py::test_real_captured_findings_keep_model_order_and_cli_json"
+      ]
+    },
+    {
+      "name": "select_first_ambiguous_candidate",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "3f5fe2e1690536e6c1b59abf1ce84497c23c42bc189e70c364529e49c7e780ee",
+          "file": "docs/validation/u7/implementation/mutations/select_first_ambiguous_candidate/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "e11f13bbcfaffb641e5b93247ea1b7de5058eaa7f5566cc44572184963c3f660",
+          "file": "docs/validation/u7/implementation/mutations/select_first_ambiguous_candidate/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "3f5fe2e1690536e6c1b59abf1ce84497c23c42bc189e70c364529e49c7e780ee",
+          "file": "docs/validation/u7/implementation/mutations/select_first_ambiguous_candidate/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">       assert finding_catalog_keys(ambiguous_snapshot, _finding(path=collision)) == tuple(",
+        "E       AssertionError: assert ('/private/va...s/same-name',) == ('/private/va...ls/same-name')",
+        "E         ",
+        "E         Right contains one more item: '/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-278/test_finding_catalog_keys_use_0/home/.codex/skills/same-name'",
+        "E         Use -v to get more diff",
+        "FAILED tests/test_tui_doctor.py::test_finding_catalog_keys_use_only_exact_captured_identity"
+      ]
+    },
+    {
+      "name": "serialize_ui_derived_json",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "76da271ae6cdc3f858d2855579cbf428781cac79facdb18f315474bc00723750",
+          "file": "docs/validation/u7/implementation/mutations/serialize_ui_derived_json/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "32dcd30b51f48260352ec225bffb841b6d86097edf30545b127c917503f9a645",
+          "file": "docs/validation/u7/implementation/mutations/serialize_ui_derived_json/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "f3b7c775959e60c303b8d490fd3a796490c339816e18ae7bc30aaf36b98d8496",
+          "file": "docs/validation/u7/implementation/mutations/serialize_ui_derived_json/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        "E             ",
+        "E             Skipping 2051 identical leading characters in diff, use -v to show",
+        "E             - _ke0/home\"",
+        "E             + _ke0/home\",",
+        "E             ?           +",
+        "E             +   \"selection\": \"ui\"",
+        "E               }",
+        "FAILED tests/test_tui_doctor.py::test_real_captured_findings_keep_model_order_and_cli_json"
+      ]
+    },
+    {
+      "name": "skip_why_suspension",
+      "logs": {
+        "control-before": {
+          "exit_code": 0,
+          "sha256": "96985a6c504be9c69c761e92d83bac6382d4ed4f0d603b6a63a28dfc16cded4c",
+          "file": "docs/validation/u7/implementation/mutations/skip_why_suspension/control-before.log",
+          "sha256_represents": "uncompressed original output"
+        },
+        "mutant": {
+          "exit_code": 1,
+          "sha256": "91f67d62eaac92e92ed8fb26d15e05e54b7a629597fb1f8c93ef0deb905d85c1",
+          "file": "docs/validation/u7/implementation/mutations/skip_why_suspension/mutant.log.gz",
+          "sha256_represents": "uncompressed original output"
+        },
+        "control-after": {
+          "exit_code": 0,
+          "sha256": "a0b9d5d5ee14dadce764fcb66a1c10b22c7e67d8884cd08d1d0f29bdb86f9004",
+          "file": "docs/validation/u7/implementation/mutations/skip_why_suspension/control-after.log",
+          "sha256_represents": "uncompressed original output"
+        }
+      },
+      "actual_failure_excerpts": [
+        ">           asyncio.run(_run())",
+        ">           assert app.controller.active_requests.get(\"why\") is None",
+        "E           AssertionError: assert ViewRequest(generation=1, request_id=1, view='why', arguments=('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-288/test_doctor_entry_suspends_hom0/home/.claude/skills/one', 'claude')) is None",
+        "E            +  where ViewRequest(generation=1, request_id=1, view='why', arguments=('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-288/test_doctor_entry_suspends_hom0/home/.claude/skills/one', 'claude')) = <built-in method get of dict object at 0x107716e80>('why')",
+        "E            +    where <built-in method get of dict object at 0x107716e80> = {'why': ViewRequest(generation=1, request_id=1, view='why', arguments=('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-288/test_doctor_entry_suspends_hom0/home/.claude/skills/one', 'claude'))}.get",
+        "E            +      where {'why': ViewRequest(generation=1, request_id=1, view='why', arguments=('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-288/test_doctor_entry_suspends_hom0/home/.claude/skills/one', 'claude'))} = <skill_lens.tui.session.SessionController object at 0x107716ed0>.active_requests",
+        "E            +        where <skill_lens.tui.session.SessionController object at 0x107716ed0> = SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'nocolor', 'dark', 'focus'}).controller",
+        "FAILED tests/test_tui_doctor.py::test_doctor_entry_suspends_home_why_and_old_completion_keeps_new_owner"
+      ]
+    }
+  ],
+  "case_count": 16,
+  "all_controls_and_restores_passed": true,
+  "coordinator_review": "Checked actual failed assertions, including retained newer Why token, hidden Enter, stale valid key and filter states; not just process status.",
+  "archive_manifest": "log-archives.json"
+}

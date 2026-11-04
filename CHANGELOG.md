@@ -23,12 +23,16 @@ release (the optional `[tui]` browsing layer), not 0.1.2 — do not rename this
 heading to 0.1.2.
 
 The current development branch ships six line-oriented CLI commands plus an
-optional, additive, read-only TUI through U6 Agents and Compare. C1–C5 and U1–U5
+optional, additive, read-only TUI implemented through U7 Doctor. C1–C5 and U1–U5
 are technically accepted in development after coordinator verification and
 independent review. U6 implementation checks are recorded in
 `docs/validation/u6/implementation/`; final parent technical verification passed
-as recorded in `docs/validation/u6/coordinator/verification.md`. U7–U9 screens
-and 0.2 publishing remain future work. Earlier local gate evidence is recorded under
+as recorded in `docs/validation/u6/coordinator/verification.md`. U7 Doctor is
+implemented in the current tree; local checks and mutation evidence are recorded
+in `docs/validation/u7/implementation/`;
+[parent verification](docs/validation/u7/coordinator/verification.md) passed. U8–U9
+screens and 0.2 publishing remain future work. This is not human visual approval,
+hosted CI acceptance or a release. Earlier local gate evidence is recorded under
 `docs/validation/assessment-repairs/h/` and `docs/validation/u3/`. The later
 [overnight CI repair](docs/validation/overnight/2026-10-24/acceptance.md) passed
 all eight Ubuntu/macOS Python 3.11–3.14 jobs and the packaging job in
@@ -69,8 +73,10 @@ This is development verification, not a release.
   See [U5 acceptance](docs/validation/u5/acceptance.md).
   U6 Agents and Compare are implemented with local implementer evidence under
   `docs/validation/u6/implementation/`; parent technical verification passed as
-  recorded in `docs/validation/u6/coordinator/verification.md`. U7–U9 screens
-  remain future work.
+  recorded in `docs/validation/u6/coordinator/verification.md`. U7 Doctor is
+  implemented locally with evidence under `docs/validation/u7/implementation/`;
+  [parent verification](docs/validation/u7/coordinator/verification.md) passed.
+  U8–U9 screens are future work.
   The full design lives in
   [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
 

@@ -24,7 +24,7 @@ from textual.binding import Binding, BindingType
 from textual.css.query import NoMatches
 from textual.message import Message
 from textual.screen import Screen
-from textual.widgets import Static
+from textual.widgets import DataTable, Static
 
 from skill_lens import __version__
 from skill_lens.core.cancellation import CaptureCancelled
@@ -41,6 +41,7 @@ from skill_lens.tui._textual_compat import record_unhandled_fault
 from skill_lens.tui.agents import AgentsScreen
 from skill_lens.tui.compare import CompareScreen
 from skill_lens.tui.diff import DiffScreen
+from skill_lens.tui.doctor import DoctorScreen
 from skill_lens.tui.home import HomeScreen
 from skill_lens.tui.session import (
     ReportValue,
@@ -306,6 +307,58 @@ class SkillLensApp(App[int]):
             return
         home.suspend_why()
         self.push_screen(CompareScreen())
+
+    def open_doctor(self) -> None:
+        """Open one Doctor screen from the focused, ordinary Home table."""
+        if isinstance(self.screen, DoctorScreen):
+            return
+        home = self.screen if isinstance(self.screen, HomeScreen) else None
+        if home is None or home._suspended or home.json_mode:
+            return
+        try:
+            table = home.query_one("#skill-table", DataTable)
+        except NoMatches:
+            return
+        if not table.has_focus:
+            return
+        home.suspend_why()
+        self.push_screen(DoctorScreen())
+
+    def close_doctor(self, expected: DoctorScreen) -> None:
+        """Close only the expected Doctor instance and resume its Home origin."""
+        if self.screen is not expected:
+            return
+        prev_screen = self.screen_stack[-2] if len(self.screen_stack) >= 2 else None
+        self.pop_screen()
+        if isinstance(prev_screen, HomeScreen):
+            prev_screen.resume_why()
+            self._update_ui()
+
+    def jump_from_doctor(self, expected: DoctorScreen, generation: int, key: str) -> bool:
+        """Validate a displayed Doctor row before queuing Home's selection."""
+        prev_screen = self.screen_stack[-2] if len(self.screen_stack) >= 2 else None
+        if self.screen is not expected or not isinstance(prev_screen, HomeScreen):
+            return False
+        snapshot = self.controller.current
+        if (
+            snapshot is None
+            or snapshot.generation != generation
+            or not expected.current_jump_matches(generation, key)
+        ):
+            expected.note_stale_jump()
+            return False
+        if not prev_screen.prepare_doctor_jump(generation, key):
+            expected.set_navigation_notice(
+                "Home could not accept this selection. Review the finding and try again."
+            )
+            return False
+
+        # Home owns the queued handoff before pop: Textual's ScreenResume and
+        # this explicit callback both pass through the same idempotent consumer.
+        self.pop_screen()
+        prev_screen.resume_why()
+        self._update_ui()
+        return True
 
     def close_compare(self, expected: CompareScreen) -> None:
         """Close only the expected Compare instance and resume Home."""
@@ -581,7 +634,7 @@ class SkillLensApp(App[int]):
             # call keeps its widgets and the controller's published state in step.
             screen.sync_from_controller()
 
-        elif isinstance(screen, (AgentsScreen, CompareScreen)):
+        elif isinstance(screen, (AgentsScreen, CompareScreen, DoctorScreen)):
             screen.sync_from_controller()
 
 
@@ -596,4 +649,5 @@ __all__ = [
     "ViewReportFailed",
     "WhyScreen",
     "CompareScreen",
+    "DoctorScreen",
 ]

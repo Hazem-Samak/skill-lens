@@ -1,0 +1,6 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest -q -o addopts= tests/test_tui_doctor.py::test_doctor_first_visit_stays_frozen_after_synthetic_tree_changes
+cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-mutations-jywj5vx7/checkout
+exit_code=0
+
+.                                                                        [100%]
+1 passed in 1.42s

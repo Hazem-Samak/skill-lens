@@ -1,0 +1,124 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+_______________ test_parent_capture_state_matrix[refusal-False] ________________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-17/test_parent_capture_state_matr0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107857110>
+has_prior = False, kind = 'refusal'
+
+    @pytest.mark.parametrize('has_prior',[False,True])
+    @pytest.mark.parametrize('kind',['refusal','retry','internal'])
+    def test_parent_capture_state_matrix(mock_home,monkeypatch,has_prior,kind):
+        from skill_lens.core.snapshot import SnapshotTooLarge, SnapshotChanged
+        base=fixture_snapshot(mock_home)
+        count=[]
+>       error={'refusal':SnapshotTooLarge('parent [refusal]'),
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               'retry':SnapshotChanged('parent [changed]; Press r to retry.'),
+               'internal':RuntimeError('parent [internal]')}[kind]
+E       TypeError: SnapshotTooLarge.__init__() takes 1 positional argument but 2 were given
+
+/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py:294: TypeError
+________________ test_parent_capture_state_matrix[refusal-True] ________________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-17/test_parent_capture_state_matr1/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107846850>
+has_prior = True, kind = 'refusal'
+
+    @pytest.mark.parametrize('has_prior',[False,True])
+    @pytest.mark.parametrize('kind',['refusal','retry','internal'])
+    def test_parent_capture_state_matrix(mock_home,monkeypatch,has_prior,kind):
+        from skill_lens.core.snapshot import SnapshotTooLarge, SnapshotChanged
+        base=fixture_snapshot(mock_home)
+        count=[]
+>       error={'refusal':SnapshotTooLarge('parent [refusal]'),
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               'retry':SnapshotChanged('parent [changed]; Press r to retry.'),
+               'internal':RuntimeError('parent [internal]')}[kind]
+E       TypeError: SnapshotTooLarge.__init__() takes 1 positional argument but 2 were given
+
+/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py:294: TypeError
+________________ test_parent_capture_state_matrix[retry-False] _________________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-17/test_parent_capture_state_matr2/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107965150>
+has_prior = False, kind = 'retry'
+
+    @pytest.mark.parametrize('has_prior',[False,True])
+    @pytest.mark.parametrize('kind',['refusal','retry','internal'])
+    def test_parent_capture_state_matrix(mock_home,monkeypatch,has_prior,kind):
+        from skill_lens.core.snapshot import SnapshotTooLarge, SnapshotChanged
+        base=fixture_snapshot(mock_home)
+        count=[]
+>       error={'refusal':SnapshotTooLarge('parent [refusal]'),
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               'retry':SnapshotChanged('parent [changed]; Press r to retry.'),
+               'internal':RuntimeError('parent [internal]')}[kind]
+E       TypeError: SnapshotTooLarge.__init__() takes 1 positional argument but 2 were given
+
+/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py:294: TypeError
+_________________ test_parent_capture_state_matrix[retry-True] _________________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-17/test_parent_capture_state_matr3/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10796c710>
+has_prior = True, kind = 'retry'
+
+    @pytest.mark.parametrize('has_prior',[False,True])
+    @pytest.mark.parametrize('kind',['refusal','retry','internal'])
+    def test_parent_capture_state_matrix(mock_home,monkeypatch,has_prior,kind):
+        from skill_lens.core.snapshot import SnapshotTooLarge, SnapshotChanged
+        base=fixture_snapshot(mock_home)
+        count=[]
+>       error={'refusal':SnapshotTooLarge('parent [refusal]'),
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               'retry':SnapshotChanged('parent [changed]; Press r to retry.'),
+               'internal':RuntimeError('parent [internal]')}[kind]
+E       TypeError: SnapshotTooLarge.__init__() takes 1 positional argument but 2 were given
+
+/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py:294: TypeError
+_______________ test_parent_capture_state_matrix[internal-False] _______________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-17/test_parent_capture_state_matr4/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107962c10>
+has_prior = False, kind = 'internal'
+
+    @pytest.mark.parametrize('has_prior',[False,True])
+    @pytest.mark.parametrize('kind',['refusal','retry','internal'])
+    def test_parent_capture_state_matrix(mock_home,monkeypatch,has_prior,kind):
+        from skill_lens.core.snapshot import SnapshotTooLarge, SnapshotChanged
+        base=fixture_snapshot(mock_home)
+        count=[]
+>       error={'refusal':SnapshotTooLarge('parent [refusal]'),
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               'retry':SnapshotChanged('parent [changed]; Press r to retry.'),
+               'internal':RuntimeError('parent [internal]')}[kind]
+E       TypeError: SnapshotTooLarge.__init__() takes 1 positional argument but 2 were given
+
+/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py:294: TypeError
+_______________ test_parent_capture_state_matrix[internal-True] ________________
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-17/test_parent_capture_state_matr5/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107948150>
+has_prior = True, kind = 'internal'
+
+    @pytest.mark.parametrize('has_prior',[False,True])
+    @pytest.mark.parametrize('kind',['refusal','retry','internal'])
+    def test_parent_capture_state_matrix(mock_home,monkeypatch,has_prior,kind):
+        from skill_lens.core.snapshot import SnapshotTooLarge, SnapshotChanged
+        base=fixture_snapshot(mock_home)
+        count=[]
+>       error={'refusal':SnapshotTooLarge('parent [refusal]'),
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               'retry':SnapshotChanged('parent [changed]; Press r to retry.'),
+               'internal':RuntimeError('parent [internal]')}[kind]
+E       TypeError: SnapshotTooLarge.__init__() takes 1 positional argument but 2 were given
+
+/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py:294: TypeError
+=========================== short test summary info ============================
+FAILED ../../../../../var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py::test_parent_capture_state_matrix[refusal-False]
+FAILED ../../../../../var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py::test_parent_capture_state_matrix[refusal-True]
+FAILED ../../../../../var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py::test_parent_capture_state_matrix[retry-False]
+FAILED ../../../../../var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py::test_parent_capture_state_matrix[retry-True]
+FAILED ../../../../../var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py::test_parent_capture_state_matrix[internal-False]
+FAILED ../../../../../var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py::test_parent_capture_state_matrix[internal-True]
+6 failed, 8 deselected in 0.25s

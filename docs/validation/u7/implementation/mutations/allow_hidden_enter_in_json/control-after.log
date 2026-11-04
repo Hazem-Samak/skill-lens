@@ -1,0 +1,6 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest -q -o addopts= tests/test_independent_u7.py::test_parent_first_open_frozen_alias_jump_clears_filters
+cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-mutations-jywj5vx7/checkout
+exit_code=0
+
+..                                                                       [100%]
+2 passed in 2.40s

@@ -22,6 +22,7 @@ import ast
 import asyncio
 import os
 import shutil
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -29,10 +30,15 @@ import pytest
 from textual.pilot import Pilot
 
 import skill_lens.tui as tui
+import skill_lens.tui.app as app_module
+from skill_lens.core.discovery import canonical_key
 from skill_lens.core.exitcodes import ExitCode
+from skill_lens.models.doctor import DoctorFinding, DoctorReport
+from skill_lens.models.enums import Evidence, Severity
 from skill_lens.tui.agents import AgentsScreen
 from skill_lens.tui.compare import CompareScreen
 from skill_lens.tui.diff import DiffScreen
+from skill_lens.tui.doctor import DoctorScreen
 from skill_lens.tui.home import HomeScreen
 from skill_lens.tui.json_view import JsonView
 from skill_lens.tui.why import WhyScreen
@@ -809,7 +815,9 @@ def _snapshot_tree_state(root: Path) -> dict[str, tuple[bytes, int, str | None]]
     return snapshot
 
 
-def test_synthetic_target_preservation_across_lifecycle(mock_home: Path) -> None:
+def test_synthetic_target_preservation_across_lifecycle(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """The TUI lifecycle (launch, refresh, reports, errors, navigation, quit)
     preserves target bytes, file modes, and symlink targets without any writes.
     """
@@ -822,6 +830,36 @@ def test_synthetic_target_preservation_across_lifecycle(mock_home: Path) -> None
     symlink_file = target_skill_dir / "symlink_doc.txt"
     symlink_file.symlink_to("SKILL.md")
     real_target.chmod(0o640)
+
+    original_capture = app_module.capture_session
+
+    def capture_with_doctor(**kwargs: Any) -> Any:
+        snapshot = original_capture(**kwargs)
+        entry = next(item for item in snapshot.index.entries if item.name == "deploy")
+        findings = (
+            DoctorFinding(
+                code="matched_target",
+                severity=Severity.ERROR,
+                message="Select captured target.",
+                rule_id="doctor_test",
+                evidence=Evidence.EMPIRICAL,
+                path=entry.entrypoint_path,
+                detail="preservation fixture",
+            ),
+            DoctorFinding(
+                code="unmatched_target",
+                severity=Severity.INFO,
+                message="This target is outside the captured catalog.",
+                rule_id="doctor_test",
+                evidence=Evidence.EMPIRICAL,
+                path="/not/in/the/catalog",
+                detail=None,
+            ),
+        )
+        report = DoctorReport(snapshot.doctor.home, snapshot.doctor.cwd, findings)
+        return replace(snapshot, doctor=report)
+
+    monkeypatch.setattr(app_module, "capture_session", capture_with_doctor)
 
     # Capture initial state of mock HOME
     before = _snapshot_tree_state(mock_home)
@@ -872,7 +910,35 @@ def test_synthetic_target_preservation_across_lifecycle(mock_home: Path) -> None
             "Home JSON exit",
         )
 
-        # 1c. Diff: the screen itself, its accepted report, its JSON document.
+        # 1c. Doctor shows frozen JSON, keeps unmatched paths inline and jumps
+        # to the captured Home row without touching its target.
+        await pilot.press("h")
+        await wait_for(lambda: isinstance(app.screen, DoctorScreen), "Doctor screen")
+        doctor = app.screen
+        assert isinstance(doctor, DoctorScreen)
+        await pilot.press("J")
+        await wait_for(
+            lambda: (
+                doctor.json_mode and doctor.query_one("#doctor-json", JsonView).document is not None
+            ),
+            "Doctor JSON document",
+        )
+        await pilot.press("escape")
+        doctor_table = doctor.query_one("#doctor-findings")
+        doctor_table.move_cursor(row=1, column=0, animate=False)
+        await pilot.pause()
+        await pilot.press("enter")
+        assert isinstance(app.screen, DoctorScreen)
+        assert "No matching catalog entry" in doctor.navigation_notice
+        doctor_table.move_cursor(row=0, column=0, animate=False)
+        await pilot.pause()
+        await pilot.press("enter")
+        await wait_for(lambda: isinstance(app.screen, HomeScreen), "Home after Doctor jump")
+        assert app.controller.selected_key == canonical_key(
+            next(item for item in app.controller.current.index.entries if item.name == "deploy")
+        )
+
+        # 1d. Diff: the screen itself, its accepted report, its JSON document.
         await pilot.press("d")
         await wait_for(
             lambda: isinstance(app.screen, DiffScreen) and app.screen.report is not None,

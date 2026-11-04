@@ -1,0 +1,11 @@
+{
+  "baseline": "f62f654f8ad95ecb1e7171e1e9e921be686dd949",
+  "source_test_config_matches_previous_acceptance_and_fresh_recheck": true,
+  "unexpected_tracked_changes": [],
+  "unrelated_files_checked": 795,
+  "unrelated_files_changed": [],
+  "frozen_plan_and_planning_evidence_unchanged": true,
+  "fresh_checks_accepted": true,
+  "remote_main_before_delivery": "f62f654f8ad95ecb1e7171e1e9e921be686dd949",
+  "delivery_authorized_by_owner": true
+}

@@ -1,0 +1,98 @@
+E501 Line too long (113 > 100)
+   --> docs/validation/u7/implementation/mutation_campaign.py:109:101
+    |
+107 |             (
+108 |                 "skill_lens/tui/doctor.py",
+109 |                 "            candidate == entry_path or snapshot_same_location(snapshot, candidate, entry_path)",
+    |                                                                                                     ^^^^^^^^^^^^^
+110 |                 "            candidate == entry_path\n"
+111 |                 "            or snapshot_same_location(snapshot, candidate, entry_path)\n"
+    |
+
+E501 Line too long (118 > 100)
+   --> docs/validation/u7/implementation/mutation_campaign.py:189:101
+    |
+187 |             (
+188 |                 "skill_lens/tui/doctor.py",
+189 |                 "        elif snapshot.generation != self._generation:\n            self._replace_snapshot(snapshot)",
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^
+190 |                 "        elif snapshot.generation != self._generation:\n"
+191 |                 "            if snapshot.generation == 1:\n"
+    |
+
+E501 Line too long (106 > 100)
+   --> docs/validation/u7/implementation/mutation_campaign.py:206:101
+    |
+204 |                 "skill_lens/tui/doctor.py",
+205 |                 "            view.show_document(dumps(snapshot.doctor.to_dict()))",
+206 |                 '            view.show_document(dumps({**snapshot.doctor.to_dict(), "selection": "ui"}))',
+    |                                                                                                     ^^^^^^
+207 |             ),
+208 |         ),
+    |
+
+E501 Line too long (105 > 100)
+   --> docs/validation/u7/implementation/mutation_campaign.py:217:101
+    |
+215 |             (
+216 |                 "skill_lens/tui/app.py",
+217 |                 "        snapshot = self.controller.current\n        if (\n            snapshot is None",
+    |                                                                                                     ^^^^^
+218 |                 "        snapshot = self.controller.current\n"
+219 |                 "        if snapshot is not None:\n"
+    |
+
+E501 Line too long (132 > 100)
+   --> docs/validation/u7/implementation/mutation_campaign.py:242:101
+    |
+240 |             (
+241 |                 "skill_lens/tui/doctor.py",
+242 |                 "        identity = self._selected_from_table()\n        if identity is None or identity.generation != generation:",
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+243 |                 "        identity = self._selected\n        if identity is None or identity.generation != generation:",
+244 |             ),
+    |
+
+E501 Line too long (119 > 100)
+   --> docs/validation/u7/implementation/mutation_campaign.py:243:101
+    |
+241 |                 "skill_lens/tui/doctor.py",
+242 |                 "        identity = self._selected_from_table()\n        if identity is None or identity.generation != generation:",
+243 |                 "        identity = self._selected\n        if identity is None or identity.generation != generation:",
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^
+244 |             ),
+245 |         ),
+    |
+
+E501 Line too long (103 > 100)
+   --> docs/validation/u7/implementation/mutation_campaign.py:330:101
+    |
+329 |         rows.append(
+330 |             f"| {mutation.name} | `{mutation.selector}` | 0 | nonzero, expected assertion | 0 | PASS |"
+    |                                                                                                     ^^^
+331 |         )
+    |
+
+E501 Line too long (435 > 100)
+   --> docs/validation/u7/implementation/mutation_campaign.py:336:101
+    |
+334 | …
+335 | …
+336 | …ests overlaid. The real checkout was never mutate…lated test tree for the hidden-Enter case.",
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^…^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+337 | …
+338 | …
+    |
+
+E501 Line too long (102 > 100)
+   --> docs/validation/u7/implementation/mutation_campaign.py:342:101
+    |
+340 |         *rows,
+341 |         "",
+342 |         f"Temporary isolated checkout: `{project}`. Per-case full output is retained in this folder.",
+    |                                                                                                     ^^
+343 |         "",
+344 |     ]
+    |
+
+Found 9 errors.

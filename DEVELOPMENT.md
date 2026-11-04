@@ -58,7 +58,7 @@ and the build proceeds by phase:
   managed-skills folder was ranked **above** the folders that should win. All 10
   agents now cite a source, and an enforced invariant guarantees it.
 - [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope, partially
-  implemented through U6; U7–U9 planned.* An optional, additive, read-only
+  implemented through U7; U8–U9 planned.* An optional, additive, read-only
   browsing layer built on the existing frozen models, shipped as the opt-in
   `[tui]` extra so the base install gains nothing. Overturns the v1 "no
   full-screen TUI" rule for 0.2. The complete plan — vision, screens, phasing
@@ -74,7 +74,11 @@ and the build proceeds by phase:
   U6 Agents and Compare are implemented in the current working tree, with local
   implementer checks in `docs/validation/u6/implementation/` and passing final
   [parent technical verification](docs/validation/u6/coordinator/verification.md).
-  U7–U9 screens and 0.2 publishing remain future work. The
+  U7 Doctor is implemented in the current tree; its local checks and mutation
+  evidence are recorded in `docs/validation/u7/implementation/`.
+  [Parent technical verification](docs/validation/u7/coordinator/verification.md)
+  passed. U8–U9 screens and 0.2 publishing remain future work.
+  This does not claim human visual approval, hosted CI acceptance or release. The
   2026-10-04 readiness review recorded two
   engine fixes required before Step 0: P1 (non-object settings robustness) and
   P2 (lock decoding robustness). Both have been implemented and verified with
@@ -113,8 +117,8 @@ and the build proceeds by phase:
   with U3–U9 screens and 0.2 publishing remaining future work. Published PyPI
   0.1.1 has no TUI extra; do not recommend released `skill-lens-cli[tui]`.
 
-Latest dated verification: [U6 parent technical verification, 3 November 2026](docs/validation/u6/coordinator/verification.md).
-It records Diff/raw JSON, independent review and the four local gates; coverage is the combined score
+Latest dated verification: [U7 parent technical verification, 4 November 2026](docs/validation/u7/coordinator/verification.md).
+It records native Doctor implementation, parent review and the four local gates; coverage is the combined score
 with branch measurement enabled, not the branch-only percentage. Earlier
 [Stage G acceptance](docs/validation/assessment-repairs/g/acceptance.md) retains
 its packaging and installed-wheel evidence. Unexecuted CI lanes are not claimed.
@@ -129,8 +133,10 @@ Why and Diff (technically accepted after coordinator verification, mutation
 rechecks and both independent final-review follow-ups). U6 Agents and Compare
 are implemented with local implementer evidence under
 `docs/validation/u6/implementation/` and passing parent checks under
-`docs/validation/u6/coordinator/verification.md`. U7–U9 and
-0.2 publishing remain a separate feature/release campaign.
+`docs/validation/u6/coordinator/verification.md`. U7 Doctor is implemented in
+the current tree with local evidence under `docs/validation/u7/implementation/`;
+[parent verification](docs/validation/u7/coordinator/verification.md) passed.
+U8–U9 and 0.2 publishing remain a separate feature/release campaign.
 
 > The Phase 6 plan is
 > [`PHASE6_PLAN.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_PLAN.md);

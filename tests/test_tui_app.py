@@ -19,21 +19,27 @@ from __future__ import annotations
 
 import asyncio
 import threading
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, ClassVar
 
 import pytest
 from textual.app import App
 from textual.pilot import Pilot
-from textual.widgets import DataTable, Static
+from textual.widgets import DataTable, Input, Static
 from typer.testing import CliRunner
 
 import skill_lens.tui as tui
+import skill_lens.tui.app as app_module
 from skill_lens.cli import app as cli_app
 from skill_lens.core import paths
 from skill_lens.core.cancellation import CaptureCancelled
+from skill_lens.core.discovery import canonical_key
 from skill_lens.core.exitcodes import ExitCode
-from skill_lens.core.snapshot import SnapshotChanged, SnapshotTooLarge
+from skill_lens.core.snapshot import SnapshotChanged, SnapshotTooLarge, capture_session
+from skill_lens.core.snapshot_models import SessionSnapshot
+from skill_lens.models.doctor import DoctorFinding, DoctorReport
+from skill_lens.models.enums import Evidence, Severity
 from skill_lens.tui.app import (
     CaptureComplete,
     CaptureFailed,
@@ -42,6 +48,8 @@ from skill_lens.tui.app import (
     ViewReportComplete,
     ViewReportFailed,
 )
+from skill_lens.tui.doctor import DoctorScreen
+from skill_lens.tui.home import HomeScreen
 from tests.fixtures.scenarios import build_scenario
 
 
@@ -1295,3 +1303,249 @@ def test_headless_size_refusal_renders_and_quits_with_0(
             assert app.return_code == int(ExitCode.OK)
 
     asyncio.run(_run())
+
+
+# Parent-authored U7 route, handoff and delayed-event acceptance checks.
+
+
+def _u7_snapshot(home: Path) -> tuple[SessionSnapshot, str]:
+    build_scenario("claude_personal_beats_project", home)
+    snapshot = capture_session(generation=1, home=home, cwd=home)
+    entry = snapshot.index.entries[0]
+    report = DoctorReport(
+        snapshot.doctor.home,
+        snapshot.doctor.cwd,
+        (
+            DoctorFinding(
+                code="parent_route",
+                severity=Severity.WARNING,
+                message="Select the captured installation.",
+                rule_id="doctor_parent_acceptance",
+                evidence=Evidence.EMPIRICAL,
+                path=entry.entrypoint_path,
+            ),
+        ),
+    )
+    return replace(snapshot, doctor=report), canonical_key(entry)
+
+
+async def _u7_wait(pilot: Pilot[Any], predicate: Any) -> None:
+    async with asyncio.timeout(6):
+        while not predicate():
+            await pilot.pause(0.01)
+
+
+def test_doctor_app_routes_require_home_focus_and_exact_screen_instance(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Host calls obey the same entry boundaries as keys; old closes stay inert."""
+    snapshot, key = _u7_snapshot(mock_home)
+    monkeypatch.setattr(
+        app_module, "capture_session", lambda **kw: replace(snapshot, generation=kw["generation"])
+    )
+
+    async def run() -> None:
+        app = SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test() as pilot:
+            await _u7_wait(pilot, lambda: app.controller.current is not None)
+            home = app.screen
+            assert isinstance(home, HomeScreen)
+            table = home.query_one("#skill-table", DataTable)
+            home.query_one("#filter-input", Input).focus()
+            await _u7_wait(pilot, lambda: home.query_one("#filter-input", Input).has_focus)
+            app.open_doctor()
+            assert app.screen is home
+            table.focus()
+            home.enter_json_mode()
+            await pilot.pause()
+            app.open_doctor()
+            assert app.screen is home
+            home.leave_json_mode()
+            await pilot.pause()
+
+            app.open_agents()
+            await pilot.pause()
+            agents = app.screen
+            app.open_doctor()
+            assert app.screen is agents
+            app.close_agents(agents)
+            await pilot.pause()
+            app.open_why(key, "claude")
+            await pilot.pause()
+            why = app.screen
+            app.open_doctor()
+            assert app.screen is why
+            app.close_why()
+            await pilot.pause()
+
+            app.open_doctor()
+            await pilot.pause()
+            doctor = app.screen
+            assert isinstance(doctor, DoctorScreen)
+            old_table = doctor.query_one("#doctor-findings", DataTable)
+            stack = tuple(app.screen_stack)
+            app.open_doctor()
+            assert tuple(app.screen_stack) == stack
+            stale = DoctorScreen()
+            app.close_doctor(stale)
+            assert not app.jump_from_doctor(stale, snapshot.generation, key)
+            assert app.screen is doctor
+            app.close_doctor(doctor)
+            await pilot.pause()
+            app.close_doctor(doctor)
+            app.open_doctor()
+            await pilot.pause()
+            current = app.screen
+            assert isinstance(current, DoctorScreen) and current is not doctor
+            assert not app.jump_from_doctor(doctor, snapshot.generation, key)
+            doctor._restore_json_focus(old_table)
+            assert app.screen is current
+            app.close_doctor(current)
+            await pilot.pause()
+            assert app.focused is table
+            await pilot.press("q")
+
+    asyncio.run(run())
+
+
+def test_doctor_handoff_rejection_and_refresh_before_home_resume(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A refused handoff stays inline; a queued removed target is not invented."""
+    snapshot, key = _u7_snapshot(mock_home)
+    monkeypatch.setattr(
+        app_module, "capture_session", lambda **kw: replace(snapshot, generation=kw["generation"])
+    )
+
+    async def run() -> None:
+        app = SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test() as pilot:
+            await _u7_wait(pilot, lambda: app.controller.current is not None)
+            home = app.screen
+            assert isinstance(home, HomeScreen)
+            await pilot.press("h")
+            doctor = app.screen
+            assert isinstance(doctor, DoctorScreen)
+            with monkeypatch.context() as patch:
+                patch.setattr(home, "prepare_doctor_jump", lambda generation, key: False)
+                assert not app.jump_from_doctor(doctor, snapshot.generation, key)
+            assert app.screen is doctor
+            assert "Home could not accept" in doctor.navigation_notice
+            assert home.prepare_doctor_jump(snapshot.generation, key)
+            assert not home.prepare_doctor_jump(snapshot.generation, key)
+
+            request = app.controller.request_refresh()
+            assert request is not None
+            generation, _ = request
+            empty = capture_session(
+                generation=generation, home=mock_home, cwd=mock_home, registry={}
+            )
+            assert not empty.index.entries
+            app.on_capture_complete(CaptureComplete(generation, empty))
+            app.close_doctor(doctor)
+            await pilot.pause()
+            assert app.screen is home
+            assert home._pending_doctor_jump is None
+            assert app.controller.selected_key is None
+            notice = str(home.query_one("#doctor-jump-notice", Static).content)
+            assert "no longer available" in notice
+            assert not app.controller.failed
+            home.resume_why()
+            assert app.controller.selected_key is None
+            await pilot.press("q")
+
+    asyncio.run(run())
+
+
+def test_doctor_delayed_row_events_cannot_target_replacement_generation_or_home(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Old table messages remain inert after replacement and after screen close."""
+    snapshot, key = _u7_snapshot(mock_home)
+    monkeypatch.setattr(
+        app_module, "capture_session", lambda **kw: replace(snapshot, generation=kw["generation"])
+    )
+
+    async def run() -> None:
+        app = SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test() as pilot:
+            await _u7_wait(pilot, lambda: app.controller.current is not None)
+            await pilot.press("h")
+            doctor = app.screen
+            assert isinstance(doctor, DoctorScreen)
+            table = doctor.query_one("#doctor-findings", DataTable)
+            old_row_key = table.coordinate_to_cell_key((0, 0)).row_key
+            request = app.controller.request_refresh()
+            assert request is not None
+            generation, _ = request
+            app.on_capture_complete(
+                CaptureComplete(generation, replace(snapshot, generation=generation))
+            )
+            await pilot.pause()
+            selected = doctor.selected_identity
+            doctor.post_message(DataTable.RowHighlighted(table, 0, old_row_key))
+            doctor.post_message(DataTable.RowSelected(table, 0, old_row_key))
+            await pilot.pause()
+            assert app.screen is doctor
+            assert doctor.selected_identity == selected
+            assert selected is not None and selected.generation == generation
+            app.close_doctor(doctor)
+            await pilot.pause()
+            home = app.screen
+            assert isinstance(home, HomeScreen)
+            doctor.on_data_table_row_highlighted(DataTable.RowHighlighted(table, 0, old_row_key))
+            doctor.on_data_table_row_selected(DataTable.RowSelected(table, 0, old_row_key))
+            doctor.action_cursor_down()
+            doctor.action_cursor_up()
+            doctor.action_jump()
+            doctor.action_toggle_json()
+            doctor._restore_detail_scroll(20)
+            assert app.screen is home
+            assert app.controller.selected_key == key
+            assert app.focused is home.query_one("#skill-table", DataTable)
+            await pilot.press("q")
+
+    asyncio.run(run())
+
+
+def test_doctor_late_enter_resynchronizes_before_a_second_confirmed_jump(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A valid old row cannot jump across publication before its screen reconciles."""
+    snapshot, key = _u7_snapshot(mock_home)
+    monkeypatch.setattr(
+        app_module, "capture_session", lambda **kw: replace(snapshot, generation=kw["generation"])
+    )
+
+    async def run() -> None:
+        app = SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test() as pilot:
+            await _u7_wait(pilot, lambda: app.controller.current is not None)
+            await pilot.press("h")
+            doctor = app.screen
+            assert isinstance(doctor, DoctorScreen)
+            table = doctor.query_one("#doctor-findings", DataTable)
+            old_row_key = table.coordinate_to_cell_key((0, 0)).row_key
+            request = app.controller.request_refresh()
+            assert request is not None
+            generation, _ = request
+            # Publish at the controller boundary, retaining the old visible row
+            # until its queued activation reaches the consumer.
+            assert app.controller.accept_capture(
+                replace(snapshot, generation=generation), generation
+            )
+            assert doctor.selected_identity is not None
+            assert doctor.selected_identity.generation == snapshot.generation
+            doctor.on_data_table_row_selected(DataTable.RowSelected(table, 0, old_row_key))
+            await pilot.pause()
+            assert app.screen is doctor
+            assert doctor.selected_identity is not None
+            assert doctor.selected_identity.generation == generation
+            assert "press Enter again" in doctor.navigation_notice
+            await pilot.press("enter")
+            await pilot.pause()
+            assert isinstance(app.screen, HomeScreen)
+            assert app.controller.selected_key == key
+            await pilot.press("q")
+
+    asyncio.run(run())

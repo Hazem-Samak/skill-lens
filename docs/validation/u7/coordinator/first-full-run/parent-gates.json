@@ -1,0 +1,76 @@
+{
+  "baseline": "f62f654f8ad95ecb1e7171e1e9e921be686dd949",
+  "checks": [
+    {
+      "name": "independent-ui",
+      "command": [
+        ".venv/bin/pytest",
+        "-q",
+        "-o",
+        "addopts=",
+        "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.3,
+      "log": "independent-ui.log",
+      "output_sha256": "0f862c53c97ff5797ded1895a83124aa297e851f2fb48b574388c5befff9146e",
+      "accepted": true
+    },
+    {
+      "name": "pytest",
+      "command": [
+        ".venv/bin/pytest",
+        "--cov=skill_lens"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 272.71,
+      "log": "pytest.log",
+      "output_sha256": "8280d066d3dcf645f5e224a637160205ca37d3645b7f498823ff15128efc1037",
+      "accepted": false,
+      "passed": 1231,
+      "skipped": 1,
+      "observed_combined_coverage_percent": 89.6,
+      "required_coverage_percent": 90,
+      "coverage_gate_passed": false
+    },
+    {
+      "name": "mypy",
+      "command": [
+        ".venv/bin/mypy"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.62,
+      "log": "mypy.log",
+      "output_sha256": "fdba5b4e396441aaf1ba0d4aee9a2b6de7229057c665772ec81bd032ce1cc3f5",
+      "accepted": true
+    },
+    {
+      "name": "ruff-check",
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.05,
+      "log": "ruff-check.log",
+      "output_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "accepted": true
+    },
+    {
+      "name": "ruff-format-check",
+      "command": [
+        ".venv/bin/ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.02,
+      "log": "ruff-format-check.log",
+      "output_sha256": "fb4be7333d41539def0a8a7662d9037c5f70b7e4975b078cf3f793cc4314a12f",
+      "accepted": true
+    }
+  ],
+  "source_test_config_changes_during_checks": []
+}

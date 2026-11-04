@@ -78,6 +78,10 @@ class _ReportHost(Protocol):
         """Open the comparison picker from Home."""
         ...
 
+    def open_doctor(self) -> None:
+        """Open the captured Doctor report from Home."""
+        ...
+
 
 @dataclass(frozen=True, slots=True)
 class AgentOption:
@@ -121,6 +125,14 @@ class _OwnedWhy:
 
     lookup_name: str
     request: ViewRequest
+
+
+@dataclass(frozen=True, slots=True)
+class _PendingDoctorJump:
+    """One validated Doctor selection waiting for Home to resume."""
+
+    generation: int
+    key: str
 
 
 def _parse_mark(parse_status: str) -> str:
@@ -297,6 +309,7 @@ class HomeScreen(Screen[None]):
         Binding("d", "open_diff", "Diff", show=False),
         Binding("g", "open_agents", "Agents", show=False),
         Binding("c", "open_compare", "Compare", show=False),
+        Binding("h", "open_doctor", "Doctor", show=True),
         Binding("J", "toggle_json", "JSON", show=False),
     ]
 
@@ -368,6 +381,11 @@ class HomeScreen(Screen[None]):
         padding: 0 1;
         color: $warning;
     }
+    #doctor-jump-notice {
+        height: auto;
+        padding: 0 1;
+        color: $warning;
+    }
     #footer-help {
         height: 1;
         padding: 0 1;
@@ -417,6 +435,10 @@ class HomeScreen(Screen[None]):
         self._last_query = ""
         self._suspended = False
         self._removal_notice: str | None = None
+        self._doctor_jump_notice = ""
+        self._pending_doctor_jump: _PendingDoctorJump | None = None
+        self._doctor_jump_event_guard: str | None = None
+        self._doctor_jump_input_suppressed = False
         self._json_mode = False
         self._json_previous_focus: Widget | None = None
         self._mounting = False
@@ -444,9 +466,10 @@ class HomeScreen(Screen[None]):
         yield Static("Initializing...", id="status-text", markup=False)
         yield Static("", id="error-details", markup=False)
         yield Static("", id="removal-notice", markup=False)
+        yield Static("", id="doctor-jump-notice", markup=False)
         yield Static(
             "q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff"
-            "   g: Agents   c: Compare"
+            "   g: Agents   c: Compare   h: Doctor"
             "   J: JSON   Tab: Focus",
             id="footer-help",
             markup=False,
@@ -510,13 +533,106 @@ class HomeScreen(Screen[None]):
         self._suspended = False
         if not self.is_mounted:
             return
-        self.sync_from_controller()
+        consumed_jump = self._pending_doctor_jump is not None
+        if consumed_jump:
+            self._consume_doctor_jump()
+        else:
+            self.sync_from_controller()
         if self.app.screen is self and not self._json_mode:
             try:
                 table = self.query_one("#skill-table", DataTable)
                 table.focus()
             except NoMatches:
                 pass
+        if consumed_jump:
+            self._host._update_ui()
+
+    def prepare_doctor_jump(self, generation: int, key: str) -> bool:
+        """Queue a current catalog selection without touching suspended widgets."""
+        controller = self._controller_or_none()
+        snapshot = controller.current if controller is not None else None
+        if (
+            not self._suspended
+            or controller is None
+            or controller.is_closed
+            or snapshot is None
+            or snapshot.generation != generation
+            or self._pending_doctor_jump is not None
+            or key not in {canonical_key(entry) for entry in snapshot.index.entries}
+        ):
+            return False
+        self._pending_doctor_jump = _PendingDoctorJump(generation, key)
+        return True
+
+    def _consume_doctor_jump(self) -> None:
+        """Apply a queued target before ordinary Home reconciliation runs."""
+        pending = self._pending_doctor_jump
+        self._pending_doctor_jump = None
+        if pending is None:
+            return
+        controller = self._host.controller
+        snapshot = controller.current
+        if (
+            snapshot is None
+            or snapshot.generation != pending.generation
+            or pending.key not in {canonical_key(entry) for entry in snapshot.index.entries}
+        ):
+            self._set_doctor_jump_notice(
+                "The requested skill is no longer available in the current session."
+            )
+            self.sync_from_controller()
+            return
+
+        rows = build_home_rows(snapshot)
+        if pending.key not in {row.key for row in rows}:
+            self._set_doctor_jump_notice(
+                "The requested skill is not available in the Home list for this session."
+            )
+            self.sync_from_controller()
+            return
+
+        query = self.query_one("#filter-input", Input)
+        if query.value:
+            self._doctor_jump_input_suppressed = True
+            query.value = ""
+        self._last_query = ""
+        self._agent_index = 0
+        self._agent_id = None
+        self._groups = {}
+        self._lookup_by_key = {}
+        self._doctor_jump_notice = ""
+        self._update_doctor_jump_notice()
+        if self._generation != snapshot.generation:
+            self._reset_for_generation(snapshot)
+        else:
+            self._apply_filters(reason="doctor_jump")
+
+        # Generation rebuilding and the previous filter can both choose a
+        # fallback row. Reapply the validated Doctor target after that work.
+        if pending.key not in {row.key for row in self._visible}:
+            self._set_doctor_jump_notice(
+                "The requested skill is no longer visible in the current Home list."
+            )
+            return
+        controller.set_selected_key(pending.key)
+        self._sync_table_cursor()
+        self._update_preview()
+        self._clear_removal_notice()
+        self._doctor_jump_event_guard = pending.key
+        self.call_after_refresh(self._clear_doctor_jump_event_guard, pending.key)
+        self.query_one("#skill-table", DataTable).focus()
+
+    def _clear_doctor_jump_event_guard(self, key: str) -> None:
+        if self._doctor_jump_event_guard == key:
+            self._doctor_jump_event_guard = None
+
+    def _set_doctor_jump_notice(self, notice: str) -> None:
+        self._doctor_jump_notice = notice
+        self._update_doctor_jump_notice()
+
+    def _update_doctor_jump_notice(self) -> None:
+        with contextlib.suppress(NoMatches):
+            self.query_one("#doctor-jump-notice", Static).update(self._doctor_jump_notice)
 
     # -- raw JSON mode -----------------------------------------------------
 
@@ -1119,13 +1235,31 @@ class HomeScreen(Screen[None]):
     def on_key(self, event: events.Key) -> None:
         if self._suspended:
             return
-        if event.key in ("down", "up", "j", "k", "slash", "a", "escape", "enter", "r"):
+        if event.key in (
+            "down",
+            "up",
+            "j",
+            "k",
+            "slash",
+            "a",
+            "escape",
+            "enter",
+            "r",
+            "h",
+        ):
             self._clear_removal_notice()
+            if event.key != "h":
+                self._set_doctor_jump_notice("")
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
         if self._syncing or self._suspended or self._json_mode:
             return
         key = event.row_key.value
+        if self._doctor_jump_event_guard is not None:
+            if key != self._doctor_jump_event_guard:
+                return
+            if self._host.controller.selected_key == self._doctor_jump_event_guard:
+                return
         table = self.query_one("#skill-table", DataTable)
         if table.row_count == 0:
             return
@@ -1144,7 +1278,7 @@ class HomeScreen(Screen[None]):
         self._drive()
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
-        if self._suspended or self._json_mode:
+        if self._suspended or self._json_mode or self._doctor_jump_event_guard is not None:
             return
         self.action_open_why()
 
@@ -1152,6 +1286,9 @@ class HomeScreen(Screen[None]):
         if self._suspended or self._json_mode:
             return
         if event.input.id != "filter-input":
+            return
+        if self._doctor_jump_input_suppressed and event.value == "":
+            self._doctor_jump_input_suppressed = False
             return
         if event.value == self._last_query:
             return
@@ -1254,6 +1391,21 @@ class HomeScreen(Screen[None]):
                 return
         self._clear_removal_notice()
         self._host.open_compare()
+
+    def action_open_doctor(self) -> None:
+        """Open Doctor only from ordinary Home while its table holds focus."""
+        if self._suspended or self._json_mode:
+            return
+        try:
+            table = self.query_one("#skill-table", DataTable)
+            filter_input = self.query_one("#filter-input", Input)
+        except NoMatches:
+            return
+        if not table.has_focus or filter_input.has_focus:
+            return
+        self._clear_removal_notice()
+        self._set_doctor_jump_notice("")
+        self._host.open_doctor()
 
     def action_noop_enter(self) -> None:
         """Backward compatibility alias for enter action."""

@@ -1,0 +1,422 @@
+"""Parent-authored U7 acceptance checks, independent of worker test helpers."""
+from __future__ import annotations
+import asyncio
+import threading
+import time
+from dataclasses import replace
+from pathlib import Path
+from types import MappingProxyType
+import pytest
+from textual.widgets import DataTable, Input, Static
+from typer.testing import CliRunner
+import skill_lens.tui.app as app_module
+from skill_lens.cli import app as cli_app
+from skill_lens.core.discovery import canonical_key
+from skill_lens.core.snapshot import capture_session
+from skill_lens.models import dumps
+from skill_lens.models.doctor import DoctorFinding, DoctorReport
+from skill_lens.models.enums import Evidence, Severity
+from skill_lens.tui.app import SkillLensApp
+from skill_lens.tui.home import HomeScreen
+from skill_lens.tui.json_view import JsonView
+from tests.fixtures.builders import make_skill, relative_symlink, write_skill
+
+async def wait(pilot, predicate, label):
+    deadline = time.monotonic() + 6
+    while time.monotonic() < deadline:
+        if predicate():
+            return
+        await pilot.pause(0.01)
+    raise AssertionError('timed out waiting for '+label)
+
+def selected_table_key(table):
+    return str(table.coordinate_to_cell_key((table.cursor_row,0)).row_key.value)
+
+def finding(path, message='[b]literal finding[/b]'):
+    return DoctorFinding(code='parent_probe', severity=Severity.WARNING,
+        message=message, rule_id='[rule]', evidence=Evidence.EMPIRICAL,
+        path=path, detail='[detail]')
+
+def fixture_snapshot(home):
+    make_skill(home/'.agents/skills/target','same-name','target description')
+    relative_symlink(home/'.agents/skills/target',home/'.claude/skills/alias')
+    make_skill(home/'.codex/skills/other','other','other description')
+    make_skill(home/'.codex/skills/second','same-name','second description')
+    return capture_session(generation=1,home=home,cwd=home)
+
+@pytest.mark.parametrize('size',[(100,30),(60,24)])
+def test_parent_first_open_frozen_alias_jump_clears_filters(mock_home,monkeypatch,size):
+    base=fixture_snapshot(mock_home)
+    report=DoctorReport(home=str(mock_home),cwd=str(mock_home),
+        findings=(finding('~/.claude/skills/alias'),))
+    base=replace(base,doctor=report)
+    target_key=next(canonical_key(e) for e in base.index.entries if e.canonical_path==str(mock_home/'.agents/skills/target'))
+    monkeypatch.setattr(app_module,'capture_session',lambda **kw:replace(base,generation=kw['generation']))
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test(size=size) as pilot:
+            await wait(pilot,lambda:app.controller.current is not None,'capture')
+            home=app.screen
+            assert isinstance(home,HomeScreen)
+            for _ in range(len(base.registry)+2):
+                if home._agent_id=='codex':break
+                await pilot.press('a')
+            assert home._agent_id=='codex'
+            await pilot.press('/')
+            home.query_one('#filter-input',Input).value='other'
+            await pilot.pause()
+            await pilot.press('enter')
+            assert home.query_one('#skill-table',DataTable).row_count==1
+            (mock_home/'.agents/skills/target/SKILL.md').unlink()
+            (mock_home/'.claude/skills/alias').unlink()
+            await pilot.press('h')
+            await pilot.pause()
+            doctor=app.screen
+            assert type(doctor).__name__=='DoctorScreen'
+            assert home._suspended
+            assert doctor.query_one(DataTable).row_count==1
+            await pilot.press('J')
+            await pilot.pause()
+            assert doctor.query_one(JsonView).document==dumps(report.to_dict())
+            await pilot.press('enter')
+            await pilot.pause()
+            assert app.screen is doctor,'hidden Enter must not jump'
+            await pilot.press('escape','enter')
+            await pilot.pause()
+            assert app.screen is home
+            assert app.controller.selected_key==target_key
+            assert home.query_one('#filter-input',Input).value==''
+            assert home._agent_id is None
+            table=home.query_one('#skill-table',DataTable)
+            assert selected_table_key(table)==target_key
+            assert app.focused is table
+            assert 'target' in str(home.query_one('#preview-pane',Static).content)
+            assert not home._suspended
+            await pilot.press('q')
+        assert app.return_value==0
+    asyncio.run(run())
+
+def test_parent_plain_back_preserves_filter_and_delayed_old_close(mock_home,monkeypatch):
+    base=fixture_snapshot(mock_home)
+    monkeypatch.setattr(app_module,'capture_session',lambda **kw:replace(base,generation=kw['generation']))
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            await wait(pilot,lambda:app.controller.current is not None,'capture')
+            home=app.screen
+            await pilot.press('/')
+            home.query_one('#filter-input',Input).value='other'
+            await pilot.pause()
+            await pilot.press('enter')
+            before=app.controller.selected_key
+            await pilot.press('h')
+            await pilot.pause()
+            old=app.screen
+            await pilot.press('escape')
+            await pilot.pause()
+            assert app.screen is home
+            assert home.query_one('#filter-input',Input).value=='other'
+            assert app.controller.selected_key==before
+            await pilot.press('h')
+            await pilot.pause()
+            current=app.screen
+            assert current is not old
+            app.close_doctor(old)
+            await pilot.pause()
+            assert app.screen is current
+            await pilot.press('q')
+    asyncio.run(run())
+
+def test_parent_ambiguous_display_path_never_guesses(mock_home,monkeypatch):
+    base=fixture_snapshot(mock_home)
+    keys=sorted({canonical_key(e) for e in base.index.entries})
+    shown='~/[ambiguous]'
+    mapping=dict(base.display_paths)
+    mapping[keys[0]]=shown
+    mapping[keys[1]]=shown
+    report=DoctorReport(home=str(mock_home),cwd=str(mock_home),findings=(finding(shown),))
+    base=replace(base,doctor=report,display_paths=MappingProxyType(mapping))
+    monkeypatch.setattr(app_module,'capture_session',lambda **kw:replace(base,generation=kw['generation']))
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            await wait(pilot,lambda:app.controller.current is not None,'capture')
+            selected=app.controller.selected_key
+            await pilot.press('h','enter')
+            await pilot.pause()
+            assert type(app.screen).__name__=='DoctorScreen'
+            assert app.controller.selected_key==selected
+            strings='\n'.join(str(w.content) for w in app.screen.query(Static))
+            assert 'more than one catalog entry' in strings
+            assert shown in strings
+            assert not app.controller.failed
+            await pilot.press('q')
+        assert app.return_value==0
+    asyncio.run(run())
+
+def test_parent_real_cli_doctor_json_equals_ui(mock_home):
+    write_skill(mock_home/'.claude/skills/bad','---\nname: bad\n---\n# [raw]\n')
+    expected=CliRunner().invoke(cli_app,['doctor','--cwd',str(mock_home),'--json'])
+    assert expected.exit_code==0
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            await wait(pilot,lambda:app.controller.current is not None,'capture')
+            await pilot.press('h','J')
+            await pilot.pause()
+            doc=app.screen.query_one(JsonView).document
+            assert doc is not None and expected.stdout==doc+'\n'
+            await pilot.press('q')
+    asyncio.run(run())
+
+def test_parent_refresh_rejects_old_capture_and_retains_raw_report(mock_home,monkeypatch):
+    base=fixture_snapshot(mock_home)
+    first=finding(None,'old [finding]')
+    second=finding('~/unknown','new [finding]')
+    base=replace(base,doctor=DoctorReport(home=str(mock_home),cwd=str(mock_home),findings=(first,)))
+    entered=threading.Event()
+    release=threading.Event()
+    finished=threading.Event()
+    def capture(**kw):
+        gen=kw['generation']
+        if gen==2:
+            entered.set()
+            try:
+                assert release.wait(8),'parent held capture was not released'
+            finally:finished.set()
+        report=base.doctor if gen<3 else replace(base.doctor,findings=(second,))
+        return replace(base,generation=gen,doctor=report)
+    monkeypatch.setattr(app_module,'capture_session',capture)
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            try:
+                await wait(pilot,lambda:app.controller.current is not None,'initial capture')
+                await pilot.press('h','J','r')
+                await wait(pilot,entered.is_set,'held second capture')
+                assert app.screen.query_one(JsonView).document==dumps(base.doctor.to_dict())
+                await pilot.press('r')
+                await wait(pilot,lambda:app.controller.current.generation==3,'third capture')
+                newdoc=dumps(replace(base.doctor,findings=(second,)).to_dict())
+                assert app.screen.query_one(JsonView).document==newdoc
+                release.set()
+                await wait(pilot,finished.is_set,'old worker finished')
+                await app.workers.wait_for_complete()
+                await pilot.pause()
+                assert app.controller.current.generation==3
+                assert app.screen.query_one(JsonView).document==newdoc
+                await pilot.press('escape','enter')
+                await pilot.pause()
+                assert type(app.screen).__name__=='DoctorScreen'
+                strings='\n'.join(str(w.content) for w in app.screen.query(Static))
+                assert 'No matching catalog entry' in strings
+                await pilot.press('q')
+            finally:release.set()
+    asyncio.run(run())
+
+
+def test_parent_doctor_before_initial_capture_then_publish_in_raw_mode(mock_home,monkeypatch):
+    base=fixture_snapshot(mock_home)
+    entered=threading.Event()
+    release=threading.Event()
+    def held_capture(**kw):
+        entered.set()
+        assert release.wait(8)
+        return replace(base,generation=kw['generation'])
+    monkeypatch.setattr(app_module,'capture_session',held_capture)
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            try:
+                await wait(pilot,entered.is_set,'initial capture held')
+                await pilot.press('h','J')
+                await pilot.pause()
+                doctor=app.screen
+                assert type(doctor).__name__=='DoctorScreen'
+                assert app.controller.current is None
+                view=doctor.query_one(JsonView)
+                assert view.document is None
+                assert 'Scanning' in view.displayed_text
+                assert 'healthy' not in view.displayed_text.lower()
+                release.set()
+                await wait(pilot,lambda:app.controller.current is not None,'first publish')
+                assert view.document==dumps(base.doctor.to_dict())
+                assert doctor.json_mode
+                await pilot.press('escape')
+                await pilot.pause()
+                old_table=doctor.query_one(DataTable)
+                doctor.enter_json_mode()
+                doctor.leave_json_mode()
+                app.close_doctor(doctor)
+                doctor._restore_json_focus(old_table)
+                await pilot.pause()
+                home=app.screen
+                assert isinstance(home,HomeScreen)
+                assert app.focused is home.query_one('#skill-table',DataTable)
+                await pilot.press('q')
+            finally:release.set()
+    asyncio.run(run())
+
+def test_parent_internal_capture_fault_retains_json_then_recovers_with_exit_three(mock_home,monkeypatch):
+    base=fixture_snapshot(mock_home)
+    calls=[]
+    def capture(**kw):
+        calls.append(kw['generation'])
+        if kw['generation']==2:
+            raise RuntimeError('parent [fault]')
+        return replace(base,generation=kw['generation'])
+    monkeypatch.setattr(app_module,'capture_session',capture)
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            await wait(pilot,lambda:app.controller.current is not None,'first snapshot')
+            await pilot.press('h','J','r')
+            await wait(pilot,lambda:app.controller.failed,'accepted fault')
+            assert app.screen.query_one(JsonView).document==dumps(base.doctor.to_dict())
+            strings='\n'.join(str(w.content) for w in app.screen.query(Static))
+            assert 'parent [fault]' in strings
+            assert calls==[1,2],'an unexpected fault must not auto-retry'
+            await pilot.press('r')
+            await wait(pilot,lambda:app.controller.current.generation==3,'explicit recovery')
+            assert app.controller.failed
+            assert app.screen.query_one(JsonView).document==dumps(base.doctor.to_dict())
+            await pilot.press('q')
+        assert app.return_value==3
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize('has_prior',[False,True])
+@pytest.mark.parametrize('kind',['refusal','retry','internal'])
+def test_parent_capture_state_matrix(mock_home,monkeypatch,has_prior,kind):
+    from skill_lens.core.snapshot import SnapshotTooLarge, SnapshotChanged
+    base=fixture_snapshot(mock_home)
+    count=[]
+    error={'refusal':SnapshotTooLarge(total_bytes=2,limit_bytes=1),
+           'retry':SnapshotChanged('parent [changed]; Press r to retry.'),
+           'internal':RuntimeError('parent [internal]')}[kind]
+    expected_status={'refusal':'refused','retry':'retry','internal':'error'}[kind]
+    def capture(**kw):
+        count.append(kw['generation'])
+        if has_prior and kw['generation']==1:
+            return replace(base,generation=1)
+        raise error
+    monkeypatch.setattr(app_module,'capture_session',capture)
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test(size=(60,24)) as pilot:
+            if has_prior:
+                await wait(pilot,lambda:app.controller.current is not None,'prior report')
+            else:
+                await wait(pilot,lambda:app.controller.status==expected_status,'initial outcome')
+            await pilot.press('h','J')
+            if has_prior:
+                await pilot.press('r')
+            await wait(pilot,lambda:app.controller.status==expected_status,'capture outcome')
+            doctor=app.screen
+            assert type(doctor).__name__=='DoctorScreen'
+            view=doctor.query_one(JsonView)
+            assert view.document==(dumps(base.doctor.to_dict()) if has_prior else None)
+            assert len(count)==(2 if has_prior else 1),'no automatic retry'
+            assert app.controller.failed==(kind=='internal')
+            strings='\n'.join(str(w.content) for w in doctor.query(Static))
+            assert {'refusal':'Snapshot refused:','retry':'Press r to retry','internal':'parent [internal]'}[kind] in strings
+            if not has_prior:
+                assert 'healthy' not in str(doctor.query_one('#doctor-summary',Static).content).lower()
+            await pilot.press('q')
+        assert app.return_value==(3 if kind=='internal' else 0)
+    asyncio.run(run())
+
+
+def test_parent_stale_generation_with_still_valid_key_never_jumps(mock_home,monkeypatch):
+    base=fixture_snapshot(mock_home)
+    key=next(canonical_key(e) for e in base.index.entries if e.canonical_path==str(mock_home/'.agents/skills/target'))
+    report=DoctorReport(str(mock_home),str(mock_home),(finding('~/.claude/skills/alias'),))
+    base=replace(base,doctor=report)
+    monkeypatch.setattr(app_module,'capture_session',lambda **kw:replace(base,generation=kw['generation']))
+    async def run():
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test() as pilot:
+            await wait(pilot,lambda:app.controller.current is not None,'first capture')
+            home=app.screen
+            await pilot.press('/')
+            home.query_one('#filter-input',Input).value='other'
+            await pilot.pause()
+            await pilot.press('enter','h','r')
+            await wait(pilot,lambda:app.controller.current.generation==2,'new capture')
+            await pilot.pause()
+            doctor=app.screen
+            assert doctor.selected_finding==report.findings[0]
+            before=app.controller.selected_key
+            assert not app.jump_from_doctor(doctor,1,key), 'stale generation with a valid key must be rejected'
+            assert app.screen is doctor
+            assert app.controller.selected_key==before
+            assert home.query_one('#filter-input',Input).value=='other'
+            assert 'report changed' in doctor.navigation_notice
+            await pilot.press('q')
+    asyncio.run(run())
+
+def test_parent_detail_and_json_scroll_survive_refresh_then_removed_finding_resets(mock_home,monkeypatch):
+    base=fixture_snapshot(mock_home)
+    long=finding(None,'long finding')
+    long=replace(long,detail='[literal]\n'+'scrollable detail line\n'*90)
+    other=finding(None,'replacement finding')
+    initial=DoctorReport(str(mock_home),str(mock_home),(long,other))
+    entered=threading.Event()
+    release=threading.Event()
+    def capture(**kw):
+        gen=kw['generation']
+        if gen==4:
+            entered.set()
+            assert release.wait(8)
+        report=initial if gen<3 else replace(initial,findings=(other,))
+        return replace(base,generation=gen,doctor=report)
+    monkeypatch.setattr(app_module,'capture_session',capture)
+    async def run():
+        from textual.containers import VerticalScroll
+        app=SkillLensApp(home=mock_home,cwd=mock_home)
+        async with app.run_test(size=(60,24)) as pilot:
+            try:
+                await wait(pilot,lambda:app.controller.current is not None,'first capture')
+                await pilot.press('h','tab','end')
+                await pilot.pause()
+                doctor=app.screen
+                detail=doctor.query_one('#doctor-detail-scroll',VerticalScroll)
+                assert app.focused is detail
+                old_y=detail.scroll_offset.y
+                assert old_y>0 and detail.max_scroll_y>0,'long detail must actually scroll'
+                app._update_ui()
+                await pilot.pause()
+                assert detail.scroll_offset.y==old_y
+                await pilot.press('J','end')
+                await pilot.pause()
+                view=doctor.query_one(JsonView)
+                raw_y=view.scroll_offset.y
+                assert raw_y>0,'raw document must actually scroll'
+                app._update_ui()
+                await pilot.pause()
+                assert view.scroll_offset.y==raw_y
+                await pilot.press('escape')
+                await pilot.pause()
+                assert app.focused is detail
+                assert detail.scroll_offset.y==old_y
+                await pilot.press('r')
+                await wait(pilot,lambda:app.controller.current.generation==2,'same-finding refresh')
+                await pilot.pause()
+                assert doctor.selected_finding==long
+                assert detail.scroll_offset.y==old_y
+                await pilot.press('J','end','r')
+                await wait(pilot,lambda:app.controller.current.generation==3,'removed finding refresh')
+                await pilot.pause()
+                assert doctor.selected_finding==other
+                assert view.scroll_offset.y==0
+                await pilot.press('backspace')
+                await pilot.pause()
+                assert detail.scroll_offset.y==0
+                await pilot.press('r')
+                await wait(pilot,entered.is_set,'held refresh before quit')
+                await pilot.press('q')
+                assert app.controller.closed
+                release.set()
+            finally:release.set()
+        assert app.return_value==0
+    asyncio.run(run())

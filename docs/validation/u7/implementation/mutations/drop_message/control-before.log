@@ -1,0 +1,6 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest -q -o addopts= tests/test_tui_doctor.py::test_real_captured_findings_keep_model_order_and_cli_json
+cwd=/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-mutations-jywj5vx7/checkout
+exit_code=0
+
+.                                                                        [100%]
+1 passed in 0.68s

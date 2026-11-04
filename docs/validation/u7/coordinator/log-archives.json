@@ -1,0 +1,107 @@
+{
+  "reason": "Preserve verbatim failure output while keeping staged Git whitespace validation clean. Existing receipt output hashes refer to uncompressed bytes; the mutation runner still emits raw logs when replayed.",
+  "archives": [
+    {
+      "original": "docs/validation/u7/coordinator/parent-app-guards-first.log",
+      "archive": "docs/validation/u7/coordinator/parent-app-guards-first.log.gz",
+      "uncompressed_sha256": "352e0208fa7de9ff957ccdada4d6fbf20b186b90336e1b468f15b03929db3b25",
+      "archive_sha256": "2119114e0bd1f085745ee5949b2dc73a716c2aa5bbdd6979368f0ad3988b34cb"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/accept_stale_generation_with_valid_key/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/accept_stale_generation_with_valid_key/mutant.log.gz",
+      "uncompressed_sha256": "8f7b9962b9b4be252f9091f0fe7c991070f2a99b7a5c06f0c22a286fb7ba2edf",
+      "archive_sha256": "1159c62a8f7ffd2f47ad2fb16a0f023a22ca443adc616e0f81c67bc3602175f2"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/allow_hidden_enter_in_json/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/allow_hidden_enter_in_json/mutant.log.gz",
+      "uncompressed_sha256": "7aea911206012f3c9b2ed84a98af9125023707cd952c36e71f89302c4126f480",
+      "archive_sha256": "8755519c53db0cd711fa7245dc903c98e5ab38481e93b1918db052d02179e5ad"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/alter_evidence/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/alter_evidence/mutant.log.gz",
+      "uncompressed_sha256": "593c7adc944053e7afd73fc42a193576c28bcc77c3b7219f6bd3baebbc24f77c",
+      "archive_sha256": "3c2ffe7bafe4f71999d1b403c73fac9d11e68e4f19119d7b75dc8afce81b19cd"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/disable_reverse_display_path/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/disable_reverse_display_path/mutant.log.gz",
+      "uncompressed_sha256": "86a9d4218daa141f1046314536d1e1f6ef542787d5ed140cb07c3acd1e4b92d5",
+      "archive_sha256": "effc5e942a3f05dc661f445e87e4e9128fc46261cd79e188eb0f7a8d494bab3c"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/drop_detail/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/drop_detail/mutant.log.gz",
+      "uncompressed_sha256": "16c468afd13ea00fdf7d54d9067aa7ae661bf7cdfaf1e3f54c4840e8a632c143",
+      "archive_sha256": "005225746b1d6fb13212bf87891ea0cf29e97922d6de6b940abfb73c7dad59be"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/drop_message/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/drop_message/mutant.log.gz",
+      "uncompressed_sha256": "4c0936b698a534f6f6c468f760d44e457a4383ba285f309a9879bac6137ff45f",
+      "archive_sha256": "c3ee485bcc6cec6f8639d48c59e3a14c7bf3b08594d1175bf00814a26eb50c24"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/invalidate_newer_owned_request_on_stale_rejection/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/invalidate_newer_owned_request_on_stale_rejection/mutant.log.gz",
+      "uncompressed_sha256": "894d9c66ee7a06c6828b95527bccf9ed400e56e20cd4d758915f1db9f3afde68",
+      "archive_sha256": "5a4d82709588bd636ffa75177ac4d67354637445987d39424cb9f7cf363c8358"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/match_by_basename/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/match_by_basename/mutant.log.gz",
+      "uncompressed_sha256": "9cab82cf2781b0231abb786676a18f67f8161a5ed753a91d0b7de5effcc58d92",
+      "archive_sha256": "8f8f7df3041b60bf474d96ca5ecd136faaf17a3dd9144151748117df9ba183e5"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/recompute_doctor/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/recompute_doctor/mutant.log.gz",
+      "uncompressed_sha256": "61256f9c3e9eb00c81260dc5adf497047d1d3e7dc93cc4c8433dc29194d17970",
+      "archive_sha256": "6db33dcd02ea5283711375cf7723eccf84e0a4ec76fba25e9aa951102b0c75b0"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/retain_blocking_agent_filter/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/retain_blocking_agent_filter/mutant.log.gz",
+      "uncompressed_sha256": "3a8a980a91391c8d7d893cf2413b4d41e1ff4f7f7c389629d224f47d7e444f52",
+      "archive_sha256": "279b6d6ce5b3ee74b1057173982ad1cbbc25c2784595a9d54f0ace21d7929dda"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/retain_blocking_text_filter/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/retain_blocking_text_filter/mutant.log.gz",
+      "uncompressed_sha256": "b3baf200df40054e809f8581b957db93fe66b895391c84091f21bfeb5e493954",
+      "archive_sha256": "66bb50aae34acf47a620b9842dc861bb4a516a7a887650906c70a1a3dacc82b6"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/retain_stale_doctor_and_json_on_refresh/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/retain_stale_doctor_and_json_on_refresh/mutant.log.gz",
+      "uncompressed_sha256": "848dfdc29c1812a10ee8cdcd1a9af5d31d492f8e540b0e408d02ea176604e88c",
+      "archive_sha256": "d9b7362bf338c35ecbb1cb0d9d35e24534c14c5a5cf522e0b5b0e681de82bd6d"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/reverse_findings/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/reverse_findings/mutant.log.gz",
+      "uncompressed_sha256": "bba091ff446b419014df5bdb6c83e08eb3090e4b9fad29f83ab380ca0334c434",
+      "archive_sha256": "34c22304965fa44f2b03697a06732a304e1078bb4a2dabbba85f83a895b672d9"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/select_first_ambiguous_candidate/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/select_first_ambiguous_candidate/mutant.log.gz",
+      "uncompressed_sha256": "e11f13bbcfaffb641e5b93247ea1b7de5058eaa7f5566cc44572184963c3f660",
+      "archive_sha256": "4341c44643c7888b31fc1e6f9fa768a807d7cb7be89d46ae5589a416d39b2a91"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/serialize_ui_derived_json/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/serialize_ui_derived_json/mutant.log.gz",
+      "uncompressed_sha256": "32dcd30b51f48260352ec225bffb841b6d86097edf30545b127c917503f9a645",
+      "archive_sha256": "8376861d6eaceb4548a8d8f036ce76b55548dec52ae9f13c5882676673500b8b"
+    },
+    {
+      "original": "docs/validation/u7/implementation/mutations/skip_why_suspension/mutant.log",
+      "archive": "docs/validation/u7/implementation/mutations/skip_why_suspension/mutant.log.gz",
+      "uncompressed_sha256": "91f67d62eaac92e92ed8fb26d15e05e54b7a629597fb1f8c93ef0deb905d85c1",
+      "archive_sha256": "4f64e8f2afb7930a47def4cf8ab3da1df2ba20378feaed5e2763c64e4d495148"
+    }
+  ]
+}

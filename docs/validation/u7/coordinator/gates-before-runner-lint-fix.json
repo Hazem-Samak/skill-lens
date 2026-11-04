@@ -1,0 +1,76 @@
+{
+  "baseline": "f62f654f8ad95ecb1e7171e1e9e921be686dd949",
+  "checks": [
+    {
+      "name": "independent-ui",
+      "command": [
+        ".venv/bin/pytest",
+        "-q",
+        "-o",
+        "addopts=",
+        "/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u7-coordinator-vtael4t7/test_independent_u7.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 13.29,
+      "log": "independent-ui.log",
+      "output_sha256": "6282594884bd891aaabd47d216e8503b496d866757976703e63363b1254260b8",
+      "accepted": true
+    },
+    {
+      "name": "pytest",
+      "command": [
+        ".venv/bin/pytest",
+        "--cov=skill_lens"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 294.3,
+      "log": "pytest.log",
+      "output_sha256": "10fd6446cee9421d47924a45313b01635f0535f6de82669e4584bee943838e1a",
+      "accepted": true,
+      "observed_combined_coverage_percent": 90.02,
+      "required_coverage_percent": 90,
+      "coverage_gate_passed": true
+    },
+    {
+      "name": "mypy",
+      "command": [
+        ".venv/bin/mypy"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.76,
+      "log": "mypy.log",
+      "output_sha256": "fdba5b4e396441aaf1ba0d4aee9a2b6de7229057c665772ec81bd032ce1cc3f5",
+      "accepted": true
+    },
+    {
+      "name": "ruff-check",
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.02,
+      "log": "ruff-check.log",
+      "output_sha256": "7731e8c568e29613d70899b2ae78ab7c99b4d91f19e7000a815c0eacd64bb4f7",
+      "accepted": false
+    },
+    {
+      "name": "ruff-format-check",
+      "command": [
+        ".venv/bin/ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.02,
+      "log": "ruff-format-check.log",
+      "output_sha256": "274182bccde4cd0320a821b8b9ccf9dccb33765dc79fd8c97face1a4c46df5a6",
+      "accepted": true
+    }
+  ],
+  "source_test_config_changes_during_checks": [],
+  "independent_probe_sha256": "5d1b515309a896d0739782905367b79b6b0f2af4a097c46e355fc681c6cb40a9",
+  "overall_accepted": false
+}
