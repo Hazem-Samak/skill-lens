@@ -1,0 +1,433 @@
+"""Read-only browsing of agent definitions captured with the current session."""
+
+from __future__ import annotations
+
+import contextlib
+from typing import ClassVar, Protocol, cast
+
+from textual import events
+from textual.app import ComposeResult
+from textual.binding import Binding, BindingType
+from textual.containers import Horizontal, VerticalScroll
+from textual.content import Content
+from textual.css.query import NoMatches
+from textual.screen import Screen
+from textual.widget import Widget
+from textual.widgets import DataTable, Footer, Header, Static
+
+from skill_lens.models import dumps
+from skill_lens.presentation import agents_payload
+from skill_lens.registry.loader import AgentDefinition
+from skill_lens.tui.json_view import JsonView, session_explanation
+from skill_lens.tui.session import SessionController
+
+
+class _AgentsHost(Protocol):
+    """The small part of the application this screen uses."""
+
+    controller: SessionController
+
+    def close_agents(self, screen: AgentsScreen) -> None:
+        """Close this exact screen instance and resume Home."""
+        ...
+
+    def _update_ui(self) -> None:
+        """Refresh session status and then synchronize the active screen."""
+        ...
+
+    def action_refresh(self) -> None:
+        """Request a session refresh."""
+        ...
+
+
+def _optional(value: str | None) -> str:
+    return value if value is not None else "(not declared)"
+
+
+def agent_detail_text(agent: AgentDefinition) -> str:
+    """Format every captured policy and root field as literal readable text."""
+    lines = [
+        f"Name: {agent.name}",
+        f"ID: {agent.id}",
+        f"Identity source: {agent.identity_source}",
+        f"Collision policy: {agent.collision_policy}",
+        f"Coexistence policy: {agent.coexist_policy}",
+        f"Policy evidence: {agent.policy_evidence.value}",
+        f"Source: {_optional(agent.source or None)}",
+        f"Walk boundary: {agent.walk_boundary}",
+        f"Unsearched rule: {agent.unsearched_rule_id}",
+        f"Disabled rule: {_optional(agent.disabled_rule_id)}",
+        f"Disabled settings: {_optional(agent.disabled_settings)}",
+        f"Disabled key: {_optional(agent.disabled_key)}",
+        f"Ambiguous rule: {_optional(agent.ambiguous_rule_id)}",
+        "",
+        f"Search roots ({len(agent.roots)}):",
+    ]
+    if not agent.roots:
+        lines.append("  (none declared)")
+    for index, root in enumerate(agent.roots, start=1):
+        lines.extend(
+            [
+                "",
+                f"Root {index}: {root.id}",
+                f"  Kind: {root.kind}",
+                f"  Path template: {root.path}",
+                f"  Scope: {root.scope.value}",
+                f"  Rank: {root.rank}",
+                f"  Rule: {root.rule_id}",
+                f"  Evidence: {root.evidence.value}",
+                f"  Base: {root.base.value}",
+                f"  Entry format: {root.entry_format.value}",
+                f"  Recursive: {'yes' if root.recursive else 'no'}",
+                f"  Nested rule: {_optional(root.nested_rule_id)}",
+                f"  File rule: {_optional(root.file_rule_id)}",
+                f"  Loadability: {_optional(root.loadability)}",
+            ]
+        )
+    return "\n".join(lines)
+
+
+class AgentsScreen(Screen[None]):
+    """Browse the captured registry and inspect one definition at a time."""
+
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("up", "cursor_up", "Up", show=False),
+        Binding("down", "cursor_down", "Down", show=False),
+        Binding("j", "cursor_down", "Down", show=False),
+        Binding("k", "cursor_up", "Up", show=False),
+        Binding("enter", "focus_details", "Details", show=False),
+        Binding("escape", "back", "Back", show=True),
+        Binding("backspace", "back", "Back", show=False),
+        Binding("J", "toggle_json", "JSON", show=True),
+        Binding("q", "app.quit", "Quit", show=True),
+        Binding("ctrl+c", "app.quit", "Quit", show=False, priority=True),
+        Binding("r", "app.refresh", "Refresh", show=True),
+    ]
+
+    DEFAULT_CSS = """
+    AgentsScreen {
+        layout: vertical;
+    }
+    #agents-title {
+        height: 1;
+        padding: 0 1;
+        text-style: bold;
+    }
+    #agents-body {
+        width: 1fr;
+        height: 1fr;
+        layout: horizontal;
+    }
+    #agents-table {
+        width: 2fr;
+        height: 1fr;
+    }
+    #agents-detail-scroll {
+        width: 3fr;
+        height: 1fr;
+        padding: 0 1;
+        border-left: solid $primary;
+    }
+    #agents-detail {
+        width: 1fr;
+        height: auto;
+    }
+    #agents-empty, #agents-status, #agents-error-details {
+        height: auto;
+        padding: 0 1;
+    }
+    #agents-empty {
+        color: $warning;
+    }
+    #agents-json {
+        display: none;
+    }
+    AgentsScreen.json-mode #agents-json {
+        display: block;
+    }
+    AgentsScreen.json-mode #agents-body,
+    AgentsScreen.json-mode #agents-empty {
+        display: none;
+    }
+    AgentsScreen.narrow #agents-body {
+        layout: vertical;
+    }
+    AgentsScreen.narrow #agents-table,
+    AgentsScreen.narrow #agents-detail-scroll {
+        width: 1fr;
+        height: 1fr;
+    }
+    AgentsScreen.narrow #agents-detail-scroll {
+        border-left: none;
+        border-top: solid $primary;
+    }
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._generation: int | None = None
+        self._agents: tuple[AgentDefinition, ...] = ()
+        self._selected_id: str | None = None
+        self._syncing = False
+        self._mounting = False
+        self._json_mode = False
+        self._json_previous_focus: Widget | None = None
+        self._json_previous_scroll = 0
+
+    @property
+    def _host(self) -> _AgentsHost:
+        return cast(_AgentsHost, self.app)
+
+    @property
+    def json_mode(self) -> bool:
+        return self._json_mode
+
+    @property
+    def selected_agent_id(self) -> str | None:
+        return self._selected_id
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Static("Agents", id="agents-title", markup=False)
+        with Horizontal(id="agents-body"):
+            yield DataTable(id="agents-table")
+            with VerticalScroll(id="agents-detail-scroll"):
+                yield Static("No session captured.", id="agents-detail", markup=False)
+        yield Static("", id="agents-empty", markup=False)
+        yield JsonView(id="agents-json")
+        yield Static("Initializing...", id="agents-status", markup=False)
+        yield Static("", id="agents-error-details", markup=False)
+        yield Footer()
+
+    def on_mount(self) -> None:
+        table = self.query_one("#agents-table", DataTable)
+        table.cursor_type = "row"
+        self._apply_width(self.size.width)
+        self._mounting = True
+        try:
+            self.sync_from_controller()
+        finally:
+            self._mounting = False
+        if not self._json_mode:
+            table.focus()
+        self.call_after_refresh(self._host._update_ui)
+
+    def on_resize(self, event: events.Resize) -> None:
+        self._apply_width(event.size.width)
+
+    def _apply_width(self, width: int) -> None:
+        self.set_class(width < 80, "narrow")
+
+    def on_unmount(self) -> None:
+        # Agents owns no background report work; the method is here to make the
+        # screen's lifecycle boundary explicit and easy to audit.
+        return
+
+    def sync_from_controller(self) -> None:
+        """Reconcile only from the controller's published snapshot."""
+        if not self.is_mounted and not self._mounting:
+            return
+        controller = getattr(self._host, "controller", None)
+        if controller is None:
+            return
+        snapshot = controller.current
+        if snapshot is not None and snapshot.generation != self._generation:
+            previous_id = self._selected_id
+            self._generation = snapshot.generation
+            self._agents = tuple(sorted(snapshot.registry, key=lambda agent: agent.id))
+            by_id = {agent.id: agent for agent in self._agents}
+            if previous_id in by_id:
+                self._selected_id = previous_id
+            else:
+                self._selected_id = self._agents[0].id if self._agents else None
+            self._rebuild_table()
+        elif snapshot is None and self._generation is not None:
+            self._generation = None
+            self._agents = ()
+            self._selected_id = None
+            self._rebuild_table()
+        if self._json_mode:
+            self._refresh_json()
+        self._update_detail()
+        self._update_empty()
+        self._update_status()
+
+    def _rebuild_table(self) -> None:
+        try:
+            table = self.query_one("#agents-table", DataTable)
+        except NoMatches:
+            return
+        self._syncing = True
+        try:
+            table.clear(columns=True)
+            table.add_columns("Agent", "ID", "Collision Policy", "Evidence", "Roots")
+            for agent in self._agents:
+                table.add_row(
+                    Content.from_text(agent.name, markup=False),
+                    Content.from_text(agent.id, markup=False),
+                    Content.from_text(agent.collision_policy, markup=False),
+                    Content.from_text(agent.policy_evidence.value, markup=False),
+                    str(len(agent.roots)),
+                    key=agent.id,
+                )
+            if self._selected_id is not None and self._agents:
+                row = next(
+                    (i for i, agent in enumerate(self._agents) if agent.id == self._selected_id),
+                    0,
+                )
+                table.move_cursor(row=row, column=0, animate=False)
+        finally:
+            self._syncing = False
+
+    def _selected_agent(self) -> AgentDefinition | None:
+        return next((agent for agent in self._agents if agent.id == self._selected_id), None)
+
+    def _update_detail(self) -> None:
+        try:
+            detail = self.query_one("#agents-detail", Static)
+        except NoMatches:
+            return
+        controller = self._host.controller
+        if controller.current is None:
+            text = session_explanation(controller)
+        elif not self._agents:
+            text = "No agent definitions are available in this captured session."
+        else:
+            agent = self._selected_agent()
+            text = agent_detail_text(agent) if agent is not None else "Choose an agent."
+        detail.update(Content.from_text(text, markup=False))
+
+    def _update_empty(self) -> None:
+        try:
+            empty = self.query_one("#agents-empty", Static)
+        except NoMatches:
+            return
+        controller = self._host.controller
+        if controller.current is None:
+            text = session_explanation(controller)
+        elif not self._agents:
+            text = "No agent definitions are available in this captured session."
+        else:
+            text = ""
+        empty.update(Content.from_text(text, markup=False))
+
+    def _update_status(self) -> None:
+        try:
+            status = self.query_one("#agents-status", Static)
+            details = self.query_one("#agents-error-details", Static)
+        except NoMatches:
+            return
+        controller = self._host.controller
+        status.update(Content.from_text(session_explanation(controller), markup=False))
+        error = controller.last_error_details if controller.status == "error" else ""
+        details.update(Content.from_text(error or "", markup=False))
+
+    def _refresh_json(self) -> None:
+        try:
+            view = self.query_one("#agents-json", JsonView)
+        except NoMatches:
+            return
+        snapshot = self._host.controller.current
+        if snapshot is None:
+            view.show_explanation(session_explanation(self._host.controller))
+        else:
+            view.show_document(dumps(agents_payload(snapshot.registry)))
+
+    def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
+        if self._syncing or self._json_mode or event.data_table.id != "agents-table":
+            return
+        agent_id = str(event.row_key.value)
+        if agent_id not in {agent.id for agent in self._agents}:
+            return
+        if agent_id != self._selected_id:
+            self._selected_id = agent_id
+            self._update_detail()
+
+    def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
+        if self._json_mode or event.data_table.id != "agents-table":
+            return
+        self.action_focus_details()
+
+    def action_cursor_down(self) -> None:
+        if self._json_mode:
+            return
+        focused = self.app.focused
+        if isinstance(focused, DataTable) and focused.id == "agents-table":
+            focused.action_cursor_down()
+        elif focused is not None and focused.id == "agents-detail-scroll":
+            focused.scroll_relative(y=1, animate=False)
+
+    def action_cursor_up(self) -> None:
+        if self._json_mode:
+            return
+        focused = self.app.focused
+        if isinstance(focused, DataTable) and focused.id == "agents-table":
+            focused.action_cursor_up()
+        elif focused is not None and focused.id == "agents-detail-scroll":
+            focused.scroll_relative(y=-1, animate=False)
+
+    def action_focus_details(self) -> None:
+        if self._json_mode:
+            return
+        with contextlib.suppress(NoMatches):
+            self.query_one("#agents-detail-scroll", VerticalScroll).focus()
+
+    def action_toggle_json(self) -> None:
+        if self._json_mode:
+            self.leave_json_mode()
+            return
+        if self.app.focused is None or self.app.focused.id not in {
+            "agents-table",
+            "agents-detail-scroll",
+        }:
+            return
+        self.enter_json_mode()
+
+    def enter_json_mode(self) -> None:
+        if self._json_mode:
+            return
+        table = self.query_one("#agents-table", DataTable)
+        detail = self.query_one("#agents-detail-scroll", VerticalScroll)
+        self._json_previous_focus = self.app.focused
+        self._json_previous_scroll = detail.scroll_offset.y
+        table.can_focus = False
+        detail.can_focus = False
+        self._json_mode = True
+        self.add_class("json-mode")
+        self._refresh_json()
+        self.call_after_refresh(self.query_one("#agents-json", JsonView).focus)
+
+    def leave_json_mode(self) -> None:
+        if not self._json_mode:
+            return
+        self._json_mode = False
+        self.remove_class("json-mode")
+        table = self.query_one("#agents-table", DataTable)
+        detail = self.query_one("#agents-detail-scroll", VerticalScroll)
+        table.can_focus = True
+        detail.can_focus = True
+        previous = self._json_previous_focus
+        self._json_previous_focus = None
+        target = previous if previous is not None else table
+        if target.is_mounted and target.can_focus and target.display:
+            target.focus()
+        else:
+            table.focus()
+        offset = self._json_previous_scroll
+        self._json_previous_scroll = 0
+        if offset:
+            self.call_after_refresh(lambda: detail.scroll_to(y=offset, animate=False))
+
+    def action_back(self) -> None:
+        if self._json_mode:
+            self.leave_json_mode()
+        elif self.app.focused is not None and self.app.focused.id == "agents-detail-scroll":
+            self.query_one("#agents-table", DataTable).focus()
+        else:
+            self._host.close_agents(self)
+
+    def action_refresh(self) -> None:
+        self._host.action_refresh()
+
+
+__all__ = ["AgentsScreen", "agent_detail_text"]

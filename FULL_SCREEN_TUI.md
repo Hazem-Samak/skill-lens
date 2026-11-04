@@ -7,7 +7,11 @@
 > on the current branch. U4 (Why detail screen) and U5 (Diff and raw JSON) are
 > technically accepted in development after independent review and verified corrections.
 > See [U4 acceptance](docs/validation/u4/acceptance.md) and
-> [U5 acceptance](docs/validation/u5/acceptance.md). U6–U9 and 0.2 publishing remain future work.
+> [U5 acceptance](docs/validation/u5/acceptance.md). U6 (Agents and Compare) is
+> implemented and locally technically verified; see
+> [U6 parent verification](docs/validation/u6/coordinator/verification.md) and
+> [implementer report](docs/validation/u6/implementation/implementation-report.md).
+> U7–U9 and 0.2 publishing remain future work.
 > No TUI extra is released: published PyPI 0.1.1 contains no TUI package and no `[tui]` extra.
 > It overturns a v1 rule ("no full-screen TUI"), so it is deliberately detailed:
 > the point of the plan is that the next person can scaffold the work without
@@ -17,7 +21,7 @@
 > **Supersedes:** the "NO full-screen TUI" rule in `AGENTS.md` §1.5 and
 > `SKILL_LENS_SPECIFICATION.md` §5.
 > **Author:** maintainer, 2026-10-04.
-> **Current revision:** 2026-11-01. Original readiness finding dated 2026-10-04
+> **Current revision:** 2026-11-03. Original readiness finding dated 2026-10-04
 > (checked against source, temporary crash reproductions and published dependency
 > metadata at that date) remains a historical record. U3 Home is technically
 > accepted with independent review and local gates:
@@ -28,7 +32,9 @@
 > retained for its limited fixture result. Findings and prerequisite records are
 > in §20; [earlier review history](docs/archive/TUI_PLAN_REVIEWS.md) is retained
 > separately. Step 0 implementation (C1–C5) is complete under §21;
-> U1–U5 are technically accepted in development; U6–U9 assignments (§22) remain future work.
+> U1–U5 are technically accepted in development. U6 implementation and parent
+> technical verification are complete in development.
+> U7–U9 remain future assignments.
 
 > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
 > Catalog, skill contents, settings and diagnostic inputs remain fixed until
@@ -38,9 +44,11 @@
 > **Implementer handoff:** [§21](#21-step-0-implementation-contract) specifies
 > Step 0 types, function signatures, files and acceptance tests.
 > [§22](#22-assignments-for-the-implementer) is the ordered assignment list.
-> Current next assignment: **U6 (Agents and Compare)**, per §22 order, after separate
-> authorization. U5 local technical acceptance is recorded above; no new phase is started.
-> Prerequisites (P1→P2→P3, C1–C5, U1–U5) are complete and technically accepted; U6–U9 remain future work.
+> U5 local technical acceptance is recorded above. U6 parent verification is in
+> `docs/validation/u6/coordinator/verification.md`; it is not a release or Git
+> delivery. The next assignment is **U7 (Doctor)**, per §22 and separate
+> authorization. Prerequisites P1→P2→P3, C1–C5 and U1–U6 are technically
+> accepted; U7–U9 remain future work.
 
 ---
 
@@ -434,22 +442,29 @@ Home (Skill list)
 | `/` | Filter the current list |
 | `a` | Cycle the agent filter |
 | `d` | Open diff for the selected skill |
+| `g` | Open Agents |
 | `c` | Open compare |
 | `J` | Toggle raw JSON for the current view |
 | `r` | Request a new catalog/session |
 | `?` | Help overlay |
 | `q` / `Ctrl-C` | Quit |
 
-**Implemented so far (development, U1–U5):** Home (`Enter`, `/`, `a`, `Tab`),
-the Why detail screen (`←`/`→`, `Tab`, `Esc`/`Backspace`) and, since U5, `d` and
-`J`. `d` opens one Diff over Home (focused, nonempty skill table) or over an
+**Implemented so far (development, U1–U6):** Home (`Enter`, `/`, `a`, `Tab`,
+`g`, `c`), the Agents and Compare screens, the Why detail screen (`←`/`→`,
+`Tab`, `Esc`/`Backspace`) and, since U5, `d` and `J`. `d` opens one Diff over
+Home (focused, nonempty skill table) or over an
 ordinary Why screen — the whole Why screen is the current detail view, so its
 opening installation key is used and repeated `d` presses never stack a second
 Diff. `J` toggles raw JSON on Home (skill table focused), ordinary Why and
-Diff; `Esc`/`Backspace` leaves JSON mode first and only then acts on the screen.
-`c`, `?` and the Agents, Compare and Doctor screens are not implemented yet.
-U5 is technically accepted in development after coordinator verification and
-both independent final-review follow-ups; see [acceptance](docs/validation/u5/acceptance.md).
+Diff, Agents and Compare; Agents uses the agents array and Compare uses the
+accepted ordered-pair report. `Esc`/`Backspace` leaves JSON mode first and only
+then acts on the screen.
+`?` and Doctor are not implemented yet. U5 is technically accepted in development
+after coordinator verification and both independent final-review follow-ups; see
+[U5 acceptance](docs/validation/u5/acceptance.md). U6 implementation checks are
+recorded in [`docs/validation/u6/implementation/`](docs/validation/u6/implementation/);
+[parent technical verification](docs/validation/u6/coordinator/verification.md)
+also passed on the final tree.
 
 ### 8.3 Home screen layout
 
@@ -607,16 +622,20 @@ shells out, never opens a file — `subprocess` is forbidden outright.
 
 ### 8.7 Compare — the picker and its edge cases
 
-- `c` opens a two-column picker: pick agent A, then agent B. Both columns list
-  only ids the registry actually defines.
+- Home's `c` binding opens a two-column picker: pick agent A, then agent B. Both
+  columns list every ID in the captured registry, sorted by ID, including agents
+  with no detected skills. Typing `c` into the focused Home filter remains text.
 - Choosing the **same agent twice** is rejected inline ("Pick two different
   agents."), mirroring the CLI's `--agent`-twice check.
-- **Fewer than two agents detected** → an explanatory panel naming what was
-  found and how many more are needed; no crash.
+- **Fewer than two registry definitions** → an explanatory panel naming the
+  available definitions and how many more are needed; submit is unavailable.
+  Detection is not an eligibility filter. If at least two definitions are known,
+  either may be compared even when neither is detected.
 - Confirming uses `snapshot_compare(state.current, a, b)`, which passes both
-  frozen index and captured registry to `run_compare()`. An unknown id uses
-  the CLI error wording in an inline message; ordinary in-app input errors do
-  not change the normal-quit exit contract in §7.1.
+  frozen index and captured registry to `run_compare()`. A removed ID after
+  refresh clears that choice and returns to the picker without substituting an
+  agent. An unknown ID uses the CLI error wording in an inline message; ordinary
+  in-app input errors do not change the normal-quit exit contract in §7.1.
 
 ### 8.8 What `J` shows on each screen
 
@@ -968,10 +987,20 @@ data for 600+ skills). The §21 full-capture contract is affirmed before C1–C5
   [U5 acceptance](docs/validation/u5/acceptance.md). No release or human visual approval is claimed.
 
 ### Step 6 — Agents and Compare
-- Agents screen reading the registry definitions.
-- Compare flow per [§8.7](#87-compare--the-picker-and-its-edge-cases).
+- Home `g` opens Agents, which lists captured definitions and their policy/root
+  details; `J` shows the existing agents JSON payload.
+- Home `c` opens Compare per [§8.7](#87-compare--the-picker-and-its-edge-cases).
+  Its ordered pair result and raw JSON use the existing captured report service.
 - **Gate:** unknown-agent handling matches the CLI; same-agent-twice rejected;
-  fewer-than-two-agents handled; snapshot service supplies index and registry.
+  missing choices and fewer-than-two registry definitions handled; undetected
+  known agents remain eligible; snapshot service supplies the frozen index and
+  captured registry. Existing CLI JSON and text output stay unchanged.
+
+**Implementation status:** U6 implementation and local checks are recorded in
+[`docs/validation/u6/implementation/`](docs/validation/u6/implementation/).
+[Parent technical verification](docs/validation/u6/coordinator/verification.md)
+passed on the final tree. This status does not claim
+human visual approval, hosted CI acceptance or release.
 
 ### Step 7 — Doctor screen
 - Findings list sorted by severity, with "jump" defined exactly as in
@@ -1778,7 +1807,7 @@ an arbitrary model can safely implement the whole project in one prompt.
 | U3 — Home | Home widgets/tests and measured benchmark; Step 3. Reuse C3 capture and U2 controller. | Canonical selection, filters, empty state, complete refresh and actual 600-skill widget responsiveness. |
 | U4 — Why | Why screen/tests; Step 4. Call snapshot service and shared parts. | Agent identity mapping, evidence display and literal markup rendering. |
 | U5 — Diff and JSON | Diff/JSON screens/tests; Step 5. No new engine algorithms. | Existing binary/truncation rules and same-input CLI JSON equality on every implemented screen. |
-| U6 — Agents and Compare | Picker/screens/tests; Step 6. | Captured registry, fewer than two agents, same/unknown agent errors and frozen comparison. |
+| U6 — Agents and Compare | Picker/screens/tests; Step 6. | Captured registry definitions, fewer than two registry definitions, known-but-undetected choices, same/unknown/missing choice errors, exact JSON and frozen comparison. |
 | U7 — Doctor | Doctor screen/tests; Step 7. Use stored report. | Severity/message parity; in-app jump and unmatched paths; no live doctor rerun. |
 | U8 — polish | Step 8 help/keymap/error/empty states and user docs. | Complete headless browsing flow, full gate with TUI coverage, measured limitations recorded. |
 | U9 — release preparation | Step 9 version/lock/release checklist and built-wheel smoke tests. | Follow DEVELOPMENT release rules; passing preparation does not itself authorize publishing. |
@@ -1787,6 +1816,9 @@ U2–U9 define scope and acceptance conditions, not complete screen designs.
 Before dispatching each one, review its concrete implementation plan and named
 tests against the completed earlier rows. Expand only that assignment's details;
 the outline is not permission to invent new product behaviour.
+U6 implementation and local checks are recorded under
+`docs/validation/u6/implementation/`; final parent technical verification is under
+`docs/validation/u6/coordinator/verification.md`.
 
 After **each row**, run `pytest --cov=skill_lens`, `mypy`, `ruff check .` and
 `ruff format --check .` using the repository environment. State what changed,

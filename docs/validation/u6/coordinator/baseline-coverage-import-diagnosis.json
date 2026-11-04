@@ -1,0 +1,21 @@
+{
+  "baseline": "3a266b4986f5b9bd6838e773a298b2a862904a08",
+  "probe": "task cancellation after Coverage.start, isolated fresh subprocess per mode",
+  "temporary_baseline_checkout_removed": true,
+  "results": [
+    {
+      "mode": "whole-package",
+      "imported_package": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u6-baseline-diagnosis-rfkhu0r4/skill_lens/__init__.py",
+      "same_cancelled_class": true,
+      "caught_by_current_class": true,
+      "stderr": ""
+    },
+    {
+      "mode": "dotted-module",
+      "imported_package": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u6-baseline-diagnosis-rfkhu0r4/skill_lens/__init__.py",
+      "same_cancelled_class": false,
+      "caught_by_current_class": false,
+      "stderr": ""
+    }
+  ]
+}

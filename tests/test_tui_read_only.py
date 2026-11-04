@@ -19,6 +19,7 @@ Enforces:
 from __future__ import annotations
 
 import ast
+import asyncio
 import os
 import shutil
 from pathlib import Path
@@ -29,8 +30,11 @@ from textual.pilot import Pilot
 
 import skill_lens.tui as tui
 from skill_lens.core.exitcodes import ExitCode
+from skill_lens.tui.agents import AgentsScreen
+from skill_lens.tui.compare import CompareScreen
 from skill_lens.tui.diff import DiffScreen
 from skill_lens.tui.home import HomeScreen
+from skill_lens.tui.json_view import JsonView
 from skill_lens.tui.why import WhyScreen
 from tests.fixtures.scenarios import build_scenario
 
@@ -979,6 +983,150 @@ def test_synthetic_target_preservation_across_lifecycle(mock_home: Path) -> None
         assert before_bytes == after_bytes, f"Bytes changed for {rel_path}"
         assert before_mode == after_mode, f"File mode changed for {rel_path}"
         assert before_symlink == after_symlink, f"Symlink target changed for {rel_path}"
+
+
+def test_u6_synthetic_target_preservation_across_agents_compare_refresh_modes(
+    mock_home: Path,
+) -> None:
+    """Agents/Compare browsing, raw JSON and refresh preserve target bytes and links."""
+    build_scenario("claude_personal_beats_project", mock_home)
+    target_skill_dir = mock_home / ".claude" / "skills" / "deploy"
+    real_target = target_skill_dir / "SKILL.md"
+    symlink_file = target_skill_dir / "symlink_doc.txt"
+    symlink_file.symlink_to("SKILL.md")
+    real_target.chmod(0o640)
+    before = _snapshot_tree_state(mock_home)
+
+    async def drive_u6(pilot: Pilot) -> None:
+        app = pilot.app
+        assert isinstance(app, tui.SkillLensApp)
+
+        async def wait_for(predicate: Any, label: str) -> None:
+            for _ in range(500):
+                if predicate():
+                    return
+                await pilot.pause(0.01)
+            raise AssertionError(f"U6 preservation traversal stalled: {label}")
+
+        await wait_for(
+            lambda: (
+                app.controller.current is not None and app.controller.pending_generation is None
+            ),
+            "initial capture",
+        )
+
+        # Agents details refresh, then its complete JSON array and another refresh.
+        await pilot.press("g")
+        await wait_for(lambda: isinstance(app.screen, AgentsScreen), "Agents screen")
+        agents = app.screen
+        assert isinstance(agents, AgentsScreen)
+        detail = agents.query_one("#agents-detail")
+        assert "Identity source:" in detail.content.plain
+        await pilot.press("r")
+        await wait_for(
+            lambda: app.controller.current is not None and app.controller.current.generation == 2,
+            "Agents detail refresh",
+        )
+        await pilot.press("J")
+        await wait_for(
+            lambda: (
+                agents.json_mode and agents.query_one("#agents-json", JsonView).document is not None
+            ),
+            "Agents JSON",
+        )
+        await pilot.press("r")
+        await wait_for(
+            lambda: (
+                app.controller.current is not None
+                and app.controller.current.generation == 3
+                and agents.json_mode
+                and agents.query_one("#agents-json", JsonView).document is not None
+            ),
+            "Agents JSON refresh",
+        )
+        await pilot.press("escape")
+        await pilot.press("escape")
+        await wait_for(lambda: isinstance(app.screen, HomeScreen), "Home after Agents")
+
+        # Compare ordinary result refresh, raw result refresh, and picker refresh.
+        await pilot.press("c")
+        await wait_for(lambda: isinstance(app.screen, CompareScreen), "Compare picker")
+        compare = app.screen
+        assert isinstance(compare, CompareScreen)
+        a_table = compare.query_one("#compare-a-table")
+        a_row = next(
+            row
+            for row in range(a_table.row_count)
+            if str(a_table.coordinate_to_cell_key((row, 1)).row_key.value) == "claude"
+        )
+        a_table.move_cursor(row=a_row, column=0, animate=False)
+        await pilot.press("enter")
+        b_table = compare.query_one("#compare-b-table")
+        b_row = next(
+            row
+            for row in range(b_table.row_count)
+            if str(b_table.coordinate_to_cell_key((row, 1)).row_key.value) == "codex"
+        )
+        b_table.move_cursor(row=b_row, column=0, animate=False)
+        await pilot.press("enter")
+        await wait_for(
+            lambda: compare.report is not None and compare._report_state == "ready",
+            "initial comparison",
+        )
+
+        await pilot.press("r")
+        await wait_for(
+            lambda: (
+                app.controller.current is not None
+                and app.controller.current.generation == 4
+                and compare.report is not None
+                and compare._report_state == "ready"
+            ),
+            "ordinary result refresh",
+        )
+        await pilot.press("J")
+        await wait_for(
+            lambda: (
+                compare.json_mode
+                and compare.query_one("#compare-json", JsonView).document is not None
+            ),
+            "Compare result JSON",
+        )
+        await pilot.press("r")
+        await wait_for(
+            lambda: (
+                app.controller.current is not None
+                and app.controller.current.generation == 5
+                and compare.json_mode
+                and compare.report is not None
+                and compare._report_state == "ready"
+                and compare.query_one("#compare-json", JsonView).document is not None
+            ),
+            "Compare JSON refresh",
+        )
+        await pilot.press("escape")
+        await pilot.press("escape")
+        assert compare.mode == "picker"
+        await pilot.press("r")
+        await wait_for(
+            lambda: (
+                app.controller.current is not None
+                and app.controller.current.generation == 6
+                and compare.mode == "picker"
+            ),
+            "Compare picker refresh",
+        )
+        await pilot.press("q")
+
+    async def _run() -> None:
+        app = tui.SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test() as pilot:
+            await drive_u6(pilot)
+
+    asyncio.run(_run())
+
+    after = _snapshot_tree_state(mock_home)
+    assert before == after, "U6 browsing, JSON or refresh modified synthetic targets"
 
 
 def test_target_preservation_when_cleanup_fails(

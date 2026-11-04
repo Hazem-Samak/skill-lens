@@ -1,0 +1,39 @@
+Command: .venv/bin/python -u docs/validation/u6/implementation/mutation_gate.py
+Working directory: /Users/corvette/Documents/Projects Coding/Skill Lens
+Exit status: 1 (campaign stopped at the third case because the harness expected the wrong failure marker)
+
+PASS filter letters open Agents: control=0 mutant=1 restored=0
+PASS picker filters to detected agents: control=0 mutant=1 restored=0
+first visit rereads a captured skill file: mutation survived, failed outside the intended assertion, (1)
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_compare_first_visit_uses_frozen_files_and_registry_only _________
+tests/test_tui_compare.py:1157: in test_compare_first_visit_uses_frozen_files_and_registry_only
+    asyncio.run(_run())
+tests/test_tui_compare.py:1050: in _run
+    async with app.run_test() as pilot:
+.venv/lib/python3.11/site-packages/textual/app.py:2218: in run_test
+    raise self._exception
+.venv/lib/python3.11/site-packages/textual/message_pump.py:829: in _on_message
+    await invoke(method, message)
+.venv/lib/python3.11/site-packages/textual/_callback.py:56: in invoke
+    result = callback(*params[:parameter_count])
+skill_lens/tui/app.py:425: in on_view_report_complete
+    screen.note_report_outcome(
+skill_lens/tui/compare.py:643: in note_report_outcome
+    self._refresh_result()
+skill_lens/tui/compare.py:687: in _refresh_result
+    container.mount(*self._report_blocks(report, snapshot))
+skill_lens/tui/compare.py:692: in _report_blocks
+    Path(snapshot.home, '.agents/skills/identical/SKILL.md').read_text(
+tests/test_tui_compare.py:1083: in guarded
+    raise AssertionError(
+E   AssertionError: first visit accessed captured target through Path.read_text: /private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-132/test_compare_first_visit_uses_0/home/.agents/skills/identical/SKILL.md
+=========================== short test summary info ============================
+FAILED tests/test_tui_compare.py::test_compare_first_visit_uses_frozen_files_and_registry_only
+1 failed in 1.35s
+
+The mutant reached the intended forbidden-read assertion. This attempt was
+rejected only because the harness was checking for a timeout marker instead of
+the guard assertion printed in the traceback. The corrected matcher is in the
+preflighted harness; no test or product source was changed.

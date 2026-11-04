@@ -1,0 +1,306 @@
+F
+ERROR: Coverage failure: total of 29 is less than fail-under=90
+                                                                         [100%]
+=================================== FAILURES ===================================
+___ test_agents_lists_every_captured_definition_and_all_root_policy_details ____
+
+    async def _run() -> None:
+        app = SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test(size=(100, 30)) as pilot:
+            await _wait_home(pilot, app)
+            snapshot = app.controller.current
+            assert snapshot is not None
+            assert snapshot.scan.summary.detected_agents == ()
+            await pilot.press("g")
+            await pilot.pause()
+            screen = app.screen
+            assert isinstance(screen, AgentsScreen)
+            assert _agent_ids(screen) == [str(item["id"]) for item in expected_payload]
+            table = screen.query_one("#agents-table", DataTable)
+            for row_index, expected in enumerate(expected_payload):
+                row = [str(cell) for cell in table.get_row_at(row_index)]
+                assert row == [
+                    expected["name"],
+                    expected["id"],
+                    expected["collision_policy"],
+                    expected["policy_evidence"],
+                    str(expected["roots"]),
+                ]
+    
+            selected = next(
+                agent for agent in snapshot.registry if agent.id == screen.selected_agent_id
+            )
+            detail = str(screen.query_one("#agents-detail", Static).content)
+            assert f"Identity source: {selected.identity_source}" in detail
+            assert f"Collision policy: {selected.collision_policy}" in detail
+            assert f"Coexistence policy: {selected.coexist_policy}" in detail
+            assert f"Policy evidence: {selected.policy_evidence.value}" in detail
+            assert f"Source: {selected.source}" in detail
+            assert f"Walk boundary: {selected.walk_boundary}" in detail
+            assert f"Unsearched rule: {selected.unsearched_rule_id}" in detail
+            assert f"Disabled rule: {selected.disabled_rule_id or '(not declared)'}" in detail
+            assert f"Disabled settings: {selected.disabled_settings or '(not declared)'}" in detail
+            assert f"Disabled key: {selected.disabled_key or '(not declared)'}" in detail
+            assert f"Ambiguous rule: {selected.ambiguous_rule_id or '(not declared)'}" in detail
+            assert [
+                detail.index(f"Root {index}: {root.id}")
+                for index, root in enumerate(selected.roots, start=1)
+            ] == sorted(
+                detail.index(f"Root {index}: {root.id}")
+                for index, root in enumerate(selected.roots, start=1)
+            )
+            for _index, root in enumerate(selected.roots, start=1):
+                for label, value in (
+                    ("Kind", root.kind),
+                    ("Path template", root.path),
+                    ("Scope", root.scope.value),
+                    ("Rank", str(root.rank)),
+                    ("Rule", root.rule_id),
+                    ("Evidence", root.evidence.value),
+                    ("Base", root.base.value),
+                    ("Entry format", root.entry_format.value),
+                    ("Nested rule", root.nested_rule_id or "(not declared)"),
+                    ("File rule", root.file_rule_id or "(not declared)"),
+                    ("Loadability", root.loadability or "(not declared)"),
+                ):
+                    assert f"  {label}: {value}" in detail
+    
+            await pilot.press("J")
+            await pilot.pause()
+            assert screen.json_mode
+            view = screen.query_one("#agents-json", JsonView)
+            assert view.document == expected_document
+            assert view.document + "\n" == cli.stdout
+            selected_before = screen.selected_agent_id
+            assert selected_before is not None
+            await pilot.press("down")
+            assert screen.selected_agent_id == selected_before
+            assert screen.query_one("#agents-body").display is False
+            assert app.focused is view
+            await pilot.press("escape")
+            await pilot.pause()
+            assert not screen.json_mode
+            assert app.focused is not None and app.focused.id == "agents-table"
+>           await pilot.press("escape")
+
+tests/test_tui_agents.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.11/site-packages/textual/pilot.py:84: in press
+    await self._wait_for_screen()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Pilot app=SkillLensApp(title='Skill Lens', classes={'-dark-mode'}, pseudo_classes={'nocolor', 'focus', 'dark'})>
+timeout = 30.0
+
+    async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
+        """Wait for the current screen and its children to have processed all pending events.
+    
+        Args:
+            timeout: A timeout in seconds to wait.
+    
+        Returns:
+            `True` if all events were processed. `False` if an exception occurred,
+            meaning that not all events could be processed.
+    
+        Raises:
+            WaitForScreenTimeout: If the screen and its children didn't finish processing within the timeout.
+        """
+        try:
+            screen = self.app.screen
+        except Exception:
+            return False
+        children = [self.app, *screen.walk_children(with_self=True)]
+        count = 0
+        count_zero_event = asyncio.Event()
+    
+        def decrement_counter() -> None:
+            """Decrement internal counter, and set an event if it reaches zero."""
+            nonlocal count
+            count -= 1
+            if count == 0:
+                # When count is zero, all messages queued at the start of the method have been processed
+                count_zero_event.set()
+    
+        # Increase the count for every successful call_later
+        for child in children:
+            if child.call_later(decrement_counter):
+                count += 1
+    
+        if count:
+            # Wait for the count to return to zero, or a timeout, or an exception
+            wait_for = [
+                asyncio.create_task(count_zero_event.wait()),
+                asyncio.create_task(self.app._exception_event.wait()),
+            ]
+            _, pending = await asyncio.wait(
+                wait_for,
+                timeout=timeout,
+                return_when=asyncio.FIRST_COMPLETED,
+            )
+    
+            for task in pending:
+                task.cancel()
+    
+            timed_out = len(wait_for) == len(pending)
+            if timed_out:
+>               raise WaitForScreenTimeout(
+                    "Timed out while waiting for widgets to process pending messages."
+                )
+E               textual.pilot.WaitForScreenTimeout: Timed out while waiting for widgets to process pending messages.
+
+.venv/lib/python3.11/site-packages/textual/pilot.py:524: WaitForScreenTimeout
+
+During handling of the above exception, another exception occurred:
+
+mock_home = PosixPath('/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/pytest-of-corvette/pytest-123/test_agents_lists_every_captur0/home')
+
+    def test_agents_lists_every_captured_definition_and_all_root_policy_details(
+        mock_home: Path,
+    ) -> None:
+        """Known agents remain visible even when the scan detects no installed skills."""
+        expected_payload = _oracle_payload()
+        cli = runner.invoke(cli_app, ["agents", "--json"])
+        assert cli.exit_code == 0
+        expected_document = json.dumps(expected_payload, sort_keys=True, indent=2)
+        assert cli.stdout == expected_document + "\n"
+    
+        async def _run() -> None:
+            app = SkillLensApp(home=mock_home, cwd=mock_home)
+            async with app.run_test(size=(100, 30)) as pilot:
+                await _wait_home(pilot, app)
+                snapshot = app.controller.current
+                assert snapshot is not None
+                assert snapshot.scan.summary.detected_agents == ()
+                await pilot.press("g")
+                await pilot.pause()
+                screen = app.screen
+                assert isinstance(screen, AgentsScreen)
+                assert _agent_ids(screen) == [str(item["id"]) for item in expected_payload]
+                table = screen.query_one("#agents-table", DataTable)
+                for row_index, expected in enumerate(expected_payload):
+                    row = [str(cell) for cell in table.get_row_at(row_index)]
+                    assert row == [
+                        expected["name"],
+                        expected["id"],
+                        expected["collision_policy"],
+                        expected["policy_evidence"],
+                        str(expected["roots"]),
+                    ]
+    
+                selected = next(
+                    agent for agent in snapshot.registry if agent.id == screen.selected_agent_id
+                )
+                detail = str(screen.query_one("#agents-detail", Static).content)
+                assert f"Identity source: {selected.identity_source}" in detail
+                assert f"Collision policy: {selected.collision_policy}" in detail
+                assert f"Coexistence policy: {selected.coexist_policy}" in detail
+                assert f"Policy evidence: {selected.policy_evidence.value}" in detail
+                assert f"Source: {selected.source}" in detail
+                assert f"Walk boundary: {selected.walk_boundary}" in detail
+                assert f"Unsearched rule: {selected.unsearched_rule_id}" in detail
+                assert f"Disabled rule: {selected.disabled_rule_id or '(not declared)'}" in detail
+                assert f"Disabled settings: {selected.disabled_settings or '(not declared)'}" in detail
+                assert f"Disabled key: {selected.disabled_key or '(not declared)'}" in detail
+                assert f"Ambiguous rule: {selected.ambiguous_rule_id or '(not declared)'}" in detail
+                assert [
+                    detail.index(f"Root {index}: {root.id}")
+                    for index, root in enumerate(selected.roots, start=1)
+                ] == sorted(
+                    detail.index(f"Root {index}: {root.id}")
+                    for index, root in enumerate(selected.roots, start=1)
+                )
+                for _index, root in enumerate(selected.roots, start=1):
+                    for label, value in (
+                        ("Kind", root.kind),
+                        ("Path template", root.path),
+                        ("Scope", root.scope.value),
+                        ("Rank", str(root.rank)),
+                        ("Rule", root.rule_id),
+                        ("Evidence", root.evidence.value),
+                        ("Base", root.base.value),
+                        ("Entry format", root.entry_format.value),
+                        ("Nested rule", root.nested_rule_id or "(not declared)"),
+                        ("File rule", root.file_rule_id or "(not declared)"),
+                        ("Loadability", root.loadability or "(not declared)"),
+                    ):
+                        assert f"  {label}: {value}" in detail
+    
+                await pilot.press("J")
+                await pilot.pause()
+                assert screen.json_mode
+                view = screen.query_one("#agents-json", JsonView)
+                assert view.document == expected_document
+                assert view.document + "\n" == cli.stdout
+                selected_before = screen.selected_agent_id
+                assert selected_before is not None
+                await pilot.press("down")
+                assert screen.selected_agent_id == selected_before
+                assert screen.query_one("#agents-body").display is False
+                assert app.focused is view
+                await pilot.press("escape")
+                await pilot.pause()
+                assert not screen.json_mode
+                assert app.focused is not None and app.focused.id == "agents-table"
+                await pilot.press("escape")
+                await pilot.pause()
+                assert isinstance(app.screen, HomeScreen)
+                await pilot.press("q")
+    
+>       asyncio.run(_run())
+
+tests/test_tui_agents.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_tui_agents.py:82: in _run
+    async with app.run_test(size=(100, 30)) as pilot:
+../../../.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/contextlib.py:231: in __aexit__
+    await self.gen.athrow(typ, value, traceback)
+.venv/lib/python3.11/site-packages/textual/app.py:2214: in run_test
+    await app._shutdown()
+.venv/lib/python3.11/site-packages/textual/message_pump.py:582: in _process_messages
+    await self._message_loop_exit()
+.venv/lib/python3.11/site-packages/textual/message_pump.py:582: in _process_messages
+    await self._message_loop_exit()
+.venv/lib/python3.11/site-packages/textual/widget.py:4523: in _message_loop_exit
+    await gather(*[node._task for node in children if node._task is not None])
+.venv/lib/python3.11/site-packages/textual/message_pump.py:578: in _process_messages
+    await Timer._stop_all(self._timers)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+timer = Timer(0.5, name='set_interval#1')
+
+    async def stop_timer(timer: Timer) -> None:
+        """Stop a timer and wait for it to finish.
+    
+        Args:
+            timer: A Timer instance.
+        """
+        if timer._task is not None:
+            timer._active.set()
+            timer._task.cancel()
+            try:
+>               await timer._task
+E               asyncio.exceptions.CancelledError
+
+.venv/lib/python3.11/site-packages/textual/timer.py:120: CancelledError
+================================ tests coverage ================================
+______________ coverage: platform darwin, python 3.11.16-final-0 _______________
+
+Name                        Stmts   Miss Branch BrPart  Cover   Missing
+-----------------------------------------------------------------------
+skill_lens/tui/agents.py      251     58     70     23    70%   67, 211->213, 229, 232, 240, 245-248, 250, 258-259, 273->280, 288-289, 292, 294, 303-304, 307, 309, 318-319, 328-329, 332, 338, 341, 343-344, 347-349, 352-358, 361-367, 370-373, 377-378, 383, 388, 402, 415, 419, 425, 430
+skill_lens/tui/compare.py     563    478    166      0    12%   57, 61-64, 174-195, 199, 203, 207, 211, 215-217, 221, 224-245, 248-258, 261, 264, 267, 273-285, 292-342, 346-353, 356-383, 388-402, 405-420, 423-428, 431-433, 436-445, 448-463, 466-467, 471-518, 524-581, 584-590, 604-642, 647-648, 651-686, 689-742, 745-753, 756-762, 765-768, 771-779, 782-787, 790-806, 809-818, 821-833, 838-845, 848-855, 858-876, 879
+-----------------------------------------------------------------------
+TOTAL                         814    536    236     23    29%
+FAIL Required test coverage of 90.0% not reached. Total coverage: 29.43%
+=========================== short test summary info ============================
+FAILED tests/test_tui_agents.py::test_agents_lists_every_captured_definition_and_all_root_policy_details
+1 failed in 31.21s

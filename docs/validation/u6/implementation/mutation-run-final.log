@@ -1,0 +1,21 @@
+RECORDED 1/13 filter letters open Agents: killed control=0 mutant=1 restored=0
+RECORDED 2/13 picker filters to detected agents: killed control=0 mutant=1 restored=0
+RECORDED 3/13 first visit rereads a captured skill file: killed control=0 mutant=1 restored=0
+RECORDED 4/13 ordered pair is reversed: killed control=0 mutant=1 restored=0
+RECORDED 5/13 stale success enters the report cache: killed control=0 mutant=1 restored=0
+RECORDED 6/13 stale error poisons controller failure state: killed control=0 mutant=1 restored=0
+RECORDED 7/13 old screen cleanup cancels a newer token: killed control=0 mutant=1 restored=0
+RECORDED 8/13 raw refresh leaves the old report and JSON visible: killed control=0 mutant=1 restored=0
+RECORDED 9/13 missing choice dispatches a report worker: survived_or_wrong_test_failed control=0 mutant=0 restored=0
+RECORDED 10/13 redraw retries a failed report: marker_mismatch control=0 mutant=1 restored=0
+RECORDED 11/13 delayed close pops the current screen regardless of owner: killed control=0 mutant=1 restored=0
+RECORDED 12/13 raw-mode cursor actions move hidden picker controls: marker_mismatch control=0 mutant=1 restored=0
+RECORDED 13/13 comparison diagnostic text is parsed as markup: killed control=0 mutant=1 restored=0
+Traceback (most recent call last):
+  File "/Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/u6/implementation/mutation_gate.py", line 706, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/Users/corvette/Documents/Projects Coding/Skill Lens/docs/validation/u6/implementation/mutation_gate.py", line 678, in main
+    f"Temporary imports: `{provenance['skill_lens']}` and `{provenance['test_module']}`",
+                                                            ~~~~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'test_module'

@@ -1,0 +1,10 @@
+{
+  "accepted": true,
+  "source_test_configuration_hashes_match_final_gates": true,
+  "final_gate_log_hashes_valid": true,
+  "report_links_resolve": true,
+  "only_status_and_evidence_documents_changed_after_gates": true,
+  "head": "3a266b4986f5b9bd6838e773a298b2a862904a08",
+  "staging_empty": true,
+  "commit_or_push_performed": false
+}

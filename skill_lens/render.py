@@ -21,13 +21,15 @@ from skill_lens.core.scanner import ScanReport
 from skill_lens.models.compare import CompareReport
 from skill_lens.models.diff import DiffCopy, DiffFile, DiffReport
 from skill_lens.models.doctor import DoctorReport
-from skill_lens.models.enums import CompareRelation, Severity
+from skill_lens.models.enums import Severity
 from skill_lens.models.resolution import ResolutionReport
 from skill_lens.presentation import (
     BASELINE_LABEL,
     BINARY_MARKER,
+    COMPARE_EMPTY_TEXT,
     COPIES_LABEL,
     NOTE_LABEL,
+    RELATION_LABEL,
     SCOPE_LABEL,
     STATE_MARK,
     STATE_STYLE,
@@ -315,13 +317,6 @@ _SEVERITY_MARK = {
     Severity.INFO: "i",
 }
 
-_RELATION_LABEL = {
-    CompareRelation.SHARED: ("shared", "green"),
-    CompareRelation.DIVERGED: ("diverged", "yellow"),
-    CompareRelation.ONLY_A: ("A only", "cyan"),
-    CompareRelation.ONLY_B: ("B only", "magenta"),
-}
-
 
 def render_doctor(report: DoctorReport, console: Console | None = None) -> None:
     """Render a doctor report: one line per finding, sorted by severity.
@@ -376,7 +371,7 @@ def render_compare(report: CompareReport, console: Console | None = None) -> Non
     console.print()
 
     if not report.entries:
-        console.print("[dim]Neither agent has any skills installed.[/dim]")
+        console.print(f"[dim]{COMPARE_EMPTY_TEXT}[/dim]")
         return
 
     table = Table(show_header=True, header_style="bold")
@@ -385,7 +380,7 @@ def render_compare(report: CompareReport, console: Console | None = None) -> Non
     table.add_column("Path A", overflow="fold")
     table.add_column("Path B", overflow="fold")
     for entry in report.entries:
-        label, style = _RELATION_LABEL[entry.relation]
+        label, style = RELATION_LABEL[entry.relation]
         table.add_row(
             escape(entry.name),
             f"[{style}]{label}[/]",

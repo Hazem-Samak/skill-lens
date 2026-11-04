@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from skill_lens.presentation.state import SCOPE_LABEL, STATE_MARK, STATE_STYLE
+from skill_lens.presentation.agents import AgentSummary, agents_payload
+from skill_lens.presentation.state import RELATION_LABEL, SCOPE_LABEL, STATE_MARK, STATE_STYLE
 from skill_lens.presentation.text import (
     BASELINE_ABSENT_TEXT,
     BASELINE_LABEL,
     BASELINE_REFERENCE_BODY,
     BINARY_FILE_NOTICE,
     BINARY_MARKER,
+    COMPARE_EMPTY_TEXT,
     COPIES_LABEL,
     HUNKLESS_TEXT_NOTICE,
     IDENTICAL_BODY,
@@ -32,15 +34,18 @@ from skill_lens.presentation.text import (
 )
 
 __all__ = [
+    "AgentSummary",
     "BASELINE_ABSENT_TEXT",
     "BASELINE_LABEL",
     "BASELINE_REFERENCE_BODY",
     "BINARY_FILE_NOTICE",
     "BINARY_MARKER",
+    "COMPARE_EMPTY_TEXT",
     "COPIES_LABEL",
     "HUNKLESS_TEXT_NOTICE",
     "IDENTICAL_BODY",
     "NOTE_LABEL",
+    "RELATION_LABEL",
     "SCOPE_LABEL",
     "STATE_MARK",
     "STATE_STYLE",
@@ -48,6 +53,7 @@ __all__ = [
     "UNCOMPARED_BODY",
     "HeadingParts",
     "NoticeParts",
+    "agents_payload",
     "baseline_text",
     "copy_body",
     "copy_heading",

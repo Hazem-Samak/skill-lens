@@ -2,7 +2,14 @@
 
 from __future__ import annotations
 
-from skill_lens.models.enums import HeadlineState, Scope
+from skill_lens.models.enums import CompareRelation, HeadlineState, Scope
+
+RELATION_LABEL: dict[CompareRelation, tuple[str, str]] = {
+    CompareRelation.SHARED: ("shared", "green"),
+    CompareRelation.DIVERGED: ("diverged", "yellow"),
+    CompareRelation.ONLY_A: ("A only", "cyan"),
+    CompareRelation.ONLY_B: ("B only", "magenta"),
+}
 
 STATE_STYLE: dict[HeadlineState, str] = {
     HeadlineState.ACTIVE: "bold green",
@@ -32,6 +39,7 @@ SCOPE_LABEL: dict[Scope, str] = {
 }
 
 __all__ = [
+    "RELATION_LABEL",
     "SCOPE_LABEL",
     "STATE_MARK",
     "STATE_STYLE",

@@ -1,0 +1,199 @@
+E501 Line too long (120 > 100)
+   --> skill_lens/tui/compare.py:637:101
+    |
+635 |                 self._owned_request = None
+636 |                 self._report_state = "idle"
+637 |                 self._report_error = "The comparison request ended before a report was accepted. Submit again to retry."
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^
+638 |         self._refresh_result()
+639 |         self._refresh_json()
+    |
+
+F841 Local variable `controller` is assigned to but never used
+   --> skill_lens/tui/compare.py:756:9
+    |
+754 |         if view is None:
+755 |             return
+756 |         controller = self._host.controller
+    |         ^^^^^^^^^^
+757 |         if self._report is not None and self._report_state == "ready":
+758 |             view.show_document(dumps(self._report.to_dict()))
+    |
+help: Remove assignment to unused variable `controller`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_tui_agents.py:3:1
+   |
+ 1 |   """Headless U6 Agents screen tests using captured definitions and Pilot events."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import asyncio
+ 6 | | import json
+ 7 | | import time
+ 8 | | import threading
+ 9 | | from dataclasses import replace
+10 | | from pathlib import Path
+11 | | from typing import Any
+12 | |
+13 | | import pytest
+14 | | from textual.containers import VerticalScroll
+15 | | from textual.widgets import DataTable, Input, Static
+16 | | from typer.testing import CliRunner
+17 | |
+18 | | import skill_lens.tui.app as app_module
+19 | | from skill_lens.cli import app as cli_app
+20 | | from skill_lens.core.snapshot import SnapshotTooLarge
+21 | | from skill_lens.models import dumps
+22 | | from skill_lens.registry.loader import list_agents
+23 | | from skill_lens.tui.agents import AgentsScreen, agent_detail_text
+24 | | from skill_lens.tui.app import SkillLensApp
+25 | | from skill_lens.tui.home import HomeScreen
+26 | | from skill_lens.tui.json_view import JsonView
+27 | | from tests.fixtures.builders import make_skill
+   | |______________________________________________^
+28 |
+29 |   runner = CliRunner()
+   |
+help: Organize imports
+  |
+6 | import json
+7 + import threading
+8 | import time
+  - import threading
+9 | from dataclasses import replace
+  |
+
+F401 [*] `skill_lens.models.dumps` imported but unused
+  --> tests/test_tui_agents.py:21:31
+   |
+19 | from skill_lens.cli import app as cli_app
+20 | from skill_lens.core.snapshot import SnapshotTooLarge
+21 | from skill_lens.models import dumps
+   |                               ^^^^^
+22 | from skill_lens.registry.loader import list_agents
+23 | from skill_lens.tui.agents import AgentsScreen, agent_detail_text
+   |
+help: Remove unused import: `skill_lens.models.dumps`
+   |
+20 | from skill_lens.core.snapshot import SnapshotTooLarge
+   - from skill_lens.models import dumps
+21 | from skill_lens.registry.loader import list_agents
+   |
+
+F401 [*] `tests.fixtures.builders.make_skill` imported but unused
+  --> tests/test_tui_agents.py:27:37
+   |
+25 | from skill_lens.tui.home import HomeScreen
+26 | from skill_lens.tui.json_view import JsonView
+27 | from tests.fixtures.builders import make_skill
+   |                                     ^^^^^^^^^^
+28 |
+29 | runner = CliRunner()
+   |
+help: Remove unused import: `tests.fixtures.builders.make_skill`
+   |
+26 | from skill_lens.tui.json_view import JsonView
+   - from tests.fixtures.builders import make_skill
+27 |
+   |
+
+B007 Loop control variable `index` not used within loop body
+   --> tests/test_tui_agents.py:127:17
+    |
+125 |                 for index, root in enumerate(selected.roots, start=1)
+126 |             )
+127 |             for index, root in enumerate(selected.roots, start=1):
+    |                 ^^^^^
+128 |                 for label, value in (
+129 |                     ("Kind", root.kind),
+    |
+help: Rename unused `index` to `_index`
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_tui_compare.py:3:1
+   |
+ 1 |   """Headless U6 Compare tests for picker behavior, frozen data, and request ownership."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import asyncio
+ 6 | | import builtins
+ 7 | | import json
+ 8 | | import os
+ 9 | | import time
+10 | | import threading
+11 | | from dataclasses import replace
+12 | | from pathlib import Path
+13 | | from stat import S_IMODE
+14 | | from typing import Any, Literal
+15 | |
+16 | | import pytest
+17 | | from textual.containers import Vertical, VerticalScroll
+18 | | from textual.widgets import Button, DataTable, Static
+19 | | from typer.testing import CliRunner
+20 | |
+21 | | import skill_lens.tui.app as app_module
+22 | | from skill_lens.cli import app as cli_app
+23 | | from skill_lens.core import compare as compare_engine
+24 | | from skill_lens.core import discovery, snapshot as snapshot_service, system
+25 | | from skill_lens.core.compare import validate_compare_agents
+26 | | from skill_lens.core.snapshot import SnapshotTooLarge
+27 | | from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
+28 | | from skill_lens.models import CompareRelation
+29 | | from skill_lens.registry.loader import list_agents
+30 | | from skill_lens.tui.agents import AgentsScreen
+31 | | from skill_lens.tui.app import SkillLensApp
+32 | | from skill_lens.tui.compare import CompareScreen
+33 | | from skill_lens.tui.home import HomeScreen
+34 | | from skill_lens.tui.json_view import JsonView
+35 | | from tests.fixtures.builders import make_skill, symlink
+   | |_______________________________________________________^
+36 |
+37 |   runner = CliRunner()
+   |
+help: Organize imports
+   |
+8  | import os
+9  + import threading
+10 | import time
+   - import threading
+11 | from dataclasses import replace
+--------------------------------------------------------------------------------
+23 | from skill_lens.core import compare as compare_engine
+   - from skill_lens.core import discovery, snapshot as snapshot_service, system
+24 + from skill_lens.core import discovery, system
+25 + from skill_lens.core import snapshot as snapshot_service
+26 | from skill_lens.core.compare import validate_compare_agents
+   |
+
+F401 [*] `skill_lens.registry.loader.list_agents` imported but unused
+  --> tests/test_tui_compare.py:29:40
+   |
+27 | from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
+28 | from skill_lens.models import CompareRelation
+29 | from skill_lens.registry.loader import list_agents
+   |                                        ^^^^^^^^^^^
+30 | from skill_lens.tui.agents import AgentsScreen
+31 | from skill_lens.tui.app import SkillLensApp
+   |
+help: Remove unused import: `skill_lens.registry.loader.list_agents`
+   |
+28 | from skill_lens.models import CompareRelation
+   - from skill_lens.registry.loader import list_agents
+29 | from skill_lens.tui.agents import AgentsScreen
+   |
+
+E501 Line too long (101 > 100)
+   --> tests/test_tui_compare.py:960:101
+    |
+958 |             # Change synthetic content and retarget a link after capture.
+959 |             skill_file.write_text(
+960 |                 "---\nname: identical\ndescription: Changed after capture.\n---\nDifferent bytes.\n",
+    |                                                                                                     ^
+961 |                 encoding="utf-8",
+962 |             )
+    |
+
+Found 9 errors.
+[*] 5 fixable with the `--fix` option (2 hidden fixes can be enabled with the `--unsafe-fixes` option).

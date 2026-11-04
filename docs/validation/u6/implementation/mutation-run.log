@@ -1,0 +1,30 @@
+PASS filter letters open Agents: control=0 mutant=1 restored=0
+PASS picker filters to detected agents: control=0 mutant=1 restored=0
+PASS first visit rereads a captured skill file: control=0 mutant=1 restored=0
+PASS ordered pair is reversed: control=0 mutant=1 restored=0
+PASS stale success enters the report cache: control=0 mutant=1 restored=0
+PASS stale error poisons controller failure state: control=0 mutant=1 restored=0
+PASS old screen cleanup cancels a newer token: control=0 mutant=1 restored=0
+raw refresh leaves the old report and JSON visible: mutation survived, failed outside the intended assertion, (1)
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_compare_refresh_keeps_valid_raw_mode_and_clears_old_json_while_loading __
+tests/test_tui_compare.py:686: in test_compare_refresh_keeps_valid_raw_mode_and_clears_old_json_while_loading
+    asyncio.run(_run())
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/corvette/.local/share/uv/python/cpython-3.11.16-macos-aarch64-none/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_tui_compare.py:660: in _run
+    await _wait_until(pilot, second_started.is_set, "new-generation comparison worker")
+tests/test_tui_compare.py:46: in _wait_until
+    raise AssertionError(f"timed out waiting for {label}")
+E   AssertionError: timed out waiting for new-generation comparison worker
+=========================== short test summary info ============================
+FAILED tests/test_tui_compare.py::test_compare_refresh_keeps_valid_raw_mode_and_clears_old_json_while_loading
+1 failed in 6.16s

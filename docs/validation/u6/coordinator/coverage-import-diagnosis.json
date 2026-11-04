@@ -1,0 +1,18 @@
+[
+  {
+    "mode": "whole-package",
+    "cancelled_type": "<class 'asyncio.exceptions.CancelledError'>",
+    "asyncio_cancelled_type": "<class 'asyncio.exceptions.CancelledError'>",
+    "same_class": true,
+    "caught_by_current_class": true,
+    "stderr": ""
+  },
+  {
+    "mode": "dotted-modules",
+    "cancelled_type": "<class 'asyncio.exceptions.CancelledError'>",
+    "asyncio_cancelled_type": "<class 'asyncio.exceptions.CancelledError'>",
+    "same_class": false,
+    "caught_by_current_class": false,
+    "stderr": ""
+  }
+]

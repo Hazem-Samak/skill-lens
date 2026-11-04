@@ -70,6 +70,14 @@ class _ReportHost(Protocol):
         """Open the Diff screen for one canonical installation key."""
         ...
 
+    def open_agents(self) -> None:
+        """Open the captured agent-definition browser from Home."""
+        ...
+
+    def open_compare(self) -> None:
+        """Open the comparison picker from Home."""
+        ...
+
 
 @dataclass(frozen=True, slots=True)
 class AgentOption:
@@ -287,6 +295,8 @@ class HomeScreen(Screen[None]):
         Binding("backspace", "back", "Back", show=False),
         Binding("enter", "open_why", "Why", show=False),
         Binding("d", "open_diff", "Diff", show=False),
+        Binding("g", "open_agents", "Agents", show=False),
+        Binding("c", "open_compare", "Compare", show=False),
         Binding("J", "toggle_json", "JSON", show=False),
     ]
 
@@ -436,6 +446,7 @@ class HomeScreen(Screen[None]):
         yield Static("", id="removal-notice", markup=False)
         yield Static(
             "q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff"
+            "   g: Agents   c: Compare"
             "   J: JSON   Tab: Focus",
             id="footer-help",
             markup=False,
@@ -1223,6 +1234,26 @@ class HomeScreen(Screen[None]):
         if cursor_index < 0 or cursor_index >= len(self._visible):
             return
         self._host.open_diff(self._visible[cursor_index].key)
+
+    def action_open_agents(self) -> None:
+        """Open Agents only from ordinary Home browsing, never from filter text."""
+        if self._suspended or self._json_mode:
+            return
+        with contextlib.suppress(NoMatches):
+            if self.query_one("#filter-input", Input).has_focus:
+                return
+        self._clear_removal_notice()
+        self._host.open_agents()
+
+    def action_open_compare(self) -> None:
+        """Open Compare only from ordinary Home browsing, never from filter text."""
+        if self._suspended or self._json_mode:
+            return
+        with contextlib.suppress(NoMatches):
+            if self.query_one("#filter-input", Input).has_focus:
+                return
+        self._clear_removal_notice()
+        self._host.open_compare()
 
     def action_noop_enter(self) -> None:
         """Backward compatibility alias for enter action."""

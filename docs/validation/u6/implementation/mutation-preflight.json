@@ -1,0 +1,227 @@
+{
+  "checkout": "temporary copy; deleted after source-only preflight",
+  "mutations": [
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/home.py",
+          "replacement_fragment": "        self._clear_removal_notice()\n        self._host.open_agents()\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "assert app.screen is home",
+      "name": "filter letters open Agents",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "assert app.screen is home",
+      "test": "tests/test_tui_agents.py::test_home_shortcuts_preserve_filter_typing_and_open_empty_catalog_screens"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/compare.py",
+          "replacement_fragment": "            detected = set(snapshot.scan.summary.detected_agents)\n            registry = tuple(\n                agent for agent in snapshot.registry if agent.id in detected\n            )\n            self._on_generation(registry, snapshot.generation)\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "row_count == 10",
+      "name": "picker filters to detected agents",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "row_count == 10",
+      "test": "tests/test_tui_compare.py::test_compare_empty_skill_home_still_offers_all_registry_choices"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/compare.py",
+          "replacement_fragment": "from __future__ import annotations\n\nfrom pathlib import Path\n",
+          "selected_occurrence": 0
+        },
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/compare.py",
+          "replacement_fragment": "        counts = report.counts_by_relation()\n        Path(snapshot.home, '.agents/skills/identical/SKILL.md').read_text(\n            encoding='utf-8'\n        )\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "first visit accessed captured target",
+      "name": "first visit rereads a captured skill file",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "first visit accessed captured target",
+      "test": "tests/test_tui_compare.py::test_compare_first_visit_uses_frozen_files_and_registry_only"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/compare.py",
+          "replacement_fragment": "        arguments = tuple(reversed(pair))\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "accepted comparison report",
+      "name": "ordered pair is reversed",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "timed out waiting for accepted comparison report",
+      "test": "tests/test_tui_compare.py::test_compare_all_registry_agents_keyboard_picker_and_exact_cli_json"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 2,
+          "file": "skill_lens/tui/session.py",
+          "replacement_fragment": "        active = self.active_requests.get(view)\n        if active is None:\n            self.cache[(generation, view, arguments)] = result\n            return True\n        if (\n            active.request_id != request_id\n            or active.generation != generation\n            or active.arguments != arguments\n        ):\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "get_cached_report(\"compare\", (\"codex\", \"claude\"))",
+      "name": "stale success enters the report cache",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "get_cached_report(\"compare\", (\"codex\", \"claude\"))",
+      "test": "tests/test_tui_compare.py::test_compare_rejects_late_old_pair_completion_after_cached_pair_reopens"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 2,
+          "file": "skill_lens/tui/session.py",
+          "replacement_fragment": "        active = self.active_requests.get(view)\n        if active is None:\n            self.failed = True\n            self.last_error_details = \"synthetic stale error\"\n            return True\n        if (\n            active.request_id != request_id\n            or active.generation != generation\n            or active.arguments != arguments\n        ):\n",
+          "selected_occurrence": 1
+        }
+      ],
+      "intended_test_assertion": "assert not app.controller.failed",
+      "name": "stale error poisons controller failure state",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "assert not app.controller.failed",
+      "test": "tests/test_tui_compare.py::test_compare_rejects_late_old_pair_completion_after_cached_pair_reopens"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/compare.py",
+          "replacement_fragment": "        active = self._host.controller.active_requests.get(\"compare\")\n        if active is not None:\n            self._host.controller.invalidate_view(\"compare\")\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "active_requests.get(\"compare\") == new_token",
+      "name": "old screen cleanup cancels a newer token",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "active_requests.get(\"compare\") == new_token",
+      "test": "tests/test_tui_compare.py::test_compare_close_and_old_token_cleanup_are_instance_checked"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 3,
+          "file": "skill_lens/tui/compare.py",
+          "replacement_fragment": "        controller = self._host.controller\n        if self._json_mode:\n            return\n        snapshot = controller.current\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "new-generation comparison worker",
+      "name": "raw refresh leaves the old report and JSON visible",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "new-generation comparison worker",
+      "test": "tests/test_tui_compare.py::test_compare_refresh_keeps_valid_raw_mode_and_clears_old_json_while_loading"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/compare.py",
+          "replacement_fragment": "        if self._selected_a is None:\n            self._input_error = \"Choose an agent for A.\"\n            self._focus_side(\"a\")\n            self._refresh_picker()\n            self._request_pair((\"claude\", \"codex\"))\n            return\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "assert report_calls == []",
+      "name": "missing choice dispatches a report worker",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "assert report_calls == []",
+      "test": "tests/test_tui_compare.py::test_compare_input_errors_are_inline_and_dispatch_no_worker"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/compare.py",
+          "replacement_fragment": "        self._refresh_result()\n        if self._report_state == \"error\" and self._submitted_pair is not None:\n            self._request_pair(self._submitted_pair)\n        if self._json_mode:\n            self._refresh_json()\n\n    def _on_generation(\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "assert calls == 1",
+      "name": "redraw retries a failed report",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "assert calls == 1",
+      "test": "tests/test_tui_compare.py::test_compare_error_is_sticky_but_redraw_never_retries"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/app.py",
+          "replacement_fragment": "    def close_compare(self, expected: CompareScreen) -> None:\n        \"\"\"Close only the expected Compare instance and resume Home.\"\"\"\n        expected._cancel_owned_token()\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "assert app.screen is second",
+      "name": "delayed close pops the current screen regardless of owner",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "assert app.screen is second",
+      "test": "tests/test_tui_compare.py::test_compare_close_and_old_token_cleanup_are_instance_checked"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/compare.py",
+          "replacement_fragment": "    def action_cursor_down(self) -> None:\n        table = self.query_one(\"#compare-a-table\", DataTable)\n        table.action_cursor_down()\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": ") == hidden_cursors",
+      "name": "raw-mode cursor actions move hidden picker controls",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "(2, 2) == (1, 2)",
+      "test": "tests/test_tui_compare.py::test_compare_result_layout_and_raw_mode_keep_hidden_picker_inert"
+    },
+    {
+      "ast_valid_after_mutation": true,
+      "edits": [
+        {
+          "before_matches": 1,
+          "file": "skill_lens/tui/compare.py",
+          "replacement_fragment": "    return Content.from_text(text)\n",
+          "selected_occurrence": 0
+        }
+      ],
+      "intended_test_assertion": "Diagnostic [red]literal[/red] note.",
+      "name": "comparison diagnostic text is parsed as markup",
+      "restored_bytes_exactly": true,
+      "runtime_failure_marker": "Diagnostic [red]literal[/red] note.",
+      "test": "tests/test_tui_compare.py::test_compare_report_uses_engine_relations_paths_counts_and_literal_notes"
+    }
+  ],
+  "result": "all source selectors and intended test markers resolved; all files restored exactly",
+  "temporary_copy_provenance": {
+    "agents_test_module": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u6-mutation-preflight-s0jvqhn9/checkout/tests/test_tui_agents.py",
+    "compare_test_module": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u6-mutation-preflight-s0jvqhn9/checkout/tests/test_tui_compare.py",
+    "skill_lens": "/private/var/folders/tf/jsdyxcts6y72fs98s7wl3dfm0000gn/T/skill-lens-u6-mutation-preflight-s0jvqhn9/checkout/skill_lens/__init__.py"
+  },
+  "test_processes_run": 0,
+  "total": 13
+}

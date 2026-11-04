@@ -1,0 +1,11 @@
+{
+  "baseline": "3a266b4986f5b9bd6838e773a298b2a862904a08",
+  "unrelated_entries_unchanged": 990,
+  "frozen_plan_unchanged": true,
+  "excluded_source_and_expected_outputs_unchanged": true,
+  "index_empty": true,
+  "head_unchanged": true,
+  "mutation_cases_reviewed": 13,
+  "mutation_controls_and_restores_passed": true,
+  "unresolved_mutation_survivors": 0
+}

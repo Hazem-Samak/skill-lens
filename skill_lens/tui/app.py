@@ -38,6 +38,8 @@ from skill_lens.core.snapshot import (
 )
 from skill_lens.core.snapshot_models import SessionSnapshot
 from skill_lens.tui._textual_compat import record_unhandled_fault
+from skill_lens.tui.agents import AgentsScreen
+from skill_lens.tui.compare import CompareScreen
 from skill_lens.tui.diff import DiffScreen
 from skill_lens.tui.home import HomeScreen
 from skill_lens.tui.session import (
@@ -275,6 +277,47 @@ class SkillLensApp(App[int]):
             prev_screen.resume_detail()
             self._update_ui()
 
+    def open_agents(self) -> None:
+        """Open the captured registry browser from Home only."""
+        if isinstance(self.screen, AgentsScreen):
+            return
+        home = self.screen if isinstance(self.screen, HomeScreen) else None
+        if home is None:
+            return
+        home.suspend_why()
+        self.push_screen(AgentsScreen())
+
+    def close_agents(self, expected: AgentsScreen) -> None:
+        """Close only the expected Agents instance, then resume its Home origin."""
+        if self.screen is not expected:
+            return
+        prev_screen = self.screen_stack[-2] if len(self.screen_stack) >= 2 else None
+        self.pop_screen()
+        if isinstance(prev_screen, HomeScreen):
+            prev_screen.resume_why()
+            self._update_ui()
+
+    def open_compare(self) -> None:
+        """Open the pair picker from Home only."""
+        if isinstance(self.screen, CompareScreen):
+            return
+        home = self.screen if isinstance(self.screen, HomeScreen) else None
+        if home is None:
+            return
+        home.suspend_why()
+        self.push_screen(CompareScreen())
+
+    def close_compare(self, expected: CompareScreen) -> None:
+        """Close only the expected Compare instance and resume Home."""
+        if self.screen is not expected:
+            return
+        expected._cancel_owned_token()
+        prev_screen = self.screen_stack[-2] if len(self.screen_stack) >= 2 else None
+        self.pop_screen()
+        if isinstance(prev_screen, HomeScreen):
+            prev_screen.resume_why()
+            self._update_ui()
+
     def request_report(self, view: ViewName, arguments: tuple[str, ...]) -> ReportValue | None:
         """Adapter method for Why/Diff/Compare report computation.
 
@@ -378,7 +421,7 @@ class SkillLensApp(App[int]):
             message.report,
         )
         screen = self.screen
-        if isinstance(screen, (HomeScreen, WhyScreen, DiffScreen)):
+        if isinstance(screen, (HomeScreen, WhyScreen, DiffScreen, CompareScreen)):
             screen.note_report_outcome(
                 message.view,
                 message.request_id,
@@ -402,7 +445,7 @@ class SkillLensApp(App[int]):
             message.error,
         )
         screen = self.screen
-        if isinstance(screen, (HomeScreen, WhyScreen, DiffScreen)):
+        if isinstance(screen, (HomeScreen, WhyScreen, DiffScreen, CompareScreen)):
             screen.note_report_outcome(
                 message.view,
                 message.request_id,
@@ -538,8 +581,12 @@ class SkillLensApp(App[int]):
             # call keeps its widgets and the controller's published state in step.
             screen.sync_from_controller()
 
+        elif isinstance(screen, (AgentsScreen, CompareScreen)):
+            screen.sync_from_controller()
+
 
 __all__ = [
+    "AgentsScreen",
     "CaptureComplete",
     "CaptureFailed",
     "DiffScreen",
@@ -548,4 +595,5 @@ __all__ = [
     "ViewReportComplete",
     "ViewReportFailed",
     "WhyScreen",
+    "CompareScreen",
 ]

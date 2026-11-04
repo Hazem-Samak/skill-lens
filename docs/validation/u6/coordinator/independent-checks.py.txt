@@ -1,0 +1,168 @@
+"""Independent parent UI checks against the frozen U6 behavior."""
+from __future__ import annotations
+
+import asyncio
+from dataclasses import replace
+from pathlib import Path
+import time
+
+import pytest
+from textual.containers import VerticalScroll
+from textual.widgets import DataTable, Input, Static
+from typer.testing import CliRunner
+
+from skill_lens.cli import app as cli
+from skill_lens.tui.app import SkillLensApp
+from skill_lens.tui.agents import AgentsScreen
+from skill_lens.tui.compare import CompareScreen
+from skill_lens.tui.home import HomeScreen
+from skill_lens.tui.json_view import JsonView
+from tests.fixtures.builders import make_skill
+
+async def until(pilot, predicate, message):
+    deadline = time.monotonic() + 8
+    while time.monotonic() < deadline:
+        if predicate():
+            return
+        await pilot.pause(0.01)
+    raise AssertionError(message)
+
+async def pick(pilot, screen, side, agent_id):
+    table = screen.query_one(f"#compare-{side}-table", DataTable)
+    ids = [str(table.coordinate_to_cell_key((i, 0)).row_key.value) for i in range(table.row_count)]
+    table.focus()
+    table.move_cursor(row=ids.index(agent_id), column=0, animate=False)
+    await pilot.pause()
+    await pilot.press("enter")
+
+@pytest.mark.parametrize("size", [(100, 30), (60, 24)])
+def test_parent_frozen_compare_cli_json_and_home_input(mock_home: Path, size):
+    skill = make_skill(mock_home / ".claude/skills/only-claude", "only-claude", "Captured old description.")
+    expected = CliRunner().invoke(cli, ["compare", "--agent", "claude", "--agent", "codex", "--sandbox", str(mock_home), "--cwd", str(mock_home), "--json"])
+    assert expected.exit_code == 0
+    agents_expected = CliRunner().invoke(cli, ["agents", "--json"])
+    assert agents_expected.exit_code == 0
+    async def run():
+        app = SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test(size=size) as pilot:
+            await until(pilot, lambda: app.controller.current is not None, "initial capture")
+            home = app.screen
+            assert isinstance(home, HomeScreen)
+            query = home.query_one("#filter-input", Input)
+            query.focus()
+            await pilot.press("g", "c")
+            assert app.screen is home
+            assert query.value == "gc"
+            query.value = ""
+            home.query_one("#skill-table", DataTable).focus()
+            await pilot.pause()
+            # Delete a skill after capture: the first comparison still owns old input.
+            skill.unlink()
+            await pilot.press("c")
+            await until(pilot, lambda: isinstance(app.screen, CompareScreen), "Compare open")
+            screen = app.screen
+            await pick(pilot, screen, "a", "claude")
+            await pick(pilot, screen, "b", "codex")
+            await until(pilot, lambda: screen.report is not None, "captured Compare report")
+            assert screen.report.agent_a == "claude" and screen.report.agent_b == "codex"
+            assert any(entry.name == "only-claude" for entry in screen.report.entries)
+            await pilot.press("J")
+            raw = screen.query_one("#compare-json", JsonView)
+            await until(pilot, lambda: raw.has_focus, "Compare raw focus")
+            assert raw.document + "\n" == expected.stdout
+            await pilot.press("j", "k", "c", "g", "enter")
+            assert screen.json_mode and screen.selected_pair == ("claude", "codex")
+            await pilot.press("escape")
+            assert screen.mode == "result" and not screen.json_mode
+            await pilot.press("escape")
+            assert screen.mode == "picker"
+            await pilot.press("escape")
+            await until(pilot, lambda: app.screen is home, "Home return")
+            assert query.value == ""
+            await pilot.press("g")
+            await until(pilot, lambda: isinstance(app.screen, AgentsScreen), "Agents open")
+            agents = app.screen
+            await pilot.press("J")
+            agents_raw = agents.query_one("#agents-json", JsonView)
+            await until(pilot, lambda: agents_raw.has_focus, "Agents raw focus")
+            assert agents_raw.document + "\n" == agents_expected.stdout
+            await pilot.press("escape", "escape")
+            await until(pilot, lambda: app.screen is home, "Agents Home return")
+            await pilot.press("q")
+        assert app.return_value == 0
+    asyncio.run(run())
+
+@pytest.mark.parametrize("raw_mode", [False, True])
+def test_parent_removed_agent_refresh_reveals_usable_picker(mock_home, monkeypatch, raw_mode):
+    import skill_lens.tui.app as app_module
+    real_capture = app_module.capture_session
+    remove = False
+    def capture(**kwargs):
+        snapshot = real_capture(**kwargs)
+        return replace(snapshot, registry=tuple(a for a in snapshot.registry if a.id != "codex")) if remove else snapshot
+    monkeypatch.setattr(app_module, "capture_session", capture)
+    async def run():
+        nonlocal remove
+        app = SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test(size=(60, 24)) as pilot:
+            await until(pilot, lambda: app.controller.current is not None, "capture")
+            await pilot.press("c")
+            await until(pilot, lambda: isinstance(app.screen, CompareScreen), "Compare")
+            screen = app.screen
+            await pick(pilot, screen, "a", "claude")
+            await pick(pilot, screen, "b", "codex")
+            await until(pilot, lambda: screen.report is not None, "empty but valid report")
+            if raw_mode:
+                await pilot.press("J")
+                await until(pilot, lambda: screen.json_mode, "raw")
+            generation = app.controller.current.generation
+            remove = True
+            await pilot.press("r")
+            await until(pilot, lambda: app.controller.current.generation > generation, "replacement capture")
+            await pilot.pause()
+            assert screen.mode == "picker" and not screen.json_mode
+            assert screen.query_one("#compare-picker").display
+            assert not screen.query_one("#compare-result-scroll").display
+            assert "codex" in str(screen.query_one("#compare-input-error", Static).content)
+            assert screen.query_one("#compare-json", JsonView).document is None
+            assert screen.selected_pair is None
+            await pick(pilot, screen, "b", "pi")
+            await until(pilot, lambda: screen.report is not None, "replacement comparison")
+            assert (screen.report.agent_a, screen.report.agent_b) == ("claude", "pi")
+            await pilot.press("q")
+        assert app.return_value == 0
+    asyncio.run(run())
+
+@pytest.mark.parametrize("size", [(100, 30), (60, 24)])
+def test_parent_accepted_fault_does_not_redraw_retry(mock_home, monkeypatch, size):
+    import skill_lens.tui.app as app_module
+    calls = 0
+    def broken(*args):
+        nonlocal calls
+        calls += 1
+        raise RuntimeError("parent-review controlled Compare failure")
+    monkeypatch.setattr(app_module, "snapshot_compare", broken)
+    async def run():
+        app = SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test(size=size) as pilot:
+            await until(pilot, lambda: app.controller.current is not None, "capture")
+            await pilot.press("c")
+            await until(pilot, lambda: isinstance(app.screen, CompareScreen), "Compare")
+            screen = app.screen
+            await pick(pilot, screen, "a", "claude")
+            await pick(pilot, screen, "b", "codex")
+            await until(pilot, lambda: app.controller.failed, "accepted report fault")
+            for _ in range(3):
+                app._update_ui()
+                await pilot.pause()
+            assert calls == 1
+            await pilot.press("J")
+            raw = screen.query_one("#compare-json", JsonView)
+            assert raw.document is None
+            assert "fault" in raw.displayed_text.lower()
+            await pilot.pause()
+            assert raw.region.height > 0, "Fault details must leave a usable JSON pane"
+            assert screen.query_one("Footer").region.bottom <= app.size.height, "Fault details must not push footer out of view"
+            await pilot.press("q")
+        assert app.return_value == 3
+    asyncio.run(run())

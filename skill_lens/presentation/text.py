@@ -54,6 +54,7 @@ BASELINE_ABSENT_TEXT = "none (no copy passed validation)"
 BASELINE_REFERENCE_BODY = "Reference copy; every diff below is against it."
 IDENTICAL_BODY = "No differences from the baseline."
 UNCOMPARED_BODY = "Not compared: there is no baseline."
+COMPARE_EMPTY_TEXT = "Neither agent has any skills installed."
 
 # Notices printed instead of file content, or instead of omitted content.
 BINARY_FILE_NOTICE = "Binary content differs and is never printed."
@@ -242,6 +243,7 @@ __all__ = [
     "BINARY_FILE_NOTICE",
     "BINARY_MARKER",
     "COPIES_LABEL",
+    "COMPARE_EMPTY_TEXT",
     "HUNKLESS_TEXT_NOTICE",
     "IDENTICAL_BODY",
     "NOTE_LABEL",

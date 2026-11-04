@@ -28,6 +28,7 @@ from skill_lens.core.scanner import build_scan_report, scan_severities
 from skill_lens.core.snapshot import DEFAULT_MAX_SNAPSHOT_BYTES
 from skill_lens.models import dumps
 from skill_lens.models.enums import Severity
+from skill_lens.presentation import agents_payload
 from skill_lens.registry.loader import list_agents
 from skill_lens.render import (
     render_agents,
@@ -377,17 +378,7 @@ def agents(
     """List the known agent definitions and their precedence policy."""
     definitions = list_agents()
     if as_json:
-        payload = [
-            {
-                "id": agent.id,
-                "name": agent.name,
-                "collision_policy": agent.collision_policy,
-                "policy_evidence": agent.policy_evidence.value,
-                "roots": len(agent.roots),
-            }
-            for agent in definitions
-        ]
-        _emit_json(payload)
+        _emit_json(agents_payload(definitions))
         return
     render_agents(definitions, console)
 
