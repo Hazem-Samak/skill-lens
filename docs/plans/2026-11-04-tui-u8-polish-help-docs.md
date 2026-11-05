@@ -3,7 +3,7 @@
 Status: FROZEN — planning only; implementation awaits a later owner instruction.
 Date: 5 November 2026.
 Baseline: `8edca36b93f8e717f61f82184e6edcf54884a2a2` on `main`.
-Reference: pending until the reference-only commit after the plan-freeze commit.
+Reference: `b59478404a9d20d2670fb12a731c703f53eee798` (operative frozen plan; the reference-only follow-up changes this line only).
 Roster: coordinator — current Qoder host / owner-selected Kimi-K3.1-Pro / high
  effort, from the `/model` readback; planning critics — none by explicit owner
  instruction; implementer and final critics — pending later owner selection.
