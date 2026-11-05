@@ -57,9 +57,9 @@ and the build proceeds by phase:
   which revealed that `dsh` was **missing both user-level roots** and that `omp`'s
   managed-skills folder was ranked **above** the folders that should win. All 10
   agents now cite a source, and an enforced invariant guarantees it.
-- [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope; implemented
-  through U8, with the 0.2.0 release candidate prepared locally by U9. Not
-  published: PyPI still serves 0.1.1.* An optional, additive, read-only
+- [x] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope; implemented
+  through U8 and published by U9 as 0.2.0 on 2026-11-05 (PyPI
+  `skill-lens-cli` 0.2.0, tag `v0.2.0`).* An optional, additive, read-only
   browsing layer built on the existing frozen models, shipped as the opt-in
   `[tui]` extra so the base install gains nothing. Overturns the v1 "no
   full-screen TUI" rule for 0.2. The complete plan — vision, screens, phasing
@@ -96,9 +96,11 @@ and the build proceeds by phase:
   [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
   (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
   candidate; see the supersession note).
-  **Not published:** no upload, tag or release date exists, and human visual
-  approval plus hosted CI for the candidate commit are still outstanding.
-  This does not claim human visual approval, hosted CI acceptance or release. The
+  **Published 2026-11-05:** uploaded to PyPI as `skill-lens-cli` 0.2.0 and
+  tagged `v0.2.0` after two independent final reviews passed, the owner's
+  visual approval of the interface, and a green hosted CI matrix on the
+  release commit; the review wave and publication receipts are under
+  [`docs/validation/u9/coordinator/`](docs/validation/u9/coordinator/). The
   2026-10-04 readiness review recorded two
   engine fixes required before Step 0: P1 (non-object settings robustness) and
   P2 (lock decoding robustness). Both have been implemented and verified with
@@ -137,8 +139,12 @@ and the build proceeds by phase:
   with U3–U9 screens and 0.2 publishing remaining future work. Published PyPI
   0.1.1 has no TUI extra; do not recommend released `skill-lens-cli[tui]`.
 
-Latest dated verification: [U8 coordinator review receipt, 5 November 2026](docs/validation/u8/coordinator/review-receipt.json).
-It records the four-gate baseline, the native pseudo-terminal smoke run, and both
+Latest dated verification: the U9 review wave and publication receipts under
+[`docs/validation/u9/coordinator/`](docs/validation/u9/coordinator/)
+(5 November 2026) — two independent final review reports, the r2/r3/r4 rebuild
+qualifications, fingerprints and the publication record. The prior
+[U8 coordinator review receipt, 5 November 2026](docs/validation/u8/coordinator/review-receipt.json)
+records the four-gate baseline, the native pseudo-terminal smoke run, and both
 independent final reviews passing with no blockers. U8 Help implementation
 and its local gate/mutation evidence remain recorded under
 [`docs/validation/u8/implementation/`](docs/validation/u8/implementation/); that
@@ -165,8 +171,8 @@ the current tree with local evidence under `docs/validation/u7/implementation/`;
 [parent verification](docs/validation/u7/coordinator/verification.md) passed.
 U8 adds the Help overlay, contextual keymap, covered-screen worker suspension,
 empty/error polish and user documentation; its frozen plan and local evidence are
-linked above. U9 prepared the unpublished 0.2.0 candidate and is complete as
-*preparation*: publishing remains a separate, explicitly authorized mission.
+linked above. U9 prepared, reviewed and published 0.2.0 on 5 November 2026
+(upload first, then tag `v0.2.0`).
 
 > The Phase 6 plan is
 > [`PHASE6_PLAN.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_PLAN.md);
@@ -288,9 +294,10 @@ CI workflow never uploads anything.
 
 ### 0.2.0 candidate qualification (U9)
 
-0.2.0 is **prepared, not published**. The steps below produced the candidate on
-macOS with Python 3.11.16; they are the checklist a reviewer re-runs, not a
-release. `$root` is this repository and `$work` is a fresh directory you own
+0.2.0 is **published** (2026-11-05, PyPI `skill-lens-cli` 0.2.0, tag `v0.2.0`).
+The steps below produced and requalified the release build on macOS with Python
+3.11.16; they are the checklist a reviewer re-runs for any future release
+candidate. `$root` is this repository and `$work` is a fresh directory you own
 outside it.
 
 ```bash
@@ -360,12 +367,15 @@ ticked:
 - [ ] SHA-256 hashes for both artifacts, the export manifest and every overlaid
       input, retained with the commands that produced them.
 
-**Publication is a separate, explicit decision.** A passing run makes the
-candidate *locally verified*: *locally technically accepted* additionally
-requires the two independent final reviews of the frozen plan, and
+**Publication is a separate, explicit decision at every step.** A passing run
+makes the candidate *locally verified*: *locally technically accepted*
+additionally requires the two independent final reviews of the frozen plan, and
 *publication ready* further requires hosted CI green on the candidate's own
-commit and human visual approval of the interface. Neither an upload nor a tag
-is authorized by this checklist. Any packaged source or document change after
+commit and human visual approval of the interface. This ladder is exactly how
+0.2.0 shipped on 2026-11-05 — reviews, then the owner's visual approval, then
+CI green on the release commit, then the authorized upload, then the tag. The
+checklist itself authorizes none of those. Any packaged source or document
+change after
 qualification invalidates the recorded hashes, so rebuild and repeat the affected
 checks; keep the tag-after-successful-upload order from step 6 above.
 

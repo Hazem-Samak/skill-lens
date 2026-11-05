@@ -11,36 +11,36 @@ all clean. Earlier unreleased work (including Stage H) records local-only
 verification. The later CI repair was verified on all nine GitHub jobs; the
 dated evidence below distinguishes those results from the historical records.
 
-`[0.2.0]` below is a **preparation record, not a published release**: it states
-its own local verification and names what is still unproven. The published
-releases remain `0.1.0` and `0.1.1`.
+`[0.2.0]` below is the **published release**: PyPI `skill-lens-cli` 0.2.0
+(with the optional `[tui]` extra), tagged `v0.2.0`, released 2026-11-05.
 
 ---
 
 ## [Unreleased]
 
-Nothing newer than the 0.2.0 preparation entry is recorded yet. This section is
+Nothing newer than the 0.2.0 release entry is recorded yet. This section is
 kept rather than deleted because the version gate
 (`test_changelog_documents_the_current_version`) treats `[Unreleased]` as *not* a
 released heading, so the next version needs a real section of its own.
 
 ---
 
-## [0.2.0] — Unreleased (release preparation)
+## [0.2.0] — 2026-11-05
 
-**Prepared locally, not published.** There is no upload, no tag and no release
-date: the published release is still `0.1.1`, and this heading deliberately has
-no tag link at the foot of this file while `v0.2.0` does not exist. The square
-brackets stay so the version gate sees the version; the entry records what the
-candidate contains so a later, separately authorized publication mission can
-finalize the date and the public installation wording without rewriting history.
+**Published 2026-11-05.** `skill-lens-cli` 0.2.0 is live on PyPI with the
+optional `[tui]` extra and tagged `v0.2.0`. Publication followed the plan's
+order: frozen plan → implementation → coordinator verification → two
+independent final reviews (findings fixed and re-verified) → release wording
+finalized → clean-export rebuild and full requalification → hosted CI green on
+the release commit → upload → tag. Nothing about the six line-oriented
+commands changed; the TUI is additive and opt-in.
 
-Verified for this candidate (commands, hashes and logs under
+Verified before upload (commands, hashes and logs under
 [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
 for the first wave and
 [`docs/validation/u9/coordinator/precommit/`](docs/validation/u9/coordinator/precommit/)
-for the rebuilt candidate — the supersession note names the live archive
-hashes):
+for the rebuilt waves — the supersession note names the live archive hashes
+of the shipped 0.2.0):
 
 - the four source gates (`pytest --cov=skill_lens`, `mypy`, `ruff check .`,
   `ruff format --check .`) on macOS / Python 3.11.16 / Textual 8.2.8;
@@ -52,9 +52,11 @@ hashes):
   (461 tests, zero skips), including the 17 CLI snapshots and 16 JSON goldens;
 - an automated terminal smoke run of the installed candidate at 100×30 and 60×24.
 
-**Not claimed:** human visual approval, hosted CI for this candidate's commit, or
-publication. Earlier green runs (including U8's packaging job and this branch's
-baseline gates) prove their own commits, not this candidate.
+Before publication the owner visually approved the running interface, and the
+hosted CI matrix ran green on the release commit; receipts in
+`docs/validation/u9/coordinator/`. Earlier green runs (including U8's packaging
+job and this branch's baseline gates) proved their own commits, not this
+release.
 
 ### Added
 
@@ -234,6 +236,8 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
   and [`benchmark_capture.py`](./docs/validation/assessment-repairs/h/benchmark_capture.py).
   No resource policy is approved or implemented; the snapshot remains
   unbounded by bytes.
+
+[0.2.0]: https://github.com/Hazem-Samak/skill-lens/releases/tag/v0.2.0
 
 ---
 

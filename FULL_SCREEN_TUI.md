@@ -1,6 +1,8 @@
 # Skill Lens 0.2 — Full-Screen TUI
 
-> **Status:** 🛠️ **Partially implemented in development — 0.2 plan not released.**
+> **Status:** ✅ **0.2.0 released** — published on PyPI as `skill-lens-cli`
+> 0.2.0 on 2026-11-05, tagged `v0.2.0`, after two independent final reviews, a
+> green hosted CI matrix on the release commit and the owner's visual approval.
 > C1–C5 (byte/hash helpers, captured engine inputs, capture and cancellation,
 > presentation extraction, Step 0 audit) and U1–U3 (optional install, worker
 > controller and Home browsing screen) are complete and accepted development work
@@ -18,15 +20,18 @@
 > passed and both independent final reviews passed on 5 November 2026, with the
 > ledger under
 > [`docs/validation/u8/coordinator/`](docs/validation/u8/coordinator/).
-> U9 prepared the **0.2.0 release candidate locally**: synchronized 0.2.0
+> U9 prepared and **published 0.2.0** on 2026-11-05: synchronized 0.2.0
 > versions and lock, completed archive/installed coverage through U8, a wheel and
 > source archive built from a clean export, three fresh installations and an
-> automated terminal smoke run. It is **not published** — evidence and hashes are
+> automated terminal smoke run, two independent final reviews (wave-A
+> findings fixed and re-verified), a green hosted CI matrix on the release
+> commit and the owner's visual approval — then the upload and the `v0.2.0`
+> tag. Evidence and hashes are
 > under [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
-> (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
-> candidate),
-> and human visual approval plus candidate-specific hosted CI are outstanding.
-> No TUI extra is released: published PyPI 0.1.1 contains no TUI package and no `[tui]` extra.
+> (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt waves
+> and publication receipts).
+> The base install gains nothing: the TUI ships only as the opt-in `[tui]`
+> extra, from 0.2.0 (0.1.x had none).
 > It overturns a v1 rule ("no full-screen TUI"), so it is deliberately detailed:
 > the point of the plan is that the next person can scaffold the work without
 > re-litigating the decisions below.
@@ -72,8 +77,7 @@
 > U9 release preparation is recorded under
 > [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
 > (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
-> candidate), which qualifies an unpublished 0.2.0 candidate rather than
-> announcing a release.
+> waves), which qualified the 0.2.0 build released on 2026-11-05.
 
 ---
 
@@ -1074,18 +1078,19 @@ human visual approval, hosted CI acceptance or release.
 ### Step 9 — Release 0.2.0
 - Bump versions, refresh lock, follow `DEVELOPMENT.md` `Releasing`.
 - **Gate:** all release checks pass; TUI smoke-tested from the built wheel.
-- **Implementation status (U9):** versions, `uv.lock`, changelog and status
+- **Release status (U9):** versions, `uv.lock`, changelog and status
   documents are synchronized at 0.2.0; the wheel and source archive were built
   from a clean source export and passed `twine check`, archive metadata and
   content checks; base, minimum-Textual and latest-Textual installations passed
   outside the checkout; the installed terminal interface was driven at 100×30
-  and 60×24. This is an unpublished candidate: no upload, tag or release date
-  exists, human visual approval and candidate-specific hosted CI are outstanding,
-  and the checklist lives in
+  and 60×24. The gate was met and the release shipped on 2026-11-05: two
+  independent final reviews passed, hosted CI ran green on the release commit,
+  the owner visually approved the interface, and the upload came before the
+  `v0.2.0` tag. The checklist lives in
   [`DEVELOPMENT.md`](DEVELOPMENT.md#020-candidate-qualification-u9). Evidence:
   [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
   (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
-  candidate; see the supersession note).
+  waves; see the supersession note).
 
 ---
 
@@ -1894,9 +1899,9 @@ verification and both independent final reviews passed on 5 November 2026
 (`docs/validation/u8/coordinator/review-receipt.json`). U9's frozen plan is
 `docs/plans/2026-11-05-tui-u9-release-preparation.md`; its implementation and
 artifact evidence are under `docs/validation/u9/implementation/` (first wave)
-and `docs/validation/u9/coordinator/precommit/` (rebuilt candidate), which
-record an unpublished 0.2.0 candidate and the checks still owned by the
-coordinator.
+and `docs/validation/u9/coordinator/precommit/` (rebuilt waves), which
+record the released 0.2.0 candidate and the checks the coordinator completed
+before publication.
 
 After **each row**, run `pytest --cov=skill_lens`, `mypy`, `ruff check .` and
 `ruff format --check .` using the repository environment. State what changed,

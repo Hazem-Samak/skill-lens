@@ -370,7 +370,7 @@ Development follows a strict test-first protocol. Tests run against mock fixture
 - **Gate:** `pytest`, `ruff check .` and `ruff format --check .` clean; every new
   guard mutation-tested; every changed golden or snapshot reviewed and explained.
 
-### Phase 7 (0.2): Interactive Full-Screen TUI — implemented through U8; 0.2.0 candidate prepared locally
+### Phase 7 (0.2): Interactive Full-Screen TUI — implemented through U8; published as 0.2.0 (2026-11-05)
 
 > **New scope after 0.1.x, owner decision.** Overturns the v1 "no full-screen
 > TUI" rule for 0.2. The full design — purpose, vision, screens, phasing and
@@ -378,7 +378,7 @@ Development follows a strict test-first protocol. Tests run against mock fixture
 > describes the development implementation; the plan remains authoritative.
 
 - The optional **`textual` dependency** is the `[tui]` extra; the base install
-  gains no new runtime dependency. Published PyPI 0.1.1 contains no TUI.
+  gains no new runtime dependency. It ships from 0.2.0; 0.1.x had no TUI.
 - `skill-lens tui` is an explicit **read-only, presentation-only** browsing
   layer over the existing frozen models: Home, Why, Diff, Agents, Compare,
   Doctor, raw JSON mode and the Help overlay. No new engine or data fields.
@@ -399,7 +399,7 @@ Development follows a strict test-first protocol. Tests run against mock fixture
 - **Gate:** see the plan's success criteria — read-only guard test, no new base
   dependency, full repository gate green, snapshots reviewed. U8 local
   implementer evidence is under `docs/validation/u8/implementation/`.
-- **Release preparation status (U9):** 0.2.0 is synchronized across
+- **Release status (U9):** 0.2.0 is synchronized across
   `pyproject.toml`, `__version__` and the `uv.lock` root package; a wheel and
   source archive were built from a clean export of the reviewed sources and
   qualified in fresh base, `textual==8.2.8` and unconstrained-latest
@@ -407,10 +407,10 @@ Development follows a strict test-first protocol. Tests run against mock fixture
   60×24. Evidence:
   [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
   (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
-  candidate; see the supersession note).
-  This is an **unpublished candidate**: published PyPI 0.1.1 is unchanged, and
-  no upload, tag, hosted-CI claim or human visual approval exists for 0.2.0.
-  Publishing remains separate work.
+  waves and publication receipts; see the supersession note).
+  **Published on PyPI as `skill-lens-cli` 0.2.0 on 2026-11-05**, tag `v0.2.0`,
+  after two independent final reviews, a green hosted CI matrix on the release
+  commit and the owner's visual approval of the interface.
 
 ---
 

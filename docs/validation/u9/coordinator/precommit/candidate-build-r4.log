@@ -1,0 +1,21 @@
+{
+  "wheel_name_version": true,
+  "sdist_name_version": true,
+  "wheel_requires_python": true,
+  "wheel_tui_extra": true,
+  "wheel_textual_requirement": true,
+  "wheel_entry_point": true,
+  "wheel_all_tui_modules": true,
+  "sdist_all_tui_modules": true,
+  "wheel_registry_count": true,
+  "sdist_registry_count": true,
+  "wheel_typed_marker": true,
+  "sdist_typed_marker": true,
+  "wheel_bytes_match_export": true,
+  "sdist_has_no_unexpected_files": true,
+  "sdist_contains_all_export_files": true,
+  "twine_check_passed": true
+}
+wheel sha256: 8c7e5f64d3b08f518c641e249d4219cfc6328ebcaa4fc5392e4289de55970661
+sdist sha256: de5687239d5692cdee466fba9558ec1a868eb901ca76c87cc2a81d1b787f2d6c
+all_checks_passed: True
