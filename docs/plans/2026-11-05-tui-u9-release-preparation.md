@@ -3,7 +3,7 @@
 Status: Agreed — frozen planning contract; implementation needs a later owner instruction.
 Date: 5 November 2026.
 Baseline: `a2b3987a5fe0c7b4388153b9fddb76c76c9bb1ad` on `main`.
-Reference: pending two-commit freeze.
+Reference: `f3c652beed4e7b5b745a77a900cc1e93f5a5f105` (operative frozen plan).
 Authorization: the owner requested U9 planning, exactly two self-review passes,
 then freezing and committing the plan.
 Roster: the owner explicitly appointed this current Qoder session as the sole
