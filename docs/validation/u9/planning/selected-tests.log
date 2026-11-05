@@ -1,0 +1,18 @@
+........................................................................ [ 17%]
+........................................................................ [ 34%]
+........................................................................ [ 51%]
+........................................................................ [ 68%]
+........................................................................ [ 85%]
+............................................................             [100%]
+============================= slowest 10 durations =============================
+30.18s call     tests/test_tui_read_only.py::test_target_preservation_when_cleanup_fails
+7.80s call     tests/test_tui_help.py::test_complete_keyboard_browsing_flow_with_help_json_filters_and_refresh
+5.59s call     tests/test_tui_read_only.py::test_synthetic_target_preservation_across_lifecycle
+4.99s call     tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes[size1]
+4.65s call     tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes[size0]
+3.74s call     tests/test_tui_read_only.py::test_u8_synthetic_target_preservation_across_help_navigation_fault_and_quit
+3.52s call     tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs
+1.79s call     tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits
+1.70s call     tests/test_tui_read_only.py::test_u6_synthetic_target_preservation_across_agents_compare_refresh_modes
+0.98s call     tests/test_tui_app.py::test_doctor_app_routes_require_home_focus_and_exact_screen_instance
+420 passed in 88.06s (0:01:28)

@@ -1,0 +1,12 @@
+{
+  "command": [
+    ".venv/bin/ruff",
+    "format",
+    "--check",
+    "."
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.04,
+  "log": "ruff-format-check.log",
+  "log_sha256": "a6a9b7f63d5632ad3024aa3a8172e6b6aaec9848ff5b61379c6c3a988194c39e"
+}

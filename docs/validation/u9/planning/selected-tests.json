@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest",
+    "tests/test_render_snapshots.py",
+    "tests/test_fixtures.py",
+    "tests/test_phase3_gate.py",
+    "tests/test_phase4_gate.py",
+    "tests/test_tui_app.py",
+    "tests/test_tui_session.py",
+    "tests/test_tui_read_only.py",
+    "tests/test_stage_g_repairs.py",
+    "tests/test_tui_packaging.py",
+    "tests/test_tui_routing.py",
+    "tests/test_tui_help.py::test_complete_keyboard_browsing_flow_with_help_json_filters_and_refresh",
+    "tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits",
+    "tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs",
+    "tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes",
+    "-q",
+    "--durations=10"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 88.5,
+  "log": "selected-tests.log",
+  "scope": "Planning feasibility probe using unchanged source and existing tests; NOT an installed-wheel lane, cold environment or CI measurement."
+}

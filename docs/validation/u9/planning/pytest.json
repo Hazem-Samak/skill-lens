@@ -1,0 +1,12 @@
+{
+  "command": [
+    ".venv/bin/pytest",
+    "--cov=skill_lens",
+    "-q"
+  ],
+  "started_at": "2026-11-05T16:11:48.827903+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 435.12,
+  "log": "pytest.log",
+  "log_sha256": "5da301720f2e5edd43debfd5261a8a53f91541f8de3156bccf2b13b269cd938f"
+}

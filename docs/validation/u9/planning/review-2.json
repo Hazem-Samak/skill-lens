@@ -1,0 +1,44 @@
+{
+  "pass": 2,
+  "date": "2026-11-05",
+  "reviewer": "Owner-appointed current Qoder session; second and final self-review, not independent review",
+  "scope": "Execution order, artifact/test provenance, acceptance boundaries, guard feasibility and closure of first-pass findings",
+  "input_plan_sha256": "464f2c10a6ad10bfa0cca4cc4b036918fddadcf71fc3d1b0ffeb8084f742bae2",
+  "corrected_plan_sha256": "2a1a67048162b406cca7daa660979c1ad258be9c38e03f66f249a80e1cc995aa",
+  "initial_verdict": "changes_required",
+  "findings": [
+    {
+      "id": "R2-01",
+      "location": "Implementation step 4: harness invocation and path bindings",
+      "problem": "The corrected draft built from a clean export but still invoked the working-checkout runner. Its default repo_root would copy tests from that checkout rather than directly from the artifact's input export.",
+      "evidence": "scripts/smoke_wheel.py:614-616 defaults repo_root from the script path; :515-523 copies tests, scripts, pyproject, lock and CI configuration from that root.",
+      "decision": "accepted",
+      "correction": "Bind all external paths before use and invoke the export's scripts/smoke_wheel.py with an absolute interpreter path. Artifact source, test code and harness now share the reviewed export."
+    },
+    {
+      "id": "R2-02",
+      "location": "Implementation step 5: readiness labels and future publication documents",
+      "problem": "Local technical acceptance and publication readiness needed distinct completion labels. The draft's unpublished README/changelog would also need finalization before an actual upload, which changes the tested artifacts.",
+      "evidence": "DEVELOPMENT.md:268-274 explains immutable PyPI README contents. The draft explicitly prepares unpublished 0.2.0 documentation and withholds publishing while hosted/human approval is pending.",
+      "decision": "accepted",
+      "correction": "Define locally technically accepted versus publication ready versus published. Require the separately authorized publication mission to finalize dates/install wording, rebuild and requalify changed packaged documents, and retain tag-after-upload order. Update old version examples during U9 documentation work."
+    }
+  ],
+  "first_pass_closure": {
+    "R1-01": "Closed: clean export, reviewed tracked overlays, explicit untracked/evidence exclusions, manifest, preservation and sidecar receipts are specified.",
+    "R1-02": "Closed: each preserved lane uses its own interpreter/console under its clean environment for distribution/import/console version equality."
+  },
+  "checks": {
+    "proposed_selection": "Executed all nine existing installed suites plus routing and four named U8 selectors, without changing product code or the runner's current selection.",
+    "result": "420 passed, zero skips in 88.06 seconds pytest time; 88.50 seconds enclosing command, exit 0.",
+    "logs": ["selected-tests.json", "selected-tests.log"],
+    "claim_boundary": "Unchanged source, local existing environment only. Does not qualify a wheel or prove cold/min/latest/hosted performance. The 300-second installed timeout remains unchanged and must be measured during implementation.",
+    "links": "All six local Markdown links resolved during the structural check.",
+    "structure": "Five implementation steps and acceptance A1-A9 present.",
+    "scope": "Current writes remain limited to the U9 plan and planning evidence. No implementation, model substitution, child launch, CI edit, credential access or publishing."
+  },
+  "verdict_after_corrections": "pass",
+  "unresolved_findings": [],
+  "formal_self_review_count": 2,
+  "next": "Mechanical final verification and authorized freeze/commits only; no third formal review."
+}

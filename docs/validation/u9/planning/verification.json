@@ -1,0 +1,92 @@
+{
+  "verified_at": "2026-11-05T16:20:02.773239+00:00",
+  "baseline": "a2b3987a5fe0c7b4388153b9fddb76c76c9bb1ad",
+  "plan_sha256_before_freeze": "67d505ef52f888059a2df64eea10f2c5c477db37d4a0143a963a366fc0dd2014",
+  "formal_self_reviews": 2,
+  "review_status": "Both self-reviews passed after recorded corrections; no independent planning review was claimed.",
+  "post_review_edits": "Administrative status and verification-record wording only; operative implementation contract matches the second corrected draft.",
+  "gates": {
+    "pytest": {
+      "command": [
+        ".venv/bin/pytest",
+        "--cov=skill_lens",
+        "-q"
+      ],
+      "started_at": "2026-11-05T16:11:48.827903+00:00",
+      "exit_code": 0,
+      "elapsed_seconds": 435.12,
+      "log": "pytest.log",
+      "log_sha256": "5da301720f2e5edd43debfd5261a8a53f91541f8de3156bccf2b13b269cd938f"
+    },
+    "mypy": {
+      "command": [
+        ".venv/bin/mypy"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.29,
+      "log": "mypy.log",
+      "log_sha256": "a97cee1ee1bdb5e2d1ca7098f7b33a6c6a21263225643192fdeb78654687ed89"
+    },
+    "ruff-check": {
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.08,
+      "log": "ruff-check.log",
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "ruff-format-check": {
+      "command": [
+        ".venv/bin/ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.04,
+      "log": "ruff-format-check.log",
+      "log_sha256": "a6a9b7f63d5632ad3024aa3a8172e6b6aaec9848ff5b61379c6c3a988194c39e"
+    }
+  },
+  "summary": {
+    "passed": 1338,
+    "skipped": 1,
+    "coverage": "90.10% combined statement/branch",
+    "mypy_source_files": 46,
+    "ruff_formatted_files": 425
+  },
+  "preservation": {
+    "tracked_files": {
+      "count": 1897,
+      "sha256": "90e9b22b4ec1e2a5f2a2ec7587e921e7e4fe9ced270eea01017b78a76a8bb7d8"
+    },
+    "preexisting_untracked_files": {
+      "count": 804,
+      "sha256": "3b196490de19994c340b96404aa20daee07138871476467bc81397dffa47b152"
+    },
+    "unexpected_new_paths": []
+  },
+  "plan_checks": {
+    "local_links": 6,
+    "unresolved_findings": [],
+    "reference": "pending until the first plan-only commit"
+  },
+  "baseline_hosted_ci": {
+    "run_id": 42029802744,
+    "head": "a2b3987a5fe0c7b4388153b9fddb76c76c9bb1ad",
+    "result": "All eight test matrix jobs and packaging succeeded, read earlier in this conversation. Follow-up API request timed out; no new result inferred."
+  },
+  "execution": {
+    "expected_child_tasks": 0,
+    "actual_child_launches": 0,
+    "failed_child_launches": 0,
+    "gate_wall_seconds": 435.12,
+    "billed_tokens": "unavailable",
+    "total_planning_wall_time": "not independently measured"
+  },
+  "claim_boundary": "Planning and unchanged-source verification only. No U9 implementation, candidate build/install, human visual approval, U9 hosted CI, upload or release.",
+  "authorized_delivery": "Plan-only freeze commit, plan-reference-only commit, and separate planning-evidence commit; no push."
+}

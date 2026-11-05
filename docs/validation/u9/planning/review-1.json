@@ -1,0 +1,39 @@
+{
+  "pass": 1,
+  "date": "2026-11-05",
+  "reviewer": "Owner-appointed current Qoder session; self-review, not independent review",
+  "scope": "Specification, packaging contracts, file scope, version/dependency policy, authorization and initial execution feasibility",
+  "input_plan_sha256": "86d7721f751d353197a9f0806d91d7470f4c970d01a06b7c6b3474aa3ddc0544",
+  "corrected_plan_sha256": "464f2c10a6ad10bfa0cca4cc4b036918fddadcf71fc3d1b0ffeb8084f742bae2",
+  "initial_verdict": "changes_required",
+  "findings": [
+    {
+      "id": "R1-01",
+      "location": "Implementation step 4: source export and artifact evidence",
+      "problem": "Building directly from the working directory only checks for unrelated packaged files after the build, and an artifact receipt included in its own source archive creates circular hash evidence.",
+      "evidence": "The initial draft used uv build --sdist from the working checkout, required pre-existing untracked preservation, and invalidated artifacts after any packaged documentation change. The baseline records 804 unrelated untracked files.",
+      "decision": "accepted",
+      "correction": "Build from a clean Git-based export with only reviewed tracked-file overlays, preserve links/modes, explicitly exclude unrelated untracked content and docs/validation/u9 receipts, and record the export manifest. Receipts are sidecar evidence. No claim was made that the current build demonstrably leaks files."
+    },
+    {
+      "id": "R1-02",
+      "location": "Implementation step 4: installed version equality",
+      "problem": "The draft required installed metadata/import/console version equality in all lanes without explaining that the existing runner does not perform those comparisons.",
+      "evidence": "scripts/smoke_wheel.py:278-344 records base version output; :573-591 records endpoint dependency/provenance/test results without the project imported/console version comparison.",
+      "decision": "accepted",
+      "correction": "Require explicit version assertions with each preserved lane's own interpreter and console script outside the checkout under its clean environment, and save separate outputs. Do not enlarge the runner's public interface."
+    }
+  ],
+  "checks": {
+    "module_paths": "All eight additional module paths exist; four originals plus eight additions equal twelve.",
+    "selectors": "All four named U8 functions exist in the parsed AST; tests/test_tui_routing.py exists and was read in full. None is currently selected by the installed runner.",
+    "current_manifest": "Four required TUI modules and nine installed suites confirmed directly from script AST.",
+    "version": "pyproject and uv.lock root versions both equal 0.1.1; the proposed explicitly-unpublished 0.2.0 heading satisfies the existing exact substring contract without changing its test.",
+    "lock": "uv lock --check --offline passed; 29 packages resolved.",
+    "build_syntax": "Installed uv build --help confirms directory/source-archive positional input, --sdist, --wheel and --out-dir.",
+    "authority": "Only planning/evidence files may change now; implementation, independent final reviewers, push, tags and publication remain separately authorized."
+  },
+  "verdict_after_corrections": "pass_for_first_review_scope",
+  "unresolved_findings": [],
+  "next": "Perform the second and final self-review, then final plan/gate verification before freeze."
+}
