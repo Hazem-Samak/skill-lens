@@ -2,7 +2,7 @@
 # Coordinator r4 candidate rebuild + requalification after the wave-A review
 # corrections (packaged documents changed again; r2 hashes are superseded).
 set -u
-E="/Users/corvette/Documents/Projects Coding/Skill Lens"
+E="<REPO_ROOT>"
 D="$E/docs/validation/u9/coordinator/precommit"
 W="/tmp/u9-candidate-r4"
 mkdir -p "$W" || exit 91

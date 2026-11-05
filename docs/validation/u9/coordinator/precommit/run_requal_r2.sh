@@ -4,7 +4,7 @@
 # artifact hashes are superseded). Reuses the implementer's audited scripts
 # unchanged; only the work directories and receipt names differ.
 set -u
-E="/Users/corvette/Documents/Projects Coding/Skill Lens"
+E="<REPO_ROOT>"
 D="$E/docs/validation/u9/coordinator/precommit"
 W="/tmp/u9-candidate-r2"
 mkdir -p "$W" || exit 91

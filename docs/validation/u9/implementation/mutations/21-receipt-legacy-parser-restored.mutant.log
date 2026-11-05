@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k unparsable or counts_and_duration -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k unparsable or counts_and_duration -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/receipt-legacy-parser-restored, HOME=/private/tmp/u9-mutations/homes/receipt-legacy-parser-restored)
 exit=1 elapsed=0.22s
 --- STDOUT ---
@@ -6,8 +6,8 @@ FF                                                                       [100%]
 =================================== FAILURES ===================================
 _______ test_installed_lane_receipt_records_positive_counts_and_duration _______
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_receipt_re0')
-mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_receipt_re0/home')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-263/test_installed_lane_receipt_re0')
+mock_home = PosixPath('/private/tmp/pytest-of-<USER>/pytest-263/test_installed_lane_receipt_re0/home')
 monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1076ba010>
 
     def test_installed_lane_receipt_records_positive_counts_and_duration(
@@ -35,10 +35,10 @@ monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1076ba010>
 /private/tmp/u9-mutations/tree/tests/test_tui_packaging.py:1041: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-wheel_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_receipt_re0/invoking_cwd/skill_lens_cli-0.2.0-py3-none-any.whl')
-work_dir = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_receipt_re0/work_dir')
+wheel_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-263/test_installed_lane_receipt_re0/invoking_cwd/skill_lens_cli-0.2.0-py3-none-any.whl')
+work_dir = PosixPath('/private/tmp/pytest-of-<USER>/pytest-263/test_installed_lane_receipt_re0/work_dir')
 endpoint_name = 'min', textual_spec = 'textual==8.2.8'
-python_bin = '/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python'
+python_bin = '<REPO_ROOT>/.venv/bin/python'
 repo_root = PosixPath('/private/tmp/u9-mutations/runs/receipt-legacy-parser-restored')
 timeout_seconds = 300
 
@@ -281,8 +281,8 @@ E           ======================== 451 passed in 84.29s (0:01:24) ============
 /private/tmp/u9-mutations/runs/receipt-legacy-parser-restored/scripts/smoke_wheel.py:630: AssertionError
 ______________ test_installed_lane_rejects_an_unparsable_summary _______________
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_rejects_an0')
-mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_rejects_an0/home')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-263/test_installed_lane_rejects_an0')
+mock_home = PosixPath('/private/tmp/pytest-of-<USER>/pytest-263/test_installed_lane_rejects_an0/home')
 monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1071764d0>
 
     def test_installed_lane_rejects_an_unparsable_summary(
@@ -312,10 +312,10 @@ monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1071764d0>
 /private/tmp/u9-mutations/tree/tests/test_tui_packaging.py:1100: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-wheel_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_rejects_an0/invoking_cwd/skill_lens_cli-0.2.0-py3-none-any.whl')
-work_dir = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_rejects_an0/work_dir')
+wheel_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-263/test_installed_lane_rejects_an0/invoking_cwd/skill_lens_cli-0.2.0-py3-none-any.whl')
+work_dir = PosixPath('/private/tmp/pytest-of-<USER>/pytest-263/test_installed_lane_rejects_an0/work_dir')
 endpoint_name = 'min', textual_spec = 'textual==8.2.8'
-python_bin = '/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python'
+python_bin = '<REPO_ROOT>/.venv/bin/python'
 repo_root = PosixPath('/private/tmp/u9-mutations/runs/receipt-legacy-parser-restored')
 timeout_seconds = 300
 

@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k passed_no_tests -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k passed_no_tests -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/tree, HOME=/private/tmp/u9-mutations/homes/receipt-zero-test-accepted)
 exit=0 elapsed=0.16s
 --- STDOUT ---

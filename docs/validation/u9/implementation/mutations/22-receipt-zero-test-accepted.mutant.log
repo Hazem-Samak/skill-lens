@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k passed_no_tests -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k passed_no_tests -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/receipt-zero-test-accepted, HOME=/private/tmp/u9-mutations/homes/receipt-zero-test-accepted)
 exit=1 elapsed=0.18s
 --- STDOUT ---
@@ -6,8 +6,8 @@ F                                                                        [100%]
 =================================== FAILURES ===================================
 ____________ test_installed_lane_rejects_a_run_that_passed_no_tests ____________
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-266/test_installed_lane_rejects_a_0')
-mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-266/test_installed_lane_rejects_a_0/home')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-266/test_installed_lane_rejects_a_0')
+mock_home = PosixPath('/private/tmp/pytest-of-<USER>/pytest-266/test_installed_lane_rejects_a_0/home')
 monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b173dd0>
 
     def test_installed_lane_rejects_a_run_that_passed_no_tests(

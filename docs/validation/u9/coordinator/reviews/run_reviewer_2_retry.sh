@@ -4,7 +4,7 @@
 # glm-5.3-flash-starter/max unverifiable on this account — served model is
 # Perch auto-failover, effort capped to high; owner said continue with perch).
 set -u
-E="/Users/corvette/Documents/Projects Coding/Skill Lens"
+E="<REPO_ROOT>"
 D="$E/docs/validation/u9/coordinator/reviews"
 R="/tmp/u9-review-r3/reviewer-2"
 mkdir -p "$R" || exit 91

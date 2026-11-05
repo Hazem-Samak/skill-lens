@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k uv_lock -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k uv_lock -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/lock-root-version-stale, HOME=/private/tmp/u9-mutations/homes/lock-root-version-stale)
 exit=1 elapsed=0.17s
 --- STDOUT ---

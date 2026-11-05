@@ -3,7 +3,7 @@
 # disclosed in approvals.json — served model unverified, effort capped to high)
 # one-shot critic run. All outputs go to /tmp (outside the checkout).
 set -u
-E="/Users/corvette/Documents/Projects Coding/Skill Lens"
+E="<REPO_ROOT>"
 D="$E/docs/validation/u9/coordinator/reviews"
 R="/tmp/u9-review-r2/reviewer-2"
 mkdir -p "$R" || exit 91

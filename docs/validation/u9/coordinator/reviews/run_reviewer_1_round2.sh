@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Reviewer 1 ROUND 2 (mcode follow-up, targeted closure verification).
 set -u
-E="/Users/corvette/Documents/Projects Coding/Skill Lens"
+E="<REPO_ROOT>"
 D="$E/docs/validation/u9/coordinator/reviews"
 R="/tmp/u9-review-r3/reviewer-1"
 mkdir -p "$R" || exit 91

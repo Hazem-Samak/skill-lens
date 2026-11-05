@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k summary or counts_and_duration -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k summary or counts_and_duration -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/receipt-modern-summary-rejected, HOME=/private/tmp/u9-mutations/homes/receipt-modern-summary-rejected)
 exit=1 elapsed=0.23s
 --- STDOUT ---
@@ -122,8 +122,8 @@ E           ======= 1 failed, 9 passed in 0.50s (0:00:00) =======
 scripts/smoke_wheel.py:103: ValueError
 _______ test_installed_lane_receipt_records_positive_counts_and_duration _______
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-260/test_installed_lane_receipt_re0')
-mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-260/test_installed_lane_receipt_re0/home')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-260/test_installed_lane_receipt_re0')
+mock_home = PosixPath('/private/tmp/pytest-of-<USER>/pytest-260/test_installed_lane_receipt_re0/home')
 monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b4b38d0>
 
     def test_installed_lane_receipt_records_positive_counts_and_duration(

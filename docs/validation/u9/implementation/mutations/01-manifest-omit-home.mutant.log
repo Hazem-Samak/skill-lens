@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k manifest or missing_tui_module -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k manifest or missing_tui_module -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/manifest-omit-home, HOME=/private/tmp/u9-mutations/homes/manifest-omit-home)
 exit=1 elapsed=0.62s
 --- STDOUT ---
@@ -27,7 +27,7 @@ E         Use -v to get more diff
 tests/test_tui_packaging.py:369: AssertionError
 ____ test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/home.py] _____
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-203/test_synthetic_wheel_missing_t4')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-203/test_synthetic_wheel_missing_t4')
 omitted_module = 'skill_lens/tui/home.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -48,7 +48,7 @@ E       Failed: DID NOT RAISE ValueError
 tests/test_tui_packaging.py:500: Failed
 ____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/home.py] _____
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-203/test_synthetic_sdist_missing_t4')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-203/test_synthetic_sdist_missing_t4')
 omitted_module = 'skill_lens/tui/home.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)

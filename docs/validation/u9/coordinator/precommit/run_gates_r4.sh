@@ -2,7 +2,7 @@
 # Coordinator r4 gate re-run for the 0.2.0 publication (release wording; pointer
 # sentences in five docs + review-round fixes).
 set -u
-E="/Users/corvette/Documents/Projects Coding/Skill Lens"
+E="<REPO_ROOT>"
 D="$E/docs/validation/u9/coordinator/precommit"
 cd "$E" || exit 90
 "$E/.venv/bin/pytest" --cov=skill_lens -q >"$D/final-pytest-r4.log" 2>&1

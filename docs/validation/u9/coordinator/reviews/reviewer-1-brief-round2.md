@@ -5,7 +5,7 @@ You are re-reviewing after your round-1 report on the U9 implementation
 returned **changes_required** with one blocker (C-F7) and four suggestions.
 The coordinator applied corrections; this round verifies closure. Everything
 from your original brief still governs: same repository
-(`/Users/corvette/Documents/Projects Coding/Skill Lens`, HEAD `da2b8d9`, work
+(`<REPO_ROOT>`, HEAD `da2b8d9`, work
 uncommitted), same frozen plan
 (`docs/plans/2026-11-05-tui-u9-release-preparation.md` @
 `f3c652beed4e7b5b745a77a900cc1e93f5a5f105`), same diff command

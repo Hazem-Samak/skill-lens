@@ -1,7 +1,7 @@
 {
-  "repo_root": "/Users/corvette/Documents/Projects Coding/Skill Lens",
-  "python": "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
-  "pytest": "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest",
+  "repo_root": "<REPO_ROOT>",
+  "python": "<REPO_ROOT>/.venv/bin/python",
+  "pytest": "<REPO_ROOT>/.venv/bin/pytest",
   "work_root": "/private/tmp/u9-mutations",
   "pristine_tree": {
     "files": 1912,

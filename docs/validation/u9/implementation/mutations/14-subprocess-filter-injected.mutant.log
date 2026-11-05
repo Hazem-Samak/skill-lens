@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k expanded_installed_selection or override -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k expanded_installed_selection or override -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/subprocess-filter-injected, HOME=/private/tmp/u9-mutations/homes/subprocess-filter-injected)
 exit=1 elapsed=0.18s
 --- STDOUT ---
@@ -6,8 +6,8 @@ F.                                                                       [100%]
 =================================== FAILURES ===================================
 ______ test_expanded_installed_selection_reaches_the_real_pytest_command _______
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-242/test_expanded_installed_select0')
-mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-242/test_expanded_installed_select0/home')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-242/test_expanded_installed_select0')
+mock_home = PosixPath('/private/tmp/pytest-of-<USER>/pytest-242/test_expanded_installed_select0/home')
 monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b0d3d90>
 
     def test_expanded_installed_selection_reaches_the_real_pytest_command(

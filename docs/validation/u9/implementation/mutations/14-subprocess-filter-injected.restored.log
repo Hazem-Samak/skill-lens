@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k expanded_installed_selection or override -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k expanded_installed_selection or override -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/subprocess-filter-injected, HOME=/private/tmp/u9-mutations/homes/subprocess-filter-injected)
 exit=0 elapsed=0.16s
 --- STDOUT ---

@@ -2,7 +2,7 @@
 # Coordinator r2 gate re-run after the C-F1..C-F5 documentation corrections.
 # Logs are evidence; the checkout caches are the normal pytest/mypy/ruff ones.
 set -u
-E="/Users/corvette/Documents/Projects Coding/Skill Lens"
+E="<REPO_ROOT>"
 D="$E/docs/validation/u9/coordinator/precommit"
 cd "$E" || exit 90
 "$E/.venv/bin/pytest" --cov=skill_lens -q >"$D/final-pytest-r2.log" 2>&1

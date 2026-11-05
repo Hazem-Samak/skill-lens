@@ -2,7 +2,7 @@
 # Reviewer 1 (mcode / MiniMax-M3.1-Flash / xhigh) one-shot critic run.
 # All outputs go to /tmp (outside the checkout). Read-only guard is in the brief.
 set -u
-E="/Users/corvette/Documents/Projects Coding/Skill Lens"
+E="<REPO_ROOT>"
 D="$E/docs/validation/u9/coordinator/reviews"
 R="/tmp/u9-review-r2/reviewer-1"
 mkdir -p "$R" || exit 91

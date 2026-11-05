@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k selection or manifest or missing_tui_module -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k selection or manifest or missing_tui_module -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/selection-drop-test_tui_help-test_all_six_json_views_match_the_cli_, HOME=/private/tmp/u9-mutations/homes/selection-drop-test_tui_help-test_all_six_json_views_match_the_cli_)
 exit=0 elapsed=0.26s
 --- STDOUT ---

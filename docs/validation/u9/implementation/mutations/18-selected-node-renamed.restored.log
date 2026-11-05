@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k installed_selection or manifest -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k installed_selection or manifest -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/selected-node-renamed, HOME=/private/tmp/u9-mutations/homes/selected-node-renamed)
 exit=0 elapsed=0.21s
 --- STDOUT ---

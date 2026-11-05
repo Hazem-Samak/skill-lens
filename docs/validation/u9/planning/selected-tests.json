@@ -1,6 +1,6 @@
 {
   "command": [
-    "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest",
+    "<REPO_ROOT>/.venv/bin/pytest",
     "tests/test_render_snapshots.py",
     "tests/test_fixtures.py",
     "tests/test_phase3_gate.py",

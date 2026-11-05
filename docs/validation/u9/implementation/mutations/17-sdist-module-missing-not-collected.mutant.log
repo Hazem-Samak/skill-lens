@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k sdist -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k sdist -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/sdist-module-missing-not-collected, HOME=/private/tmp/u9-mutations/homes/sdist-module-missing-not-collected)
 exit=1 elapsed=0.25s
 --- STDOUT ---
@@ -6,7 +6,7 @@ exit=1 elapsed=0.25s
 =================================== FAILURES ===================================
 __ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/__init__.py] ___
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t0')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t0')
 omitted_module = 'skill_lens/tui/__init__.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -28,7 +28,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 _____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/app.py] _____
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t1')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t1')
 omitted_module = 'skill_lens/tui/app.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -50,7 +50,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 ___ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/session.py] ___
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t2')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t2')
 omitted_module = 'skill_lens/tui/session.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -72,7 +72,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 _ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/_textual_compat.py] _
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t3')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t3')
 omitted_module = 'skill_lens/tui/_textual_compat.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -94,7 +94,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 ____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/home.py] _____
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t4')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t4')
 omitted_module = 'skill_lens/tui/home.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -116,7 +116,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 _____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/why.py] _____
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t5')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t5')
 omitted_module = 'skill_lens/tui/why.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -138,7 +138,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 ____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/diff.py] _____
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t6')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t6')
 omitted_module = 'skill_lens/tui/diff.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -160,7 +160,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 __ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/json_view.py] __
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t7')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t7')
 omitted_module = 'skill_lens/tui/json_view.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -182,7 +182,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 ___ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/agents.py] ____
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t8')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t8')
 omitted_module = 'skill_lens/tui/agents.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -204,7 +204,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 ___ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/compare.py] ___
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t9')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t9')
 omitted_module = 'skill_lens/tui/compare.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -226,7 +226,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 ___ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/doctor.py] ____
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t10')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t10')
 omitted_module = 'skill_lens/tui/doctor.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
@@ -248,7 +248,7 @@ E       Failed: DID NOT RAISE ValueError
 ../../tree/tests/test_tui_packaging.py:559: Failed
 ____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/help.py] _____
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-251/test_synthetic_sdist_missing_t11')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-251/test_synthetic_sdist_missing_t11')
 omitted_module = 'skill_lens/tui/help.py'
 
     @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)

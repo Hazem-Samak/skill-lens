@@ -23,7 +23,7 @@ Return only the report format below. Nothing else.
 
 U9 ("Prepare the 0.2.0 release") is implemented as UNCOMMITTED work in the
 working tree at HEAD `da2b8d9` on branch `main`, repository:
-`/Users/corvette/Documents/Projects Coding/Skill Lens` (use this as your
+`<REPO_ROOT>` (use this as your
 working directory; read files there).
 
 - Frozen plan (authoritative contract):

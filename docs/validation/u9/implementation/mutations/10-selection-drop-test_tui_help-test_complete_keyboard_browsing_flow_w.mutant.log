@@ -1,4 +1,4 @@
-$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k selection or manifest or missing_tui_module -q -p no:cacheprovider
+$ <REPO_ROOT>/.venv/bin/pytest tests/test_tui_packaging.py -k selection or manifest or missing_tui_module -q -p no:cacheprovider
 (cwd=/private/tmp/u9-mutations/runs/selection-drop-test_tui_help-test_complete_keyboard_browsing_flow_w, HOME=/private/tmp/u9-mutations/homes/selection-drop-test_tui_help-test_complete_keyboard_browsing_flow_w)
 exit=1 elapsed=0.28s
 --- STDOUT ---
@@ -22,8 +22,8 @@ E         Use -v to get more diff
 ../../tree/tests/test_tui_packaging.py:392: AssertionError
 ______ test_expanded_installed_selection_reaches_the_real_pytest_command _______
 
-tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-230/test_expanded_installed_select0')
-mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-230/test_expanded_installed_select0/home')
+tmp_path = PosixPath('/private/tmp/pytest-of-<USER>/pytest-230/test_expanded_installed_select0')
+mock_home = PosixPath('/private/tmp/pytest-of-<USER>/pytest-230/test_expanded_installed_select0/home')
 monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b912690>
 
     def test_expanded_installed_selection_reaches_the_real_pytest_command(

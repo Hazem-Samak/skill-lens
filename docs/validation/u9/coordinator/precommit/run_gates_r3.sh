@@ -2,7 +2,7 @@
 # Coordinator r3 gate re-run after the wave-A review corrections (pointer
 # sentences in five docs + DEVELOPMENT usability fixes C-S1..C-S4).
 set -u
-E="/Users/corvette/Documents/Projects Coding/Skill Lens"
+E="<REPO_ROOT>"
 D="$E/docs/validation/u9/coordinator/precommit"
 cd "$E" || exit 90
 "$E/.venv/bin/pytest" --cov=skill_lens -q >"$D/final-pytest-r3.log" 2>&1
