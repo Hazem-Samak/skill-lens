@@ -38,6 +38,7 @@ from skill_lens.models.enums import ParseStatus
 from skill_lens.models.resolution import ResolutionReport
 from skill_lens.presentation.state import SCOPE_LABEL
 from skill_lens.registry.loader import AgentDefinition
+from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
 
@@ -442,6 +443,11 @@ class HomeScreen(Screen[None]):
         self._json_mode = False
         self._json_previous_focus: Widget | None = None
         self._mounting = False
+        self._help_focus: Widget | None = None
+        self._help_restore_pending = False
+        self._help_generation: int | None = None
+        self._help_preview_scroll = 0
+        self._help_json_scroll = 0
 
     # -- lifecycle ---------------------------------------------------------
 
@@ -514,11 +520,20 @@ class HomeScreen(Screen[None]):
 
     def suspend_why(self) -> None:
         """Suspend Home screen activity while detail screen is active."""
+        self._help_focus = None
+        self._help_restore_pending = False
         self._suspended = True
         self._cancel_owned_why()
 
     def on_screen_resume(self) -> None:
-        """Handle Textual ScreenResume event when detail screen pops."""
+        """Handle Textual ScreenResume event when a covering screen pops."""
+        if self._help_restore_pending:
+            # Help reconciles its exact origin explicitly and Textual also sends
+            # ScreenResume; the same idempotent path runs for both, and the
+            # saved filter-input focus survives the second pass.
+            self._help_restore_pending = False
+            self.resume_help()
+            return
         if self._suspended:
             self.resume_why()
         elif not self._json_mode:
@@ -546,6 +561,219 @@ class HomeScreen(Screen[None]):
                 pass
         if consumed_jump:
             self._host._update_ui()
+
+    # -- Help overlay -------------------------------------------------------
+
+    def help_context(self) -> HelpContext:
+        """Describe the actual Home mode, focus and conditional key scope."""
+        rows: list[HelpRow] = []
+        notes: list[str] = []
+        try:
+            table = self.query_one("#skill-table", DataTable)
+            filter_input = self.query_one("#filter-input", Input)
+        except NoMatches:
+            table = None
+            filter_input = None
+        snapshot = self._controller_or_none()
+        current = snapshot.current if snapshot is not None else None
+        filter_value = filter_input.value if filter_input is not None else ""
+
+        if self._json_mode:
+            mode = "raw JSON view"
+            focus = "JSON document"
+            rows.extend(
+                [
+                    HelpRow(
+                        "↑ ↓ / PageUp / PageDown / Home / End",
+                        "Scroll the captured JSON document.",
+                    ),
+                    HelpRow(
+                        "J / Esc / Backspace",
+                        "Return to the ordinary Home list. Esc and Backspace leave JSON"
+                        " first; they do not quit.",
+                    ),
+                    HelpRow(
+                        "r",
+                        "Refresh the captured session; this document changes only when"
+                        " a new capture is accepted.",
+                    ),
+                ]
+            )
+            notes.append(
+                "Enter, d, h, g, c, / and a do not operate the list while raw JSON is"
+                " shown. J leaves JSON; F1 also closes this Help."
+            )
+        elif filter_input is not None and filter_input.has_focus:
+            mode = "ordinary list"
+            focus = "filter input"
+            rows.extend(
+                [
+                    HelpRow(
+                        "Typing",
+                        "Edits the filter literally. q, r, h, d, g, c, J and ? are"
+                        " characters here; use F1 for Help.",
+                    ),
+                    HelpRow(
+                        "F1",
+                        "Opens Help without changing the filter text or cursor.",
+                    ),
+                    HelpRow("Enter", "Return focus to the skill table."),
+                    HelpRow(
+                        "Esc",
+                        "Clear the filter and return focus to the skill table; Esc does not quit.",
+                    ),
+                    HelpRow(
+                        "Tab / Shift+Tab",
+                        "Move focus between the filter input, skill table and preview.",
+                    ),
+                ]
+            )
+            notes.append(
+                "q and r are ordinary filter text while the input has focus. Ctrl+C"
+                " keeps the application's existing quit behaviour."
+            )
+        else:
+            mode = "ordinary list"
+            table_focused = table is not None and table.has_focus
+            focus = "skill table" if table_focused else "another Home control"
+            rows.extend(
+                [
+                    HelpRow("↑ ↓ / j k", "Move the selected row."),
+                    HelpRow(
+                        "J",
+                        "Show raw JSON for the whole captured scan, not the filtered"
+                        " rows. It requires the focused ordinary skill table.",
+                    ),
+                    HelpRow("g / c", "Open Agents / Compare from ordinary Home."),
+                    HelpRow("/", "Focus the filter input."),
+                    HelpRow(
+                        "Esc",
+                        "Clear the text filter and keep Home open; Esc does not quit.",
+                    ),
+                    HelpRow(
+                        "a",
+                        "Cycle the agent filter. A named agent adds per-row State columns.",
+                    ),
+                    HelpRow(
+                        "h",
+                        "Open Doctor. It requires the focused ordinary skill table, not"
+                        " the filter input.",
+                    ),
+                ]
+            )
+            if table is not None and table.row_count:
+                rows.append(HelpRow("Enter", "Open Why for the selected row."))
+                rows.append(
+                    HelpRow(
+                        "d",
+                        "Open Diff for the selected row. It requires this focused,"
+                        " nonempty ordinary table.",
+                    )
+                )
+            else:
+                notes.append(
+                    "The table has no rows, so Enter and d do nothing. h and g/c still"
+                    " require their ordinary Home focus rules."
+                )
+            if not table_focused:
+                notes.append(
+                    "Enter and d require the skill table to have focus. Tab reaches it"
+                    " from the filter input or preview."
+                )
+
+        if current is not None and filter_value and not self._json_mode:
+            notes.append(f'Text filter: "{filter_value}".')
+        return HelpContext("Home", mode, focus, tuple(rows), tuple(notes))
+
+    def suspend_help(self) -> None:
+        """Remember Home's exact focus and scroll, then suspend its own work."""
+        if self._suspended:
+            return
+        self.suspend_why()
+        controller = self._controller_or_none()
+        snapshot = controller.current if controller is not None else None
+        self._help_generation = snapshot.generation if snapshot is not None else None
+        self._help_focus = self.app.focused
+        self._help_restore_pending = True
+        with contextlib.suppress(NoMatches):
+            preview = self.query_one("#preview-scroll", VerticalScroll)
+            self._help_preview_scroll = int(preview.scroll_offset.y)
+        view = self._json_view_or_none()
+        self._help_json_scroll = int(view.scroll_offset.y) if view is not None else 0
+
+    def resume_help(self) -> None:
+        """Reconcile the revealed Home once, then restore its saved focus/scroll."""
+        if not self.is_mounted:
+            self._suspended = False
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        self._suspended = False
+        self.sync_from_controller()
+        self._restore_help_view()
+
+    def _restore_help_view(self) -> None:
+        controller = self._controller_or_none()
+        current = controller.current if controller is not None else None
+        same_generation = self._help_generation == (
+            current.generation if current is not None else None
+        )
+        if self._json_mode:
+            view = self._json_view_or_none()
+            if (
+                view is not None
+                and view.can_focus
+                and view.is_mounted
+                and view.display
+                and not self._suspended
+            ):
+                view.focus()
+                if same_generation and self._help_json_scroll:
+                    self.call_after_refresh(self._scroll_help_widget, view, self._help_json_scroll)
+            return
+        try:
+            table = self.query_one("#skill-table", DataTable)
+        except NoMatches:
+            return
+        target = self._help_focus
+        if target is not None and target.can_focus and target.is_mounted and target.display:
+            target.focus()
+        elif table.can_focus and table.display:
+            table.focus()
+        if same_generation and self._help_preview_scroll:
+            with contextlib.suppress(NoMatches):
+                preview = self.query_one("#preview-scroll", VerticalScroll)
+                self.call_after_refresh(
+                    self._scroll_help_widget, preview, self._help_preview_scroll
+                )
+
+    def _scroll_help_widget(self, widget: Widget, offset: int) -> None:
+        if not self.is_mounted or self._suspended:
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        widget.scroll_to(y=offset, animate=False)
+
+    def _focus_if_active(self, widget: Widget | None) -> None:
+        """Complete a deferred focus only while this screen is still active."""
+        if widget is None or not self.is_mounted:
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        if self._suspended or not widget.can_focus or not widget.is_mounted:
+            return
+        if not widget.display:
+            return
+        widget.focus()
 
     def prepare_doctor_jump(self, generation: int, key: str) -> bool:
         """Queue a current catalog selection without touching suspended widgets."""
@@ -688,7 +916,9 @@ class HomeScreen(Screen[None]):
         if view is not None:
             # Focus is moved after the stylesheet has hidden the ordinary
             # widgets, so the JSON pane is a legal focus target when it lands.
-            self.call_after_refresh(view.focus)
+            # The guard keeps a deferred callback from stealing focus if Help
+            # (or another screen) covers Home first.
+            self.call_after_refresh(self._focus_if_active, view)
 
     def _json_view_or_none(self) -> JsonView | None:
         try:
@@ -1095,7 +1325,7 @@ class HomeScreen(Screen[None]):
                 empty.update("No skills discovered in this session. Press r to refresh.")
             return
         if not self._visible:
-            empty.update("No skills match the current filter.")
+            empty.update("No skills match the current filter. Press Esc to clear it.")
             return
         empty.update("")
 

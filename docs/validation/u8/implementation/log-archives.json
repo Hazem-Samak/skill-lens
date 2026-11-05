@@ -1,0 +1,70 @@
+{
+  "note": "Failure and interim captures contain intentional trailing terminal padding from the raw output. They are stored as .log.gz to preserve exact bytes while keeping staged whitespace checks clean. Decompressed hashes match the original receipts.",
+  "files": {
+    "docs/validation/u8/implementation/interim-coverage-tests.log": {
+      "raw_sha256": "3811ed6fdb7178a6d806b16b16aa017ff3d3005b60de0fb816c367823d29f16f",
+      "gz_sha256": "f874745f6a0cf85c50872cdd2770ae4d50f85698ecf8ff195ebf028b5cc218f5",
+      "decompress": "gunzip -k docs/validation/u8/implementation/interim-coverage-tests.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/01-duplicate-help-stacking.mutant.log": {
+      "raw_sha256": "165c796642c8472ce07bbcd4dc818e8969e720e48e943d8749397a9fe8fbca63",
+      "gz_sha256": "62c0a718f1ce78953a42ee0b364f8af423c0f46311ca3ff652704ae0934e0c82",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/01-duplicate-help-stacking.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/02-covered-key-leakage.mutant.log": {
+      "raw_sha256": "f65dd793051dcacea80df85153f021bc37ffcea6d592e6eddcc687119ebe7b85",
+      "gz_sha256": "2415c9a38e7a102a6a2c89a5a272ff82d342d2d27c81470d154e1412d3485155",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/02-covered-key-leakage.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/03-lost-input-focus.mutant.log": {
+      "raw_sha256": "0f2002e532aa30f308deb05369be462f86369a52f5415492129652f8e15aa555",
+      "gz_sha256": "cb5fc6d5cba6ac2e92542a758ae7509fdc802990cfc8152584875a986a53d8db",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/03-lost-input-focus.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/04-ignored-diff-suspension.mutant.log": {
+      "raw_sha256": "c95510b3dd3ade0e66c43005a5da75bd993ba179b60b4c69ed14fd0a126da6b3",
+      "gz_sha256": "5d525601d42a4951412ffadb8cb0b9019410b739b9f3d58ced6aa1b0250689a0",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/04-ignored-diff-suspension.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/05-ignored-compare-suspension.mutant.log": {
+      "raw_sha256": "9aa1857552bca82cbedaba54b2c8b27d48d0c8a7ba7395d8040d4acfbdda6d4c",
+      "gz_sha256": "32743929c8307f6b57e029487e4447b5525cd72d2db385bb046860300f85f523",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/05-ignored-compare-suspension.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/06-stranded-report-after-reveal.mutant.log": {
+      "raw_sha256": "0c0e3a73842d8624eedf563bc6a4f73889673157423bdd8da9f4dd5e2b83b656",
+      "gz_sha256": "fa6f56708f7fcc2b0a2fa9ffddb1ca0675481289ebd5f5ea9cbfb4d38c82e52a",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/06-stranded-report-after-reveal.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/07-stale-callback-pops-newer-screen.mutant.log": {
+      "raw_sha256": "28e2f92c1a68798f39bec891c9624b1b7163dba7b729004f499757db189b29c2",
+      "gz_sha256": "8de771db1ca7f1b5ab24086982372548595898305466af5ccae32edff052dcca",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/07-stale-callback-pops-newer-screen.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/08-stale-json-after-refresh.mutant.log": {
+      "raw_sha256": "41a2327ff21f07984413e6df182117cd69fc6e25ff2dc5e484a8e6d6746d9e43",
+      "gz_sha256": "a218ccad9f7f378137e3164fc5822c9be706b9388fb3d08af558e05491e5bddb",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/08-stale-json-after-refresh.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/09-fault-hidden-while-help-open.mutant.log": {
+      "raw_sha256": "069657c75f612807b1d8d0b794fb48140067b2cd93b59ce2586557e77a08e759",
+      "gz_sha256": "726025b9c019e0c9c06db7c7f54444bd7b971e4fb52377c7f45514182c5e74d5",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/09-fault-hidden-while-help-open.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/10-fault-reset-while-help-open.mutant.log": {
+      "raw_sha256": "778a333ed4716b9ee1175ceee62d2d9e24391aaf5244861ce1456fa7c1752e61",
+      "gz_sha256": "24d312ea73fd1606341ed8319fbeeb88329803fd5bff7e2c77d3c03d0c905000",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/10-fault-reset-while-help-open.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/11-banned-import-in-help-module.mutant.log": {
+      "raw_sha256": "7f177e7106f7c0d7352e7a1942cafad95ca02d4c3a149768a07a0d2f8e74dcb8",
+      "gz_sha256": "137315fd3526f8660a0c78b3fb1ce57050661a951f37c80555721a289b5e1e83",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/11-banned-import-in-help-module.mutant.log.gz"
+    },
+    "docs/validation/u8/implementation/mutations/12-write-in-help-module.mutant.log": {
+      "raw_sha256": "39ef1c2230d11cb17a8780860e80682a230952bebe7fb494ceeffcb425d3b6da",
+      "gz_sha256": "8cacbda55bf16cc05ca33b01ffd0b19dc1e5dd7fd2e1050d870d4009f97adc99",
+      "decompress": "gunzip -k docs/validation/u8/implementation/mutations/12-write-in-help-module.mutant.log.gz"
+    }
+  }
+}

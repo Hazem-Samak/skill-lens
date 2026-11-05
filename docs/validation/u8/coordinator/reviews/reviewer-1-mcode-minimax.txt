@@ -1,0 +1,210 @@
+EFFECTIVE_MODEL: [ provider/model: minimax/MiniMax-M3.1-Flash (mcode CLI v0.7.4, binary
+  /Users/corvette/.minimax-code/bin/mcode); settings: effort xhigh, launch argv
+  ["/Users/corvette/.minimax-code/bin/mcode","--model","minimax/MiniMax-M3.1-Flash"],
+  Herdr terminal t7j (name u8-mcode-r1, parent t75), cwd
+  "/Users/corvette/Documents/Projects Coding/Skill Lens"; runtimeMode: interactive
+  agent TUI (not one-shot print mode), coordinator-owned readable/steerable terminal;
+  interactionMode: interactive, single task turn, durable file report + hc send to
+  t75 | evidence: REQUESTED roster "mcode CLI / MiniMax-M3.1-Flash / xhigh effort"
+  (mcode-brief.txt line 2) vs CONFIGURED argv confirmed via `hc get t7j --json`
+  (model prefix resolved by the coordinator after t7g was rejected for a bare model
+  id) vs CONFIRMED model and effort at report time: `hc get t7j` reports
+  state=live/status=working and the mcode status bar reads
+  "M3.1-Flash · Effort xhigh". Effort was observed as "max" early in the review and
+  as "xhigh" at report time (changed by the coordinator mid-review; the earlier
+  `hc send u8-mcode-r1 "/model"` was delivered as a chat prompt, not a TUI command).
+  No unverified element remains in the roster. ]
+
+VERDICT:         pass
+
+  Reviewer 1 (standards/specification axis). No blocker found. The U8 change is
+  inside the frozen plan's allowed scope, keeps every read-only/captured-data
+  guarantee, leaves CLI JSON, snapshots, goldens, the controller and the public
+  models untouched, and its documentation agrees with the tested behaviour. Two
+  non-blocking documentation-accuracy items are listed below; both are text-only
+  and are the coordinator's to action before the commit. Two suspected problems
+  were withdrawn after verification (see CONCEDED).
+
+BLOCKERS:        [ none ]
+
+  No defect on this axis. Specifically checked and found sound:
+
+  - Frozen contract. `git show b5947840:docs/plans/2026-11-04-tui-u8-polish-help-docs.md
+    | shasum -a 256` = 01f6f250be358ed2168170e06513c1908ef616208a204d8f50f9dfa03f0c26de,
+    exactly the briefed plan hash. HEAD = a9d67b808ce235a543e63fba40b478da2a96c3e3 as
+    briefed. `git diff b5947840 HEAD` touches that plan file by one line only (the
+    `Reference:` line), which the frozen plan itself anticipates ("the reference-only
+    follow-up changes this line only"). The operative contract is intact.
+  - Allowed scope. The patch changes 14 tracked files and adds 2 (skill_lens/tui/help.py,
+    tests/test_tui_help.py) — all inside the plan's "Allowed future implementation files"
+    table. I compared every one of the 1,815 tracked files at a9d67b8 against a tree
+    built from `git archive a9d67b8` + the supplied patch: exactly those 14 differ.
+    Unchanged: skill_lens/core/ (controller state machine, snapshot capture),
+    skill_lens/models/, skill_lens/registry/, skill_lens/cli.py, skill_lens/render.py,
+    skill_lens/presentation/, skill_lens/tui/session.py, skill_lens/tui/json_view.py,
+    tests/fixtures/ (all snapshots and goldens), pyproject.toml, uv.lock,
+    .github/workflows/ci.yml, AGENTS.md, docs/process/, docs/archive/, docs/plans/.
+    Nothing in the plan's exclusion list was touched; no scope amendment was needed.
+  - Patch fidelity (the reviewed artifact is the real change). I applied
+    u8-product.patch to a pristine `git archive a9d67b8` tree outside the checkout and
+    compared SHA-256 for all 16 files: byte-identical to the live working tree. The
+    patch is complete and uncurated — git status shows no other product/test/doc change.
+  - Read-only, captured-data, optional and offline. skill_lens/tui/help.py imports only
+    textual widgets plus SessionController for read-only status; no Rich, no CLI renderer,
+    no filesystem/process/network call, no log file (plan §2). `grep` finds no
+    socket/requests/urllib/http/subprocess/shutil/os import anywhere under skill_lens/tui/.
+    The recursive AST guard (tests/test_tui_read_only.py:345 check_source_tree) rglobs the
+    whole tui package, so the new module is included, and the package-discovery test now
+    asserts help.py (tests/test_tui_read_only.py:374-380). Mutation cases 11 and 12 prove
+    the guard actually fires on a banned import and on a Path write inside help.py.
+  - JSON compatibility. json_view.py, the CLI and the renderers are untouched, so the CLI
+    JSON shape cannot have changed. New test
+    tests/test_tui_help.py:2152 compares all six TUI JSON documents byte-for-byte with
+    `runner.invoke(cli_app, [..., "--json"])` stdout on identical inputs; the pre-existing
+    per-screen oracle tests in tests/test_tui_json.py, test_tui_agents.py, test_tui_compare.py
+    and test_tui_doctor.py are retained. `git diff HEAD -- tests/fixtures/` is empty, so no
+    snapshot or golden was regenerated.
+  - Keyboard contract (spot-checked against plan §1-§8). App bindings at
+    skill_lens/tui/app.py:129-133 give a non-priority `question_mark` and an app-level
+    priority `f1`; HelpScreen bindings at skill_lens/tui/help.py:204-211 contain no competing
+    `f1`, so the app priority key is not preempted. Dismiss keys route through
+    app.close_help, which returns unless `self.screen is expected`
+    (skill_lens/tui/app.py:255-257) — only the exact instance can close itself. Repeated
+    opens cannot stack (app.py:234-236 returns when the current screen is a HelpScreen).
+    Help IDs are unique help-* (help-frame/help-title/help-body/help-content/help-session/
+    help-close). Layered Back is explained in the Compare context rows, not merely implied.
+  - Documentation accuracy. README has no relative and no same-page link (the DEVELOPMENT
+    absolute-URL rule); I independently resolved all 46 relative link targets across the
+    five edited documents and every one exists. Exit-code claims match the code:
+    bare launch without the extra prints help plus a tip and exits 0
+    (skill_lens/cli.py:163-166); explicit `skill-lens tui` without the extra exits
+    ExitCode.USAGE = 2 (cli.py:279-287) and a non-interactive stream also exits 2
+    (cli.py:288-295); normal quit 0 and accepted internal fault 3. The documented capture
+    budget matches DEFAULT_MAX_SNAPSHOT_BYTES = 256 * 1024 * 1024
+    (skill_lens/core/snapshot.py:67) with 0 disabling it (cli.py:263). The specification's
+    Phase 7 heading was corrected from "planned, not built" to "implemented in development
+    through U8" while keeping "Published PyPI 0.1.1 contains no TUI", which is exactly the
+    published-vs-development distinction the plan required. CHANGELOG records U8 only under
+    Unreleased → Added, makes no 0.2 release claim, and preserves published headings.
+  - Acceptance evidence. All 12 mutation cases in
+    docs/validation/u8/implementation/mutations/results.json show a passing control before
+    (exit 0), a meaningful mutant failure (exit 1) and a passing restored control (exit 0),
+    with syntax_or_import_error false and no timeout anywhere — the A8 standard, not exit
+    code alone. I read the mutant logs directly: 11 and 12 fail on the real assertion
+    ("Shipped tui/ code contains prohibited operations: help.py:34: Banned import
+    'subprocess'"), 08 fails on a real document inequality. The acceptance matrix maps
+    A1-A10 to named tests, A7 maps each empty/error state to a concrete test, and A9/A10
+    point at gates.json and the four final-*.log files. The implementer's changed-files.txt
+    lists exactly the 16 changed product/test/doc files and correctly omits the unattributed
+    artifacts. Coordinator verification.json records the four gates (1338 passed, 1 skipped,
+    90.12%, mypy over 46 files, ruff check and format clean), the native terminal smoke
+    result, and an explicit claim boundary that excludes human visual approval, the
+    Linux/Python matrix, hosted CI and built-wheel qualification.
+
+SUGGESTIONS:     [ non-blocking ]
+
+  1. Stale verification-status sentence at commit time.
+     Location: README.md:228, DEVELOPMENT.md:85, FULL_SCREEN_TUI.md:19, FULL_SCREEN_TUI.md:494
+     and CHANGELOG.md:130 all say "Coordinator verification and independent review remain
+     separate". Problem: the sentence was accurate when written, but
+     docs/validation/u8/coordinator/verification.json now exists in the same working tree
+     and records coordinator technical verification as passed, and the plan allows and A10
+     expects docs/validation/u8/ to carry the execution receipt and the final-review
+     decisions. If that evidence is committed together with these documents, the shipped
+     commit states "coordinator verification ... remain[s] separate" while containing the
+     coordinator verification record. Expected behaviour: the current-status statements match
+     the evidence shipped in the same commit. Evidence: `git status` shows
+     "?? docs/validation/u8/coordinator/" untracked and ready to be committed;
+     docs/validation/u8/coordinator/verification.json has "acceptance":
+     {"coordinator_technical_verification": "passed", "independent_final_review": "pending
+     user-named roster or an explicit user waiver"}. Remedy: when the coordinator commits,
+     either point these sentences at the coordinator record and state that independent review
+     is the remaining step, or state the actual state. If the product is committed first and
+     the evidence separately, no edit is needed. Nothing else in the wording is wrong.
+
+  2. The delivered keymap table omits F1.
+     Location: FULL_SCREEN_TUI.md §8.2 "Keymap (draft)" table, lines 445-463 — the table
+     lists `?` → Help overlay (line 462) and `q` / `Ctrl-C` → Quit (line 463) but has no
+     `F1` row. Problem: plan §1 requires the new additive key to be "documented everywhere",
+     and the documentation bullet for the TUI design asks to reconcile "actual contextual
+     keys". F1 is described in the prose immediately below the table
+     (FULL_SCREEN_TUI.md:483) and in README.md:165, README.md:221,
+     SKILL_LENS_SPECIFICATION.md:392 and CHANGELOG.md:117, so the document is not wrong about
+     the key existing — but a reader of the keymap table itself would conclude F1 does not
+     exist, and the table already lists other app-level keys. Expected behaviour: the
+     keymap table lists every delivered key, including the priority F1 toggle that works
+     while typing. Evidence: the table is the canonical key list and omits the key;
+     skill_lens/tui/app.py:132 binds F1 as an app-level priority toggle. Remedy: add one
+     row after line 462, e.g. "| `F1` | Toggle Help (works even while typing) |".
+     DEVELOPMENT.md contains no keymap by design, so it needs no change.
+
+FILES_AT_RISK:   [
+
+  - README.md:228, DEVELOPMENT.md:85, FULL_SCREEN_TUI.md:19, FULL_SCREEN_TUI.md:494,
+    CHANGELOG.md:130 — the verification-status sentence (SUGGESTION 1). Text-only.
+  - FULL_SCREEN_TUI.md:445-463 — the §8.2 keymap table missing the F1 row
+    (SUGGESTION 2). Text-only.
+  - Reviewed and found compliant, no action: skill_lens/tui/help.py, skill_lens/tui/app.py,
+    skill_lens/tui/home.py, skill_lens/tui/why.py, skill_lens/tui/diff.py,
+    skill_lens/tui/agents.py, skill_lens/tui/compare.py, skill_lens/tui/doctor.py,
+    tests/test_tui_help.py, tests/test_tui_read_only.py, tests/test_tui_home.py,
+    README.md, DEVELOPMENT.md, CHANGELOG.md, SKILL_LENS_SPECIFICATION.md, FULL_SCREEN_TUI.md.
+
+CONCEDED:        [ points withdrawn after argument ]
+
+  1. "Plan SHA-256 mismatch — the frozen plan was edited after the freeze." Withdrawn.
+     The hash of the plan at the briefed operative commit b5947840 is exactly
+     01f6f250be358ed2168170e06513c1908ef616208a204d8f50f9dfa03f0c26de, and the working
+     tree copy hashes to 63f22879db2bd44237801455d0dc739b90087db27d695e5662763027e2deca66.
+     The difference is the single `Reference:` line changed by the briefed reference-only
+     follow-up commit a9d67b8, which the frozen plan's own text authorises. No contract
+     breach.
+  2. "The brief undercounts the unattributed artifacts (seven four-byte files, not eight)."
+     Withdrawn. before.json contains exactly eight entries with the blat hash: 3y5luqdv,
+     xa1fl79v, _6r0sqne, m5txb5iu, rbvraqtn, skl6wira, y7vpe7r2 and
+     docs/validation/u8/implementation/mutations/7pma619t. The count of eight is correct;
+     the separate empty file .path is separate again. I deleted nothing.
+  3. "The supplied patch may be a curated subset of the real change." Withdrawn. Applying
+     the patch to a pristine a9d67b8 tree reproduces all 16 files byte-for-byte, and the
+     working tree contains no other product/test/doc modification.
+
+APPENDIX — VERIFICATION EVIDENCE (supporting the fields above)
+
+  Method. Read-only throughout: AGENTS.md, the frozen plan at b5947840, the complete
+  patch, all 16 changed sources and tests, and the whole docs/validation/u8/ record. I
+  applied the patch and compared hashes in a throwaway tree under /tmp only; no file in
+  the repository was created, edited, moved, deleted or renamed, no formatter, linter,
+  installer, git commit/checkout/stash or snapshot regeneration was run, and no test
+  suite was executed. I relied on the recorded gate and mutation logs rather than
+  re-running them, and I did not infer correctness from pass counts.
+
+  Commands used (all read-only): git rev-parse/log/diff/status/ls-tree/show/archive,
+  shasum, grep, and file reads. `git archive` was written to /tmp/u8-patch-check only.
+
+  Local reproduction of the boundary checks:
+    git show b5947840:docs/plans/2026-11-04-tui-u8-polish-help-docs.md | shasum -a 256
+      -> 01f6f250be358ed2168170e06513c1908ef616208a204d8f50f9dfa03f0c26de  (matches brief)
+    git rev-parse HEAD
+      -> a9d67b808ce235a543e63fba40b478da2a96c3e3  (matches brief)
+    git diff b5947840 HEAD --stat
+      -> docs/plans/2026-11-04-tui-u8-polish-help-docs.md | 2 +-  (Reference: line only)
+    git archive a9d67b8 | tar -x -C /tmp/u8-patch-check && git apply u8-product.patch
+      -> applies cleanly; all 16 files byte-identical to the working tree
+    per-file SHA-256 comparison of all 1,815 tracked files at a9d67b8 vs the patched tree
+      -> exactly 14 differ, all inside the plan's allowed table
+    git diff HEAD -- tests/fixtures/
+      -> empty (no snapshot or golden changed)
+
+  Known limitations carried forward unchanged and not treated as findings: local
+  macOS / Python 3.11.16 / Textual 8.2.8 checks only; no human visual approval, no
+  Linux or Python matrix, no hosted CI, no built-wheel qualification; cooperative quit
+  cannot forcibly stop a running thread; Help's static body captures focus and mode at
+  open while the live session section keeps updating; eight unattributed four-byte
+  blat artifacts remain, were not touched and must not be deleted.
+
+  Boundary note: reviewer 2 covers behavioural lifecycle and test gaps. I did not
+  duplicate that axis, except where a lifecycle decision also bears on a standards
+  rule — the exact-instance dismissal guard, the no-stacking guard, the app-level
+  priority F1 with no competing modal binding, the read-only AST guard reaching the new
+  module, and the CLI-serializer JSON equality test. I did not attempt to re-litigate
+  reviewer 2's findings.

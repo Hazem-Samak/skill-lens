@@ -53,6 +53,7 @@ from skill_lens.presentation import (
     report_truncation_notice,
     unified_text,
 )
+from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
 
@@ -196,6 +197,11 @@ class DiffScreen(Screen[None]):
         self._json_previous_focus: Widget | None = None
         self._json_previous_scroll = 0
         self._rendered_context: tuple[object, ...] | None = None
+        self._suspended = False
+        self._help_focus: Widget | None = None
+        self._help_generation: int | None = None
+        self._help_body_scroll = 0
+        self._help_json_scroll = 0
 
     # -- host integration ---------------------------------------------------
 
@@ -247,6 +253,160 @@ class DiffScreen(Screen[None]):
         finally:
             self._mounting = False
 
+    def on_screen_suspend(self) -> None:
+        """A covering screen (Help) starts: suspend this screen's own work."""
+        self.suspend_help()
+
+    def on_screen_resume(self) -> None:
+        """The covering screen closed: reconcile once and restore the view."""
+        self.resume_help()
+
+    # -- Help overlay -------------------------------------------------------
+
+    def help_context(self) -> HelpContext:
+        """Describe whether this Diff is ordinary or raw JSON."""
+        rows: list[HelpRow] = []
+        notes: list[str] = []
+        if self._json_mode:
+            mode = "raw JSON view"
+            focus = "JSON document"
+            rows.extend(
+                [
+                    HelpRow(
+                        "↑ ↓ / PageUp / PageDown / Home / End",
+                        "Scroll the canonical diff JSON document.",
+                    ),
+                    HelpRow(
+                        "J / Esc / Backspace",
+                        "Return to the ordinary Diff. Esc and Backspace leave JSON"
+                        " first, then the next Back returns to the origin screen.",
+                    ),
+                    HelpRow(
+                        "r",
+                        "Refresh the captured session; this document changes only when"
+                        " a new capture is accepted.",
+                    ),
+                ]
+            )
+            notes.append("The diff report body and metadata are hidden while JSON is shown.")
+        else:
+            mode = "unified diff"
+            focus = "report body"
+            rows.extend(
+                [
+                    HelpRow(
+                        "↑ ↓ / PageUp / PageDown / Home / End",
+                        "Scroll the report metadata and unified diff.",
+                    ),
+                    HelpRow(
+                        "J",
+                        "Toggle the canonical diff --json report for this installation.",
+                    ),
+                    HelpRow(
+                        "Esc / Backspace",
+                        "Return to the screen that opened Diff (Home or Why). If JSON is"
+                        " shown, leave JSON first.",
+                    ),
+                ]
+            )
+            if self._report is None and self._owned_request is not None:
+                notes.append("The captured Diff report is still loading.")
+            elif self._report is not None and not self._report.found:
+                notes.append(
+                    "The captured model found no eligible copies; its exact"
+                    " not-found answer is shown and stays scrollable."
+                )
+        return HelpContext("Diff", mode, focus, tuple(rows), tuple(notes))
+
+    def suspend_help(self) -> None:
+        """Cancel only this screen's still-owned token and remember its view."""
+        if self._suspended:
+            return
+        self._suspended = True
+        controller = self._controller_or_none()
+        snapshot = controller.current if controller is not None else None
+        self._help_generation = snapshot.generation if snapshot is not None else None
+        self._help_focus = self.app.focused
+        body = self._body_or_none()
+        self._help_body_scroll = int(body.scroll_offset.y) if body is not None else 0
+        view = self._json_view_or_none()
+        self._help_json_scroll = int(view.scroll_offset.y) if view is not None else 0
+        self._cancel_owned_token()
+
+    def resume_help(self) -> None:
+        """Reconcile the revealed Diff once, then restore focus and scroll."""
+        if not self.is_mounted:
+            self._suspended = False
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        self._suspended = False
+        if self.sync_from_controller():
+            return
+        if not self.is_mounted:
+            return
+        controller = self._controller_or_none()
+        if controller is None:
+            return
+        current = controller.current
+        same_generation = self._help_generation == (
+            current.generation if current is not None else None
+        )
+        if self._report is None:
+            active = controller.active_requests.get("diff")
+            if self._owned_request is not None and active != self._owned_request:
+                self._owned_request = None
+            if self._owned_request is None and not controller.is_failed:
+                self._request_report()
+        self._restore_help_view(same_generation)
+
+    def _restore_help_view(self, same_generation: bool) -> None:
+        target = self._help_focus
+        if target is not None and target.can_focus and target.is_mounted and target.display:
+            target.focus()
+        else:
+            body = self._body_or_none()
+            if body is not None:
+                body.focus()
+        if not same_generation:
+            return
+        if self._json_mode:
+            view = self._json_view_or_none()
+            if view is not None and self._help_json_scroll:
+                self.call_after_refresh(self._scroll_help_widget, view, self._help_json_scroll)
+        elif self._help_body_scroll:
+            body = self._body_or_none()
+            if body is not None:
+                self.call_after_refresh(self._scroll_help_widget, body, self._help_body_scroll)
+
+    def _scroll_help_widget(self, widget: Widget, offset: int) -> None:
+        if not self.is_mounted or self._suspended:
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        widget.scroll_to(y=offset, animate=False)
+
+    def _focus_if_active(self, widget: Widget | None) -> None:
+        """Complete a deferred focus only while this Diff is still active."""
+        if widget is None or not self.is_mounted:
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        if self._suspended or not widget.can_focus or not widget.is_mounted:
+            return
+        if not widget.display:
+            return
+        widget.focus()
+
     def on_unmount(self) -> None:
         self._cancel_owned_token()
 
@@ -259,6 +419,8 @@ class DiffScreen(Screen[None]):
         opening installation disappeared from a newly published capture.
         """
         if not self.is_mounted and not self._mounting:
+            return False
+        if self._suspended:
             return False
         controller = self._controller_or_none()
         if controller is None:
@@ -307,6 +469,8 @@ class DiffScreen(Screen[None]):
         This is the U4 sequence: cached report first, then a full owned-token
         comparison so a plain redraw never re-dispatches, then a true miss.
         """
+        if self._suspended:
+            return
         controller = self._controller_or_none()
         if controller is None or controller.current is None:
             return
@@ -376,7 +540,7 @@ class DiffScreen(Screen[None]):
         error: Exception | None = None,
     ) -> None:
         """Consume an accepted Diff result, or merely wake after a rejection."""
-        if not self.is_mounted or view != "diff":
+        if not self.is_mounted or self._suspended or view != "diff":
             return
         controller = self._controller_or_none()
         if controller is None:
@@ -623,6 +787,8 @@ class DiffScreen(Screen[None]):
 
     def action_toggle_json(self) -> None:
         """Toggle between the unified diff and its canonical JSON document."""
+        if self._suspended:
+            return
         if self._json_mode:
             self.leave_json_mode()
         else:
@@ -630,7 +796,7 @@ class DiffScreen(Screen[None]):
 
     def enter_json_mode(self) -> None:
         """Show the JSON document, remembering the ordinary focus and scroll."""
-        if self._json_mode:
+        if self._suspended or self._json_mode:
             return
         body = self._body_or_none()
         self._json_previous_focus = self.app.focused
@@ -645,7 +811,9 @@ class DiffScreen(Screen[None]):
         view = self._json_view_or_none()
         if view is not None:
             # Focus lands after the stylesheet has hidden the ordinary report.
-            self.call_after_refresh(view.focus)
+            # A cover that arrives first keeps this deferred callback from
+            # stealing focus.
+            self.call_after_refresh(self._focus_if_active, view)
 
     def _json_view_or_none(self) -> JsonView | None:
         try:
@@ -691,6 +859,8 @@ class DiffScreen(Screen[None]):
 
     def action_back(self) -> None:
         """Leave JSON mode first, otherwise return to the origin screen."""
+        if self._suspended:
+            return
         if self._json_mode:
             self.leave_json_mode()
             return

@@ -1,0 +1,13 @@
+$ .venv/bin/pytest tests/test_phase5_gate.py -q
+...................                                                      [100%]
+19 passed in 0.18s
+
+$ python link-check README.md DEVELOPMENT.md CHANGELOG.md SKILL_LENS_SPECIFICATION.md FULL_SCREEN_TUI.md
+README.md: 11 links checked
+DEVELOPMENT.md: 41 links checked
+CHANGELOG.md: 21 links checked
+SKILL_LENS_SPECIFICATION.md: 5 links checked
+FULL_SCREEN_TUI.md: 57 links checked
+missing relative targets: none
+README same-page links: none
+README non-absolute links: none

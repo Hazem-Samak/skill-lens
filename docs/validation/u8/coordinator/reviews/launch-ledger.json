@@ -1,0 +1,48 @@
+{
+  "risk": "High",
+  "round": 1,
+  "coordinator_terminal": "t75",
+  "family_disclosure": {
+    "coordinator": "Kimi",
+    "implementer": "DeepSeek Harness runtime; exact model/family unverified",
+    "reviewer_1": "MiniMax",
+    "reviewer_2": "GLM",
+    "reviewer_reviewer_overlap": false,
+    "user_acceptance": "The user explicitly named both reviewers and their CLIs/settings."
+  },
+  "launches": [
+    {
+      "address": "t7g",
+      "status": "failed_before_worker_start",
+      "reason": "The first absolute mcode launch used bare MiniMax-M3.1-Flash; mcode required provider/model. An earlier bare-name launch also failed because Herdr PATH did not include the custom bin directory."
+    },
+    {
+      "address": "t7j",
+      "name": "u8-mcode-r1",
+      "cli": "/Users/corvette/.minimax-code/bin/mcode",
+      "requested_model": "minimax/MiniMax-M3.1-Flash",
+      "requested_effort": "xhigh",
+      "configured_evidence": "Interactive model picker and status bar show M3.1-Flash, Effort xhigh, Context 1M.",
+      "native_receipt": "hc get reports app=mcode, state=working after the review brief was accepted.",
+      "brief": "/tmp/skill-lens-u8-final-review/mcode-brief.txt",
+      "report": "/tmp/skill-lens-u8-final-review/mcode-report.txt",
+      "review_axis": "Standards, scope, read-only/captured-data and JSON compatibility, documentation and acceptance evidence.",
+      "configuration_side_effect": "The model picker applied xhigh to this session and saved it as the default. Previous observed default was M3.1-Flash effort max. Restore max after review completion."
+    },
+    {
+      "address": "t7h",
+      "name": "u8-glm",
+      "cli": "/Users/corvette/.opencode/bin/opencode",
+      "requested_model": "opencode/glm-5.3-flash-free#max",
+      "configured_evidence": "Interactive model picker selected GLM-5.3-Flash Free; Variant cycle changed high to max. Status and hc get title report opencode/glm-5.3-flash-free#max.",
+      "native_receipt": "hc get records app=opencode, state=working, title=opencode/glm-5.3-flash-free#max model selection after the review brief was accepted.",
+      "brief": "/tmp/skill-lens-u8-final-review/opencode-brief.txt",
+      "report": "/tmp/skill-lens-u8-final-review/opencode-report.txt",
+      "review_axis": "Behavioral lifecycle, keyboard/priority handling, covered-worker races, stale callbacks, focus/scroll and test gaps.",
+      "saved_default_evidence": "opencode debug config continues to show the user's original space-bunny-free/max configuration."
+    }
+  ],
+  "setup_note": "Slash commands sent with hc send became agent prompts rather than native model commands. Those turns were interrupted. Native hc keys model dialogs were then used and verified before either review brief was sent.",
+  "expected_review_tasks": 2,
+  "product_commit_or_push": false
+}

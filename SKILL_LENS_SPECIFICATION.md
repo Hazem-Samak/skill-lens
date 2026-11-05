@@ -138,7 +138,7 @@ reached the chosen threshold (including "nothing found" and "no differences");
 `1` means findings reached the `--fail-on` threshold on `scan` or `doctor`;
 `2` means a usage error or an unknown agent. `--fail-on` defaults to `never`, so
 findings alone do not change the exit status. Code `3` is reserved for an
-unexpected internal fault; the planned TUI uses it as specified in its plan.
+unexpected internal fault; the TUI uses it as specified in its plan.
 
 ### 1. `skill-lens scan [--sandbox <dir>] [--cwd <dir>] [--json]`
 Inventories skills across detected agents, separating canonical user skills from plugins.
@@ -370,20 +370,37 @@ Development follows a strict test-first protocol. Tests run against mock fixture
 - **Gate:** `pytest`, `ruff check .` and `ruff format --check .` clean; every new
   guard mutation-tested; every changed golden or snapshot reviewed and explained.
 
-### Phase 7 (0.2): Interactive Full-Screen TUI — planned, not built
+### Phase 7 (0.2): Interactive Full-Screen TUI — implemented in development through U8
 
 > **New scope after 0.1.x, owner decision.** Overturns the v1 "no full-screen
 > TUI" rule for 0.2. The full design — purpose, vision, screens, phasing and
-> gates — lives in [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md). This section is
-> only the pointer; the plan is authoritative.
+> gates — lives in [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md). This section
+> describes the development implementation; the plan remains authoritative.
 
-- Add an **optional** `textual` dependency as the `[tui]` extra; the base install
-  gains no new runtime dependency.
-- Ship `skill-lens tui` as a strictly **read-only, presentation-only** browsing
-  layer over the existing frozen models. No new engine, no new data fields.
-- Keep every existing command, flag, JSON shape and exit code unchanged.
+- The optional **`textual` dependency** is the `[tui]` extra; the base install
+  gains no new runtime dependency. Published PyPI 0.1.1 contains no TUI.
+- `skill-lens tui` is an explicit **read-only, presentation-only** browsing
+  layer over the existing frozen models: Home, Why, Diff, Agents, Compare,
+  Doctor, raw JSON mode and the Help overlay. No new engine or data fields.
+- Bare `skill-lens` opens the TUI only when Textual is installed and both stdin
+  and stdout are interactive; `--plain`, a non-interactive stream or a missing
+  extra prints help instead. A bare launch without the extra exits `0` with an
+  install tip; explicit `skill-lens tui` without it exits `2`.
+- Main keys: arrows/`j`/`k` move, `Enter` opens, `Esc`/`Backspace` go back
+  (Help first, then raw JSON, then the screen), `/` filters, `a` cycles the
+  agent filter, `d` opens Diff, `g` opens Agents, `c` opens Compare, `h` opens
+  Doctor, `J` toggles raw JSON, `r` refreshes, `?` opens Help, `F1` toggles Help
+  even while typing, and `q`/`Ctrl+C` quit. Help reflects the real screen,
+  mode and focus rather than promising every key everywhere.
+- Sessions stay captured until a successful `r`; the default capture budget is
+  256 MiB (`--max-snapshot-bytes`, `0` disables). A normal quit exits `0`; an
+  accepted unexpected internal fault is sticky, is retained in memory, and
+  makes quit exit `3`.
 - **Gate:** see the plan's success criteria — read-only guard test, no new base
-  dependency, full repository gate green, snapshots reviewed.
+  dependency, full repository gate green, snapshots reviewed. U8 local
+  implementer evidence is under `docs/validation/u8/implementation/`; U9
+  release preparation, installed-wheel qualification and publishing remain
+  separate work.
 
 ---
 

@@ -1,0 +1,108 @@
+{
+  "baseline": {
+    "mypy": {
+      "command": ".venv/bin/mypy",
+      "exit": 0,
+      "log": "baseline-mypy.log",
+      "log_sha256": "fdba5b4e396441aaf1ba0d4aee9a2b6de7229057c665772ec81bd032ce1cc3f5",
+      "result": "Success: no issues found in 45 source files"
+    },
+    "pytest": {
+      "command": ".venv/bin/pytest --cov=skill_lens",
+      "exit": 0,
+      "log": "baseline-pytest.log",
+      "log_sha256": "e31067835bf90d9e4b74ac97381971c601b8987661630f911fa93aa701d8cbb8",
+      "result": {
+        "coverage": "90.02",
+        "passed": 1238,
+        "skipped": 1,
+        "totals": {
+          "branches": 2794,
+          "missed_branches": 375,
+          "missed_statements": 602,
+          "statements": 7775
+        }
+      }
+    },
+    "ruff_check": {
+      "command": ".venv/bin/ruff check .",
+      "exit": 0,
+      "log": "baseline-ruff-check.log",
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "result": "All checks passed"
+    },
+    "ruff_format": {
+      "command": ".venv/bin/ruff format --check .",
+      "exit": 0,
+      "log": "baseline-ruff-format.log",
+      "log_sha256": "61689733bb114440f657d3f37328814a60d043ca84b7aa1daf4672eb05bda67a"
+    }
+  },
+  "date": "2026-11-05",
+  "final": {
+    "help_module_coverage": "skill_lens/tui/help.py: 99%",
+    "mypy": {
+      "command": ".venv/bin/mypy",
+      "exit": 0,
+      "log": "final-mypy.log",
+      "log_sha256": "a97cee1ee1bdb5e2d1ca7098f7b33a6c6a21263225643192fdeb78654687ed89",
+      "result": "Success: no issues found in 46 source files"
+    },
+    "pytest": {
+      "command": ".venv/bin/pytest --cov=skill_lens",
+      "exit": 0,
+      "log": "final-pytest.log",
+      "log_sha256": "64722da1ccce9a41a1f425cc820d5a488cf1060f47e3681a09f988c55b28d7aa",
+      "result": {
+        "coverage": "90.10",
+        "passed": 1338,
+        "skipped": 1,
+        "totals": {
+          "branches": 3116,
+          "missed_branches": 415,
+          "missed_statements": 657,
+          "statements": 8545
+        }
+      }
+    },
+    "ruff_check": {
+      "command": ".venv/bin/ruff check .",
+      "exit": 0,
+      "log": "final-ruff-check.log",
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "result": "All checks passed"
+    },
+    "ruff_format": {
+      "command": ".venv/bin/ruff format --check .",
+      "exit": 0,
+      "log": "final-ruff-format.log",
+      "log_sha256": "98a28c6b6f62e1bf86b733994ce0e4420ee48c17cc1cef364bc177434c0a6d40",
+      "result": "422 files already formatted"
+    },
+    "targeted_help": {
+      "command": ".venv/bin/pytest tests/test_tui_help.py -q",
+      "exit": 0,
+      "log": "final-targeted-help.log",
+      "log_sha256": "03cc0401d519f642df23c11834dfa521dde9cf9ec8e6b02db219640fe0f9a8b9",
+      "result": "99 passed"
+    }
+  },
+  "head": "a9d67b808ce235a543e63fba40b478da2a96c3e3",
+  "mutation_campaign": {
+    "caught": 12,
+    "command": ".venv/bin/python docs/validation/u8/implementation/mutations/run_mutations.py",
+    "exit": 0,
+    "results": "docs/validation/u8/implementation/mutations/results.json",
+    "survivors": [],
+    "total": 12
+  },
+  "staged_files": [],
+  "unchanged_configuration": {
+    "configuration_hashes": {
+      "pyproject.toml": "60cf6e098ef31ab21a47a71dda563c7d6ff07f5c9bc674abb8bee9bd553011b7"
+    },
+    "coverage_branch": true,
+    "coverage_threshold": 90,
+    "note": "No coverage configuration, dependency, lockfile, snapshot, golden or CI file was changed."
+  }
+}

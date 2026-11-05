@@ -22,6 +22,7 @@ from skill_lens.models import dumps
 from skill_lens.models.compare import CompareReport
 from skill_lens.presentation import COMPARE_EMPTY_TEXT, RELATION_LABEL
 from skill_lens.registry.loader import AgentDefinition
+from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
 
@@ -193,6 +194,12 @@ class CompareScreen(Screen[None]):
         self._json_previous_focus: Widget | None = None
         self._json_previous_scroll = 0
         self._rendered_context: tuple[object, ...] | None = None
+        self._suspended = False
+        self._help_focus: Widget | None = None
+        self._help_generation: int | None = None
+        self._help_result_scroll = 0
+        self._help_picker_scroll = 0
+        self._help_json_scroll = 0
 
     @property
     def _host(self) -> _CompareHost:
@@ -266,11 +273,217 @@ class CompareScreen(Screen[None]):
     def on_unmount(self) -> None:
         self._cancel_owned_token()
 
+    def on_screen_suspend(self) -> None:
+        """A covering screen (Help) starts: suspend this screen's own work."""
+        self.suspend_help()
+
+    def on_screen_resume(self) -> None:
+        """The covering screen closed: reconcile once and restore the view."""
+        self.resume_help()
+
+    # -- Help overlay -------------------------------------------------------
+
+    def help_context(self) -> HelpContext:
+        """Describe the actual picker, result or JSON mode and its key scope."""
+        rows: list[HelpRow] = []
+        notes: list[str] = []
+        if self._json_mode:
+            mode = "raw JSON view"
+            focus = "JSON document"
+            rows.extend(
+                [
+                    HelpRow(
+                        "↑ ↓ / PageUp / PageDown / Home / End",
+                        "Scroll the canonical compare JSON document.",
+                    ),
+                    HelpRow(
+                        "J / Esc / Backspace",
+                        "Return to the comparison result. Esc and Backspace leave JSON"
+                        " before the next Back returns to the picker.",
+                    ),
+                    HelpRow(
+                        "r",
+                        "Refresh the captured session; this document changes only when"
+                        " a new capture is accepted.",
+                    ),
+                ]
+            )
+        elif self._mode == "result":
+            mode = "comparison result"
+            focus = "result pane"
+            rows.extend(
+                [
+                    HelpRow(
+                        "↑ ↓ / PageUp / PageDown / Home / End",
+                        "Scroll the comparison result while its pane has focus.",
+                    ),
+                    HelpRow(
+                        "J",
+                        "Toggle the canonical compare --json report for the accepted ordered pair.",
+                    ),
+                    HelpRow(
+                        "Esc / Backspace",
+                        "Return to the picker. If JSON is shown, leave JSON first; Back"
+                        " does not close Compare from result mode.",
+                    ),
+                ]
+            )
+        else:
+            mode = "agent picker"
+            focus = "picker columns"
+            rows.extend(
+                [
+                    HelpRow(
+                        "↑ ↓ / j k",
+                        "Move within the focused agent column.",
+                    ),
+                    HelpRow(
+                        "Enter",
+                        "Choose the highlighted agent for A, then for B; choosing B"
+                        " submits the pair when both choices are valid.",
+                    ),
+                    HelpRow(
+                        "Esc / Backspace",
+                        "Close Compare and return to Home.",
+                    ),
+                ]
+            )
+            rows.append(
+                HelpRow(
+                    "J",
+                    "Unavailable in the picker; it applies only to result mode.",
+                )
+            )
+            if self._host.controller.current is None:
+                notes.append(
+                    "No captured session is available; refresh to capture registry"
+                    " definitions before comparing."
+                )
+            elif len(self._agents) < 2:
+                notes.append(self._registry_shortfall())
+            elif self._input_error:
+                notes.append(self._input_error)
+            else:
+                notes.append(
+                    "Detection is not comparison eligibility: every captured registry"
+                    " definition can be chosen, even when it has no detected skills."
+                )
+        return HelpContext("Compare", mode, focus, tuple(rows), tuple(notes))
+
+    def suspend_help(self) -> None:
+        """Cancel only this screen's owned request and remember its exact view."""
+        if self._suspended:
+            return
+        self._suspended = True
+        controller = self._host.controller
+        snapshot = controller.current
+        self._help_generation = snapshot.generation if snapshot is not None else None
+        self._help_focus = self.app.focused
+        with contextlib.suppress(NoMatches):
+            picker = self.query_one("#compare-picker", Vertical)
+            self._help_picker_scroll = int(picker.scroll_offset.y)
+        with contextlib.suppress(NoMatches):
+            result = self.query_one("#compare-result-scroll", VerticalScroll)
+            self._help_result_scroll = int(result.scroll_offset.y)
+        view = self._json_view_or_none()
+        self._help_json_scroll = int(view.scroll_offset.y) if view is not None else 0
+        self._cancel_owned_token()
+
+    def resume_help(self) -> None:
+        """Reconcile the revealed Compare once, then restore focus and scroll."""
+        if not self.is_mounted:
+            self._suspended = False
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        self._suspended = False
+        self.sync_from_controller()
+        if not self.is_mounted:
+            return
+        controller = self._host.controller
+        current = controller.current
+        same_generation = self._help_generation == (
+            current.generation if current is not None else None
+        )
+        if self._mode == "result" and self._report is None and self._report_state == "loading":
+            active = controller.active_requests.get("compare")
+            if self._owned_request is not None and active != self._owned_request:
+                self._owned_request = None
+            if controller.is_failed:
+                self._report_state = "error"
+                self._report_error = _INTERNAL_ERROR_TEXT
+                self._refresh_result()
+                self._refresh_json()
+            elif self._owned_request is None and self._submitted_pair is not None:
+                self._request_pair(self._submitted_pair)
+        self._restore_help_view(same_generation)
+
+    def _restore_help_view(self, same_generation: bool) -> None:
+        target = self._help_focus
+        if target is not None and target.can_focus and target.is_mounted and target.display:
+            target.focus()
+        elif self._json_mode:
+            view = self._json_view_or_none()
+            if view is not None:
+                view.focus()
+        elif self._mode == "result":
+            with contextlib.suppress(NoMatches):
+                self.query_one("#compare-result-scroll", VerticalScroll).focus()
+        else:
+            self._focus_side("b" if self._selected_a is not None else "a")
+        if not same_generation:
+            return
+        if self._json_mode:
+            view = self._json_view_or_none()
+            if view is not None and self._help_json_scroll:
+                self.call_after_refresh(self._scroll_help_widget, view, self._help_json_scroll)
+        elif self._mode == "result":
+            with contextlib.suppress(NoMatches):
+                result = self.query_one("#compare-result-scroll", VerticalScroll)
+                if self._help_result_scroll:
+                    self.call_after_refresh(
+                        self._scroll_help_widget, result, self._help_result_scroll
+                    )
+        elif self._help_picker_scroll:
+            with contextlib.suppress(NoMatches):
+                picker = self.query_one("#compare-picker", Vertical)
+                self.call_after_refresh(self._scroll_help_widget, picker, self._help_picker_scroll)
+
+    def _scroll_help_widget(self, widget: Widget, offset: int) -> None:
+        if not self.is_mounted or self._suspended:
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        widget.scroll_to(y=offset, animate=False)
+
+    def _focus_if_active(self, widget: Widget | None) -> None:
+        """Complete a deferred focus only while this Compare is still active."""
+        if widget is None or not self.is_mounted:
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        if self._suspended or not widget.can_focus or not widget.is_mounted:
+            return
+        if not widget.display:
+            return
+        widget.focus()
+
     # -- snapshot reconciliation ------------------------------------------
 
     def sync_from_controller(self) -> None:
         """Update from the published registry and never reload live definitions."""
         if not self.is_mounted and not self._mounting:
+            return
+        if self._suspended:
             return
         controller = self._host.controller
         snapshot = controller.current
@@ -433,7 +646,7 @@ class CompareScreen(Screen[None]):
             self.query_one(selector, DataTable).focus()
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
-        if self._syncing or self._json_mode or self._mode != "picker":
+        if self._suspended or self._syncing or self._json_mode or self._mode != "picker":
             return
         table_id = event.data_table.id
         agent_id = str(event.row_key.value)
@@ -445,7 +658,7 @@ class CompareScreen(Screen[None]):
             self._highlight_b = agent_id
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
-        if self._json_mode or self._mode != "picker":
+        if self._suspended or self._json_mode or self._mode != "picker":
             return
         table_id = event.data_table.id
         agent_id = str(event.row_key.value)
@@ -463,12 +676,12 @@ class CompareScreen(Screen[None]):
             self._submit_selected()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "compare-submit" and not self._json_mode:
+        if event.button.id == "compare-submit" and not self._suspended and not self._json_mode:
             self._submit_selected()
 
     def _submit_selected(self) -> None:
         """Validate captured IDs and submit the pair without any live discovery."""
-        if self._mode != "picker" or self._json_mode:
+        if self._suspended or self._mode != "picker" or self._json_mode:
             return
         controller = self._host.controller
         snapshot = controller.current
@@ -515,12 +728,17 @@ class CompareScreen(Screen[None]):
         self._refresh_json()
         self._refresh_result()
         self._request_pair(pair)
-        self.call_after_refresh(self.query_one("#compare-result-scroll", VerticalScroll).focus)
+        self.call_after_refresh(
+            self._focus_if_active,
+            self.query_one("#compare-result-scroll", VerticalScroll),
+        )
 
     # -- report ownership --------------------------------------------------
 
     def _request_pair(self, pair: Pair) -> None:
         """Use the controller cache first, then retain one complete owned token."""
+        if self._suspended:
+            return
         controller = self._host.controller
         snapshot = controller.current
         if snapshot is None:
@@ -601,7 +819,7 @@ class CompareScreen(Screen[None]):
         error: Exception | None = None,
     ) -> None:
         """Accept only the active screen's exact request for its current pair."""
-        if not self.is_mounted or view != "compare":
+        if not self.is_mounted or self._suspended or view != "compare":
             return
         owned = self._owned_request
         if owned is None:
@@ -779,7 +997,7 @@ class CompareScreen(Screen[None]):
         details.update(Content.from_text(error or "", markup=False))
 
     def action_toggle_json(self) -> None:
-        if self._mode != "result":
+        if self._suspended or self._mode != "result":
             return
         if self._json_mode:
             self.leave_json_mode()
@@ -787,7 +1005,7 @@ class CompareScreen(Screen[None]):
             self.enter_json_mode()
 
     def enter_json_mode(self) -> None:
-        if self._mode != "result" or self._json_mode:
+        if self._suspended or self._mode != "result" or self._json_mode:
             return
         picker = self.query_one("#compare-picker", Vertical)
         result = self.query_one("#compare-result-scroll", VerticalScroll)
@@ -803,7 +1021,7 @@ class CompareScreen(Screen[None]):
         self._refresh_json()
         view = self._json_view_or_none()
         if view is not None:
-            self.call_after_refresh(view.focus)
+            self.call_after_refresh(self._focus_if_active, view)
 
     def leave_json_mode(self) -> None:
         if not self._json_mode:
@@ -835,7 +1053,7 @@ class CompareScreen(Screen[None]):
     # -- keyboard ----------------------------------------------------------
 
     def action_cursor_down(self) -> None:
-        if self._json_mode or self._mode != "picker":
+        if self._suspended or self._json_mode or self._mode != "picker":
             return
         focused = self.app.focused
         if isinstance(focused, DataTable) and focused.id in {
@@ -845,7 +1063,7 @@ class CompareScreen(Screen[None]):
             focused.action_cursor_down()
 
     def action_cursor_up(self) -> None:
-        if self._json_mode or self._mode != "picker":
+        if self._suspended or self._json_mode or self._mode != "picker":
             return
         focused = self.app.focused
         if isinstance(focused, DataTable) and focused.id in {
@@ -855,6 +1073,8 @@ class CompareScreen(Screen[None]):
             focused.action_cursor_up()
 
     def action_back(self) -> None:
+        if self._suspended:
+            return
         if self._json_mode:
             self.leave_json_mode()
         elif self._mode == "result":

@@ -38,6 +38,7 @@ from skill_lens.models import dumps
 from skill_lens.models.enums import HeadlineState, ParseStatus, Scope
 from skill_lens.models.resolution import CandidateResolution, ResolutionReport
 from skill_lens.presentation.state import STATE_MARK, STATE_STYLE
+from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.home import AgentOption, agent_display_name
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
@@ -297,6 +298,9 @@ class WhyScreen(Screen[None]):
         self._json_mode = False
         self._json_previous_focus: Widget | None = None
         self._json_previous_scroll = 0
+        self._help_generation: int | None = None
+        self._help_body_scroll = 0
+        self._help_json_scroll = 0
 
     # -- host integration ---------------------------------------------------
 
@@ -400,6 +404,147 @@ class WhyScreen(Screen[None]):
             return
         self._detail_focus = None
         self._update_strip_focus()
+
+    # -- Help overlay -------------------------------------------------------
+
+    def help_context(self) -> HelpContext:
+        """Describe the current detail mode, focus and conditional keys."""
+        rows: list[HelpRow] = []
+        notes: list[str] = []
+        if self._json_mode:
+            mode = "raw JSON view"
+            focus = "JSON document"
+            rows.extend(
+                [
+                    HelpRow(
+                        "↑ ↓ / PageUp / PageDown / Home / End",
+                        "Scroll the canonical why JSON document.",
+                    ),
+                    HelpRow(
+                        "J / Esc / Backspace",
+                        "Return to the ordinary detail. Esc and Backspace leave JSON"
+                        " before any other Back action.",
+                    ),
+                    HelpRow(
+                        "r",
+                        "Refresh the captured session; this document changes only when"
+                        " a new capture is accepted.",
+                    ),
+                ]
+            )
+            notes.append("Agent switching, d and Enter do not operate while JSON is shown.")
+        else:
+            mode = "resolution detail"
+            focus = "agent strip" if self._is_strip_focused() else "candidate list"
+            rows.extend(
+                [
+                    HelpRow(
+                        "← / →",
+                        "Choose the previous or next agent only while the agent strip has focus.",
+                    ),
+                    HelpRow(
+                        "Tab / Shift+Tab",
+                        "Move focus through the agent strip and candidate details.",
+                    ),
+                    HelpRow(
+                        "Enter",
+                        "Activate the focused agent button.",
+                    ),
+                    HelpRow(
+                        "d",
+                        "Open Diff for the installation this detail was opened from.",
+                    ),
+                    HelpRow(
+                        "J",
+                        "Toggle the canonical why --json report for the current agent."
+                        " It shows the whole report, not a filtered payload.",
+                    ),
+                    HelpRow(
+                        "Esc / Backspace",
+                        "Close this detail and return to Home. If JSON is shown, leave JSON first.",
+                    ),
+                ]
+            )
+            if not self._agent_options:
+                if self._unavailable:
+                    notes.append(
+                        "Unavailable agent IDs: "
+                        + ", ".join(self._unavailable)
+                        + ". No registered agent reaches this installation; the"
+                        " model's missing or unreadable answer stays readable."
+                    )
+                else:
+                    notes.append("No agent reaches this installation; no Why report is requested.")
+            elif self._report is None and self._owned_request is not None:
+                notes.append("The report for this agent is still loading.")
+        return HelpContext("Why", mode, focus, tuple(rows), tuple(notes))
+
+    def suspend_help(self) -> None:
+        """Remember detail state, then use the existing exact-owner suspension."""
+        if self._suspended:
+            return
+        controller = self._controller_or_none()
+        snapshot = controller.current if controller is not None else None
+        self._help_generation = snapshot.generation if snapshot is not None else None
+        body = self._body_or_none()
+        self._help_body_scroll = int(body.scroll_offset.y) if body is not None else 0
+        view = self._json_view_or_none()
+        self._help_json_scroll = int(view.scroll_offset.y) if view is not None else 0
+        self.suspend_detail()
+
+    def resume_help(self) -> None:
+        """Reveal the detail through its existing idempotent resume path."""
+        if not self.is_mounted:
+            self._suspended = False
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        self.resume_detail()
+        if not self.is_mounted:
+            return
+        controller = self._controller_or_none()
+        current = controller.current if controller is not None else None
+        same_generation = self._help_generation == (
+            current.generation if current is not None else None
+        )
+        if not same_generation:
+            return
+        if self._json_mode:
+            view = self._json_view_or_none()
+            if view is not None and self._help_json_scroll:
+                self.call_after_refresh(self._scroll_help_widget, view, self._help_json_scroll)
+            return
+        body = self._body_or_none()
+        if body is not None and self._help_body_scroll:
+            self.call_after_refresh(self._scroll_help_widget, body, self._help_body_scroll)
+
+    def _scroll_help_widget(self, widget: Widget, offset: int) -> None:
+        if not self.is_mounted or self._suspended:
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        widget.scroll_to(y=offset, animate=False)
+
+    def _focus_if_active(self, widget: Widget | None) -> None:
+        """Complete a deferred focus only while this detail is still active."""
+        if widget is None or not self.is_mounted:
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        if self._suspended or not widget.can_focus or not widget.is_mounted:
+            return
+        if not widget.display:
+            return
+        widget.focus()
 
     # -- synchronization ----------------------------------------------------
 
@@ -710,7 +855,9 @@ class WhyScreen(Screen[None]):
         view = self._json_view_or_none()
         if view is not None:
             # Focus lands after the stylesheet has hidden the ordinary widgets.
-            self.call_after_refresh(view.focus)
+            # A cover that arrives first keeps the deferred callback from
+            # stealing focus.
+            self.call_after_refresh(self._focus_if_active, view)
 
     def _json_view_or_none(self) -> JsonView | None:
         try:

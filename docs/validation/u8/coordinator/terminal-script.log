@@ -1,0 +1,284 @@
+? ⭘                            Skill Lens — 0.1.1
+ Skill Lens Home
+ ▊▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▎ Agent: All agents
+ ▊  Filter by name or description  (/)                  ▎
+ ▊▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▎
+ Parse: * valid, x invalid.  State appears only while an agent filter is
+ active.
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+
+
+ Initializing...
+
+
+
+ q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents
+                                                                                 ⭘                            Skill Lens — 0.1.1
+ Skill Lens Home
+ ▊▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▎ Agent: All agents
+ ▊  Filter by name or description  (/)                  ▎
+ ▊▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▎
+ Parse: * valid, x invalid.  State appears only while an agent filter is
+ active.
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+
+
+ Initializing...
+
+
+
+ q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents
+                                                                                 ⭘                            Skill Lens — 0.1.1
+ Skill Lens Home
+ ▊▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▎ Agent: All agents
+ ▊  Filter by name or description  (/)                  ▎
+ ▊▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▎
+ Parse: * valid, x invalid.  State appears only while an agent filter is
+ active.
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+                                                │
+
+
+ Initializing...
+
+
+
+ q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents
+                                                                                 ⭘                            Skill Lens — 0.1.1
+ Skill Lens Home
+ ▊┌──────────────────────────────────────────────────────────────────────────┐
+ ▊│ Help — Home                                                              │
+ ▊│ Covered screen: Home — ordinary list                                     │
+ P│ Current focus: skill table                                               │
+ a│                                                                          │
+  │ COMMON KEYS                                                              │
+  │   q / Ctrl+C — Quit through the normal application path. Quit is         │
+  │ cooperative and returns 0, or 3 after an accepted internal fault.        │
+  │   r — Refresh the captured session. External edits appear only after a   │
+  │ successful refresh; a failed refresh can keep the previous catalog.      │
+  │   ? / Esc / Backspace — Close this Help. ? is non-priority, so it        │
+  │ stays ordinary filter text while the Home filter input is focused.       │
+  │   F1 — Toggle Help: open it from Home, Why, Diff, Agents, Compare or     │
+  │ Doctor, or close this exact Help, even while typing.                     │
+  │   Tab / Shift+Tab — Move focus between this Help body and the Close      │
+  │ ▔▔▔▔▔▔▔▔▔▔▔▔                                                             │
+ I│    Close                                                                 │
+  │ ▁▁▁▁▁▁▁▁▁▁▁▁                                                             │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+ q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents
+                                                                                 ⭘                            Skill Lens — 0.1.1
+┌──────────────────────────────────────────────────────────────────────────┐
+│ Help — Home                                                              │
+│ Covered screen: Home — ordinary list                                     │
+│ Current focus: skill table                                               │
+│                                                                          │
+│ COMMON KEYS                                                              │
+│   q / Ctrl+C — Quit through the normal application path. Quit is         │
+│ cooperative and returns 0, or 3 after an accepted internal fault.        │
+│   r — Refresh the captured session. External edits appear only after     │
+│ a successful refresh; a failed refresh can keep the previous             │
+│ catalog.                                                                 │
+│   ? / Esc / Backspace — Close this Help. ? is non-priority, so it        │
+│ stays ordinary filter text while the Home filter input is focused.       │
+│   F1 — Toggle Help: open it from Home, Why, Diff, Agents, Compare or     │
+│ Doctor, or close this exact Help, even while typing.                     │
+│ ▔▔▔▔▔▔▔▔▔▔▔▔                                                             │
+│    Close                                                                 │
+│ ▁▁▁▁▁▁▁▁▁▁▁▁                                                             │
+└──────────────────────────────────────────────────────────────────────────┘                      Skill Lens — 0.1.1
+ Help — Home
+ Covered screen: Home — ordinary list
+ Current focus: skill table
+
+ COMMON KEYS
+   q / Ctrl+C — Quit through the normal application path. Quit is
+ cooperative and returns 0, or 3 after an accepted internal fault.
+   r — Refresh the captured session. External edits appear only after
+ a successful refresh; a failed refresh can keep the previous
+ catalog.
+   ? / Esc / Backspace — Close this Help. ? is non-priority, so it
+ stays ordinary filter text while the Home filter input is focused.
+   F1 — Toggle Help: open it from Home, Why, Diff, Agents, Compare or
+ Doctor, or close this exact Help, even while typing.
+▔▔▔▔▔▔▔▔▔▔▔▔
+   Close
+▁▁▁▁▁▁▁▁▁▁▁▁
+                                                                                 Covered screen: Home — ordinary list
+ Current focus: skill table
+                                                                     ▁▁
+ COMMON KEYS
+   q / Ctrl+C — Quit through the normal application path. Quit is
+ cooperative and returns 0, or 3 after an accepted internal fault.
+   r — Refresh the captured session. External edits appear only after
+ a successful refresh; a failed refresh can keep the previous
+ catalog.
+   ? / Esc / Backspace — Close this Help. ? is non-priority, so it
+ stays ordinary filter text while the Home filter input is focused.
+   F1 — Toggle Help: open it from Home, Why, Diff, Agents, Compare or
+ Doctor, or close this exact Help, even while typing.
+ esc Close  q Quit  r Refresh                                                    ⭘                            Skill Lens — 0.1.1
+ Skill Lens Home
+ ▊┌──────────────────────────────────────────────────────────────────────────┐
+ ▊│ Help — Home                                                              │
+ ▊│ Covered screen: Home — ordinary list                                     │
+ P│ Current focus: skill table                                               │
+ a│                                                                     ▁▁   │
+  │ COMMON KEYS                                                              │
+  │   q / Ctrl+C — Quit through the normal application path. Quit is         │
+  │ cooperative and returns 0, or 3 after an accepted internal fault.        │
+  │   r — Refresh the captured session. External edits appear only after     │
+  │ a successful refresh; a failed refresh can keep the previous             │
+  │ catalog.                                                                 │
+  │   ? / Esc / Backspace — Close this Help. ? is non-priority, so it        │
+  │ stays ordinary filter text while the Home filter input is focused.       │
+  │   F1 — Toggle Help: open it from Home, Why, Diff, Agents, Compare or     │
+  │ Doctor, or close this exact Help, even while typing.                     │
+  │ ▔▔▔▔▔▔▔▔▔▔▔▔                                                             │
+ I│    Close                                                                 │
+  │ ▁▁▁▁▁▁▁▁▁▁▁▁                                                             │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+ q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents
+ esc Close  q Quit  r Refresh                                                    Covered screen: Home — ordinary list
+ Current focus: skill table
+                                                                     ▁▁
+ COMMON KEYS
+   q / Ctrl+C — Quit through the normal application path. Quit is
+ cooperative and returns 0, or 3 after an accepted internal fault.
+   r — Refresh the captured session. External edits appear only after
+ a successful refresh; a failed refresh can keep the previous
+ catalog.
+   ? / Esc / Backspace — Close this Help. ? is non-priority, so it
+ stays ordinary filter text while the Home filter input is focused.
+   F1 — Toggle Help: open it from Home, Why, Diff, Agents, Compare or
+ Doctor, or close this exact Help, even while typing.
+ esc Close  q Quit  r Refresh  ⭘                            Skill Lens — 0.1.1
+ Skill Lens Home
+ ▊┌──────────────────────────────────────────────────────────────────────────┐
+ ▊│ Help — Home                                                              │
+ ▊│ Covered screen: Home — ordinary list                                     │
+ P│ Current focus: skill table                                               │
+ a│                                                                     ▁▁   │
+  │ COMMON KEYS                                                              │
+  │   q / Ctrl+C — Quit through the normal application path. Quit is         │
+  │ cooperative and returns 0, or 3 after an accepted internal fault.        │
+  │   r — Refresh the captured session. External edits appear only after     │
+  │ a successful refresh; a failed refresh can keep the previous             │
+  │ catalog.                                                                 │
+  │   ? / Esc / Backspace — Close this Help. ? is non-priority, so it        │
+  │ stays ordinary filter text while the Home filter input is focused.       │
+  │   F1 — Toggle Help: open it from Home, Why, Diff, Agents, Compare or     │
+  │ Doctor, or close this exact Help, even while typing.                     │
+  │ ▔▔▔▔▔▔▔▔▔▔▔▔                                                             │
+ I│    Close                                                                 │
+  │ ▁▁▁▁▁▁▁▁▁▁▁▁                                                             │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+ q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents
+ esc Close  q Quit  r Refresh                                                   │ Name: deploy
+│ Scope: Global
+│ Path: ~/.claude/skills/deploy
+│ Agents: Claude Code, OpenCode
+│ V2 (2)
+│ Hash:
+│ sha256:cbb920bf417ccc9e720cae
+│ b7ef5e2cdddba4ca29affed466f7b
+│ 4c89b03fd9aeb
+ h Doctor  q Quit  r Refresh  f1 Help                                            ⭘                            Skill Lens — 0.1.1
+ Skill Lens Home
+ ▊▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▎ Agent: All agents
+ ▊  Filter by name or description  (/)                  ▎
+ ▊▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▎
+ Parse: * valid, x invalid.  State appears only while an agent filter is
+ active.
+ Name    Scope   Parse                          │ Name: deploy
+ deploy  Global  *                              │ Scope: Global
+                                                │ Path: ~/.claude/skills/deploy
+                                                │ Agents: Claude Code, OpenCode
+                                                │ V2 (2)
+                                                │ Hash:
+                                                │ sha256:cbb920bf417ccc9e720cae
+                                                │ b7ef5e2cdddba4ca29affed466f7b
+                                                │ 4c89b03fd9aeb
+
+
+ Ready: 1 skills discovered
+
+
+
+ q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents
+ h Doctor  q Quit  r Refresh  f1 Help                                            Agent: All agents
+ Parse: * valid, x invalid.  State appears only while an agent filter is
+ active.
+ Name    Scope   Parse                          │ Name: deploy
+ deploy  Global  *                              │ Scope: Global
+                                                │ Path:
+                                                │ ~/.claude/skills/deploy
+                                                │ Agents: Claude Code,
+                                                │ OpenCode V2 (2)            ▇▇
+                                                │ Hash:
+                                                │ sha256:cbb920bf417ccc9e720c
+                                                │ aeb7ef5e2cdddba4ca29affed46
+
+
+ Ready: 1 skills discovered
+
+
+ h Doctor  q Quit  r Refresh  f1 Help                                            ⭘                            Skill Lens — 0.1.1
+ Skill Lens Home
+ ▊▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▎ Agent: All agents
+ ▊  Filter by name or description  (/)                  ▎
+ ▊▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▎
+ Parse: * valid, x invalid.  State appears only while an agent filter is
+ active.
+ Name    Scope   Parse                          │ Name: deploy
+ deploy  Global  *                              │ Scope: Global
+                                                │ Path:
+                                                │ ~/.claude/skills/deploy
+                                                │ Agents: Claude Code,
+                                                │ OpenCode V2 (2)            ▇▇
+                                                │ Hash:
+                                                │ sha256:cbb920bf417ccc9e720c
+                                                │ aeb7ef5e2cdddba4ca29affed46
+
+
+ Ready: 1 skills discovered
+
+
+
+ q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents
+ h Doctor  q Quit  r Refresh  f1 Help                                           │ Name: deploy
+│ Scope: Global
+│ Path:
+│ ~/.claude/skills/deploy
+│ Agents: Claude Code,
+│ OpenCode V2 (2)            ▇▇
+│ Hash:
+│ sha256:cbb920bf417ccc9e720c
+│ aeb7ef5e2cdddba4ca29affed46
+ h Doctor  q Quit  r Refresh  f1 Help

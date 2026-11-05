@@ -1,0 +1,39 @@
+{
+  "observed_at": "2026-11-05",
+  "tree": "post-review ledger and documentation edits applied on top of the reviewed implementation",
+  "pytest": {
+    "command": ".venv/bin/pytest --cov=skill_lens",
+    "exit_code": 0,
+    "seconds": 415.82,
+    "sha256": "237860a6040f15d56259dc775c09174fe8e4ecc51bb3c3e6b2d68fab03292e59",
+    "result": {
+      "passed": 1338,
+      "skipped": 1,
+      "coverage": "90.10%",
+      "threshold": "90.0% combined statement/branch, tui/ measured, unchanged",
+      "skip_reason": "case-insensitive filesystem guard (pre-existing)"
+    }
+  },
+  "mypy": {
+    "command": ".venv/bin/mypy",
+    "exit_code": 0,
+    "sha256": "a97cee1ee1bdb5e2d1ca7098f7b33a6c6a21263225643192fdeb78654687ed89",
+    "result": "Success: no issues found in 46 source files"
+  },
+  "ruff_check": {
+    "command": ".venv/bin/ruff check .",
+    "exit_code": 0,
+    "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "result": "All checks passed!"
+  },
+  "ruff_format_check": {
+    "command": ".venv/bin/ruff format --check .",
+    "exit_code": 0,
+    "sha256": "bc783451c5b19b2e4860562b05bb64368e1178d498aa01595fcb6f4f3138ed32",
+    "result": "424 files already formatted"
+  },
+  "spot_checks_after_doc_edits": {
+    "command": ".venv/bin/pytest tests/test_phase5_gate.py tests/test_render_snapshots.py -q",
+    "result": "38 passed (README absolute-link gate and render snapshots unaffected by the ledger/status edits)"
+  }
+}

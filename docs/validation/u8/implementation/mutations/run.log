@@ -1,0 +1,14 @@
+duplicate-help-stacking: control=0 mutant=1 restore=0 meaningful=True PASS
+covered-key-leakage: control=0 mutant=1 restore=0 meaningful=True PASS
+lost-input-focus: control=0 mutant=1 restore=0 meaningful=True PASS
+ignored-diff-suspension: control=0 mutant=1 restore=0 meaningful=True PASS
+ignored-compare-suspension: control=0 mutant=1 restore=0 meaningful=True PASS
+stranded-report-after-reveal: control=0 mutant=1 restore=0 meaningful=True PASS
+stale-callback-pops-newer-screen: control=0 mutant=1 restore=0 meaningful=True PASS
+stale-json-after-refresh: control=0 mutant=1 restore=0 meaningful=True PASS
+fault-hidden-while-help-open: control=0 mutant=1 restore=0 meaningful=True PASS
+fault-reset-while-help-open: control=0 mutant=1 restore=0 meaningful=True PASS
+banned-import-in-help-module: control=0 mutant=1 restore=0 meaningful=True PASS
+write-in-help-module: control=0 mutant=1 restore=0 meaningful=True PASS
+
+12/12 caught

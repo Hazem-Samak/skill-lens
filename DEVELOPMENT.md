@@ -58,7 +58,7 @@ and the build proceeds by phase:
   managed-skills folder was ranked **above** the folders that should win. All 10
   agents now cite a source, and an enforced invariant guarantees it.
 - [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope, partially
-  implemented through U7; U8–U9 planned.* An optional, additive, read-only
+  implemented through U8; U9 planned.* An optional, additive, read-only
   browsing layer built on the existing frozen models, shipped as the opt-in
   `[tui]` extra so the base install gains nothing. Overturns the v1 "no
   full-screen TUI" rule for 0.2. The complete plan — vision, screens, phasing
@@ -77,7 +77,16 @@ and the build proceeds by phase:
   U7 Doctor is implemented in the current tree; its local checks and mutation
   evidence are recorded in `docs/validation/u7/implementation/`.
   [Parent technical verification](docs/validation/u7/coordinator/verification.md)
-  passed. U8–U9 screens and 0.2 publishing remain future work.
+  passed. U8 Help, keyboard polish, empty/error states and user documentation are
+  implemented in the current working tree; the frozen plan is
+  [`2026-11-04-tui-u8-polish-help-docs.md`](docs/plans/2026-11-04-tui-u8-polish-help-docs.md)
+  and local implementation evidence is under
+  [`docs/validation/u8/implementation/`](docs/validation/u8/implementation/).
+  Coordinator technical verification passed and both independent final reviews
+  (mcode/MiniMax-M3.1-Flash/xhigh and OpenCode/GLM-5.3-Flash-Free/max) returned
+  pass with no blockers on 5 November 2026; the ledger and verbatim reports are
+  under [`docs/validation/u8/coordinator/`](docs/validation/u8/coordinator/). U9 release
+  preparation and 0.2 publishing remain future work.
   This does not claim human visual approval, hosted CI acceptance or release. The
   2026-10-04 readiness review recorded two
   engine fixes required before Step 0: P1 (non-object settings robustness) and
@@ -117,8 +126,15 @@ and the build proceeds by phase:
   with U3–U9 screens and 0.2 publishing remaining future work. Published PyPI
   0.1.1 has no TUI extra; do not recommend released `skill-lens-cli[tui]`.
 
-Latest dated verification: [U7 parent technical verification, 4 November 2026](docs/validation/u7/coordinator/verification.md).
-It records native Doctor implementation, parent review and the four local gates; coverage is the combined score
+Latest dated verification: [U8 coordinator review receipt, 5 November 2026](docs/validation/u8/coordinator/review-receipt.json).
+It records the four-gate baseline, the native pseudo-terminal smoke run, and both
+independent final reviews passing with no blockers. U8 Help implementation
+and its local gate/mutation evidence remain recorded under
+[`docs/validation/u8/implementation/`](docs/validation/u8/implementation/); that
+is implementer evidence. Earlier dated records such as
+[U7 parent technical verification, 4 November 2026](docs/validation/u7/coordinator/verification.md)
+are retained: it records native Doctor implementation, parent review and the four
+local gates; coverage is the combined score
 with branch measurement enabled, not the branch-only percentage. Earlier
 [Stage G acceptance](docs/validation/assessment-repairs/g/acceptance.md) retains
 its packaging and installed-wheel evidence. Unexecuted CI lanes are not claimed.
@@ -136,7 +152,9 @@ are implemented with local implementer evidence under
 `docs/validation/u6/coordinator/verification.md`. U7 Doctor is implemented in
 the current tree with local evidence under `docs/validation/u7/implementation/`;
 [parent verification](docs/validation/u7/coordinator/verification.md) passed.
-U8–U9 and 0.2 publishing remain a separate feature/release campaign.
+U8 adds the Help overlay, contextual keymap, covered-screen worker suspension,
+empty/error polish and user documentation; its frozen plan and local evidence are
+linked above. U9 and 0.2 publishing remain a separate feature/release campaign.
 
 > The Phase 6 plan is
 > [`PHASE6_PLAN.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_PLAN.md);
@@ -158,6 +176,30 @@ ruff format .                 # format
 The coverage threshold lives in `[tool.coverage.report]` and the type-check
 scope in `[tool.mypy]`, both in `pyproject.toml` — one source of truth each, so
 CI enforces exactly what a local run does.
+
+### Replaying the U8 Help and lifecycle checks
+
+The U8 acceptance evidence is reproducible from the checkout:
+
+```bash
+pytest tests/test_tui_help.py              # Help, keymap, worker, refresh and state matrix
+pytest tests/test_tui_read_only.py         # AST guard + target-preservation lifecycle
+pytest tests/test_tui_home.py tests/test_tui_why.py tests/test_tui_diff.py \
+       tests/test_tui_agents.py tests/test_tui_compare.py tests/test_tui_doctor.py
+```
+
+The semantic tests drive real Textual `Pilot` key events and assert focus, stack
+identity, scroll, controller ownership and literal content; they do not pin
+text-grid screenshots. Covered-worker tests use threading events and bounded
+waits for delayed Why/Diff/Compare work, then deliver old and current outcomes
+explicitly. Mutation controls, failure output, restored controls and the exact
+commands are recorded in
+[`docs/validation/u8/implementation/mutations/`](docs/validation/u8/implementation/mutations/);
+they run in disposable copies outside the reviewed checkout. Final gate logs,
+source/test hashes and the acceptance-to-test map are in
+[`docs/validation/u8/implementation/`](docs/validation/u8/implementation/).
+These are local, headless checks: they do not establish human visual approval,
+installed-wheel qualification, hosted CI acceptance or a release.
 
 Terminal output is pinned by plain-text snapshots under
 `tests/fixtures/snapshots/`. After an intentional change to the presentation

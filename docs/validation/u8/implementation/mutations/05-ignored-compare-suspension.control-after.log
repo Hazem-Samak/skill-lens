@@ -1,0 +1,3 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python -m pytest tests/test_tui_help.py::test_compare_job_is_suspended_and_restarted_once -q --no-header -p no:cacheprovider
+.                                                                        [100%]
+1 passed in 1.34s

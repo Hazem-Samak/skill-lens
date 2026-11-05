@@ -13,7 +13,12 @@
 > [implementer report](docs/validation/u6/implementation/implementation-report.md).
 > U7 (Doctor) is implemented and locally technically verified; see
 > [U7 parent verification](docs/validation/u7/coordinator/verification.md).
-> U8–U9 and 0.2 publishing remain future work.
+> U8 (Help, keyboard polish, empty/error states and user documentation) is
+> implemented in the current working tree; coordinator technical verification
+> passed and both independent final reviews passed on 5 November 2026, with the
+> ledger under
+> [`docs/validation/u8/coordinator/`](docs/validation/u8/coordinator/). U9 release
+> preparation and 0.2 publishing remain future work.
 > No TUI extra is released: published PyPI 0.1.1 contains no TUI package and no `[tui]` extra.
 > It overturns a v1 rule ("no full-screen TUI"), so it is deliberately detailed:
 > the point of the plan is that the next person can scaffold the work without
@@ -37,7 +42,8 @@
 > U1–U5 are technically accepted in development. U6 implementation and parent
 > technical verification are complete in development.
 > U7 implementation and parent technical verification are complete in the
-> current tree. U8–U9 remain future assignments.
+> current tree. U8 implementation and local evidence are complete in the current
+> working tree; U9 remains a future assignment.
 
 > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
 > Catalog, skill contents, settings and diagnostic inputs remain fixed until
@@ -53,8 +59,9 @@
 > accepted. U7 (Doctor) is implemented locally; see
 > [`docs/validation/u7/implementation/implementation-report.md`](docs/validation/u7/implementation/implementation-report.md).
 > [Parent verification](docs/validation/u7/coordinator/verification.md) passed.
-> The next assignment is U8, under separate
-> authorization; U8–U9 remain future work.
+> U8 Help/keyboard/docs implementation is present with local evidence under
+> [`docs/validation/u8/implementation/`](docs/validation/u8/implementation/);
+> U9 release preparation remains future work.
 
 ---
 
@@ -454,9 +461,10 @@ Home (Skill list)
 | `J` | Toggle raw JSON for the current view |
 | `r` | Request a new catalog/session |
 | `?` | Help overlay |
+| `F1` | Toggle the Help overlay (app-level priority; works even while typing) |
 | `q` / `Ctrl-C` | Quit |
 
-**Implemented so far (development, U1–U7):** Home (`Enter`, `/`, `a`, `Tab`,
+**Implemented (development, U1–U8):** Home (`Enter`, `/`, `a`, `Tab`,
 `g`, `c`), the Agents and Compare screens, the Why detail screen (`←`/`→`,
 `Tab`, `Esc`/`Backspace`) and, since U5, `d` and `J`. `d` opens one Diff over
 Home (focused, nonempty skill table) or over an
@@ -470,8 +478,25 @@ it remains ordinary filter text while the filter input is active. Doctor reads
 the published report, supports exact raw JSON, and offers only frozen in-app
 catalog selection. Its local technical verification passed; see
 [U7 parent verification](docs/validation/u7/coordinator/verification.md).
-`?` is not implemented yet. U5 is technically accepted in development
-after coordinator verification and both independent final-review follow-ups; see
+
+Since U8, `?` opens one read-only Help modal over Home, Why, Diff, Agents,
+Compare or Doctor, including ordinary, raw JSON, initial-loading and no-session
+states. It is non-priority, so it stays literal filter text in Home's input.
+The app-level priority `F1` toggles the exact active Help even while typing.
+Help has a scrollable body, a visible Close button, live session status and
+literal in-memory fault details; `Esc`, `Backspace`, `?`, `F1` and Close
+dismiss only that instance, and `Tab`/`Shift+Tab` stay inside Help. Opening Help
+starts no capture, report computation or filesystem discovery. Covered Home and
+Why use their existing exact-owner suspension; Diff and Compare have bounded
+idempotent suspend/resume hooks; Agents and Doctor guard covered selection and
+deferred focus. Reconciliation is deferred until reveal so a refresh-driven
+removal cannot pop Help, and a successful report or accepted fault still passes
+through the controller's existing acceptance gates. U8 local implementer
+evidence is under [`docs/validation/u8/implementation/`](docs/validation/u8/implementation/);
+coordinator verification and both independent final reviews passed on 5 November
+2026 (ledger: [`docs/validation/u8/coordinator/`](docs/validation/u8/coordinator/)). U5 is
+technically accepted in development after coordinator verification and both
+independent final-review follow-ups; see
 [U5 acceptance](docs/validation/u5/acceptance.md). U6 implementation checks are
 recorded in [`docs/validation/u6/implementation/`](docs/validation/u6/implementation/);
 [parent technical verification](docs/validation/u6/coordinator/verification.md)
@@ -1028,6 +1053,11 @@ human visual approval, hosted CI acceptance or release.
 - Help overlay, final keymap, empty/error states.
 - Update README, DEVELOPMENT, CHANGELOG, SPEC references.
 - **Gate:** full repo gate green, coverage ≥ 90% **with `tui/` measured**.
+- **Status:** implemented in the current working tree (U8) with local semantic,
+  mutation and gate evidence under `docs/validation/u8/implementation/`.
+  Coordinator verification passed and both independent final reviews passed
+  with no blockers on 5 November 2026 (ledger:
+  `docs/validation/u8/coordinator/review-receipt.json`).
 
 ### Step 9 — Release 0.2.0
 - Bump versions, refresh lock, follow `DEVELOPMENT.md` `Releasing`.
@@ -1834,7 +1864,10 @@ tests against the completed earlier rows. Expand only that assignment's details;
 the outline is not permission to invent new product behaviour.
 U6 implementation and local checks are recorded under
 `docs/validation/u6/implementation/`; final parent technical verification is under
-`docs/validation/u6/coordinator/verification.md`.
+`docs/validation/u6/coordinator/verification.md`. U8 implementation and local
+checks are recorded under `docs/validation/u8/implementation/`; coordinator
+verification and both independent final reviews passed on 5 November 2026
+(`docs/validation/u8/coordinator/review-receipt.json`).
 
 After **each row**, run `pytest --cov=skill_lens`, `mypy`, `ruff check .` and
 `ruff format --check .` using the repository environment. State what changed,

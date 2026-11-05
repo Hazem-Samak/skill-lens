@@ -1,0 +1,223 @@
+{
+  "cases": 12,
+  "python": "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+  "results": [
+    {
+      "case": "duplicate-help-stacking",
+      "category": "Duplicate Help stacking",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "assert app.screen is first",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/app.py\n- if isinstance(self.screen, HelpScreen):\n            return\n        origin = self.screen\n+ if isinstance(self.screen, HelpScreen):\n            self.push_screen(HelpScreen(self.screen.context, self.controller))\n            return\n        origin = self.screen\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 2.12,
+        "control_before": 1.21,
+        "mutant": 0.65
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_help.py::test_help_does_not_stack_and_stale_instance_cannot_close_a_newer_help"
+    },
+    {
+      "case": "covered-key-leakage",
+      "category": "Covered-key leakage",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "assert app.controller.selected_key == selection_before",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/help.py\n- Binding(\"r\", \"app.refresh\", \"Refresh\", show=True),\n+ Binding(\"r\", \"app.refresh\", \"Refresh\", show=True),\n        Binding(\"j\", \"leak_down\", \"Leak\", show=False),\n\n--- skill_lens/tui/help.py\n- def action_dismiss_help(self) -> None:\n+ def action_leak_down(self) -> None:\n        key = self.app.controller.selected_key\n        if key is not None:\n            self.app.open_why(key, None)\n\n    def action_dismiss_help(self) -> None:\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 5.26,
+        "control_before": 5.21,
+        "mutant": 5.23
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_help.py::test_hidden_screen_actions_cannot_leak_through_help"
+    },
+    {
+      "case": "lost-input-focus",
+      "category": "Lost Input focus",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "assert app.focused is filter_input",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/home.py\n- target = self._help_focus\n        if target is not None and target.can_focus and target.is_mounted and target.display:\n            target.focus()\n        elif table.can_focus and table.display:\n            table.focus()\n+ table.focus()\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 2.21,
+        "control_before": 2.2,
+        "mutant": 2.21
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_help.py::test_home_filter_typing_is_literal_and_f1_preserves_text_and_cursor"
+    },
+    {
+      "case": "ignored-diff-suspension",
+      "category": "Ignored Diff suspension",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "assert event.is_set()",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/diff.py\n- view = self._json_view_or_none()\n        self._help_json_scroll = int(view.scroll_offset.y) if view is not None else 0\n        self._cancel_owned_token()\n+ view = self._json_view_or_none()\n        self._help_json_scroll = int(view.scroll_offset.y) if view is not None else 0\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 1.3,
+        "control_before": 1.33,
+        "mutant": 5.57
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_help.py::test_diff_job_is_suspended_and_restarted_once"
+    },
+    {
+      "case": "ignored-compare-suspension",
+      "category": "Ignored Compare suspension",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "assert event.is_set()",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/compare.py\n- view = self._json_view_or_none()\n        self._help_json_scroll = int(view.scroll_offset.y) if view is not None else 0\n        self._cancel_owned_token()\n+ view = self._json_view_or_none()\n        self._help_json_scroll = int(view.scroll_offset.y) if view is not None else 0\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 1.48,
+        "control_before": 1.48,
+        "mutant": 5.75
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_help.py::test_compare_job_is_suspended_and_restarted_once"
+    },
+    {
+      "case": "stranded-report-after-reveal",
+      "category": "Stranded report after reveal",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "reveal must resume Diff work",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/diff.py\n- if self._report is None:\n            active = controller.active_requests.get(\"diff\")\n            if self._owned_request is not None and active != self._owned_request:\n                self._owned_request = None\n            if self._owned_request is None and not controller.is_failed:\n                self._request_report()\n        self._restore_help_view(same_generation)\n+ self._restore_help_view(same_generation)\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 1.25,
+        "control_before": 1.28,
+        "mutant": 0.94
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_help.py::test_diff_job_is_suspended_and_restarted_once"
+    },
+    {
+      "case": "stale-callback-pops-newer-screen",
+      "category": "Stale callback popping a newer screen",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "assert app.screen is second",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/app.py\n- if self.screen is not expected:\n            return\n        tracked = self._help_origin\n+ tracked = self._help_origin\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 1.02,
+        "control_before": 0.98,
+        "mutant": 0.9
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_help.py::test_help_does_not_stack_and_stale_instance_cannot_close_a_newer_help"
+    },
+    {
+      "case": "stale-json-after-refresh",
+      "category": "Stale JSON after refresh",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "assert view.document != old_document",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/json_view.py\n- if self._document == document:\n            return\n        self._document = document\n+ if self._document is not None:\n            return\n        self._document = document\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 0.87,
+        "control_before": 0.86,
+        "mutant": 0.87
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_help.py::test_help_over_home_json_refresh_replaces_the_document_without_stale_data"
+    },
+    {
+      "case": "fault-hidden-while-help-open",
+      "category": "Fault state hidden while Help is open",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "AssertionError: assert 'ACCEPTED INTERNAL FAULT' in",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/help.py\n- if controller.is_failed:\n        lines.extend(\n            [\n                \"\",\n                \"ACCEPTED INTERNAL FAULT (sticky; Quit exits 3):\",\n                controller.last_error_details or \"(no details were recorded)\",\n            ]\n        )\n    return \"\\n\".join(lines)\n+ return \"\\n\".join(lines)\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 0.77,
+        "control_before": 0.76,
+        "mutant": 0.6
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_help.py::test_help_status_with_prior_data_keeps_retained_wording_and_data[fault]"
+    },
+    {
+      "case": "fault-reset-while-help-open",
+      "category": "Fault state reset while Help is open",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "AssertionError: assert 'Retained data' in",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/help.py\n- def update_session(self, controller: SessionController) -> None:\n        \"\"\"Refresh only the live session section; the static body keeps its scroll.\"\"\"\n        if not self.is_mounted:\n            return\n+ def update_session(self, controller: SessionController) -> None:\n        \"\"\"Refresh only the live session section; the static body keeps its scroll.\"\"\"\n        return\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 0.76,
+        "control_before": 0.74,
+        "mutant": 0.56
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_help.py::test_help_status_with_prior_data_keeps_retained_wording_and_data[fault]"
+    },
+    {
+      "case": "banned-import-in-help-module",
+      "category": "Banned import in the new Help module",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "Banned import 'subprocess'",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/help.py\n- from skill_lens.tui.session import SessionController\n+ import subprocess\n\nfrom skill_lens.tui.session import SessionController\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 0.23,
+        "control_before": 0.25,
+        "mutant": 0.26
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_read_only.py::test_shipped_tui_code_has_zero_read_only_violations"
+    },
+    {
+      "case": "write-in-help-module",
+      "category": "Write in the new Help module",
+      "control_after_exit": 0,
+      "control_before_exit": 0,
+      "expected_failure": "write_text",
+      "mutant_exit": 1,
+      "mutant_meaningful_failure": true,
+      "mutation": "--- skill_lens/tui/help.py\n- from skill_lens.tui.session import SessionController\n+ from pathlib import Path\n\nfrom skill_lens.tui.session import SessionController\n\nPath(\"u8-mutant.txt\").write_text(\"should never run\", encoding=\"utf-8\")\n",
+      "passed": true,
+      "seconds": {
+        "control_after": 0.24,
+        "control_before": 0.23,
+        "mutant": 0.25
+      },
+      "syntax_or_import_error": false,
+      "test": "tests/test_tui_read_only.py::test_shipped_tui_code_has_zero_read_only_violations"
+    }
+  ],
+  "survivors": []
+}

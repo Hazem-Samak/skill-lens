@@ -18,6 +18,7 @@ from textual.widgets import DataTable, Footer, Header, Static
 from skill_lens.models import dumps
 from skill_lens.presentation import agents_payload
 from skill_lens.registry.loader import AgentDefinition
+from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import SessionController
 
@@ -173,6 +174,11 @@ class AgentsScreen(Screen[None]):
         self._json_mode = False
         self._json_previous_focus: Widget | None = None
         self._json_previous_scroll = 0
+        self._suspended = False
+        self._help_focus: Widget | None = None
+        self._help_generation: int | None = None
+        self._help_detail_scroll = 0
+        self._help_json_scroll = 0
 
     @property
     def _host(self) -> _AgentsHost:
@@ -223,9 +229,173 @@ class AgentsScreen(Screen[None]):
         # screen's lifecycle boundary explicit and easy to audit.
         return
 
+    def on_screen_suspend(self) -> None:
+        """A covering screen (Help) starts; no report work runs here."""
+        self.suspend_help()
+
+    def on_screen_resume(self) -> None:
+        """The covering screen closed: reconcile and restore the exact view."""
+        self.resume_help()
+
+    # -- Help overlay -------------------------------------------------------
+
+    def help_context(self) -> HelpContext:
+        """Describe the ordinary table/details or raw JSON mode and its scope."""
+        rows: list[HelpRow] = []
+        notes: list[str] = []
+        if self._json_mode:
+            mode = "raw JSON view"
+            focus = "JSON document"
+            rows.extend(
+                [
+                    HelpRow(
+                        "↑ ↓ / PageUp / PageDown / Home / End",
+                        "Scroll the captured agents JSON payload.",
+                    ),
+                    HelpRow(
+                        "J / Esc / Backspace",
+                        "Return to the ordinary Agents view.",
+                    ),
+                    HelpRow(
+                        "r",
+                        "Refresh the captured session; this payload changes only when a"
+                        " new capture is accepted.",
+                    ),
+                ]
+            )
+            notes.append("Row selection and Enter do not operate while JSON is shown.")
+        else:
+            mode = "captured registry browser"
+            focus = "details pane" if self._details_focused() else "definitions table"
+            rows.extend(
+                [
+                    HelpRow(
+                        "↑ ↓ / j k",
+                        "Move the selected definition, or scroll the details pane while"
+                        " it has focus.",
+                    ),
+                    HelpRow(
+                        "Enter",
+                        "Move focus into the details pane for the selected definition.",
+                    ),
+                    HelpRow(
+                        "J",
+                        "Toggle the captured agents --json payload while the table or"
+                        " details pane has focus.",
+                    ),
+                    HelpRow(
+                        "Esc / Backspace",
+                        "Leave JSON if shown, then leave the details pane for the table,"
+                        " then close Agents and return to Home.",
+                    ),
+                ]
+            )
+            controller = self._host.controller
+            if controller.current is None:
+                notes.append("No session is captured yet; refresh to capture registry definitions.")
+            elif not self._agents:
+                notes.append(
+                    "No agent definitions are available in this captured session."
+                    " Detection is separate from registry definitions."
+                )
+            else:
+                notes.append(
+                    "Captured registry definitions are listed, including agents with"
+                    " no detected skills."
+                )
+        return HelpContext("Agents", mode, focus, tuple(rows), tuple(notes))
+
+    def _details_focused(self) -> bool:
+        focused = self.app.focused
+        return focused is not None and focused.id == "agents-detail-scroll"
+
+    def suspend_help(self) -> None:
+        """Remember the exact focus/scroll; Agents owns no report workers."""
+        if self._suspended:
+            return
+        self._suspended = True
+        controller = self._host.controller
+        snapshot = controller.current
+        self._help_generation = snapshot.generation if snapshot is not None else None
+        self._help_focus = self.app.focused
+        with contextlib.suppress(NoMatches):
+            detail = self.query_one("#agents-detail-scroll", VerticalScroll)
+            self._help_detail_scroll = int(detail.scroll_offset.y)
+        try:
+            view = self.query_one("#agents-json", JsonView)
+        except NoMatches:
+            view = None
+        self._help_json_scroll = int(view.scroll_offset.y) if view is not None else 0
+
+    def resume_help(self) -> None:
+        """Reconcile the revealed Agents view once and restore its exact state."""
+        if not self.is_mounted:
+            self._suspended = False
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        self._suspended = False
+        self.sync_from_controller()
+        if not self.is_mounted:
+            return
+        controller = self._host.controller
+        snapshot = controller.current
+        same_generation = self._help_generation == (
+            snapshot.generation if snapshot is not None else None
+        )
+        target = self._help_focus
+        if target is not None and target.can_focus and target.is_mounted and target.display:
+            target.focus()
+        else:
+            with contextlib.suppress(NoMatches):
+                self.query_one("#agents-table", DataTable).focus()
+        if not same_generation:
+            return
+        if self._json_mode:
+            try:
+                view = self.query_one("#agents-json", JsonView)
+            except NoMatches:
+                view = None
+            if view is not None and self._help_json_scroll:
+                self.call_after_refresh(self._scroll_help_widget, view, self._help_json_scroll)
+        elif self._help_detail_scroll:
+            with contextlib.suppress(NoMatches):
+                detail = self.query_one("#agents-detail-scroll", VerticalScroll)
+                self.call_after_refresh(self._scroll_help_widget, detail, self._help_detail_scroll)
+
+    def _scroll_help_widget(self, widget: Widget, offset: int) -> None:
+        if not self.is_mounted or self._suspended:
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        widget.scroll_to(y=offset, animate=False)
+
+    def _focus_if_active(self, widget: Widget | None) -> None:
+        """Complete a deferred focus only while Agents is still active."""
+        if widget is None or not self.is_mounted:
+            return
+        try:
+            if self.app.screen is not self:
+                return
+        except Exception:  # pragma: no cover - only during teardown
+            return
+        if self._suspended or not widget.can_focus or not widget.is_mounted:
+            return
+        if not widget.display:
+            return
+        widget.focus()
+
     def sync_from_controller(self) -> None:
         """Reconcile only from the controller's published snapshot."""
         if not self.is_mounted and not self._mounting:
+            return
+        if self._suspended:
             return
         controller = getattr(self._host, "controller", None)
         if controller is None:
@@ -334,7 +504,12 @@ class AgentsScreen(Screen[None]):
             view.show_document(dumps(agents_payload(snapshot.registry)))
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
-        if self._syncing or self._json_mode or event.data_table.id != "agents-table":
+        if (
+            self._suspended
+            or self._syncing
+            or self._json_mode
+            or event.data_table.id != "agents-table"
+        ):
             return
         agent_id = str(event.row_key.value)
         if agent_id not in {agent.id for agent in self._agents}:
@@ -344,12 +519,12 @@ class AgentsScreen(Screen[None]):
             self._update_detail()
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
-        if self._json_mode or event.data_table.id != "agents-table":
+        if self._suspended or self._json_mode or event.data_table.id != "agents-table":
             return
         self.action_focus_details()
 
     def action_cursor_down(self) -> None:
-        if self._json_mode:
+        if self._suspended or self._json_mode:
             return
         focused = self.app.focused
         if isinstance(focused, DataTable) and focused.id == "agents-table":
@@ -358,7 +533,7 @@ class AgentsScreen(Screen[None]):
             focused.scroll_relative(y=1, animate=False)
 
     def action_cursor_up(self) -> None:
-        if self._json_mode:
+        if self._suspended or self._json_mode:
             return
         focused = self.app.focused
         if isinstance(focused, DataTable) and focused.id == "agents-table":
@@ -367,12 +542,14 @@ class AgentsScreen(Screen[None]):
             focused.scroll_relative(y=-1, animate=False)
 
     def action_focus_details(self) -> None:
-        if self._json_mode:
+        if self._suspended or self._json_mode:
             return
         with contextlib.suppress(NoMatches):
             self.query_one("#agents-detail-scroll", VerticalScroll).focus()
 
     def action_toggle_json(self) -> None:
+        if self._suspended:
+            return
         if self._json_mode:
             self.leave_json_mode()
             return
@@ -384,7 +561,7 @@ class AgentsScreen(Screen[None]):
         self.enter_json_mode()
 
     def enter_json_mode(self) -> None:
-        if self._json_mode:
+        if self._suspended or self._json_mode:
             return
         table = self.query_one("#agents-table", DataTable)
         detail = self.query_one("#agents-detail-scroll", VerticalScroll)
@@ -395,7 +572,7 @@ class AgentsScreen(Screen[None]):
         self._json_mode = True
         self.add_class("json-mode")
         self._refresh_json()
-        self.call_after_refresh(self.query_one("#agents-json", JsonView).focus)
+        self.call_after_refresh(self._focus_if_active, self.query_one("#agents-json", JsonView))
 
     def leave_json_mode(self) -> None:
         if not self._json_mode:
@@ -419,6 +596,8 @@ class AgentsScreen(Screen[None]):
             self.call_after_refresh(lambda: detail.scroll_to(y=offset, animate=False))
 
     def action_back(self) -> None:
+        if self._suspended:
+            return
         if self._json_mode:
             self.leave_json_mode()
         elif self.app.focused is not None and self.app.focused.id == "agents-detail-scroll":

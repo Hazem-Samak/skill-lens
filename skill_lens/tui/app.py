@@ -42,6 +42,7 @@ from skill_lens.tui.agents import AgentsScreen
 from skill_lens.tui.compare import CompareScreen
 from skill_lens.tui.diff import DiffScreen
 from skill_lens.tui.doctor import DoctorScreen
+from skill_lens.tui.help import HelpScreen
 from skill_lens.tui.home import HomeScreen
 from skill_lens.tui.session import (
     ReportValue,
@@ -127,6 +128,8 @@ class SkillLensApp(App[int]):
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("q", "quit", "Quit", show=True),
         Binding("r", "refresh", "Refresh", show=True),
+        Binding("question_mark", "open_help", "Help", show=False),
+        Binding("f1", "toggle_help", "Help", show=True, priority=True),
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
     ]
 
@@ -190,6 +193,7 @@ class SkillLensApp(App[int]):
         self.controller: SessionController = (
             controller if controller is not None else SessionController()
         )
+        self._help_origin: Screen[None] | None = None
 
     def get_default_screen(self) -> Screen[None]:
         """Return the Home screen as the default root screen."""
@@ -213,6 +217,53 @@ class SkillLensApp(App[int]):
             gen, event = req
             self._update_ui()
             self._run_capture(gen, self._home, self._cwd, event)
+
+    # -- Help overlay -------------------------------------------------------
+
+    def action_open_help(self) -> None:
+        """Non-priority ? opens Help over a supported browsing screen."""
+        self.open_help()
+
+    def action_toggle_help(self) -> None:
+        """App-level priority F1 opens Help, or closes the exact active Help."""
+        if isinstance(self.screen, HelpScreen):
+            self.close_help(self.screen)
+        else:
+            self.open_help()
+
+    def open_help(self) -> None:
+        """Open one Help modal over the current supported browsing screen.
+
+        Repeated opens cannot stack: the active Help is returned unchanged. The
+        origin is suspended first so covered report work cannot keep running or
+        receive callbacks; opening Help itself starts no work.
+        """
+        if isinstance(self.screen, HelpScreen):
+            return
+        origin = self.screen
+        if not isinstance(
+            origin,
+            (HomeScreen, WhyScreen, DiffScreen, AgentsScreen, CompareScreen, DoctorScreen),
+        ):
+            return
+        context = origin.help_context()
+        origin.suspend_help()
+        help_screen = HelpScreen(context, self.controller)
+        self._help_origin = origin
+        self.push_screen(help_screen)
+
+    def close_help(self, expected: HelpScreen) -> None:
+        """Close only the expected Help, reconcile the origin, then restore focus."""
+        if self.screen is not expected:
+            return
+        tracked = self._help_origin
+        self._help_origin = None
+        prev_screen = self.screen_stack[-2] if len(self.screen_stack) >= 2 else None
+        origin = tracked if tracked is prev_screen else prev_screen
+        self.pop_screen()
+        if origin is not None and origin.is_mounted and hasattr(origin, "resume_help"):
+            origin.resume_help()
+        self._update_ui()
 
     def open_why(self, key: str, agent_id: str | None) -> None:
         """Open a Why screen for the given installation key and agent."""
@@ -539,6 +590,12 @@ class SkillLensApp(App[int]):
         except (ScreenStackError, UnknownModeError):
             return
 
+        if isinstance(screen, HelpScreen):
+            # Covered screens defer reconciliation until reveal; live status and
+            # in-memory fault details belong to Help while it is on top.
+            screen.update_session(self.controller)
+            return
+
         if isinstance(screen, HomeScreen):
             try:
                 status_widget = screen.query_one("#status-text", Static)
@@ -650,4 +707,5 @@ __all__ = [
     "WhyScreen",
     "CompareScreen",
     "DoctorScreen",
+    "HelpScreen",
 ]

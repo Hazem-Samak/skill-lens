@@ -399,7 +399,9 @@ def test_home_text_filter_focus_enter_escape_and_empty_states(
             await pilot.press("slash")
             await pilot.press(*"zzz")
             assert _table(app).row_count == 0
-            assert _empty_state(app) == "No skills match the current filter."
+            assert _empty_state(app) == (
+                "No skills match the current filter. Press Esc to clear it."
+            )
             assert _preview(app) == ""
 
             await pilot.press("escape")

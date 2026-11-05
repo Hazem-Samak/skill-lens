@@ -1,0 +1,60 @@
+{
+  "branch": "## main...origin/main [ahead 3]",
+  "commits_made": 0,
+  "controller_changes": [],
+  "core_package_changes": [],
+  "date": "2026-11-05",
+  "delegations_made": 0,
+  "final_status_short": [
+    "M CHANGELOG.md",
+    " M DEVELOPMENT.md",
+    " M FULL_SCREEN_TUI.md",
+    " M README.md",
+    " M SKILL_LENS_SPECIFICATION.md",
+    " M skill_lens/tui/agents.py",
+    " M skill_lens/tui/app.py",
+    " M skill_lens/tui/compare.py",
+    " M skill_lens/tui/diff.py",
+    " M skill_lens/tui/doctor.py",
+    " M skill_lens/tui/home.py",
+    " M skill_lens/tui/why.py",
+    " M tests/test_tui_home.py",
+    " M tests/test_tui_read_only.py",
+    "?? .path",
+    "?? .qoder/",
+    "?? docs/validation/2026-10-25/",
+    "?? docs/validation/u8/implementation/",
+    "?? skill_lens/tui/help.py",
+    "?? tests/test_tui_help.py"
+  ],
+  "frozen_plan": {
+    "current_tracked_sha256": "63f22879db2bd44237801455d0dc739b90087db27d695e5662763027e2deca66",
+    "operative_commit": "b59478404a9d20d2670fb12a731c703f53eee798",
+    "operative_sha256": "01f6f250be358ed2168170e06513c1908ef616208a204d8f50f9dfa03f0c26de",
+    "path": "docs/plans/2026-11-04-tui-u8-polish-help-docs.md"
+  },
+  "head": "a9d67b808ce235a543e63fba40b478da2a96c3e3",
+  "head_subject": "docs: record U8 frozen plan reference",
+  "initial_unrelated_status": [
+    "?? .path",
+    "?? .qoder/",
+    "?? docs/validation/2026-10-25/"
+  ],
+  "pushes_made": 0,
+  "snapshot_and_golden_changes": [],
+  "staged_files": [],
+  "unrelated_preserved": {
+    ".path": {
+      "kind": "file",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".qoder": {
+      "kind": "directory",
+      "sha256": "1ee7fe8b99aaf8182742411c223c6dcc5d1f70497aa75e9ef4dcf6027e20861f"
+    },
+    "docs/validation/2026-10-25": {
+      "kind": "directory",
+      "sha256": "5da3f77e38205ff11c1b44a3735b83427794faa7a05de7711d5346f0355653c1"
+    }
+  }
+}

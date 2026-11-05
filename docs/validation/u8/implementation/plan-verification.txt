@@ -1,0 +1,22 @@
+$ git show b59478404a9d20d2670fb12a731c703f53eee798:docs/plans/2026-11-04-tui-u8-polish-help-docs.md | shasum -a 256
+01f6f250be358ed2168170e06513c1908ef616208a204d8f50f9dfa03f0c26de  -
+
+$ git show a9d67b808ce235a543e63fba40b478da2a96c3e3 --stat
+    docs: record U8 frozen plan reference
+
+ docs/plans/2026-11-04-tui-u8-polish-help-docs.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+$ git show a9d67b8 -- docs/plans/2026-11-04-tui-u8-polish-help-docs.md
+index 847a08c..2566002 100644
+--- a/docs/plans/2026-11-04-tui-u8-polish-help-docs.md
++++ b/docs/plans/2026-11-04-tui-u8-polish-help-docs.md
+@@ -3,7 +3,7 @@
+ Status: FROZEN — planning only; implementation awaits a later owner instruction.
+ Date: 5 November 2026.
+ Baseline: `8edca36b93f8e717f61f82184e6edcf54884a2a2` on `main`.
+-Reference: pending until the reference-only commit after the plan-freeze commit.
++Reference: `b59478404a9d20d2670fb12a731c703f53eee798` (operative frozen plan; the reference-only follow-up changes this line only).
+ Roster: coordinator — current Qoder host / owner-selected Kimi-K3.1-Pro / high
+  effort, from the `/model` readback; planning critics — none by explicit owner
+  instruction; implementer and final critics — pending later owner selection.

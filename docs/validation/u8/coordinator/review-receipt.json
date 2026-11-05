@@ -1,0 +1,66 @@
+{
+  "date": "2026-11-05",
+  "phase": "U8 final independent review",
+  "risk": "High",
+  "required_independent_reviews": 2,
+  "coordinator_roster_note": "Reviewers named by the user on 5 November 2026: reviewer 1 minimax m3.1 flash xhigh via mcode CLI; reviewer 2 glm 5.3 flash free max via opencode CLI. Family overlap accepted implicitly by naming two distinct families; neither reviewer shares the coordinator's Kimi family, and neither shares the implementer's unverified DeepSeek harness family.",
+  "reviews": [
+    {
+      "address": "t7j (u8-mcode-r1)",
+      "requested": "mcode / minimax/MiniMax-M3.1-Flash / xhigh",
+      "confirmed": "hc get argv plus mcode status bar at dispatch and at report time read 'M3.1-Flash - Effort xhigh'; provider catalog marks xhigh a supported level for this model.",
+      "verdict": "pass",
+      "blockers": [],
+      "report": "reviews/reviewer-1-mcode-minimax.txt",
+      "report_sha256": "297a3557eee69774e6dd969bd1e1ab22748c7644062aebd062b5a38aabeaaaa7",
+      "axis": "standards, scope, read-only/captured-data and JSON compatibility, documentation accuracy, acceptance evidence"
+    },
+    {
+      "address": "t7h (u8-glm)",
+      "requested": "opencode / opencode/glm-5.3-flash-free / #max",
+      "confirmed": "OpenCode v2 session store: session_v2.model = glm-5.3-flash-free/variant max; a session_message 'model-switched' event at seq 122 (14:0x, before brief dispatch) changes pulse-alpha-free to glm-5.3-flash-free#max; every assistant message from seq 126 through the final report (seq 599) records model glm-5.3-flash-free/variant max. The coordinator independently read the status bar as 'GLM-5.3-Flash Free ... max' immediately before and after dispatch.",
+      "verdict": "pass",
+      "blockers": [],
+      "report": "reviews/reviewer-2-opencode-glm.txt",
+      "report_sha256": "497cfcdee4bbac2adeaf791286d1d4ad70ea1a1161f5168e5350b15437fca603",
+      "axis": "behavioral lifecycle: keyboard/priority handling, covered-worker ownership, refresh/reveal races, stale callbacks, focus/scroll restoration, empty/error states, mutation coverage",
+      "provenance_discrepancy": {
+        "claim": "The report's EFFECTIVE_MODEL states the requested model 'was never active' and that the review ran on opencode/pulse-alpha-free.",
+        "coordinator_evidence": "False for the review turns. Pre-switch turns (seq 5-113) genuinely ran on Pulse while the session was being configured; the switch event at seq 122 and every review turn after it record glm-5.3-flash-free#max in the authoritative session store, matching the coordinator's status-bar readbacks. The model's self-identification in its narrative is therefore a provenance defect of the report, not a roster violation.",
+        "disposition": "The substantive review content is retained as independent evidence; the identity field is corrected by this receipt and the discrepancy is disclosed to the owner. If the owner prefers, the review can be re-run; the coordinator judges the independent-store evidence sufficient because the review substance is verifiable line-by-line and reviewer 1 passed independently."
+      }
+    }
+  ],
+  "integrity": {
+    "before_fingerprints": "/tmp/skill-lens-u8-final-review/before.json (3711 files)",
+    "after_fingerprints_mid_wave": "CLEAN (after reviewer 1; no adds/removes/changes)",
+    "after_fingerprints_final": "CLEAN (after reviewer 2; no adds/removes/changes)",
+    "unattributed_blat_artifacts": "eight 4-byte files untouched and excluded from scope; not deleted",
+    "coordinator_edits_after_reviews": [
+      "FULL_SCREEN_TUI.md: added the missing F1 row to the 8.2 keymap table (reviewer 1 S2); updated two status sentences (reviewer 1 S1).",
+      "README.md / DEVELOPMENT.md / CHANGELOG.md: status sentences now state that coordinator verification and both independent reviews passed; claim boundaries retained (reviewer 1 S1).",
+      "docs/validation/u8/coordinator/: review ledger, verbatim reports, launch ledger."
+    ]
+  },
+  "finding_dispositions": [
+    {"id": "R1-S1", "type": "suggestion", "decision": "accepted", "reason": "Text-only status sentences would contradict evidence committed alongside them; corrected across the five cited locations."},
+    {"id": "R1-S2", "type": "suggestion", "decision": "accepted", "reason": "Plan requires the additive key to be documented everywhere; the canonical keymap table omitted F1; row added."},
+    {"id": "R2-S1", "type": "suggestion", "decision": "deferred", "reason": "Long end-to-end tests could be split for bisectability; future low-risk task, no current defect, and splitting now would churn acceptance evidence."},
+    {"id": "R2-S2", "type": "suggestion", "decision": "deferred", "reason": "Second-order mutation coverage improvement; all 12 required categories currently have control/mutant/control proof and reviewer 2 directly audited representative raw logs."},
+    {"id": "R2-S3", "type": "suggestion", "decision": "deferred", "reason": "Prose-sync guard for future key handling changes; not a defect in this change."}
+  ],
+  "execution_receipt": {
+    "expected_child_tasks_high_risk": "1 implementer + 2 final critics = 3 (plus planning review waived earlier by the owner)",
+    "actual_final_critic_launches": 2,
+    "setup_failures": "2 (two mcode spawn failures: bare name not on Herdr PATH, bare model id without provider prefix; both resolved before any review turn; and one OpenCode slash-command delivered as prompt, interrupted then replaced with native keys). No child ran a review turn under an unintended model.",
+    "wall_clock": "reviewer 1 ~14m (13:57:35-14:11:41); reviewer 2 ~21m (13:56:45-14:17:35)",
+    "token_usage": "provider-exposed counts not available to the coordinator; the OpenCode context/cost readback showed 148K/74% and mcode 88% context left at their screens' last reads",
+    "side_effects": "mcode's model picker saved xhigh as the user default after the reviewer ran; the prior observed default was max. The coordinator restored effort max and verified it via a throwaway launch whose status bar read 'M3.1-Flash - Effort max' before removing the check terminal."
+  },
+  "convergence": "Round 1: both critics pass with no blockers. No rework required; no second broad wave needed.",
+  "acceptance": {
+    "coordinator_technical_verification": "passed (gates rerun after ledger edits)",
+    "independent_final_reviews": "passed 2 of 2",
+    "commit_or_push": "not yet authorized by the owner"
+  }
+}

@@ -39,6 +39,7 @@ from skill_lens.tui.agents import AgentsScreen
 from skill_lens.tui.compare import CompareScreen
 from skill_lens.tui.diff import DiffScreen
 from skill_lens.tui.doctor import DoctorScreen
+from skill_lens.tui.help import HelpScreen
 from skill_lens.tui.home import HomeScreen
 from skill_lens.tui.json_view import JsonView
 from skill_lens.tui.why import WhyScreen
@@ -376,6 +377,7 @@ def test_actual_package_discovery_finds_all_tui_modules() -> None:
     assert "__init__.py" in py_files
     assert "app.py" in py_files
     assert "session.py" in py_files
+    assert "help.py" in py_files
 
 
 def test_skill_lens_app_neutralizes_inherited_writes_and_palette() -> None:
@@ -1231,3 +1233,113 @@ def test_target_preservation_when_cleanup_fails(
 
     after = _snapshot_tree_state(mock_home)
     assert before == after, "Target files modified despite cleanup failure"
+
+
+def test_u8_synthetic_target_preservation_across_help_navigation_fault_and_quit(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Help over every screen, JSON, refresh faults and a sticky quit never write."""
+    build_scenario("claude_personal_beats_project", mock_home)
+    target_skill_dir = mock_home / ".claude" / "skills" / "deploy"
+    real_target = target_skill_dir / "SKILL.md"
+    symlink_file = target_skill_dir / "symlink_doc.txt"
+    symlink_file.symlink_to("SKILL.md")
+    real_target.chmod(0o640)
+    before = _snapshot_tree_state(mock_home)
+
+    real_capture = app_module.capture_session
+
+    def controlled_capture(**kwargs: Any) -> Any:
+        if int(kwargs["generation"]) >= 2:
+            raise RuntimeError("preservation fault")
+        return real_capture(**kwargs)
+
+    monkeypatch.setattr(app_module, "capture_session", controlled_capture)
+
+    async def drive_u8(pilot: Pilot) -> None:
+        app = pilot.app
+        assert isinstance(app, tui.SkillLensApp)
+
+        async def wait_for(predicate: Any, label: str) -> None:
+            for _ in range(500):
+                if predicate():
+                    return
+                await pilot.pause(0.01)
+            raise AssertionError(f"U8 preservation traversal stalled: {label}")
+
+        await wait_for(
+            lambda: (
+                app.controller.current is not None and app.controller.pending_generation is None
+            ),
+            "initial capture",
+        )
+
+        # Home Help and raw JSON.
+        await pilot.press("question_mark")
+        await wait_for(lambda: isinstance(app.screen, HelpScreen), "Home Help")
+        await pilot.press("escape")
+        await wait_for(lambda: isinstance(app.screen, HomeScreen), "Home after Help")
+        await pilot.press("J")
+        await wait_for(
+            lambda: app.screen.query_one("#home-json").shows_document,
+            "Home JSON",
+        )
+        await pilot.press("escape")
+
+        # Why -> Diff with Help and JSON.
+        await pilot.press("enter")
+        await wait_for(lambda: isinstance(app.screen, WhyScreen), "Why")
+        await pilot.press("f1")
+        await wait_for(lambda: isinstance(app.screen, HelpScreen), "Why Help")
+        await pilot.press("f1")
+        await wait_for(lambda: isinstance(app.screen, WhyScreen), "Why after Help")
+        await pilot.press("J")
+        await pilot.press("J")
+        await pilot.press("d")
+        await wait_for(lambda: isinstance(app.screen, DiffScreen), "Diff")
+        await pilot.press("question_mark")
+        await wait_for(lambda: isinstance(app.screen, HelpScreen), "Diff Help")
+        await pilot.press("escape")
+        await pilot.press("J")
+        await pilot.press("J")
+        await pilot.press("escape")
+        await wait_for(lambda: isinstance(app.screen, WhyScreen), "Why after Diff")
+        await pilot.press("escape")
+        await wait_for(lambda: isinstance(app.screen, HomeScreen), "Home")
+
+        # Agents, Compare picker and Doctor each open/close Help.
+        for key, screen_type in (
+            ("g", AgentsScreen),
+            ("c", CompareScreen),
+            ("h", DoctorScreen),
+        ):
+            await pilot.press(key)
+            await wait_for(lambda expected=screen_type: isinstance(app.screen, expected), key)
+            await pilot.press("question_mark")
+            await wait_for(lambda: isinstance(app.screen, HelpScreen), f"{key} Help")
+            await pilot.press("escape")
+            await wait_for(
+                lambda expected=screen_type: isinstance(app.screen, expected),
+                f"{key} closed",
+            )
+            await pilot.press("escape")
+            await wait_for(lambda: isinstance(app.screen, HomeScreen), "Home")
+
+        # An accepted refresh fault is sticky; Help shows details; quit exits 3.
+        await pilot.press("r")
+        await wait_for(lambda: app.controller.is_failed, "sticky fault")
+        await pilot.press("question_mark")
+        await wait_for(lambda: isinstance(app.screen, HelpScreen), "fault Help")
+        assert "preservation fault" in str(app.screen.query_one("#help-session").content)
+        await pilot.press("q")
+        assert app.return_code == int(ExitCode.INTERNAL)
+
+    async def _run() -> None:
+        app = tui.SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test() as pilot:
+            await drive_u8(pilot)
+
+    asyncio.run(_run())
+
+    after = _snapshot_tree_state(mock_home)
+    assert before == after, "U8 Help, navigation, refresh fault or quit modified targets"

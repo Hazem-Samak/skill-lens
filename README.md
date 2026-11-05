@@ -86,7 +86,7 @@ each agent actually resolves skills.
 All six commands are built and tested.
 
 Every command accepts `--json`. `doctor` and `scan` also accept `--fail-on` to
-gate a pipeline — see [Exit codes and CI use](#exit-codes-and-ci-use).
+gate a pipeline — see [Exit codes and CI use](https://github.com/Hazem-Samak/skill-lens/blob/main/README.md#exit-codes-and-ci-use).
 
 ## Install
 
@@ -112,7 +112,7 @@ pip install skill-lens-cli
 ```
 
 This works only inside a virtual environment you already manage with Python
-3.11+ (see [Development](#development)). On a stock Mac it fails, and the error
+3.11+ (see [Development](https://github.com/Hazem-Samak/skill-lens/blob/main/README.md#development)). On a stock Mac it fails, and the error
 is misleading, so read the gotcha below first.
 
 </details>
@@ -140,6 +140,42 @@ Homebrew Python.
 > **Package name note:** the command is `skill-lens` and the Python package is
 > `skill_lens`; the distribution is published as `skill-lens-cli` because the
 > bare `skill-lens` name was already taken on PyPI.
+
+## Interactive mode (development TUI)
+
+The optional full-screen TUI exists on the development branch, **not** in the
+published PyPI 0.1.1 package. To try it from a development checkout, use an
+already prepared virtual environment:
+
+```bash
+pip install -e '.[tui]'
+skill-lens          # opens the TUI when both stdin and stdout are terminals
+skill-lens tui      # explicit command with the same requirement
+```
+
+- **Bare launch** opens the TUI only when Textual is installed and both stdin
+  and stdout are interactive. `--plain`, either stream being non-interactive,
+  or a missing Textual install prints help instead. A bare launch without the
+  TUI extra prints help plus an install tip and exits `0`.
+- **Explicit `skill-lens tui`** without the extra prints the missing-extra hint
+  and exits `2`; a non-interactive stream also exits `2`.
+- **Main keys:** `↑`/`↓`/`j`/`k` move, `Enter` opens Why, `d` opens Diff,
+  `g` opens Agents, `c` opens Compare, `h` opens Doctor, `J` toggles raw JSON,
+  `/` focuses the Home filter, `a` cycles the agent filter, `r` refreshes,
+  `?` opens Help (literal text in the filter), `F1` toggles Help even while
+  typing, and `q`/`Ctrl+C` quit. `Esc`/`Backspace` leave Help, then raw JSON,
+  then the screen.
+- **Help** is read-only and scrollable. It lists the keys that actually work in
+  the current screen and focus, shows the live session status, distinguishes an
+  initial scan from a refresh with retained data, and keeps any in-memory fault
+  details visible.
+- **Captured data:** screens show one captured session until a successful `r`.
+  The TUI never reads live files while browsing and never writes, opens editors,
+  runs processes or uses the network.
+- **Capture budget:** the default limit is 256 MiB of total skill payload;
+  `skill-lens tui --max-snapshot-bytes <bytes>` changes it and `0` disables it.
+- **Exit codes:** a normal TUI quit exits `0`; quitting after an accepted
+  unexpected internal fault exits `3` without a terminal traceback.
 
 ## Exit codes and CI use
 
@@ -181,13 +217,20 @@ recorded residual rather than a bounded one.
 release ships a TUI.
 
 **Current development branch:** the same six line-oriented commands plus an
-optional, additive, read-only TUI: a skill table, metadata preview, text and
-agent filters, candidate resolution detail, and U5's unified Diff screen (`d`
-from Home or Why) plus raw JSON mode (`J` on Home, Why and Diff). C1–C5 and
-U1–U5 are **technically accepted in development**, with coordinator verification
-and independent reviews complete. U6–U9 screens and 0.2 publishing remain separate future work. Do not
-install released `skill-lens-cli[tui]` expecting a browsing UI — the published
-0.1.1 has no TUI extra at all.
+optional, additive, read-only TUI with Home, Why, Diff, Agents, Compare and
+Doctor screens, raw JSON mode, and the U8 Help overlay (`?`, or `F1` while
+typing). C1–C5 and U1–U5 are **technically accepted in development**, with
+coordinator verification and independent reviews complete. U6 Agents/Compare and
+U7 Doctor have local technical verification. U8 Help/keyboard/empty-state work
+and its documentation are implemented in the current working tree with local
+implementation evidence under
+[`docs/validation/u8/implementation/`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/validation/u8/implementation/);
+coordinator technical verification passed and both independent final reviews
+returned pass with no blockers (5 November 2026). U9 release
+preparation, human visual approval, hosted CI acceptance and 0.2 publishing
+remain future work. Do not install released
+`skill-lens-cli[tui]` expecting a browsing UI — the published 0.1.1 has no TUI
+extra at all.
 
 The latest U5 local technical acceptance (2026-11-01), including both independent
 final-review follow-ups and real-terminal verification, is recorded in

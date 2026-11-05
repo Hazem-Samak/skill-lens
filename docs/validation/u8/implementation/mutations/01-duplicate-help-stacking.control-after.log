@@ -1,0 +1,3 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python -m pytest tests/test_tui_help.py::test_help_does_not_stack_and_stale_instance_cannot_close_a_newer_help -q --no-header -p no:cacheprovider
+.                                                                        [100%]
+1 passed in 2.00s

@@ -1,0 +1,78 @@
+{
+  "date": "2026-11-05",
+  "head": "a9d67b808ce235a543e63fba40b478da2a96c3e3",
+  "frozen_plan_commit": "b59478404a9d20d2670fb12a731c703f53eee798",
+  "coordinator_source_inspection": {
+    "product_blockers_found": [],
+    "scope": "Read the complete existing-TUI diff, new Help module, substantive acceptance tests, documentation diff, implementer evidence, and mutation runner.",
+    "current_input_hash_mismatches": [],
+    "implementer_gate_log_hash_mismatches": [],
+    "mutation_audit": "All 12 cases have passing controls before/after and the intended meaningful mutant assertion; no syntax/import/collection failure was accepted."
+  },
+  "gates": {
+    "pytest": {
+      "command": ".venv/bin/pytest --cov=skill_lens",
+      "exit_code": 0,
+      "passed": 1338,
+      "skipped": 1,
+      "coverage": "90.12%",
+      "help_module_coverage": "100%",
+      "log": "pytest.log",
+      "log_sha256": "64ed8f591c727fdb786f9a55f87106b15ea8e505b91a1899ba7e5c433fb98df8"
+    },
+    "mypy": {
+      "command": ".venv/bin/mypy",
+      "exit_code": 0,
+      "source_files": 46,
+      "log": "mypy.log",
+      "log_sha256": "a97cee1ee1bdb5e2d1ca7098f7b33a6c6a21263225643192fdeb78654687ed89"
+    },
+    "ruff_check": {
+      "command": ".venv/bin/ruff check .",
+      "exit_code": 0,
+      "log": "ruff-check.log",
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "ruff_format": {
+      "command": ".venv/bin/ruff format --check .",
+      "exit_code": 0,
+      "formatted_files": 424,
+      "log": "ruff-format-check.log",
+      "log_sha256": "bc783451c5b19b2e4860562b05bb64368e1178d498aa01595fcb6f4f3138ed32"
+    }
+  },
+  "terminal_smoke": {
+    "command": "Native macOS script driver running .venv/bin/skill-lens tui against a disposable synthetic home",
+    "result": "pass",
+    "observed": "Real interactive launch, successful capture, Help opened with ?, Help closed through Tab/Enter Close, normal q quit with exit 0 and alternate-screen cleanup; no traceback.",
+    "log": "terminal-script.log",
+    "log_sha256": "61daa23228abf2302f4c8136a3dcb079c06ae12d7381d4f3fa0970ba8e2c4e51",
+    "raw_log_sha256_before_sanitization": "91862c432fdd35a386b773546899e28a562b31f92458ee9575b6ee8499799e8c",
+    "supplemental_log": "terminal-smoke.log (failed custom-PTY harness probe, sanitized likewise; raw sha 23e199cb3bc5c68f61a96b062238965a55b44327e826b1f6a80f975f87c85b98)",
+    "sanitization_note": "Both terminal logs were ANSI-stripped and had trailing terminal padding removed so the committed diff passes git's whitespace gate while keeping every readable frame line. The raw-byte hashes above bind the originals. The earlier reviewer/coordinator reads quoted these same contents pre-sanitization.",
+    "claim_boundary": "Automated local pseudo-terminal evidence, not human visual approval, Linux/Python-matrix coverage, hosted CI, or built-wheel qualification.",
+    "failed_probe_note": "Two custom PTY harnesses had process-input/reaping problems and were stopped or cleaned up. The native script driver isolated a successful application path. A separate instrumented native launch recorded no Python file-opening write calls and created no new artifact."
+  },
+  "unexpected_unlisted_artifacts": {
+    "count": 8,
+    "content": "blat (4 bytes each)",
+    "paths": [
+      "3y5luqdv",
+      "xa1fl79v",
+      "_6r0sqne",
+      "m5txb5iu",
+      "rbvraqtn",
+      "skl6wira",
+      "y7vpe7r2",
+      "docs/validation/u8/implementation/mutations/7pma619t"
+    ],
+    "status": "Unattributed and excluded from the implementation scope. They were not deleted or modified by the coordinator. The implementer's changed-files list omits them.",
+    "product_write_claim": "Not established. The instrumented native TUI launch did not reproduce an artifact or log a Python write call."
+  },
+  "acceptance": {
+    "coordinator_technical_verification": "passed",
+    "independent_final_review": "passed 2 of 2 (see review-receipt.json: reviewer 1 mcode/MiniMax-M3.1-Flash/xhigh pass; reviewer 2 OpenCode/GLM-5.3-Flash-Free/max pass; both no blockers)",
+    "required_default_for_high_risk": "two final critics named by the user — completed 5 November 2026",
+    "commit_or_push": "not authorized by this verification and not performed"
+  }
+}

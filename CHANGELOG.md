@@ -30,9 +30,12 @@ independent review. U6 implementation checks are recorded in
 as recorded in `docs/validation/u6/coordinator/verification.md`. U7 Doctor is
 implemented in the current tree; local checks and mutation evidence are recorded
 in `docs/validation/u7/implementation/`;
-[parent verification](docs/validation/u7/coordinator/verification.md) passed. U8–U9
-screens and 0.2 publishing remain future work. This is not human visual approval,
-hosted CI acceptance or a release. Earlier local gate evidence is recorded under
+[parent verification](docs/validation/u7/coordinator/verification.md) passed. U8
+adds the read-only Help overlay, contextual keyboard polish, covered-screen worker
+suspension, empty/error-state clarifications and user documentation; its local
+implementation evidence is under `docs/validation/u8/implementation/`. U9 release
+preparation and 0.2 publishing remain future work. This is not human visual
+approval, hosted CI acceptance or a release. Earlier local gate evidence is recorded under
 `docs/validation/assessment-repairs/h/` and `docs/validation/u3/`. The later
 [overnight CI repair](docs/validation/overnight/2026-10-24/acceptance.md) passed
 all eight Ubuntu/macOS Python 3.11–3.14 jobs and the packaging job in
@@ -76,7 +79,9 @@ This is development verification, not a release.
   recorded in `docs/validation/u6/coordinator/verification.md`. U7 Doctor is
   implemented locally with evidence under `docs/validation/u7/implementation/`;
   [parent verification](docs/validation/u7/coordinator/verification.md) passed.
-  U8–U9 screens are future work.
+  U8 Help, keyboard polish, empty/error states and documentation are implemented
+  in the current working tree with local evidence under
+  `docs/validation/u8/implementation/`; U9 release preparation is future work.
   The full design lives in
   [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
 
@@ -105,6 +110,26 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
   unbounded by bytes.
 
 ### Added
+
+- **Help overlay, contextual keymap and empty-state polish (U8).** The
+  development TUI now has one read-only Help modal over Home, Why, Diff, Agents,
+  Compare and Doctor, including raw JSON, initial-loading and no-session states.
+  `?` opens it outside the Home filter input; the app-level priority `F1` toggles
+  it even while typing. The body is scrollable, keeps the Close button visible,
+  and names the keys that actually work for the current screen, mode and focus.
+  It shows live session status, distinguishes an initial scan from a refresh with
+  retained data, and keeps literal in-memory fault details visible. Opening Help
+  starts no capture, report computation or filesystem discovery; covered Home,
+  Why, Diff and Compare work is suspended through the existing exact-owner
+  tokens and reconciled once on reveal. Diff and Compare gain bounded suspend and
+  resume hooks; Agents and Doctor guard covered selection and deferred focus.
+  Home's filter now explains that `Esc` clears a no-match filter. The README,
+  DEVELOPMENT, specification, TUI design and this changelog describe the tested
+  behavior; the six line-oriented commands remain primary. Local implementer
+  evidence, mutation results and gates are under
+  `docs/validation/u8/implementation/`. Coordinator technical verification passed
+  and both independent final reviews passed with no blockers (ledger under
+  `docs/validation/u8/coordinator/`); this is not a 0.2 release claim.
 
 - **Why resolution screen (U4).** The development TUI now provides a dedicated
   Why resolution screen accessible by pressing Enter on a focused Home skill row.
