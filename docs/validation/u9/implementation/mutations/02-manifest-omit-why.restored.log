@@ -1,0 +1,9 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k manifest or missing_tui_module -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/manifest-omit-why, HOME=/private/tmp/u9-mutations/homes/manifest-omit-why)
+exit=0 elapsed=0.17s
+--- STDOUT ---
+..........................                                               [100%]
+26 passed, 41 deselected in 0.08s
+
+--- STDERR ---
+

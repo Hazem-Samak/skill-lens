@@ -3,7 +3,8 @@
 
 Verifies:
 1. Wheel and sdist archive integrity:
-   - All required TUI modules: __init__.py, app.py, session.py, _textual_compat.py
+   - All 12 required TUI modules (entrypoint, controller, compatibility adapter
+     and the eight screen/view modules through U8)
    - All 10 agent registry TOML files
    - py.typed typing marker
 2. Base installation lane (lean fallback without [tui] extra):
@@ -16,6 +17,8 @@ Verifies:
    - Latest endpoint: unconstrained textual resolution (resolves current latest on PyPI)
    - Both lanes execute full pinned-output parity and installed TUI lifecycle/read-only suites
      outside the repository checkout without copying skill_lens source packages.
+   - Installed selections also cover launch routing and the U8 browsing flow, captured-data
+     stability, six-view CLI JSON parity and both terminal sizes.
    - Exact installed package origins, versions, commands, test/skip counts, and endpoint overlap
      are recorded in machine-readable receipts.
 """
@@ -34,6 +37,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 import zipfile
 from typing import Any
 
@@ -42,6 +46,14 @@ REQUIRED_TUI_MODULES: tuple[str, ...] = (
     "skill_lens/tui/app.py",
     "skill_lens/tui/session.py",
     "skill_lens/tui/_textual_compat.py",
+    "skill_lens/tui/home.py",
+    "skill_lens/tui/why.py",
+    "skill_lens/tui/diff.py",
+    "skill_lens/tui/json_view.py",
+    "skill_lens/tui/agents.py",
+    "skill_lens/tui/compare.py",
+    "skill_lens/tui/doctor.py",
+    "skill_lens/tui/help.py",
 )
 
 REQUIRED_REGISTRY_COUNT: int = 10
@@ -57,6 +69,11 @@ INSTALLED_TUI_TEST_SUITES: tuple[str, ...] = (
     "tests/test_tui_read_only.py",
     "tests/test_stage_g_repairs.py",
     "tests/test_tui_packaging.py",
+    "tests/test_tui_routing.py",
+    "tests/test_tui_help.py::test_complete_keyboard_browsing_flow_with_help_json_filters_and_refresh",
+    "tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits",
+    "tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs",
+    "tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes",
 )
 
 
@@ -67,6 +84,43 @@ def compute_sha256(path: pathlib.Path) -> str:
         while chunk := f.read(65536):
             h.update(chunk)
     return h.hexdigest()
+
+
+# pytest's final line, with or without the "(0:01:24)" elapsed parenthetical that
+# modern versions append: "======== 451 passed in 84.29s (0:01:24) ========".
+_PYTEST_SUMMARY_RE = re.compile(r"=+\s*([^=\n]*?)\s+in\s+[\d.]+s(?:\s*\([^)]*\))?\s*=+")
+
+
+def _pytest_summary_match(stdout: str) -> re.Match[str]:
+    """Return the regex match for pytest's final summary line.
+
+    Raising is deliberate. An earlier version treated an unmatched summary as
+    "zero passed, zero skipped", so a run that really executed 451 tests could be
+    receipted as an empty lane. A receipt must never under-report silently.
+    """
+    match = _PYTEST_SUMMARY_RE.search(stdout)
+    if match is None:
+        raise ValueError(
+            "could not find a pytest summary line (for example '12 passed in 0.4s') "
+            f"in the installed suite output:\n{stdout[-4000:]}"
+        )
+    return match
+
+
+def parse_pytest_summary(stdout: str) -> tuple[int, int]:
+    """Return ``(passed, skipped)`` from pytest's summary line."""
+    summary = _pytest_summary_match(stdout).group(1)
+    passed_match = re.search(r"(\d+)\s+passed", summary)
+    skipped_match = re.search(r"(\d+)\s+skipped", summary)
+    return (
+        int(passed_match.group(1)) if passed_match else 0,
+        int(skipped_match.group(1)) if skipped_match else 0,
+    )
+
+
+def pytest_summary_line(stdout: str) -> str:
+    """Return the stripped summary line, for example ``451 passed in 84.29s``."""
+    return _pytest_summary_match(stdout).group(0).strip("= ").strip()
 
 
 def verify_wheel_contents(wheel_path: pathlib.Path) -> dict[str, Any]:
@@ -529,6 +583,7 @@ def verify_tui_endpoint_install(
 
     # 5. Run test suites with bounded timeout
     test_cmd = [str(pytest_exe), *INSTALLED_TUI_TEST_SUITES, "-ra"]
+    suite_started = time.monotonic()
     try:
         test_res = subprocess.run(
             test_cmd,
@@ -562,13 +617,15 @@ def verify_tui_endpoint_install(
             f"STDERR:\n{test_res.stderr}"
         )
 
-    # Parse test and skip counts from summary
-    summary_match = re.search(r"=+\s*(.*?)\s+in\s+[\d\.]+s\s*=+", test_res.stdout)
-    summary_text = summary_match.group(1) if summary_match else ""
-    passed_match = re.search(r"(\d+)\s+passed", summary_text)
-    skipped_match = re.search(r"(\d+)\s+skipped", summary_text)
-    test_count = int(passed_match.group(1)) if passed_match else 0
-    skip_count = int(skipped_match.group(1)) if skipped_match else 0
+    suite_elapsed = round(time.monotonic() - suite_started, 2)
+
+    # Parse test and skip counts from summary; a lane that ran nothing cannot pass.
+    test_count, skip_count = parse_pytest_summary(test_res.stdout)
+    if test_count <= 0:
+        raise AssertionError(
+            f"Installed test suites reported no passed tests for endpoint {endpoint_name!r}; "
+            f"the selection must execute:\n{test_res.stdout[-4000:]}"
+        )
 
     return {
         "status": "passed",
@@ -583,6 +640,8 @@ def verify_tui_endpoint_install(
         "suites_exit_code": test_res.returncode,
         "test_count": test_count,
         "skip_count": skip_count,
+        "elapsed_seconds": suite_elapsed,
+        "pytest_summary": pytest_summary_line(test_res.stdout),
         "command": test_cmd,
         "stdout": test_res.stdout,
         "stderr": test_res.stderr,

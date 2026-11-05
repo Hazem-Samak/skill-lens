@@ -1,0 +1,9 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k unparsable or counts_and_duration -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/receipt-legacy-parser-restored, HOME=/private/tmp/u9-mutations/homes/receipt-legacy-parser-restored)
+exit=0 elapsed=0.18s
+--- STDOUT ---
+..                                                                       [100%]
+2 passed, 65 deselected in 0.09s
+
+--- STDERR ---
+

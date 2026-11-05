@@ -1,0 +1,68 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k expanded_installed_selection or override -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/subprocess-selection-truncated, HOME=/private/tmp/u9-mutations/homes/subprocess-selection-truncated)
+exit=1 elapsed=0.18s
+--- STDOUT ---
+F.                                                                       [100%]
+=================================== FAILURES ===================================
+______ test_expanded_installed_selection_reaches_the_real_pytest_command _______
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-245/test_expanded_installed_select0')
+mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-245/test_expanded_installed_select0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109177d10>
+
+    def test_expanded_installed_selection_reaches_the_real_pytest_command(
+        tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Every U9 selection must reach the lane's own pytest argv, unfiltered.
+    
+        The runner builds its own command list, so a narrowing option (``-k``,
+        ``--deselect``, ``--ignore`` …) or a hand-trimmed list could drop the new
+        browsing/parity cases while the lane still reports success. This drives the
+        real command builder through a deterministic subprocess double and reads back
+        the argv it would execute.
+        """
+        invoking_cwd = tmp_path / "invoking_cwd"
+        invoking_cwd.mkdir()
+        wheel_file = invoking_cwd / "skill_lens_cli-0.2.0-py3-none-any.whl"
+        wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
+        monkeypatch.chdir(invoking_cwd)
+    
+        captured_calls: list[dict[str, Any]] = []
+        monkeypatch.setattr(
+            subprocess, "run", _make_packaging_subprocess_runner(captured_calls=captured_calls)
+        )
+    
+        result = verify_tui_endpoint_install(
+            wheel_file,
+            tmp_path / "work_dir",
+            endpoint_name="min",
+            textual_spec="textual==8.2.8",
+            repo_root=REPO_ROOT,
+        )
+    
+        pytest_calls = [call for call in captured_calls if Path(call["cmd"][0]).name == "pytest"]
+        assert len(pytest_calls) == 1, pytest_calls
+        argv = pytest_calls[0]["cmd"]
+    
+        lane_dir = (tmp_path / "work_dir" / "min_lane").resolve()
+        assert Path(argv[0]).parent == lane_dir / "venv" / "bin", (
+            f"the lane must run its own pytest, not the repository one: {argv[0]!r}"
+        )
+        assert Path(pytest_calls[0]["cwd"]) == lane_dir / "test_lane"
+>       assert tuple(argv[1:]) == (*EXPECTED_INSTALLED_TEST_SUITES, "-ra"), (
+            f"installed pytest argv does not carry the expected selection: {argv[1:]!r}"
+        )
+E       AssertionError: installed pytest argv does not carry the expected selection: ['tests/test_render_snapshots.py', 'tests/test_fixtures.py', 'tests/test_phase3_gate.py', 'tests/test_phase4_gate.py', 'tests/test_tui_app.py', 'tests/test_tui_session.py', 'tests/test_tui_read_only.py', 'tests/test_stage_g_repairs.py', 'tests/test_tui_packaging.py', 'tests/test_tui_routing.py', 'tests/test_tui_help.py::test_complete_keyboard_browsing_flow_with_help_json_filters_and_refresh', 'tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits', 'tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs', '-ra']
+E       assert ('tests/test_...sion.py', ...) == ('tests/test_...sion.py', ...)
+E         
+E         At index 13 diff: '-ra' != 'tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes'
+E         Right contains one more item: '-ra'
+E         Use -v to get more diff
+
+/private/tmp/u9-mutations/tree/tests/test_tui_packaging.py:815: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_expanded_installed_selection_reaches_the_real_pytest_command
+1 failed, 1 passed, 65 deselected in 0.09s
+
+--- STDERR ---
+

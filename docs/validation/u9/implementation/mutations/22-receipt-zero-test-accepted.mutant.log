@@ -1,0 +1,41 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k passed_no_tests -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/receipt-zero-test-accepted, HOME=/private/tmp/u9-mutations/homes/receipt-zero-test-accepted)
+exit=1 elapsed=0.18s
+--- STDOUT ---
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_installed_lane_rejects_a_run_that_passed_no_tests ____________
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-266/test_installed_lane_rejects_a_0')
+mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-266/test_installed_lane_rejects_a_0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b173dd0>
+
+    def test_installed_lane_rejects_a_run_that_passed_no_tests(
+        tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A lane whose summary reports no passes cannot be accepted as green.
+    
+        ``0 passed, 3 skipped`` parses cleanly, so only the positive-count guard
+        stops it from being receipted as a passing lane.
+        """
+        invoking_cwd = tmp_path / "invoking_cwd"
+        invoking_cwd.mkdir()
+        wheel_file = invoking_cwd / "skill_lens_cli-0.2.0-py3-none-any.whl"
+        wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
+        monkeypatch.chdir(invoking_cwd)
+    
+        runner = _make_packaging_subprocess_runner(
+            pytest_stdout="================ 0 passed, 3 skipped in 0.10s ================\n"
+        )
+        monkeypatch.setattr(subprocess, "run", runner)
+    
+>       with pytest.raises(AssertionError, match="reported no passed tests"):
+E       Failed: DID NOT RAISE AssertionError
+
+/private/tmp/u9-mutations/tree/tests/test_tui_packaging.py:1074: Failed
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_installed_lane_rejects_a_run_that_passed_no_tests
+1 failed, 66 deselected in 0.09s
+
+--- STDERR ---
+

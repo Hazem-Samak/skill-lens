@@ -1,0 +1,34 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k uv_lock -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/lock-root-version-stale, HOME=/private/tmp/u9-mutations/homes/lock-root-version-stale)
+exit=1 elapsed=0.17s
+--- STDOUT ---
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+____________ test_uv_lock_root_package_version_matches_the_package _____________
+
+    def test_uv_lock_root_package_version_matches_the_package() -> None:
+        """A version bump must refresh the lock's root package entry as well.
+    
+        ``test_phase5_gate`` already pins ``pyproject.toml`` to ``__version__``; this
+        closes the third declaration. A stale lock would describe a distribution that
+        does not exist, and the lock is what CI installs from.
+        """
+        lock = _read_uv_lock()
+        root_pkg = next(p for p in lock.get("package", []) if p["name"] == "skill-lens-cli")
+>       assert root_pkg["version"] == skill_lens.__version__, (
+            f"uv.lock records skill-lens-cli {root_pkg['version']!r} but the package is "
+            f"{skill_lens.__version__!r}; run `uv lock` after bumping the version"
+        )
+E       AssertionError: uv.lock records skill-lens-cli '0.1.1' but the package is '0.2.0'; run `uv lock` after bumping the version
+E       assert '0.1.1' == '0.2.0'
+E         
+E         - 0.2.0
+E         + 0.1.1
+
+../../tree/tests/test_tui_packaging.py:311: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_uv_lock_root_package_version_matches_the_package
+1 failed, 1 passed, 55 deselected in 0.08s
+
+--- STDERR ---
+

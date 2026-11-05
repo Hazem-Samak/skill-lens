@@ -1,0 +1,103 @@
+{
+  "date": "2026-11-05",
+  "frozen_plan": "docs/plans/2026-11-05-tui-u9-release-preparation.md @ f3c652beed4e7b5b745a77a900cc1e93f5a5f105",
+  "wave_b_fingerprint": {
+    "pre_aggregate": "d180048246115b0f38c7a7af67adaf0d707155ea4e10c883da44fc0f1f2cad24",
+    "post_aggregate": "aa05c6ced0104889db2d7776188a43efca298f9c3e851135bf6bd1277de5bf93",
+    "tracked_changes_during_review": [],
+    "unexpected_non_evidence_additions": [],
+    "note": "Only coordinator evidence files were added during wave B; both critics left the repository unmodified."
+  },
+  "reviews": [
+    {
+      "axis": "packaging, compatibility, claim accuracy",
+      "cli": "mcode exec",
+      "identity": "providerId=minimax, modelId=MiniMax-M3.1-Flash, variant=thinking (exec JSON receipts, both rounds); effort xhigh flag-configured, not receipt-echoed (disclosed)",
+      "round_1": {
+        "verdict": "changes_required",
+        "blockers": [
+          "C-F7 evidence-pointer/supersession"
+        ],
+        "suggestions": 4,
+        "report": "raw-reviewer-1-round1-exec.json",
+        "duration_ms": 113773
+      },
+      "round_2": {
+        "verdict": "pass",
+        "blockers": [],
+        "suggestions": 4,
+        "closure_evidence": "recomputed r3 wheel 9be079b7.../sdist 890f91e2... independently; verified all nine pointer sentences, SUPERSESSION.md accuracy, r1-file preservation, snippet fixes, scope and gates r3",
+        "report": "raw-reviewer-1-round2-exec.json",
+        "duration_ms": 167203
+      }
+    },
+    {
+      "axis": "installed-test effectiveness, isolation, guard load-bearingness",
+      "cli": "perch run --permission auto_review",
+      "identity": "UNVERIFIED by design of the platform (disclosed deviation, owner-authorized \"continue with perch\" \u2014 see approvals.json): requested glm-5.3-flash-starter/effort max; account is non-Pro (effort capped to high), served model is Perch auto-failover (stealth/crouton-alpha quota-failed 24x during the run), receipt selectedModel=null",
+      "round_1": {
+        "verdict": "pass",
+        "blockers": [],
+        "suggestions": 1,
+        "activity_verification_by_coordinator": "60 bash tool calls; repo copied to /tmp/u9-review2; clean packaging-subset run; at least three mutation edits matching the brief (routing-selection drop, summary-regex break, restore-then-continue); scratch smoke_wheel byte-identical to saved original (RESTORED_MATCHES); receipt cites real r3 lane timings (83.46s/83.08s vs 300s bound)",
+        "receipt_limitation_disclosed": "perch JSON receipt truncates per-command outputs; depth verified via retained /tmp artifacts and command list instead",
+        "report": "reviewer-2-report-round1.txt + raw-reviewer-2-exec.json",
+        "duration_ms": 227847
+      }
+    }
+  ],
+  "finding_dispositions": [
+    {
+      "id": "C-F7",
+      "decision": "accepted-fixed-verified-closed",
+      "round2_evidence": "reviewer 1 recomputed hashes; pass"
+    },
+    {
+      "id": "C-S1/C-S2/C-S3/C-S4",
+      "decision": "accepted-implemented (verified round 2)"
+    },
+    {
+      "id": "S-A wording consistency (3 pointer sentences omit the note clause)",
+      "decision": "deferred \u2014 cosmetic; every pointer names both folders and resolves; editing again re-triggers a full rebuild wave for zero correctness gain; bundle with the publication mission"
+    },
+    {
+      "id": "S-B README \"build the candidate from a clone\" resolves to 0.1.1 main",
+      "decision": "deferred-to-publication \u2014 pre-existing until push; the correction is inherently a publication-mission task because the candidate commit itself (this push) makes the clone produce 0.2.0. Post-push the README sentence becomes true of main; note for publication wording review"
+    },
+    {
+      "id": "S-C $root-relative paths in probe line",
+      "decision": "deferred \u2014 works from repo root; bundle with publication polish"
+    },
+    {
+      "id": "S-D acceptance-matrix cites r1 hashes without pointer",
+      "decision": "deferred \u2014 mitigated by SUPERSESSION.md in the same folder; bundle with publication polish"
+    },
+    {
+      "id": "R2 timeout-margin suggestion",
+      "decision": "noted; partial-output handling and 300s bound retained as planned"
+    }
+  ],
+  "convergence": "Reviewer 1: round 1 changes_required \u2192 coordinator corrections + r3 rebuild \u2192 round 2 pass with no blockers. Reviewer 2: one pass round 1 (after a disclosed-identity retry); no blockers.",
+  "acceptance": {
+    "coordinator_technical_verification": "passed (all four gates rerun on the final tree at r3; 1379 passed, 1 pre-existing skip, 90.10%; receipts re-verified by hash)",
+    "independent_final_reviews": "passed 2 of 2 with disclosed identity deviations for reviewer 2 accepted by the owner",
+    "state": "locally technically accepted (plan definition: A1-A9 + two independent reviews passed)",
+    "not_reached": [
+      "publication ready (needs candidate-commit hosted CI \u2014 starts with the authorized push below \u2014 and human visual approval)",
+      "published (needs a separate authorized publication mission: finalize docs, rebuild, upload, tag)"
+    ],
+    "commit_and_push": "authorized by the owner contingent on no reviewer blockers \u2014 condition met"
+  },
+  "execution_receipt": {
+    "expected_child_tasks": "1 implementer + 2 final critics",
+    "actual_critic_launches": "4 launched (R1 round 1 pass-with-findings, R2 round 1 stopped at approval gate \u2014 no report, R1 round 2 pass, R2 retry pass); plus 3 short identity probes (mcode precheck, perch precheck, perch auto_review probe)",
+    "setup_failures": "1 (perch default one-shot cannot answer approval prompts; resolved by the supported --permission auto_review flag, no bypass invented)",
+    "wall_clock_ms": {
+      "r1_round1": 113773,
+      "r1_round2": 167203,
+      "r2_retry": 227847
+    },
+    "billed_tokens": "unavailable (perch); mcode receipts report token usage: round1 18K-token precheck, round2 usage in receipt",
+    "side_effects": ".perch/PERCH.md and .perch/mcp.json created by the perch CLI startup (preserved, excluded from the commit); /tmp scratch trees retained for inspection"
+  }
+}

@@ -1,0 +1,9 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k sdist -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/sdist-module-missing-not-collected, HOME=/private/tmp/u9-mutations/homes/sdist-module-missing-not-collected)
+exit=0 elapsed=0.17s
+--- STDOUT ---
+...............                                                          [100%]
+15 passed, 52 deselected in 0.07s
+
+--- STDERR ---
+

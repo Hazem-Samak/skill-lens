@@ -1,0 +1,78 @@
+{
+  "recorded_at": "2026-11-05T18:52:06.026786+00:00",
+  "wave": "coordinator pre-review corrections (council \u00a76: mechanical/claim-accuracy corrections before independent review)",
+  "authorization": "Owner instruction 5 Nov 2026: proceed with the two named reviewers; commit and push if no blockers. Documentation-only corrections within the frozen plan's allowed file table; no product behavior, test, dependency, CI or policy change.",
+  "findings": [
+    {
+      "id": "C-F1",
+      "location": "DEVELOPMENT.md '0.2.0 candidate qualification' closing paragraph",
+      "problem": "Said a passing local run makes the candidate *locally technically accepted*, but the plan's own definition of that state (A9) requires two independent final reviews.",
+      "decision": "accepted; corrected to *locally verified*, with reviews and hosted CI/human approval stated as further gates."
+    },
+    {
+      "id": "C-F2",
+      "location": "DEVELOPMENT.md checklist step 4 + 'Per-lane probes' item",
+      "problem": "The inline probe command, run from the checkout root, imports skill_lens from the SOURCE TREE, not the installed lane \u2014 provenance luck (version strings happened to match). Reproduced: `/tmp/u9-candidate/smoke/min_lane/venv/bin/python -c 'import skill_lens'` from the repo printed the checkout path. The executed version_probes.py was correct (cwd=lane dir, receipts valid); only the doc snippet was unsafe to copy-paste.",
+      "decision": "accepted; snippet now calls the audited version_probes.py and the checklist requires running outside the checkout with module-file provenance recorded."
+    },
+    {
+      "id": "C-F3",
+      "location": "DEVELOPMENT.md generic Releasing steps 3/4/6",
+      "problem": "Step 3 still told maintainers to run `uv build --out-dir dist` on the live checkout \u2014 the exact trap U9 documented (packages all 804 untracked files); step 4 used `dist/*.whl` wildcards; step 6 example still showed v0.1.1 while the plan required updating old version examples for 0.2.0.",
+      "decision": "accepted; steps rewritten to build from a clean export with explicit artifact paths and v0.2.0 examples, tag-after-upload order kept."
+    },
+    {
+      "id": "C-F4",
+      "location": "CHANGELOG.md 0.2.0 'Verified for this candidate' third bullet",
+      "problem": "'three fresh installations ... each running the installed selections, including the 17 CLI snapshots and 16 JSON goldens' \u2014 the base lane runs no test suites (scripts/smoke_wheel.py:185-344 performs CLI lifecycle checks only).",
+      "decision": "accepted; wording now separates base (lifecycle checks) from min/latest (14 selections, 461 tests, zero skips)."
+    },
+    {
+      "id": "C-F5",
+      "location": "CHANGELOG.md 0.2.0 'Added' launch-rules sentence",
+      "problem": "'prints help instead (exit 0 with an install tip)' generalized the tip: with the extra missing the tip appears only when BOTH streams are interactive; a non-interactive bare run prints help with no tip (tests/test_tui_routing.py stream matrix).",
+      "decision": "accepted; tip condition stated explicitly."
+    },
+    {
+      "id": "C-F6",
+      "location": "docs/validation/u9/implementation/implementation-report.md line 4",
+      "problem": "Implementer report labels the candidate 'locally technically accepted' before A9's independent reviews existed.",
+      "decision": "not rewritten (append-only implementer record); superseded by this ledger \u2014 status is *locally verified, final reviews pending*. The r1 receipts below the label remain accurate observations."
+    }
+  ],
+  "consequence": "CHANGELOG.md and DEVELOPMENT.md are packaged inputs; the r1 artifact hashes are invalidated. The candidate is rebuilt and requalified (r2) before reviewers see the tree; r1 evidence is retained as history.",
+  "changed_hashes_before_corrections": {
+    "CHANGELOG.md": "a7a7cb67d9ff1c7f5173e3abdea746bd6277c239b5ef65a0ffc12cd4f9dd8d64",
+    "DEVELOPMENT.md": "a618a9ea6d013a34dc0a9b9640645457925268f799cfa87196d8929d9f931a61",
+    "FULL_SCREEN_TUI.md": "d0e2a7b3b79836b8ecedff44946d86b29e3d25058ed0a6e4ce566db28bb75fc0",
+    "README.md": "b8874fddd3e516b176e993ecd7c5129204595f3880ef8d5c1b7565ec322e5f33",
+    "SKILL_LENS_SPECIFICATION.md": "d48f2c94d249f4af0120754e4536e78bdbbb7fb604e407ce08945c374c618370",
+    "pyproject.toml": "aa4fb153a3d63b6e82a97c7eb57e694ebd9095d6b54ef71347d4c27b05c5acc6",
+    "scripts/smoke_wheel.py": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+    "skill_lens/__init__.py": "ed84deeb6d33d71f5167f543f75f13af461bf7e6c29ff391b7e0df3e52ad5377",
+    "tests/test_tui_packaging.py": "41e20f6aa1e5b420156ba939eb765dc8f9b3b7febc84c4d72a8c4979feba57af",
+    "uv.lock": "b79ed6b414ce51fb5155de0bb9ebc7114915bc1105be8494355cbd328a69b32b"
+  },
+  "changed_hashes_after_corrections": {
+    "CHANGELOG.md": "4fc9ae554dab1fa5409a054d8bf9dd353498df2bb001ff9d4c9ca8bef261408b",
+    "DEVELOPMENT.md": "3fda9cc8885800027173485043a78c5f7cf35b3351e3e370066baedc0310c08a",
+    "FULL_SCREEN_TUI.md": "d0e2a7b3b79836b8ecedff44946d86b29e3d25058ed0a6e4ce566db28bb75fc0",
+    "README.md": "b8874fddd3e516b176e993ecd7c5129204595f3880ef8d5c1b7565ec322e5f33",
+    "SKILL_LENS_SPECIFICATION.md": "d48f2c94d249f4af0120754e4536e78bdbbb7fb604e407ce08945c374c618370",
+    "pyproject.toml": "aa4fb153a3d63b6e82a97c7eb57e694ebd9095d6b54ef71347d4c27b05c5acc6",
+    "scripts/smoke_wheel.py": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+    "skill_lens/__init__.py": "ed84deeb6d33d71f5167f543f75f13af461bf7e6c29ff391b7e0df3e52ad5377",
+    "tests/test_tui_packaging.py": "41e20f6aa1e5b420156ba939eb765dc8f9b3b7febc84c4d72a8c4979feba57af",
+    "uv.lock": "b79ed6b414ce51fb5155de0bb9ebc7114915bc1105be8494355cbd328a69b32b"
+  },
+  "unchanged_by_corrections": [
+    "FULL_SCREEN_TUI.md",
+    "README.md",
+    "SKILL_LENS_SPECIFICATION.md",
+    "pyproject.toml",
+    "scripts/smoke_wheel.py",
+    "skill_lens/__init__.py",
+    "tests/test_tui_packaging.py",
+    "uv.lock"
+  ]
+}

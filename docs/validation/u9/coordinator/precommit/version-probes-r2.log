@@ -1,0 +1,4 @@
+base   metadata=0.2.0 package=0.2.0 cli='skill-lens 0.2.0' textual=None inside_venv=yes
+min    metadata=0.2.0 package=0.2.0 cli='skill-lens 0.2.0' textual=8.2.8 inside_venv=yes
+latest metadata=0.2.0 package=0.2.0 cli='skill-lens 0.2.0' textual=8.2.8 inside_venv=yes
+all_passed: True

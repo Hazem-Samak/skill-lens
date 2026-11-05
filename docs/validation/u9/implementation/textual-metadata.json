@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-11-05T17:29:44Z",
+  "source": "https://pypi.org/pypi/textual/json",
+  "http_status": 200,
+  "latest_stable_version": "8.2.8",
+  "latest_release_url": "https://pypi.org/project/textual/8.2.8/",
+  "declared_floor": "textual>=8.2.8",
+  "floor_equals_latest_stable": true,
+  "requires_python": "<4.0,>=3.9",
+  "note": "Read at execution time to check whether the declared floor is still current. It is: the unconstrained 'latest' installation lane therefore resolves the same 8.2.8 as the pinned minimum lane. This is disclosed as two installation checks, not two-version coverage. The approved floor was not changed in U9."
+}

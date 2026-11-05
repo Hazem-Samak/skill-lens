@@ -17,8 +17,15 @@
 > implemented in the current working tree; coordinator technical verification
 > passed and both independent final reviews passed on 5 November 2026, with the
 > ledger under
-> [`docs/validation/u8/coordinator/`](docs/validation/u8/coordinator/). U9 release
-> preparation and 0.2 publishing remain future work.
+> [`docs/validation/u8/coordinator/`](docs/validation/u8/coordinator/).
+> U9 prepared the **0.2.0 release candidate locally**: synchronized 0.2.0
+> versions and lock, completed archive/installed coverage through U8, a wheel and
+> source archive built from a clean export, three fresh installations and an
+> automated terminal smoke run. It is **not published** — evidence and hashes are
+> under [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
+> (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
+> candidate),
+> and human visual approval plus candidate-specific hosted CI are outstanding.
 > No TUI extra is released: published PyPI 0.1.1 contains no TUI package and no `[tui]` extra.
 > It overturns a v1 rule ("no full-screen TUI"), so it is deliberately detailed:
 > the point of the plan is that the next person can scaffold the work without
@@ -28,7 +35,7 @@
 > **Supersedes:** the "NO full-screen TUI" rule in `AGENTS.md` §1.5 and
 > `SKILL_LENS_SPECIFICATION.md` §5.
 > **Author:** maintainer, 2026-10-04.
-> **Current revision:** 2026-11-03. Original readiness finding dated 2026-10-04
+> **Current revision:** 2026-11-05. Original readiness finding dated 2026-10-04
 > (checked against source, temporary crash reproductions and published dependency
 > metadata at that date) remains a historical record. U3 Home is technically
 > accepted with independent review and local gates:
@@ -43,7 +50,8 @@
 > technical verification are complete in development.
 > U7 implementation and parent technical verification are complete in the
 > current tree. U8 implementation and local evidence are complete in the current
-> working tree; U9 remains a future assignment.
+> working tree. U9 completed the local 0.2.0 release preparation; publishing is a
+> separate, unauthorized mission.
 
 > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
 > Catalog, skill contents, settings and diagnostic inputs remain fixed until
@@ -61,7 +69,11 @@
 > [Parent verification](docs/validation/u7/coordinator/verification.md) passed.
 > U8 Help/keyboard/docs implementation is present with local evidence under
 > [`docs/validation/u8/implementation/`](docs/validation/u8/implementation/);
-> U9 release preparation remains future work.
+> U9 release preparation is recorded under
+> [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
+> (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
+> candidate), which qualifies an unpublished 0.2.0 candidate rather than
+> announcing a release.
 
 ---
 
@@ -1062,6 +1074,18 @@ human visual approval, hosted CI acceptance or release.
 ### Step 9 — Release 0.2.0
 - Bump versions, refresh lock, follow `DEVELOPMENT.md` `Releasing`.
 - **Gate:** all release checks pass; TUI smoke-tested from the built wheel.
+- **Implementation status (U9):** versions, `uv.lock`, changelog and status
+  documents are synchronized at 0.2.0; the wheel and source archive were built
+  from a clean source export and passed `twine check`, archive metadata and
+  content checks; base, minimum-Textual and latest-Textual installations passed
+  outside the checkout; the installed terminal interface was driven at 100×30
+  and 60×24. This is an unpublished candidate: no upload, tag or release date
+  exists, human visual approval and candidate-specific hosted CI are outstanding,
+  and the checklist lives in
+  [`DEVELOPMENT.md`](DEVELOPMENT.md#020-candidate-qualification-u9). Evidence:
+  [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
+  (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
+  candidate; see the supersession note).
 
 ---
 
@@ -1867,7 +1891,12 @@ U6 implementation and local checks are recorded under
 `docs/validation/u6/coordinator/verification.md`. U8 implementation and local
 checks are recorded under `docs/validation/u8/implementation/`; coordinator
 verification and both independent final reviews passed on 5 November 2026
-(`docs/validation/u8/coordinator/review-receipt.json`).
+(`docs/validation/u8/coordinator/review-receipt.json`). U9's frozen plan is
+`docs/plans/2026-11-05-tui-u9-release-preparation.md`; its implementation and
+artifact evidence are under `docs/validation/u9/implementation/` (first wave)
+and `docs/validation/u9/coordinator/precommit/` (rebuilt candidate), which
+record an unpublished 0.2.0 candidate and the checks still owned by the
+coordinator.
 
 After **each row**, run `pytest --cov=skill_lens`, `mypy`, `ruff check .` and
 `ruff format --check .` using the repository environment. State what changed,

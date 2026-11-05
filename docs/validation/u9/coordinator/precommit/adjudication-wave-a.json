@@ -1,0 +1,52 @@
+{
+  "recorded_at": "2026-11-05T21:15:00Z",
+  "wave": "A",
+  "reviews": [
+    {
+      "id": "reviewer-1-round-1",
+      "cli": "mcode exec",
+      "requested": "minimax/MiniMax-M3.1-Flash, effort xhigh",
+      "receipt_identity": "providerId=minimax, modelId=MiniMax-M3.1-Flash, variant=thinking; effort flag-configured, receipt does not echo effort",
+      "exit": "MCODE_EXIT=0",
+      "verdict": "changes_required",
+      "report": "raw-reviewer-1-exec.json (full output in coordinator notes)",
+      "duration_ms": 113773
+    },
+    {
+      "id": "reviewer-2-round-1",
+      "cli": "perch run",
+      "requested": "glm-5.3-flash-starter, effort max",
+      "receipt_identity": "unverified: 7 quota failures on stealth/crouton-alpha, completed calls unlabeled provider=auto, selectedModel=null; effort capped to high (non-Pro account); owner authorized continuing with these deviations (approvals.json)",
+      "exit": "PERCH_EXIT=2",
+      "status": "no report produced: run reached approval_required on its first terminal command and cannot answer interactively in one-shot mode; 18 read-only tool calls completed before stopping",
+      "disposition": "retry as a fresh one-shot with perch's non-interactive approval policy auto_review; disclosed here; identity deviation unchanged"
+    }
+  ],
+  "findings_dispositions": [
+    {"id": "C-F7", "type": "blocker", "raised_by": "reviewer-1-round-1",
+     "finding": "All five status documents pointed only at docs/validation/u9/implementation/, whose r1 receipts hold invalidated source-archive hashes; the rebuilt receipts under coordinator/precommit/ were unreachable from the documents.",
+     "reproduction": "coordinator verified: r1 sdist 53263dde... matches no retained artifact; r2 sdist 92c81c3d... recorded only under coordinator/precommit; no supersession note in implementation/. Confirmed real; accepted.",
+     "decision": "accepted",
+     "correction": "Nine pointer sentences across README/CHANGELOG(x2)/DEVELOPMENT/FULL_SCREEN_TUI(x4)/SPEC now name both folders; append-only implementation/SUPERSESSION.md documents the r1->r2->r3 chain with exact hashes; because these are packaged docs, the candidate was rebuilt again (r3 wave) and all receipts re-run."},
+    {"id": "C-S1", "type": "suggestion", "raised_by": "reviewer-1-round-1",
+     "finding": "Export snippets lacked mkdir -p for $work/src; tar fails loudly.",
+     "decision": "accepted; mkdir -p added in both snippets."},
+    {"id": "C-S2", "type": "suggestion", "raised_by": "reviewer-1-round-1",
+     "finding": "$root/$work used in generic Releasing step 3 before being introduced.",
+     "decision": "accepted; defined at first use."},
+    {"id": "C-S3", "type": "suggestion", "raised_by": "reviewer-1-round-1",
+     "finding": "Probe comment self-contradictory (script launched from repo root is fine; lane cwds are what must be outside).",
+     "decision": "accepted; comment rewritten."},
+    {"id": "C-S4", "type": "suggestion", "raised_by": "reviewer-1-round-1",
+     "finding": "Step 1 did not show manifest recording though the checklist requires it.",
+     "decision": "accepted; step 1 comment now names qualify_candidate.py's manifest and overlaid-hash recording."}
+  ],
+  "integrity": {
+    "pre_wave_fingerprint": "pre-wave-fingerprint.json (aggregate 7c74836efe8d18d7..., tracked 1912, untracked 925)",
+    "post_wave_a_result": "zero tracked-file changes; zero product-file changes",
+    "unexpected_additions": [
+      ".perch/PERCH.md and .perch/mcp.json — config scaffolding created by the perch CLI itself at workspace startup (its own session warning 'No PERCH.md ...' confirms the behavior), not by reviewer instructions. Preserved untouched, excluded from the commit scope, and disclosed here per the preserve/inspect/attribute rule."
+    ]
+  },
+  "next": "r3 gates + requalification (running), SUPERSESSION.md written from r3 hashes, then concurrent wave B: reviewer-1 round-2 follow-up (mcode) and reviewer-2 fresh run (perch, auto_review)."
+}

@@ -1,0 +1,42 @@
+{
+  "recorded_at": "2026-11-05T17:41:26Z",
+  "command_prefix": ".venv/bin/",
+  "gates": {
+    "pytest": {
+      "command": ".venv/bin/pytest --cov=skill_lens -q",
+      "exit_code": 0,
+      "passed": 1379,
+      "skipped": 1,
+      "duration_seconds": 444.11,
+      "combined_coverage_percent": 90.1,
+      "log": "final-pytest.log",
+      "skip_reason": "tests/test_session_snapshot.py:1979 Filesystem is case-insensitive; dual distinct physical files unsupported.",
+      "note": "Run after the last code, test and tracked-document change; the only files added afterwards are untracked evidence documents under docs/validation/u9/implementation/, which are outside pytest's testpaths, mypy's file list and coverage's source."
+    },
+    "mypy": {
+      "command": ".venv/bin/mypy",
+      "exit_code": 0,
+      "summary": "Success: no issues found in 46 source files",
+      "log": "final-mypy.log"
+    },
+    "ruff-check": {
+      "command": ".venv/bin/ruff check .",
+      "exit_code": 0,
+      "summary": "All checks passed!",
+      "log": "final-ruff-check.log"
+    },
+    "ruff-format-check": {
+      "command": ".venv/bin/ruff format --check .",
+      "exit_code": 0,
+      "summary": "433 files already formatted",
+      "log": "final-ruff-format-check.log",
+      "note": "Re-run after the final evidence documents were added. ruff's counter includes every file it walks, so it grows with the evidence directory; the pass/fail signal is the exit code and the absence of reformat suggestions."
+    }
+  },
+  "baseline_for_comparison": {
+    "passed": 1338,
+    "skipped": 1,
+    "combined_coverage_percent": 90.1,
+    "note": "Recorded in this session before edits; final run adds 41 new test items (tests/test_tui_packaging.py 26 -> 67) and keeps the same single filesystem skip."
+  }
+}

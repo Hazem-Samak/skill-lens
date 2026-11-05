@@ -11,108 +11,86 @@ all clean. Earlier unreleased work (including Stage H) records local-only
 verification. The later CI repair was verified on all nine GitHub jobs; the
 dated evidence below distinguishes those results from the historical records.
 
+`[0.2.0]` below is a **preparation record, not a published release**: it states
+its own local verification and names what is still unproven. The published
+releases remain `0.1.0` and `0.1.1`.
+
 ---
 
 ## [Unreleased]
 
-Fixes and improvements waiting for the next version. Nothing here is published
-yet: `[Unreleased]` is deliberately not a released heading, so the version gate
-(`test_changelog_documents_the_current_version`) still demands a real release
-section before a release. This project targets 0.2 for the next versioned
-release (the optional `[tui]` browsing layer), not 0.1.2 — do not rename this
-heading to 0.1.2.
+Nothing newer than the 0.2.0 preparation entry is recorded yet. This section is
+kept rather than deleted because the version gate
+(`test_changelog_documents_the_current_version`) treats `[Unreleased]` as *not* a
+released heading, so the next version needs a real section of its own.
 
-The current development branch ships six line-oriented CLI commands plus an
-optional, additive, read-only TUI implemented through U7 Doctor. C1–C5 and U1–U5
-are technically accepted in development after coordinator verification and
-independent review. U6 implementation checks are recorded in
-`docs/validation/u6/implementation/`; final parent technical verification passed
-as recorded in `docs/validation/u6/coordinator/verification.md`. U7 Doctor is
-implemented in the current tree; local checks and mutation evidence are recorded
-in `docs/validation/u7/implementation/`;
-[parent verification](docs/validation/u7/coordinator/verification.md) passed. U8
-adds the read-only Help overlay, contextual keyboard polish, covered-screen worker
-suspension, empty/error-state clarifications and user documentation; its local
-implementation evidence is under `docs/validation/u8/implementation/`. U9 release
-preparation and 0.2 publishing remain future work. This is not human visual
-approval, hosted CI acceptance or a release. Earlier local gate evidence is recorded under
-`docs/validation/assessment-repairs/h/` and `docs/validation/u3/`. The later
-[overnight CI repair](docs/validation/overnight/2026-10-24/acceptance.md) passed
-all eight Ubuntu/macOS Python 3.11–3.14 jobs and the packaging job in
-[run 40136543801](https://github.com/Hazem-Samak/skill-lens/actions/runs/40136543801).
-This is development verification, not a release.
+---
 
-### Workflow documentation
+## [0.2.0] — Unreleased (release preparation)
 
-- Corrected T3 Nightly model readback, delegated worktree isolation, and launch
-  request IDs against the installed API. Shared policy now routes explicitly to
-  T3, Herdr, BB, and Rex without leaking one host's permission or lifecycle rules
-  into another.
-- Repaired Herdr status fields, parent report addresses, blocked-answer handling,
-  existing-worker display, and per-terminal cleanup. Added native BB and Rex
-  adapters covering explicit checkout selection, complete evidence, waits,
-  messaging, optional workflow capabilities, and ownership-safe cleanup.
+**Prepared locally, not published.** There is no upload, no tag and no release
+date: the published release is still `0.1.1`, and this heading deliberately has
+no tag link at the foot of this file while `v0.2.0` does not exist. The square
+brackets stay so the version gate sees the version; the entry records what the
+candidate contains so a later, separately authorized publication mission can
+finalize the date and the public installation wording without rewriting history.
 
-### Planned
+Verified for this candidate (commands, hashes and logs under
+[`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
+for the first wave and
+[`docs/validation/u9/coordinator/precommit/`](docs/validation/u9/coordinator/precommit/)
+for the rebuilt candidate — the supersession note names the live archive
+hashes):
 
-- **0.2 — an interactive full-screen TUI (major surface change).** A new,
-  *optional*, additive browsing layer so the tool can be opened once and
-  navigated instead of only run command-by-command. It stays strictly read-only
-  and presentation-only, reading the same frozen models the `--json` output is
-  built from, and ships as the opt-in `[tui]` extra so the base install gains no
-  new runtime dependency. All existing commands, flags, JSON shapes and exit
-  codes are unchanged; the line-oriented CLI remains the primary interface.
-  This overturns the v1 "no full-screen TUI" rule for 0.2. **Partial status:**
-  C1–C5 (byte/hash helpers, captured engine inputs, capture and cancellation,
-  presentation extraction, Step 0 audit) and U1–U4 (optional install, worker
-  controller, Home browsing and Why resolution) are accepted development work on
-  the current branch. U5 (read-only unified Diff from Home and Why, plus the raw
-  JSON mode of Home, Why and Diff) is **technically accepted in development**:
-  final local gate evidence records 1192 passed, 1 skipped, 90.15% combined
-  coverage with branch measurement, mypy and Ruff clean. Coordinator mutation
-  rechecks closed the former survivors; both independent final-review follow-ups
-  passed after the Why focus correction. Real-terminal smoke preserved focus in
-  sixteen round trips and retained a positive ordinary scroll offset.
-  See [U5 acceptance](docs/validation/u5/acceptance.md).
-  U6 Agents and Compare are implemented with local implementer evidence under
-  `docs/validation/u6/implementation/`; parent technical verification passed as
-  recorded in `docs/validation/u6/coordinator/verification.md`. U7 Doctor is
-  implemented locally with evidence under `docs/validation/u7/implementation/`;
-  [parent verification](docs/validation/u7/coordinator/verification.md) passed.
-  U8 Help, keyboard polish, empty/error states and documentation are implemented
-  in the current working tree with local evidence under
-  `docs/validation/u8/implementation/`; U9 release preparation is future work.
-  The full design lives in
-  [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
+- the four source gates (`pytest --cov=skill_lens`, `mypy`, `ruff check .`,
+  `ruff format --check .`) on macOS / Python 3.11.16 / Textual 8.2.8;
+- a wheel and a source archive built from a clean export of the reviewed sources,
+  with recorded SHA-256 hashes and `twine check` metadata PASS;
+- three fresh installations outside the checkout — a base install without
+  Textual (CLI lifecycle fallback checks), plus `textual==8.2.8` and
+  unconstrained-latest TUI installs that each ran the 14 installed selections
+  (461 tests, zero skips), including the 17 CLI snapshots and 16 JSON goldens;
+- an automated terminal smoke run of the installed candidate at 100×30 and 60×24.
 
-### Development documentation and resource measurements (Stage H)
-
-These are documentation and measurement repairs only — no product, test, CI,
-dependency, snapshot or golden changes. Local verification and independent
-review are recorded in the [Stage H acceptance record](docs/validation/assessment-repairs/h/acceptance.md).
-
-- **README/DEVELOPMENT status reconciliation.** Published 0.1.1 (six CLI
-  commands, no TUI extra) vs current development (six CLI commands plus C1–C5
-  and U1–U2 TUI entrypoint/controller/skeleton; U3–U9 future work). Dated gate
-  numbers linked instead of stale counters; historical measurements preserved.
-- **FULL_SCREEN_TUI.md status header.** Reflects C1–C5 + U1–U2 as complete
-  development work and U3–U9 as future work; operative contract and historical
-  metrics preserved.
-- **AGENTS.md architecture map/pointers.** Read-before-changing pointers updated
-  to reference Stage H validation evidence.
-- **Resource-risk measurement.** Byte-heavy capture/refresh benchmarks on
-  synthetic fixtures (8 skills × 2 MiB, 8 × 8 MiB, one larger aggregate file,
-  3 repeats each) with tracemalloc traced heap, retention and preservation
-  reporting. See
-  [`docs/validation/assessment-repairs/h/resource-risk.md`](./docs/validation/assessment-repairs/h/resource-risk.md)
-  and [`benchmark_capture.py`](./docs/validation/assessment-repairs/h/benchmark_capture.py).
-  No resource policy is approved or implemented; the snapshot remains
-  unbounded by bytes.
+**Not claimed:** human visual approval, hosted CI for this candidate's commit, or
+publication. Earlier green runs (including U8's packaging job and this branch's
+baseline gates) prove their own commits, not this candidate.
 
 ### Added
 
+- **Optional full-screen TUI (major surface change).** `skill-lens` can now be
+  opened once and navigated: Home, Why, Diff, Agents, Compare and Doctor screens,
+  a raw JSON mode of every view, and a read-only Help overlay. It is *optional*,
+  additive, strictly read-only and presentation-only — it reads the same frozen
+  models the `--json` output is built from — and it ships as the opt-in `[tui]`
+  extra over `textual>=8.2.8`, so the base install gains no new runtime
+  dependency. All existing commands, flags, JSON shapes and exit codes are
+  unchanged, and the line-oriented CLI remains the primary interface. Launch
+  rules: bare `skill-lens` opens the TUI only when Textual is installed and both
+  stdin and stdout are interactive; `--plain`, a non-interactive stream or a
+  missing extra prints help instead and exits `0` — the install tip appears only
+  when both streams are interactive and the extra is missing — and explicit
+  `skill-lens tui` without the extra exits `2`. Screens stay on one captured
+  session until a successful refresh; the default capture budget is 256 MiB
+  (`--max-snapshot-bytes`, `0` disables it); a normal quit exits `0` and an
+  accepted unexpected internal fault makes quit exit `3`. This overturns the v1
+  "no full-screen TUI" rule for 0.2. Design: [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
+  Implementation record: C1–C5 (byte/hash helpers, captured engine inputs,
+  capture and cancellation, presentation extraction, Step 0 audit) and U1–U8 are
+  complete. U5 (Diff and raw JSON) final local gate evidence recorded 1192
+  passed, 1 skipped, 90.15% combined coverage — see
+  [U5 acceptance](docs/validation/u5/acceptance.md). U6 and U7 carry local
+  implementer evidence plus passing parent verification
+  (`docs/validation/u6/coordinator/verification.md`,
+  `docs/validation/u7/coordinator/verification.md`). U8's coordinator
+  verification and both independent final reviews passed on 5 November 2026
+  (`docs/validation/u8/coordinator/`). U9 prepared this candidate; its evidence
+  is under [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
+  (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
+  candidate; see the supersession note).
+
 - **Help overlay, contextual keymap and empty-state polish (U8).** The
-  development TUI now has one read-only Help modal over Home, Why, Diff, Agents,
+  TUI now has one read-only Help modal over Home, Why, Diff, Agents,
   Compare and Doctor, including raw JSON, initial-loading and no-session states.
   `?` opens it outside the Home filter input; the app-level priority `F1` toggles
   it even while typing. The body is scrollable, keeps the Close button visible,
@@ -131,7 +109,7 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
   and both independent final reviews passed with no blockers (ledger under
   `docs/validation/u8/coordinator/`); this is not a 0.2 release claim.
 
-- **Why resolution screen (U4).** The development TUI now provides a dedicated
+- **Why resolution screen (U4).** The TUI now provides a dedicated
   Why resolution screen accessible by pressing Enter on a focused Home skill row.
   Shows candidate collapsibles in resolution order, active agent switching strip,
   lookup details, and honest loading/refreshed states. See the
@@ -139,7 +117,7 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
   [local technical acceptance](docs/validation/u4/acceptance.md). Human visual
   approval and 0.2 publishing remain separate and are not claimed here.
 
-- **Home browsing screen (U3).** The development TUI now shows a skill table,
+- **Home browsing screen (U3).** The TUI now shows a skill table,
   scrollable metadata preview, text and agent filters, and optional per-agent
   resolution states. Selection, refresh and late worker results preserve the
   frozen session contract; browsing stays read-only. Local checks, a synthetic
@@ -172,6 +150,14 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
   [`docs/plans/2026-10-16-snapshot-capture-budget.md`](./docs/plans/2026-10-16-snapshot-capture-budget.md).
 
 ### Fixed
+
+- **Installed-lane receipts under-reported their test counts.** pytest appends an
+  elapsed parenthetical to its summary line; the packaging harness's pattern did
+  not allow for it, so a lane that really ran 451 tests was receipted as
+  `test_count: 0`, and nothing failed. The pattern now accepts both forms, an
+  unparsable summary raises instead of silently defaulting to zero, a lane with no
+  passed tests is rejected, and the receipt records the summary line and duration.
+  Each new guard is mutation-tested.
 
 - **TUI Home could stay empty after its initial scan.** If the first capture
   finished before the Home screen finished mounting, the ready snapshot was
@@ -208,6 +194,46 @@ review are recorded in the [Stage H acceptance record](docs/validation/assessmen
   Both routes were verified against real installs, and the README was rendered
   through PyPI's own `readme_renderer` to confirm the new `<details>` block and
   its page anchor survive there.
+
+### Documentation and process records
+
+Recorded because they are repo-visible work on this branch. They are
+documentation and measurement changes only; none of them ships inside the wheel.
+
+#### Workflow documentation
+
+- Corrected T3 Nightly model readback, delegated worktree isolation, and launch
+  request IDs against the installed API. Shared policy now routes explicitly to
+  T3, Herdr, BB, and Rex without leaking one host's permission or lifecycle rules
+  into another.
+- Repaired Herdr status fields, parent report addresses, blocked-answer handling,
+  existing-worker display, and per-terminal cleanup. Added native BB and Rex
+  adapters covering explicit checkout selection, complete evidence, waits,
+  messaging, optional workflow capabilities, and ownership-safe cleanup.
+
+#### Development documentation and resource measurements (Stage H)
+
+These are documentation and measurement repairs only — no product, test, CI,
+dependency, snapshot or golden changes. Local verification and independent
+review are recorded in the [Stage H acceptance record](docs/validation/assessment-repairs/h/acceptance.md).
+
+- **README/DEVELOPMENT status reconciliation.** Published 0.1.1 (six CLI
+  commands, no TUI extra) vs current development (six CLI commands plus C1–C5
+  and U1–U2 TUI entrypoint/controller/skeleton; U3–U9 future work). Dated gate
+  numbers linked instead of stale counters; historical measurements preserved.
+- **FULL_SCREEN_TUI.md status header.** Reflects C1–C5 + U1–U2 as complete
+  development work and U3–U9 as future work; operative contract and historical
+  metrics preserved.
+- **AGENTS.md architecture map/pointers.** Read-before-changing pointers updated
+  to reference Stage H validation evidence.
+- **Resource-risk measurement.** Byte-heavy capture/refresh benchmarks on
+  synthetic fixtures (8 skills × 2 MiB, 8 × 8 MiB, one larger aggregate file,
+  3 repeats each) with tracemalloc traced heap, retention and preservation
+  reporting. See
+  [`docs/validation/assessment-repairs/h/resource-risk.md`](./docs/validation/assessment-repairs/h/resource-risk.md)
+  and [`benchmark_capture.py`](./docs/validation/assessment-repairs/h/benchmark_capture.py).
+  No resource policy is approved or implemented; the snapshot remains
+  unbounded by bytes.
 
 ---
 

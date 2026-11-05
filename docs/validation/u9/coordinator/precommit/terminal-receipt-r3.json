@@ -1,0 +1,972 @@
+{
+  "recorded_at": "2026-11-05T19:11:30Z",
+  "os": "Darwin 27.0.0",
+  "machine": "arm64",
+  "terminal": "xterm-256color",
+  "driver_python": "3.11.16 (main, Aug 25 2026, 13:50:51) [Clang 22.1.3 ]",
+  "artifact_sha256": "9be079b70933f160d334e6806e906fb600ef4e9a735bd5a2d149ed5ea3e4eba7",
+  "installed": {
+    "metadata_version": "0.2.0",
+    "package_version": "0.2.0",
+    "textual_version": "8.2.8",
+    "skill_lens_file": "/tmp/u9-candidate-r3/smoke/min_lane/venv/lib/python3.11/site-packages/skill_lens/__init__.py",
+    "cli_version_output": "skill-lens 0.2.0"
+  },
+  "driver_cwd": "/private/tmp/u9-terminal-r3",
+  "scenarios": {
+    "nonempty_100x30": {
+      "binary": "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens",
+      "home": "/private/tmp/u9-terminal-r3/home",
+      "terminal_size": {
+        "columns": 100,
+        "rows": 30
+      },
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens",
+        "tui",
+        "--sandbox",
+        "/private/tmp/u9-terminal-r3/home",
+        "--cwd",
+        "/private/tmp/u9-terminal-r3/home/project"
+      ],
+      "steps": [
+        {
+          "id": "home",
+          "description": "Home lists the captured catalogue and shows the installed version",
+          "keys": [],
+          "expected": [
+            "Skill Lens \u2014 0.2.0",
+            "Skill Lens Home",
+            "alpha",
+            "Ready:"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.33,
+          "screen_excerpt": "\nScope: Global                        \nPath: ~/.claude/skills/alpha         \nAgents: Claude Code, OpenCode V2 (2) \nHash:                                \nsha256:211c046bda0279ebd34010dcc55d4f\n80aed78e1f022b87e2434e8280c0a63d2f   \nParse: valid (*)                     \nVariant: A                           \nHealth: ok                           \n                                     \nDescription:                         \nAlpha skill from Claude personal.    \n                                                                                                    \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "help-open",
+          "description": "Help overlay opens and names its close control",
+          "keys": [
+            "help"
+          ],
+          "expected": [
+            "Help",
+            "Close"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                                                        \u2502   \n  \u2502 HOME \u2014 ORDINARY LIST                                                                        \u2502   \n  \u2502   \u2191 \u2193 / j k \u2014 Move the selected row.                                                        \u2502   \n  \u2502   J \u2014 Show raw JSON for the whole captured scan, not the filtered rows. It requires the     \u2502   \n  \u2502 \u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594                                                                                \u2502   \n R\u2502    Close                                                                                    \u2502   \n  \u2502 \u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581                                                                                \u2502   \n  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518   \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n                                                                                                     esc Close  q Quit  r Refresh                                                                        esc Close  q Quit  r Refresh "
+        },
+        {
+          "id": "help-dismiss",
+          "description": "Esc returns to the Home screen",
+          "keys": [
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "           \u2502 Alpha skill from Claude personal.     \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                                                                    \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "why",
+          "description": "Enter opens the Why resolution screen for the focused skill",
+          "keys": [
+            "enter"
+          ],
+          "expected": [
+            "Installation:",
+            "Name: alpha",
+            "Claude Code"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                                    \n    Reason: Highest-priority copy (Alpha skill from Claude personal.).                              \n    Rule: claude_personal_beats_project  Evidence: documented                                       \n                                                                                                    \n\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\n  \u25b6 . alpha  [C]  (UNSEARCHED)                                                                      \n                                                                                                    \n\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\n  \u25b6 . alpha  [B]  (UNSEARCHED)                                                                      \n                                                                                                    \n esc Back  d Diff  J JSON  q Quit  r Refresh  f1 Help                                                esc Back  d Diff  J JSON  q Quit  r Refresh  f1 Help                                                esc Back  d Diff  J JSON  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "diff",
+          "description": "d opens the Diff screen with all captured copies",
+          "keys": [
+            "diff"
+          ],
+          "expected": [
+            "Diff: 'alpha'",
+            "Baseline"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                                           \n -Alpha body line one.                                                                              \n +Alpha body line one, edited in the codex copy.                                                    \n * ~/.agents/skills/alpha [Variant C] (user, valid)  1 file(s) differ                               \n   SKILL.md modified                                                                                \n --- SKILL.md                                                                                       \n +++ SKILL.md                                                                                    \u2581\u2581 \n @@ -1,5 +1,5 @@                                                                                    \n  ---                                                                                               \n  name: alpha                                                                                       \n -description: Alpha skill from Claude personal.                                                    \n esc Back  J JSON  q Quit  r Refresh  f1 Help                                                        esc Back  J JSON  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "back-home-1",
+          "description": "Esc from Diff returns to Why, Esc again returns Home",
+          "keys": [
+            "escape",
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.68,
+          "screen_excerpt": "           \u2502 Alpha skill from Claude personal.     \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                                                                    \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "agents",
+          "description": "g opens the Agents screen with the captured registry detail",
+          "keys": [
+            "agents"
+          ],
+          "expected": [
+            "Agents",
+            "Collision policy:",
+            "Policy evidence:"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "            \n                                                       \nSearch roots (5):                                      \n                                                       \nRoot 1: antigravity_cli_global                         \n  Kind: global                                         \n  Path template: .gemini/antigravity-cli/skills        \n  Scope: user                                          \n  Rank: 75                                             \n  Rule: antigravity_cli_skills                         \n  Evidence: documented                                 \n                                  \u2589     \n  Base: home                                           \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n esc Back  J JSON  q Quit  r Refresh  f1 Help                                                                                         \u2589     \n esc Back  J JSON  q Quit  r Refresh  f1 Help                                   \u2589     "
+        },
+        {
+          "id": "back-home-2",
+          "description": "Esc returns to Home",
+          "keys": [
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "           \u2502 Alpha skill from Claude personal.     \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                                                                    \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "compare-picker",
+          "description": "c opens the Compare picker",
+          "keys": [
+            "compare"
+          ],
+          "expected": [
+            "Compare agents"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                                                  \n        Compare                                                                                     \n  \u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581                                                                              \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                     A: Choose an agent    B: Choose an agent                                                         \n                                                                                                  \n                                                                                                  \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n esc Back  J JSON  q Quit  r Refresh  f1 Help                                                        esc Back  J JSON  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "compare-result",
+          "description": "Choosing two agents renders the comparison summary",
+          "keys": [
+            "enter",
+            "down",
+            "enter"
+          ],
+          "expected": [
+            "Shared:",
+            "Relation:"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.91,
+          "screen_excerpt": "                                            \n                                                                                                    \n                                                                                                    \n                                                                                                    \n                                                                                                    \n                                                                                                    \n                                                                                                    \n                                                                                                    \n                                                                                                    \n                                                                                                    \n esc Back  J JSON  q Quit  r Refresh  f1 Help                                                        esc Back  J JSON  q Quit  r Refresh  f1 Help                                                        esc Back  J JSON  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "back-home-3",
+          "description": "Esc leaves the comparison and the picker",
+          "keys": [
+            "escape",
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.68,
+          "screen_excerpt": "           \u2502 Alpha skill from Claude personal.     \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                                                                    \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "doctor",
+          "description": "h opens the Doctor screen showing the dangling-symlink finding",
+          "keys": [
+            "doctor"
+          ],
+          "expected": [
+            "Doctor",
+            "dangling_symlink"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                        \u2502                                       \n                                                                                                    \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                                         \u2589                                      \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n esc Back  J JSON  q Quit  r Refresh  f1 Help                                                                            \u2589                                      \n esc Back  J JSON  q Quit  r Refresh  f1 Help                      \u2589                                      "
+        },
+        {
+          "id": "back-home-4",
+          "description": "Esc returns to Home",
+          "keys": [
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.41,
+          "screen_excerpt": "           \u2502 Alpha skill from Claude personal.     \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                                                                    \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "raw-json",
+          "description": "J on Home shows the canonical JSON document",
+          "keys": [
+            "json"
+          ],
+          "expected": [
+            "\"cwd\":"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.41,
+          "screen_excerpt": "                                                    \n       \"error_reason\": null,                                                                        \n       \"health_status\": \"ok\",                                                                       \n       \"is_symlink\": false,                                                                         \n       \"name\": \"alpha\",                                                                             \n       \"parse_status\": \"valid\",                                                                     \n       \"scope\": \"user\",                                                                             \n       \"traversal_complete\": true,                                                                  \n       \"variant_label\": \"A\"                                                                         \n     },                                                                                             \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "raw-json-off",
+          "description": "J toggles back to the ordinary table",
+          "keys": [
+            "json"
+          ],
+          "expected": [
+            "Skill Lens Home",
+            "alpha"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.41,
+          "screen_excerpt": "                                                    \u2502                                       \n                                                                                                    \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help                                                               "
+        },
+        {
+          "id": "filter",
+          "description": "/ focuses the filter input",
+          "keys": [
+            "filter"
+          ],
+          "expected": [
+            "Filter by name or description"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.41,
+          "screen_excerpt": "\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u258e\n Name    Scope   Parse                                      \n alpha   Global  *                                          \n alpha   Global  *                                          \n alpha   Global  *                                          \n beta    Global  *                                          \n broken  Global  x                                          \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n f1 Help                                                                                             f1 Help                                                                                             f1 Help "
+        },
+        {
+          "id": "filter-no-match",
+          "description": "A no-match filter explains how to clear it",
+          "keys": [
+            "type:nosuchskill"
+          ],
+          "expected": [
+            "No skills match the current filter"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "arse                                         \n                                     \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n                                                            \n No skills match the current filter. Press Esc to clear it.                                         \n                                                                                                    "
+        },
+        {
+          "id": "filter-clear",
+          "description": "Esc clears the filter and restores the captured rows",
+          "keys": [
+            "escape"
+          ],
+          "expected": [
+            "alpha"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.41,
+          "screen_excerpt": "                                            \nAlpha skill from Claude personal.    \n                                                            \n                                                            \n                                                            \n                                                                                                    \n                                                                                                    \n h Doctor  q Quit  r Refresh  f1 Help                                                               Name: alpha                          \nScope: Global                        \nPath: ~/.claude/skills/alpha         \nAgents: Claude Code, OpenCode V2 (2) \nHash:                                \nsha256:211c046bda0279ebd34010dcc55d4f\n80aed78e1f022b87e2434e8280c0a63d2f   \nParse: valid (*)                     \nVariant: A                           \nHealth: ok                           \n                                     \nDescription:                         \nAlpha skill from Claude personal.    \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "agent-filter",
+          "description": "a cycles the agent filter and labels the active agent",
+          "keys": [
+            "agent_filter"
+          ],
+          "expected": [
+            "Agent: ",
+            "(claude)"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.41,
+          "screen_excerpt": "                 \n                                                            \nVariant: A                           \n                                                            \nHealth: ok                           \n                                                            \n                                     \n                                                            \nDescription:                         \n                                                            \nAlpha skill from Claude personal.    \n                                                            \n                                                            \n                                                            \n                                                                                                    \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                    "
+        },
+        {
+          "id": "refresh",
+          "description": "r refreshes and the session reports ready again",
+          "keys": [
+            "refresh"
+          ],
+          "expected": [
+            "Ready:"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.41,
+          "screen_excerpt": "                 \n                                                            \nVariant: A                           \n                                                            \nHealth: ok                           \n                                                            \n                                     \n                                                            \nDescription:                         \n                                                            \nAlpha skill from Claude personal.    \n                                                            \n                                                            \n                                                            \n                                                                                                    \n                                                                                                    \n Ready: 5 skills discovered                                                                         \n                                                                                                    \n                                                                                                    "
+        }
+      ],
+      "steps_passed": true,
+      "restore": {
+        "returncode": 0,
+        "alternate_screen_left": true,
+        "cursor_shown": true,
+        "tail_escapes": [
+          "\u001b[?1000l",
+          "\u001b[?1003l",
+          "\u001b[?1004l",
+          "\u001b[?1006l",
+          "\u001b[?1015l",
+          "\u001b[?1049l",
+          "\u001b[?2004l",
+          "\u001b[?25h",
+          "\u001b[?7h"
+        ],
+        "tail_excerpt": "\u001b[<u"
+      },
+      "all_passed": true
+    },
+    "nonempty_60x24": {
+      "binary": "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens",
+      "home": "/private/tmp/u9-terminal-r3/home",
+      "terminal_size": {
+        "columns": 60,
+        "rows": 24
+      },
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens",
+        "tui",
+        "--sandbox",
+        "/private/tmp/u9-terminal-r3/home",
+        "--cwd",
+        "/private/tmp/u9-terminal-r3/home/project"
+      ],
+      "steps": [
+        {
+          "id": "home",
+          "description": "Home lists the captured catalogue and shows the installed version",
+          "keys": [],
+          "expected": [
+            "Skill Lens \u2014 0.2.0",
+            "Skill Lens Home",
+            "alpha",
+            "Ready:"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.33,
+          "screen_excerpt": "                            \u2582\u2582\n alpha   Global  *                                          \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Name: alpha                                                \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                            \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Name: alpha                                                \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n h Doctor  q Quit  r Refresh  f1 Help   \n  \n\u2582\u2582\n  "
+        },
+        {
+          "id": "help-open",
+          "description": "Help overlay opens and names its close control",
+          "keys": [
+            "help"
+          ],
+          "expected": [
+            "Help",
+            "Close"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "         \u2502  \n \u2502                                                  \u2585\u2585   \u2502  \n \u2502 COMMON KEYS                                           \u2502  \n \u2502   q / Ctrl+C \u2014 Quit through the normal                \u2502  \n \u2502 application path. Quit is cooperative and returns     \u2502\u2582\u2582\n \u2502 0, or 3 after an accepted internal fault.             \u2502  \n\u2500\u2502   r \u2014 Refresh the captured session. External          \u2502\u2500\u2500\n \u2502 edits appear only after a successful refresh; a       \u2502  \n \u2502 failed refresh can keep the previous catalog.         \u2502\u2586 \n \u2502   ? / Esc / Backspace \u2014 Close this Help. ? is         \u2502  \n \u2502 non-priority, so it stays ordinary filter text        \u2502  \n \u2502 while the Home filter input is focused.               \u2502  \n \u2502 \u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594                                          \u2502  \n \u2502    Close                                              \u2502  \n \u2502 \u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581                                          \u2502  \n \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518  \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n                                                             esc Close  q Quit  r Refresh                                esc Close  q Quit  r Refresh "
+        },
+        {
+          "id": "help-dismiss",
+          "description": "Esc returns to the Home screen",
+          "keys": [
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "invalid.  State appears only while an    \n agent filter is active.                                    \n Name    Scope   Parse                                      \n alpha   Global  *                                          \n alpha   Global  *                                        \u2582\u2582\n alpha   Global  *                                          \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Name: alpha                                                \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                            \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n h Doctor  q Quit  r Refresh  f1 Help   \n  \n\u2582\u2582\n  "
+        },
+        {
+          "id": "why",
+          "description": "Enter opens the Why resolution screen for the focused skill",
+          "keys": [
+            "enter"
+          ],
+          "expected": [
+            "Installation:",
+            "Name: alpha",
+            "Claude Code"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": ": alpha                                         \n Collision policy: Personal > Project (documented)          \n Report-wide headline: ACTIVE                               \n  \u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594                                            \n   Claude Code                                              \n  \u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581                                            \n  \u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594                                            \n   OpenCode V2                                              \n  \u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581                                            \n Ready: 5 skills discovered                                 \n                                                          \u2582\u2582\n Report: alpha for Claude Code                              \n\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594  \n  \u25bc * alpha  [A]  (ACTIVE)                                  \n                                                            \n    * alpha  [A]                                            \n      Canonical: ~/.claude/skills/alpha                     \n      Hash: sha256:211c046bda0279eb...                      \n esc Back  d Diff  J JSON  q Quit  r Refresh  f1 Help        esc Back  d Diff  J JSON  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "diff",
+          "description": "d opens the Diff screen with all captured copies",
+          "keys": [
+            "diff"
+          ],
+          "expected": [
+            "Diff: 'alpha'",
+            "Baseline"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "ies: 3                                                  \n Baseline: ~/.claude/skills/alpha (Variant A)               \n = ~/.claude/skills/alpha [Variant A] (user, valid)         \n baseline (no diff shown)                                   \n   Reference copy; every diff below is against it.          \n * ~/.codex/skills/alpha [Variant B] (user, valid)  1       \n file(s) differ                                             \n   SKILL.md modified                                        \n --- SKILL.md                                               \n +++ SKILL.md                                            \u2587\u2587 \n @@ -1,5 +1,5 @@                                            \n  ---                                                       \n  name: alpha                                               \n -description: Alpha skill from Claude personal.            \n +description: Alpha skill from Codex global.               \n  ---                                                       \n -Alpha body line one.                                      \n +Alpha body line one, edited in the codex copy.            \n esc Back  J JSON  q Quit  r Refresh  f1 Help                esc Back  J JSON  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "back-home-1",
+          "description": "Esc from Diff returns to Why, Esc again returns Home",
+          "keys": [
+            "escape",
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.68,
+          "screen_excerpt": "invalid.  State appears only while an    \n agent filter is active.                                    \n Name    Scope   Parse                                      \n alpha   Global  *                                          \n alpha   Global  *                                        \u2582\u2582\n alpha   Global  *                                          \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Name: alpha                                                \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                            \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n h Doctor  q Quit  r Refresh  f1 Help   \n  \n\u2582\u2582\n  "
+        },
+        {
+          "id": "agents",
+          "description": "g opens the Agents screen with the captured registry detail",
+          "keys": [
+            "agents"
+          ],
+          "expected": [
+            "Agents",
+            "Collision policy:",
+            "Policy evidence:"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "         \n Source: https://antigravity.google/docs/skills             \n Walk boundary: git_root                                    \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                              \n  \n  \n  \n  \n  \n  \n\u2585\u2585\n  \nName: Antigravity CLI                                   \nID: antigravity                                         \nIdentity source: hybrid                                 \nCollision policy: Shadow (Project > User > Builtin)     \nCoexistence policy: shadow                              \nPolicy evidence: empirical                              \nSource: https://antigravity.google/docs/skills          \nWalk boundary: git_root                                 \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n esc Back  J JSON  q Quit  r Refresh  f1 Help                 \n  \n  \n  \n  \n  \n  \n\u2585\u2585\n  \n esc Back  J JSON  q Quit  r Refresh  f1 Help   \n  \n  \n  \n  \n  \n  \n\u2585\u2585\n  "
+        },
+        {
+          "id": "back-home-2",
+          "description": "Esc returns to Home",
+          "keys": [
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "invalid.  State appears only while an    \n agent filter is active.                                    \n Name    Scope   Parse                                      \n alpha   Global  *                                          \n alpha   Global  *                                        \u2582\u2582\n alpha   Global  *                                          \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Name: alpha                                                \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                            \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n h Doctor  q Quit  r Refresh  f1 Help   \n  \n\u2582\u2582\n  "
+        },
+        {
+          "id": "compare-picker",
+          "description": "c opens the Compare picker",
+          "keys": [
+            "compare"
+          ],
+          "expected": [
+            "Compare agents"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                  \n  OpenA  co                                                 \n  A: Choose an agent    B: Choose an agent                  \n                                                            \n                                                            \n  \u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594                                      \n        Compare                                             \n  \u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581                                      \n Ready: 5 skills discovered                                 \n                                                            \n                                                              \n  \n\u2585\u2585\n  \n  \n  \n\u2584\u2584\n  \n  \n A: Choose an agent    B: Choose an agent                 \n                                                          \n                                                          \n Ready: 5 skills discovered                                 \n                                                            \n esc Back  J JSON  q Quit  r Refresh  f1 Help                 \n  \n\u2585\u2585\n  \n  \n  \n\u2584\u2584\n  \n  \n esc Back  J JSON  q Quit  r Refresh  f1 Help                 \n  \n\u2585\u2585\n  \n  \n  \n\u2584\u2584\n  \n  \n esc Back  J JSON  q Quit  r Refresh  f1 Help   \n  \n\u2585\u2585\n  \n  \n  \n\u2584\u2584\n  \n  "
+        },
+        {
+          "id": "compare-result",
+          "description": "Choosing two agents renders the comparison summary",
+          "keys": [
+            "enter",
+            "down",
+            "enter"
+          ],
+          "expected": [
+            "Shared:",
+            "Relation:"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.91,
+          "screen_excerpt": "ared: 0  Diverged: 0  A only: 0  B only: 3               \n Skill: alpha                                               \n Relation: B only                                           \n Path A: -                                                  \n Path B: ~/.claude/skills/alpha                             \n Skill: beta                                                \n Relation: B only                                           \n Path A: -                                                  \n Path B: ~/.claude/skills/beta                              \n Skill: broken                                              \n Relation: B only                                           \n Path A: -                                                  \n Path B: ~/.claude/skills/broken                            \n                                                            \n                                                            \n                                                            \n                                                            \n esc Back  J JSON  q Quit  r Refresh  f1 Help                esc Back  J JSON  q Quit  r Refresh  f1 Help                esc Back  J JSON  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "back-home-3",
+          "description": "Esc leaves the comparison and the picker",
+          "keys": [
+            "escape",
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.67,
+          "screen_excerpt": "invalid.  State appears only while an    \n agent filter is active.                                    \n Name    Scope   Parse                                      \n alpha   Global  *                                          \n alpha   Global  *                                        \u2582\u2582\n alpha   Global  *                                          \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Name: alpha                                                \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                            \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n h Doctor  q Quit  r Refresh  f1 Help   \n  \n\u2582\u2582\n  "
+        },
+        {
+          "id": "doctor",
+          "description": "h opens the Doctor screen showing the dangling-symlink finding",
+          "keys": [
+            "doctor"
+          ],
+          "expected": [
+            "Doctor",
+            "dangling_symlink"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Severity: error                                            \n Code: dangling_symlink                                     \n Message: '~/.claude/skills/broken' links to a target       \n that does not exist -- claude, opencode cannot load        \n 'broken'.                                                  \n Path: ~/.claude/skills/broken                              \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                                                 \u2589                                      \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n esc Back  J JSON  q Quit  r Refresh  f1 Help                                    \u2589                                      \n esc Back  J JSON  q Quit  r Refresh  f1 Help                      \u2589                                      "
+        },
+        {
+          "id": "back-home-4",
+          "description": "Esc returns to Home",
+          "keys": [
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "invalid.  State appears only while an    \n agent filter is active.                                    \n Name    Scope   Parse                                      \n alpha   Global  *                                          \n alpha   Global  *                                        \u2582\u2582\n alpha   Global  *                                          \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Name: alpha                                                \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                            \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n h Doctor  q Quit  r Refresh  f1 Help   \n  \n\u2582\u2582\n  "
+        },
+        {
+          "id": "raw-json",
+          "description": "J on Home shows the canonical JSON document",
+          "keys": [
+            "json"
+          ],
+          "expected": [
+            "\"cwd\":"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "hy   \n h Doctor  q Quit  r Refresh  f1 Help                        {                                                          \n   \"cwd\": \"/private/tmp/u9-terminal-r3/home/project\",       \n   \"home\": \"/private/tmp/u9-terminal-r3/home\",              \n   \"skills\": [                                              \n     {                                                      \n       \"agents\": [                                          \n         \"claude\",                                          \n         \"opencode\"                                         \n       ],                                                   \n       \"canonical_path\":                                    \n \"/private/tmp/u9-terminal-r3/home/.claude/skills/alpha\",   \n       \"content_hash\":                                      \n \"sha256:211c046bda0279ebd34010dcc55d4f80aed78e1f022b87e2   \n 434e8280c0a63d2f\",                                         \n       \"description\": \"Alpha skill from Claude              \n personal.\",                                                \n h Doctor  q Quit  r Refresh  f1 Help                        h Doctor  q Quit  r Refresh  f1 Help                        h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "raw-json-off",
+          "description": "J toggles back to the ordinary table",
+          "keys": [
+            "json"
+          ],
+          "expected": [
+            "Skill Lens Home",
+            "alpha"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                   \n alpha   Global  *                                          \n alpha   Global  *                                        \u2582\u2582\n alpha   Global  *                                          \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Name: alpha                                                \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                            \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n h Doctor  q Quit  r Refresh  f1 Help   \n  \n\u2582\u2582\n  "
+        },
+        {
+          "id": "filter",
+          "description": "/ focuses the filter input",
+          "keys": [
+            "filter"
+          ],
+          "expected": [
+            "Filter by name or description"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "          \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                            \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n h Doctor  q Quit  r Refresh  f1 Help                       \u258a\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u258e\n\u258a  Filter by name or description   \u258e\n\u258a\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u258e\n Name    Scope   Parse                                      \n alpha   Global  *                                          \n alpha   Global  *                                        \u2582\u2582\n alpha   Global  *                                          \n f1 Help                                                      \n  \n\u2582\u2582\n  \n f1 Help                                                      \n  \n\u2582\u2582\n  \n f1 Help   \n  \n\u2582\u2582\n  "
+        },
+        {
+          "id": "filter-no-match",
+          "description": "A no-match filter explains how to clear it",
+          "keys": [
+            "type:nosuchskill"
+          ],
+          "expected": [
+            "No skills match the current filter"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                    \n                                                             Agent: All agents    \n Parse: * valid, x invalid.  State appears only while an    \n agent filter is active.                                    \n Name  Scope  Parse                                         \n                                                            \n                                                            \n                                                            \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n                                                            \n                                                            \n                                                            \n                                                            \n No skills match the current filter. Press Esc to clear it. \n                                                            \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n                                                            \n                                                            \n                                                            \n                                                            "
+        },
+        {
+          "id": "filter-clear",
+          "description": "Esc clears the filter and restores the captured rows",
+          "keys": [
+            "escape"
+          ],
+          "expected": [
+            "alpha"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "de, OpenCode V2 (2)                       \n                                                            \n                                                            \n h Doctor  q Quit  r Refresh  f1 Help                        Name    Scope   Parse                                      \n alpha   Global  *                                          \n alpha   Global  *                                        \u2582\u2582\n alpha   Global  *                                          \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Name: alpha                                                \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n h Doctor  q Quit  r Refresh  f1 Help                         \n  \n\u2582\u2582\n  \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Name: alpha                                                \n Scope: Global                                           \u2586\u2586 \n Path: ~/.claude/skills/alpha                               \n Agents: Claude Code, OpenCode V2 (2)                       \n h Doctor  q Quit  r Refresh  f1 Help   \n  \n\u2582\u2582\n  "
+        },
+        {
+          "id": "agent-filter",
+          "description": "a cycles the agent filter and labels the active agent",
+          "keys": [
+            "agent_filter"
+          ],
+          "expected": [
+            "Agent: ",
+            "(claude)"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.41,
+          "screen_excerpt": "\u258a\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u258e Agent: Claude Code (claude) \n\u258a  Filter by name or        \u258e       \n\u258a\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u258e       \n                                                             Agent: Claude Code (claude) \n State: per-agent resolution for this filter.  Parse: *     \n valid, x invalid.                                          \n Name    Scope   Parse  State                               \n alpha   Global  *      ACTIVE                              \n beta    Global  *      ACTIVE                              \n broken  Global  x      INVALID                             \nName: alpha                                             \nScope: Global                                           \nPath: ~/.claude/skills/alpha                            \nAgents: Claude Code, OpenCode V2 (2)                    \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                            "
+        },
+        {
+          "id": "refresh",
+          "description": "r refreshes and the session reports ready again",
+          "keys": [
+            "refresh"
+          ],
+          "expected": [
+            "Ready:"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                                                             Agent: Claude Code (claude) \n State: per-agent resolution for this filter.  Parse: *     \n valid, x invalid.                                          \n Name    Scope   Parse  State                               \n alpha   Global  *      ACTIVE                              \n beta    Global  *      ACTIVE                              \n broken  Global  x      INVALID                             \nName: alpha                                             \nScope: Global                                           \nPath: ~/.claude/skills/alpha                            \nAgents: Claude Code, OpenCode V2 (2)                    \n                                                            \n                                                            \n Ready: 5 skills discovered                                 \n                                                            \n                                                            "
+        }
+      ],
+      "steps_passed": true,
+      "restore": {
+        "returncode": 0,
+        "alternate_screen_left": true,
+        "cursor_shown": true,
+        "tail_escapes": [
+          "\u001b[?1000l",
+          "\u001b[?1003l",
+          "\u001b[?1004l",
+          "\u001b[?1006l",
+          "\u001b[?1015l",
+          "\u001b[?1049l",
+          "\u001b[?2004l",
+          "\u001b[?25h",
+          "\u001b[?7h"
+        ],
+        "tail_excerpt": "\u001b[<u"
+      },
+      "all_passed": true
+    },
+    "empty_100x30": {
+      "binary": "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens",
+      "home": "/private/tmp/u9-terminal-r3/empty-home",
+      "terminal_size": {
+        "columns": 100,
+        "rows": 30
+      },
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens",
+        "tui",
+        "--sandbox",
+        "/private/tmp/u9-terminal-r3/empty-home",
+        "--cwd",
+        "/private/tmp/u9-terminal-r3/empty-home/project"
+      ],
+      "steps": [
+        {
+          "id": "empty-home",
+          "description": "An empty synthetic home reports no discovered skills",
+          "keys": [],
+          "expected": [
+            "Skill Lens \u2014 0.2.0",
+            "Skill Lens Home",
+            "No skills discovered in this session"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.33,
+          "screen_excerpt": "                                                                           \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n                                                                                                     Agent: All agents (no agents detected) \n                                     \n No skills discovered in this session. Press r to refresh.                                          \n                                                                                                    \n Ready: 0 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "help-open",
+          "description": "Help is available with no captured skills",
+          "keys": [
+            "help"
+          ],
+          "expected": [
+            "Help",
+            "Close"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                                                        \u2502   \n  \u2502 HOME \u2014 ORDINARY LIST                                                                        \u2502   \n  \u2502   \u2191 \u2193 / j k \u2014 Move the selected row.                                                        \u2502   \n N\u2502   J \u2014 Show raw JSON for the whole captured scan, not the filtered rows. It requires the     \u2502   \n  \u2502 \u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594                                                                                \u2502   \n R\u2502    Close                                                                                    \u2502   \n  \u2502 \u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581                                                                                \u2502   \n  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518   \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n                                                                                                     esc Close  q Quit  r Refresh                                                                        esc Close  q Quit  r Refresh "
+        },
+        {
+          "id": "help-dismiss",
+          "description": "Esc returns to the empty Home screen",
+          "keys": [
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "           \u2502                                       \n                                                            \u2502                                       \n                                                            \u2502                                       \n                                                            \u2502                                       \n No skills discovered in this session. Press r to refresh.                                          \n                                                                                                    \n Ready: 0 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "raw-json",
+          "description": "Raw JSON works for an empty session",
+          "keys": [
+            "json"
+          ],
+          "expected": [
+            "\"cwd\":"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "                                                    \n                                                                                                    \n                                                                                                    \n                                                                                                    \n                                                                                                    \n Ready: 0 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "raw-json-off",
+          "description": "J toggles back to the empty table",
+          "keys": [
+            "json"
+          ],
+          "expected": [
+            "No skills discovered in this session"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.4,
+          "screen_excerpt": "             \u2502                                       \n                                                            \u2502                                       \n No skills discovered in this session. Press r to refresh.                                          \n                                                                                                    \n Ready: 0 skills discovered                                                                         \n                                                                                                    \n                                                                                                    \n                                                                                                    \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff   g: Agents   c: Compare   h:   \n h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help                                                                h Doctor  q Quit  r Refresh  f1 Help "
+        }
+      ],
+      "steps_passed": true,
+      "restore": {
+        "returncode": 0,
+        "alternate_screen_left": true,
+        "cursor_shown": true,
+        "tail_escapes": [
+          "\u001b[?1000l",
+          "\u001b[?1003l",
+          "\u001b[?1004l",
+          "\u001b[?1006l",
+          "\u001b[?1015l",
+          "\u001b[?1049l",
+          "\u001b[?2004l",
+          "\u001b[?25h",
+          "\u001b[?7h"
+        ],
+        "tail_excerpt": "\u001b[<u"
+      },
+      "all_passed": true
+    },
+    "empty_60x24": {
+      "binary": "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens",
+      "home": "/private/tmp/u9-terminal-r3/empty-home",
+      "terminal_size": {
+        "columns": 60,
+        "rows": 24
+      },
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens",
+        "tui",
+        "--sandbox",
+        "/private/tmp/u9-terminal-r3/empty-home",
+        "--cwd",
+        "/private/tmp/u9-terminal-r3/empty-home/project"
+      ],
+      "steps": [
+        {
+          "id": "empty-home",
+          "description": "An empty synthetic home reports no discovered skills",
+          "keys": [],
+          "expected": [
+            "Skill Lens \u2014 0.2.0",
+            "Skill Lens Home",
+            "No skills discovered in this session"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.32,
+          "screen_excerpt": "                          Agent: All agents (no agents detected) \n No agents detected. Showing every discovered skill.        \n Name  Scope  Parse                                         \n                                                            \n                                                            \n                                                            \n                                                            \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n                                                            \n                                                            \n                                                            \n                                                            \n No skills discovered in this session. Press r to refresh.  \n                                                            \n Ready: 0 skills discovered                                 \n                                                            \n                                                            \n h Doctor  q Quit  r Refresh  f1 Help                        h Doctor  q Quit  r Refresh  f1 Help                        h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "help-open",
+          "description": "Help is available with no captured skills",
+          "keys": [
+            "help"
+          ],
+          "expected": [
+            "Help",
+            "Close"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "         \u2502  \n \u2502                                                  \u2585\u2585   \u2502  \n \u2502 COMMON KEYS                                           \u2502  \n \u2502   q / Ctrl+C \u2014 Quit through the normal                \u2502  \n \u2502 application path. Quit is cooperative and returns     \u2502  \n \u2502 0, or 3 after an accepted internal fault.             \u2502  \n\u2500\u2502   r \u2014 Refresh the captured session. External          \u2502\u2500\u2500\n \u2502 edits appear only after a successful refresh; a       \u2502  \n \u2502 failed refresh can keep the previous catalog.         \u2502  \n \u2502   ? / Esc / Backspace \u2014 Close this Help. ? is         \u2502  \n \u2502 non-priority, so it stays ordinary filter text        \u2502  \n \u2502 while the Home filter input is focused.               \u2502  \n \u2502 \u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594\u2594                                          \u2502  \n \u2502    Close                                              \u2502  \n \u2502 \u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581\u2581                                          \u2502  \n \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518  \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n                                                             esc Close  q Quit  r Refresh                                esc Close  q Quit  r Refresh "
+        },
+        {
+          "id": "help-dismiss",
+          "description": "Esc returns to the empty Home screen",
+          "keys": [
+            "escape"
+          ],
+          "expected": [
+            "Skill Lens Home"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.41,
+          "screen_excerpt": "   \n No agents detected. Showing every discovered skill.        \n Name  Scope  Parse                                         \n                                                            \n                                                            \n                                                            \n                                                            \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n                                                            \n                                                            \n                                                            \n                                                            \n No skills discovered in this session. Press r to refresh.  \n                                                            \n Ready: 0 skills discovered                                 \n                                                            \n                                                            \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n h Doctor  q Quit  r Refresh  f1 Help                        h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "raw-json",
+          "description": "Raw JSON works for an empty session",
+          "keys": [
+            "json"
+          ],
+          "expected": [
+            "\"cwd\":"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.41,
+          "screen_excerpt": "    \n   \"summary\": {                                             \n     \"canonical_skill_count\": 0,                            \n     \"detected_agents\": [],                                 \n     \"plugin_skills\": 0,                                    \n     \"project_skills\": 0,                                   \n     \"symlink_entrypoints\": 0,                              \n     \"system_skills\": 0,                                    \n     \"total_skills\": 0,                                     \n     \"user_skills\": 0                                       \n   },                                                       \n   \"unreadable\": []                                         \n }                                                          \n Ready: 0 skills discovered                                 \n                                                            \n                                                            \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n h Doctor  q Quit  r Refresh  f1 Help                        h Doctor  q Quit  r Refresh  f1 Help                        h Doctor  q Quit  r Refresh  f1 Help "
+        },
+        {
+          "id": "raw-json-off",
+          "description": "J toggles back to the empty table",
+          "keys": [
+            "json"
+          ],
+          "expected": [
+            "No skills discovered in this session"
+          ],
+          "ok": true,
+          "missing": [],
+          "elapsed_seconds": 0.42,
+          "screen_excerpt": "     \n                                                            \n                                                            \n                                                            \n                                                            \n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n                                                            \n                                                            \n                                                            \n                                                            \n No skills discovered in this session. Press r to refresh.  \n                                                            \n Ready: 0 skills discovered                                 \n                                                            \n                                                            \n                                                            \n q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   \n h Doctor  q Quit  r Refresh  f1 Help                        h Doctor  q Quit  r Refresh  f1 Help                        h Doctor  q Quit  r Refresh  f1 Help                        h Doctor  q Quit  r Refresh  f1 Help "
+        }
+      ],
+      "steps_passed": true,
+      "restore": {
+        "returncode": 0,
+        "alternate_screen_left": true,
+        "cursor_shown": true,
+        "tail_escapes": [
+          "\u001b[?1000l",
+          "\u001b[?1003l",
+          "\u001b[?1004l",
+          "\u001b[?1006l",
+          "\u001b[?1015l",
+          "\u001b[?1049l",
+          "\u001b[?2004l",
+          "\u001b[?25h",
+          "\u001b[?7h"
+        ],
+        "tail_excerpt": "\u001b[<u"
+      },
+      "all_passed": true
+    }
+  },
+  "fallbacks": {
+    "extra_plain_pty": {
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens",
+        "--plain"
+      ],
+      "exit_code": 0,
+      "output": "                                                                                                    \n Usage: skill-lens [OPTIONS] COMMAND [ARGS]...                                                      \n                                                                                                    \n Local, read-only diagnostics and resolution for AI agent skills.                                   \n                                                                                                    \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --version          Show version.                                                                 \u2502\n\u2502 --plain            Print help instead of opening the terminal UI on bare invocation.             \u2502\n\u2502 --help             Show this message and exit.                                                   \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\u256d\u2500 Commands \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 tui      Open the interactive terminal UI.                                                       \u2502\n\u2502 scan     Inventory skills across every detected agent.                                           \u2502\n\u2502 why      Explain how a skill resolves for one agent, and why.                                    \u2502\n\u2502 agents   List the known agent definitions and their precedence policy.                           \u2502\n\u2502 diff     Unified diff between the differing variants that share one name.                        \u2502\n\u2502 doctor   Check skill hygiene: broken links, bad frontmatter, budget risks.                       \u2502\n\u2502 compare  Compare which skills two agents can reach: shared, diverged, one-sided.                 \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\n"
+    },
+    "extra_bare_noninteractive": {
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens"
+      ],
+      "exit_code": 0,
+      "stdout": "                                                                                \n Usage: skill-lens [OPTIONS] COMMAND [ARGS]...                                  \n                                                                                \n Local, read-only diagnostics and resolution for AI agent skills.               \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --version          Show version.                                             \u2502\n\u2502 --plain            Print help instead of opening the terminal UI on bare     \u2502\n\u2502                    invocation.                                               \u2502\n\u2502 --help             Show this message and exit.                               \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\u256d\u2500 Commands \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 tui      Open the interactive terminal UI.                                   \u2502\n\u2502 scan     Inventory skills across every detected agent.                       \u2502\n\u2502 why      Explain how a skill resolves for one agent, and why.                \u2502\n\u2502 agents   List the known agent definitions and their precedence policy.       \u2502\n\u2502 diff     Unified diff between the differing variants that share one name.    \u2502\n\u2502 doctor   Check skill hygiene: broken links, bad frontmatter, budget risks.   \u2502\n\u2502 compare  Compare which skills two agents can reach: shared, diverged,        \u2502\n\u2502          one-sided.                                                          \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\n",
+      "stderr": ""
+    },
+    "extra_tui_noninteractive": {
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/min_lane/venv/bin/skill-lens",
+        "tui"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Error: The terminal UI requires an interactive terminal.\n"
+    },
+    "base_bare_interactive_pty": {
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/base_lane/venv/bin/skill-lens"
+      ],
+      "exit_code": 0,
+      "output": "                                                                                                    \n Usage: skill-lens [OPTIONS] COMMAND [ARGS]...                                                      \n                                                                                                    \n Local, read-only diagnostics and resolution for AI agent skills.                                   \n                                                                                                    \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --version          Show version.                                                                 \u2502\n\u2502 --plain            Print help instead of opening the terminal UI on bare invocation.             \u2502\n\u2502 --help             Show this message and exit.                                                   \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\u256d\u2500 Commands \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 tui      Open the interactive terminal UI.                                                       \u2502\n\u2502 scan     Inventory skills across every detected agent.                                           \u2502\n\u2502 why      Explain how a skill resolves for one agent, and why.                                    \u2502\n\u2502 agents   List the known agent definitions and their precedence policy.                           \u2502\n\u2502 diff     Unified diff between the differing variants that share one name.                        \u2502\n\u2502 doctor   Check skill hygiene: broken links, bad frontmatter, budget risks.                       \u2502\n\u2502 compare  Compare which skills two agents can reach: shared, diverged, one-sided.                 \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\n\nTip: Install the terminal UI with: pip install 'skill-lens-cli[tui]'\n"
+    },
+    "base_bare_noninteractive": {
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/base_lane/venv/bin/skill-lens"
+      ],
+      "exit_code": 0,
+      "stdout": "                                                                                \n Usage: skill-lens [OPTIONS] COMMAND [ARGS]...                                  \n                                                                                \n Local, read-only diagnostics and resolution for AI agent skills.               \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --version          Show version.                                             \u2502\n\u2502 --plain            Print help instead of opening the terminal UI on bare     \u2502\n\u2502                    invocation.                                               \u2502\n\u2502 --help             Show this message and exit.                               \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\u256d\u2500 Commands \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 tui      Open the interactive terminal UI.                                   \u2502\n\u2502 scan     Inventory skills across every detected agent.                       \u2502\n\u2502 why      Explain how a skill resolves for one agent, and why.                \u2502\n\u2502 agents   List the known agent definitions and their precedence policy.       \u2502\n\u2502 diff     Unified diff between the differing variants that share one name.    \u2502\n\u2502 doctor   Check skill hygiene: broken links, bad frontmatter, budget risks.   \u2502\n\u2502 compare  Compare which skills two agents can reach: shared, diverged,        \u2502\n\u2502          one-sided.                                                          \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\n",
+      "stderr": ""
+    },
+    "base_tui_noninteractive": {
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/base_lane/venv/bin/skill-lens",
+        "tui"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Error: The terminal UI requires 'skill-lens-cli[tui]'. Install it with: pip install 'skill-lens-cli[tui]'\n"
+    },
+    "base_tui_explicit_sandbox": {
+      "command": [
+        "/tmp/u9-candidate-r3/smoke/base_lane/venv/bin/skill-lens",
+        "tui",
+        "--sandbox",
+        "/private/tmp/u9-terminal-r3/empty-home"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Error: The terminal UI requires 'skill-lens-cli[tui]'. Install it with: pip install 'skill-lens-cli[tui]'\n"
+    }
+  },
+  "fallback_checks": {
+    "plain_prints_help": true,
+    "bare_noninteractive_prints_help": true,
+    "bare_noninteractive_has_no_tip": true,
+    "tui_noninteractive_exits_2": true,
+    "base_bare_prints_help_without_tip": true,
+    "base_bare_interactive_prints_tip": true,
+    "base_tui_missing_extra_exits_2": true,
+    "base_tui_with_sandbox_exits_2": true
+  },
+  "claim_boundary": "Automated pseudo-terminal smoke evidence only. It is not human visual approval, hosted CI, or a release.",
+  "all_passed": true
+}

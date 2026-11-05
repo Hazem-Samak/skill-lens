@@ -141,14 +141,20 @@ Homebrew Python.
 > `skill_lens`; the distribution is published as `skill-lens-cli` because the
 > bare `skill-lens` name was already taken on PyPI.
 
-## Interactive mode (development TUI)
+## Interactive mode (TUI — 0.2.0 candidate)
 
-The optional full-screen TUI exists on the development branch, **not** in the
-published PyPI 0.1.1 package. To try it from a development checkout, use an
-already prepared virtual environment:
+The optional full-screen TUI is **not published on PyPI yet**: the published
+`skill-lens-cli` 0.1.1 contains no TUI package and no `[tui]` extra, so
+`pip install 'skill-lens-cli[tui]'` cannot give you a browsing UI today. A
+locally prepared **0.2.0 release candidate** — built, installed and smoke-tested
+in three clean environments, but not uploaded — adds it as the optional `[tui]`
+extra. Until 0.2.0 is published, build the candidate from a clone:
 
 ```bash
-pip install -e '.[tui]'
+git clone https://github.com/Hazem-Samak/skill-lens.git
+cd skill-lens
+python -m venv .venv && . .venv/bin/activate
+pip install '.[tui]'
 skill-lens          # opens the TUI when both stdin and stdout are terminals
 skill-lens tui      # explicit command with the same requirement
 ```
@@ -176,6 +182,9 @@ skill-lens tui      # explicit command with the same requirement
   `skill-lens tui --max-snapshot-bytes <bytes>` changes it and `0` disables it.
 - **Exit codes:** a normal TUI quit exits `0`; quitting after an accepted
   unexpected internal fault exits `3` without a terminal traceback.
+
+The base install still gains nothing: without the extra, every line-oriented
+command behaves exactly as in 0.1.1, and no TUI code is imported.
 
 ## Exit codes and CI use
 
@@ -206,29 +215,36 @@ Early development, and honest about it: the agent registry tags every precedence
 rule `documented`, `empirical`, or `inferred`, and says `ambiguous` rather than
 guessing. Original development Phases 0–6 are complete and reviewed; the separate
 assessment-repair stages A–H are accepted. Stage H documented the snapshot memory
-risk, and the TUI now enforces a **256 MiB** capture budget by default: the total
-skill payload is measured before the capture phase reads it, `skill-lens tui
---max-snapshot-bytes <bytes>` overrides the budget, and `0` disables it. Discovery
-still parses each skill source document before that measurement, so that read is a
-recorded residual rather than a bounded one.
+risk, and in the 0.2.0 candidate (not in published 0.1.1 — it has no TUI) the TUI
+enforces a **256 MiB** capture budget by default: the total skill payload is
+measured before the capture phase reads it, `skill-lens tui --max-snapshot-bytes
+<bytes>` overrides the budget, and `0` disables it. Discovery still parses each
+skill source document before that measurement, so that read is a recorded
+residual rather than a bounded one.
 
 **Published (PyPI `skill-lens-cli` 0.1.1):** six line-oriented CLI commands
 (`scan`, `why`, `agents`, `diff`, `compare`, `doctor`), no TUI extra. No `pip`
 release ships a TUI.
 
-**Current development branch:** the same six line-oriented commands plus an
-optional, additive, read-only TUI with Home, Why, Diff, Agents, Compare and
-Doctor screens, raw JSON mode, and the U8 Help overlay (`?`, or `F1` while
-typing). C1–C5 and U1–U5 are **technically accepted in development**, with
-coordinator verification and independent reviews complete. U6 Agents/Compare and
-U7 Doctor have local technical verification. U8 Help/keyboard/empty-state work
-and its documentation are implemented in the current working tree with local
-implementation evidence under
-[`docs/validation/u8/implementation/`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/validation/u8/implementation/);
-coordinator technical verification passed and both independent final reviews
-returned pass with no blockers (5 November 2026). U9 release
-preparation, human visual approval, hosted CI acceptance and 0.2 publishing
-remain future work. Do not install released
+**0.2.0 release candidate (prepared locally, not published):** the same six
+line-oriented commands plus an optional, additive, read-only TUI with Home, Why,
+Diff, Agents, Compare and Doctor screens, raw JSON mode, and the Help overlay
+(`?`, or `F1` while typing). Versions in `pyproject.toml`, `skill_lens` and
+`uv.lock` are synchronized at 0.2.0; a wheel and a source archive were built from
+a clean export of the reviewed sources, reinstalled into three fresh
+environments (base without Textual, `textual==8.2.8`, and an unconstrained
+latest) and driven through the installed terminal interface. Evidence, artifact
+hashes and the recorded limitations are under
+[`docs/validation/u9/implementation/`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/validation/u9/implementation/)
+(first wave) and
+[`docs/validation/u9/coordinator/precommit/`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/validation/u9/coordinator/precommit/)
+(rebuilt candidate; the supersession note in the first folder names the live
+archive hashes).
+
+Three things are **not** claimed for the candidate: human visual approval,
+hosted CI on the candidate's commit, and publication. U8's earlier green CI run
+and this branch's baseline gates prove their own commits, not this candidate. So:
+treat 0.2.0 as a locally qualified candidate, and do not install released
 `skill-lens-cli[tui]` expecting a browsing UI — the published 0.1.1 has no TUI
 extra at all.
 

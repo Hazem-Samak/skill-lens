@@ -1,0 +1,67 @@
+nonempty_100x30: pass
+   home               ok
+   help-open          ok
+   help-dismiss       ok
+   why                ok
+   diff               ok
+   back-home-1        ok
+   agents             ok
+   back-home-2        ok
+   compare-picker     ok
+   compare-result     ok
+   back-home-3        ok
+   doctor             ok
+   back-home-4        ok
+   raw-json           ok
+   raw-json-off       ok
+   filter             ok
+   filter-no-match    ok
+   filter-clear       ok
+   agent-filter       ok
+   refresh            ok
+   restore: exit=0 alt_screen_left=True cursor_shown=True
+nonempty_60x24: pass
+   home               ok
+   help-open          ok
+   help-dismiss       ok
+   why                ok
+   diff               ok
+   back-home-1        ok
+   agents             ok
+   back-home-2        ok
+   compare-picker     ok
+   compare-result     ok
+   back-home-3        ok
+   doctor             ok
+   back-home-4        ok
+   raw-json           ok
+   raw-json-off       ok
+   filter             ok
+   filter-no-match    ok
+   filter-clear       ok
+   agent-filter       ok
+   refresh            ok
+   restore: exit=0 alt_screen_left=True cursor_shown=True
+empty_100x30: pass
+   empty-home         ok
+   help-open          ok
+   help-dismiss       ok
+   raw-json           ok
+   raw-json-off       ok
+   restore: exit=0 alt_screen_left=True cursor_shown=True
+empty_60x24: pass
+   empty-home         ok
+   help-open          ok
+   help-dismiss       ok
+   raw-json           ok
+   raw-json-off       ok
+   restore: exit=0 alt_screen_left=True cursor_shown=True
+fallback plain_prints_help: ok
+fallback bare_noninteractive_prints_help: ok
+fallback bare_noninteractive_has_no_tip: ok
+fallback tui_noninteractive_exits_2: ok
+fallback base_bare_prints_help_without_tip: ok
+fallback base_bare_interactive_prints_tip: ok
+fallback base_tui_missing_extra_exits_2: ok
+fallback base_tui_with_sandbox_exits_2: ok
+all_passed: True

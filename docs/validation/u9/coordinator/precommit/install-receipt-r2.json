@@ -1,0 +1,344 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.11.16 (main, Aug 25 2026, 13:50:51) [Clang 22.1.3 ]",
+  "wheel": {
+    "wheel": "/private/tmp/u9-candidate-r2/artifacts/skill_lens_cli-0.2.0-py3-none-any.whl",
+    "sha256": "91f6c55329d19b14a5bd9e1a1a7aa1f194d09d17d09dab7b4dc8ffc366c4e107",
+    "tui_modules": [
+      "skill_lens/tui/__init__.py",
+      "skill_lens/tui/app.py",
+      "skill_lens/tui/session.py",
+      "skill_lens/tui/_textual_compat.py",
+      "skill_lens/tui/home.py",
+      "skill_lens/tui/why.py",
+      "skill_lens/tui/diff.py",
+      "skill_lens/tui/json_view.py",
+      "skill_lens/tui/agents.py",
+      "skill_lens/tui/compare.py",
+      "skill_lens/tui/doctor.py",
+      "skill_lens/tui/help.py"
+    ],
+    "registry_count": 10,
+    "registry_files": [
+      "skill_lens/registry/agents/antigravity.toml",
+      "skill_lens/registry/agents/claude.toml",
+      "skill_lens/registry/agents/codex.toml",
+      "skill_lens/registry/agents/dsh.toml",
+      "skill_lens/registry/agents/grok.toml",
+      "skill_lens/registry/agents/omp.toml",
+      "skill_lens/registry/agents/opencode.toml",
+      "skill_lens/registry/agents/pi.toml",
+      "skill_lens/registry/agents/qoder.toml",
+      "skill_lens/registry/agents/windsurf.toml"
+    ],
+    "typed_marker": true,
+    "total_files": 62
+  },
+  "sdist": {
+    "sdist": "/private/tmp/u9-candidate-r2/artifacts/skill_lens_cli-0.2.0.tar.gz",
+    "sha256": "92c81c3d4000b8d19651f1c283ee54897e057ce288700e9d7011ea493e38702a",
+    "prefix": "skill_lens_cli-0.2.0/",
+    "tui_modules": [
+      "skill_lens/tui/__init__.py",
+      "skill_lens/tui/app.py",
+      "skill_lens/tui/session.py",
+      "skill_lens/tui/_textual_compat.py",
+      "skill_lens/tui/home.py",
+      "skill_lens/tui/why.py",
+      "skill_lens/tui/diff.py",
+      "skill_lens/tui/json_view.py",
+      "skill_lens/tui/agents.py",
+      "skill_lens/tui/compare.py",
+      "skill_lens/tui/doctor.py",
+      "skill_lens/tui/help.py"
+    ],
+    "registry_count": 10,
+    "total_files": 1899
+  },
+  "base_lane": {
+    "status": "passed",
+    "provenance": "/private/tmp/u9-candidate-r2/smoke/base_lane/venv/lib/python3.11/site-packages/skill_lens/__init__.py",
+    "textual_absent": true,
+    "version_output": "skill-lens 0.2.0",
+    "bare_exit_code": 0,
+    "bare_tip_omitted": true,
+    "explicit_tui_exit_code": 2,
+    "explicit_tui_hint_present": true,
+    "explicit_tui_no_traceback": true
+  },
+  "min_endpoint_lane": {
+    "status": "passed",
+    "endpoint": "min",
+    "textual_constraint": "textual==8.2.8",
+    "textual_version": "8.2.8",
+    "provenance_pkg": "/private/tmp/u9-candidate-r2/smoke/min_lane/venv/lib/python3.11/site-packages/skill_lens/__init__.py",
+    "provenance_tui": "/private/tmp/u9-candidate-r2/smoke/min_lane/venv/lib/python3.11/site-packages/skill_lens/tui/__init__.py",
+    "installed_packages": [
+      {
+        "name": "annotated-doc",
+        "version": "0.0.5"
+      },
+      {
+        "name": "coverage",
+        "version": "7.17.2"
+      },
+      {
+        "name": "iniconfig",
+        "version": "2.3.1"
+      },
+      {
+        "name": "linkify-it-py",
+        "version": "2.2.0"
+      },
+      {
+        "name": "markdown-it-py",
+        "version": "4.2.0"
+      },
+      {
+        "name": "mdit-py-plugins",
+        "version": "0.6.1"
+      },
+      {
+        "name": "mdurl",
+        "version": "0.1.2"
+      },
+      {
+        "name": "packaging",
+        "version": "26.3"
+      },
+      {
+        "name": "platformdirs",
+        "version": "4.14.5"
+      },
+      {
+        "name": "pluggy",
+        "version": "1.7.0"
+      },
+      {
+        "name": "pygments",
+        "version": "2.21.0"
+      },
+      {
+        "name": "pytest",
+        "version": "9.2.0"
+      },
+      {
+        "name": "pytest-cov",
+        "version": "7.1.0"
+      },
+      {
+        "name": "pyyaml",
+        "version": "6.0.3"
+      },
+      {
+        "name": "rich",
+        "version": "15.0.0"
+      },
+      {
+        "name": "shellingham",
+        "version": "1.5.4"
+      },
+      {
+        "name": "skill-lens-cli",
+        "version": "0.2.0"
+      },
+      {
+        "name": "textual",
+        "version": "8.2.8"
+      },
+      {
+        "name": "typer",
+        "version": "0.27.3"
+      },
+      {
+        "name": "typing-extensions",
+        "version": "4.16.0"
+      }
+    ],
+    "explicit_non_tty_tui_exit_code": 2,
+    "suites_executed": [
+      "tests/test_render_snapshots.py",
+      "tests/test_fixtures.py",
+      "tests/test_phase3_gate.py",
+      "tests/test_phase4_gate.py",
+      "tests/test_tui_app.py",
+      "tests/test_tui_session.py",
+      "tests/test_tui_read_only.py",
+      "tests/test_stage_g_repairs.py",
+      "tests/test_tui_packaging.py",
+      "tests/test_tui_routing.py",
+      "tests/test_tui_help.py::test_complete_keyboard_browsing_flow_with_help_json_filters_and_refresh",
+      "tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits",
+      "tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs",
+      "tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes"
+    ],
+    "suites_exit_code": 0,
+    "test_count": 461,
+    "skip_count": 0,
+    "elapsed_seconds": 85.6,
+    "pytest_summary": "461 passed in 84.87s (0:01:24)",
+    "command": [
+      "/private/tmp/u9-candidate-r2/smoke/min_lane/venv/bin/pytest",
+      "tests/test_render_snapshots.py",
+      "tests/test_fixtures.py",
+      "tests/test_phase3_gate.py",
+      "tests/test_phase4_gate.py",
+      "tests/test_tui_app.py",
+      "tests/test_tui_session.py",
+      "tests/test_tui_read_only.py",
+      "tests/test_stage_g_repairs.py",
+      "tests/test_tui_packaging.py",
+      "tests/test_tui_routing.py",
+      "tests/test_tui_help.py::test_complete_keyboard_browsing_flow_with_help_json_filters_and_refresh",
+      "tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits",
+      "tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs",
+      "tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes",
+      "-ra"
+    ],
+    "stdout": "============================= test session starts ==============================\nplatform darwin -- Python 3.11.16, pytest-9.2.0, pluggy-1.7.0\nrootdir: /private/tmp/u9-candidate-r2/smoke/min_lane/test_lane\nconfigfile: pyproject.toml\nplugins: platformdirs-4.14.5, cov-7.1.0\ncollected 461 items\n\ntests/test_render_snapshots.py ...................                       [  4%]\ntests/test_fixtures.py ................................................. [ 14%]\n..................                                                       [ 18%]\ntests/test_phase3_gate.py ..................................             [ 26%]\ntests/test_phase4_gate.py ..........                                     [ 28%]\ntests/test_tui_app.py .................................                  [ 35%]\ntests/test_tui_session.py ..........................                     [ 40%]\ntests/test_tui_read_only.py ............................................ [ 50%]\n........................................................................ [ 66%]\n.......................                                                  [ 71%]\ntests/test_stage_g_repairs.py ..............                             [ 74%]\ntests/test_tui_packaging.py ............................................ [ 83%]\n.......................                                                  [ 88%]\ntests/test_tui_routing.py .............................................. [ 98%]\n.                                                                        [ 98%]\ntests/test_tui_help.py .....                                             [100%]\n\n======================== 461 passed in 84.87s (0:01:24) ========================\n",
+    "stderr": "",
+    "tests_run_outside_checkout": true,
+    "source_unshadowed": true
+  },
+  "latest_endpoint_lane": {
+    "status": "passed",
+    "endpoint": "latest",
+    "textual_constraint": null,
+    "textual_version": "8.2.8",
+    "provenance_pkg": "/private/tmp/u9-candidate-r2/smoke/latest_lane/venv/lib/python3.11/site-packages/skill_lens/__init__.py",
+    "provenance_tui": "/private/tmp/u9-candidate-r2/smoke/latest_lane/venv/lib/python3.11/site-packages/skill_lens/tui/__init__.py",
+    "installed_packages": [
+      {
+        "name": "annotated-doc",
+        "version": "0.0.5"
+      },
+      {
+        "name": "coverage",
+        "version": "7.17.2"
+      },
+      {
+        "name": "iniconfig",
+        "version": "2.3.1"
+      },
+      {
+        "name": "linkify-it-py",
+        "version": "2.2.0"
+      },
+      {
+        "name": "markdown-it-py",
+        "version": "4.2.0"
+      },
+      {
+        "name": "mdit-py-plugins",
+        "version": "0.6.1"
+      },
+      {
+        "name": "mdurl",
+        "version": "0.1.2"
+      },
+      {
+        "name": "packaging",
+        "version": "26.3"
+      },
+      {
+        "name": "platformdirs",
+        "version": "4.14.5"
+      },
+      {
+        "name": "pluggy",
+        "version": "1.7.0"
+      },
+      {
+        "name": "pygments",
+        "version": "2.21.0"
+      },
+      {
+        "name": "pytest",
+        "version": "9.2.0"
+      },
+      {
+        "name": "pytest-cov",
+        "version": "7.1.0"
+      },
+      {
+        "name": "pyyaml",
+        "version": "6.0.3"
+      },
+      {
+        "name": "rich",
+        "version": "15.0.0"
+      },
+      {
+        "name": "shellingham",
+        "version": "1.5.4"
+      },
+      {
+        "name": "skill-lens-cli",
+        "version": "0.2.0"
+      },
+      {
+        "name": "textual",
+        "version": "8.2.8"
+      },
+      {
+        "name": "typer",
+        "version": "0.27.3"
+      },
+      {
+        "name": "typing-extensions",
+        "version": "4.16.0"
+      }
+    ],
+    "explicit_non_tty_tui_exit_code": 2,
+    "suites_executed": [
+      "tests/test_render_snapshots.py",
+      "tests/test_fixtures.py",
+      "tests/test_phase3_gate.py",
+      "tests/test_phase4_gate.py",
+      "tests/test_tui_app.py",
+      "tests/test_tui_session.py",
+      "tests/test_tui_read_only.py",
+      "tests/test_stage_g_repairs.py",
+      "tests/test_tui_packaging.py",
+      "tests/test_tui_routing.py",
+      "tests/test_tui_help.py::test_complete_keyboard_browsing_flow_with_help_json_filters_and_refresh",
+      "tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits",
+      "tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs",
+      "tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes"
+    ],
+    "suites_exit_code": 0,
+    "test_count": 461,
+    "skip_count": 0,
+    "elapsed_seconds": 85.15,
+    "pytest_summary": "461 passed in 84.44s (0:01:24)",
+    "command": [
+      "/private/tmp/u9-candidate-r2/smoke/latest_lane/venv/bin/pytest",
+      "tests/test_render_snapshots.py",
+      "tests/test_fixtures.py",
+      "tests/test_phase3_gate.py",
+      "tests/test_phase4_gate.py",
+      "tests/test_tui_app.py",
+      "tests/test_tui_session.py",
+      "tests/test_tui_read_only.py",
+      "tests/test_stage_g_repairs.py",
+      "tests/test_tui_packaging.py",
+      "tests/test_tui_routing.py",
+      "tests/test_tui_help.py::test_complete_keyboard_browsing_flow_with_help_json_filters_and_refresh",
+      "tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits",
+      "tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs",
+      "tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes",
+      "-ra"
+    ],
+    "stdout": "============================= test session starts ==============================\nplatform darwin -- Python 3.11.16, pytest-9.2.0, pluggy-1.7.0\nrootdir: /private/tmp/u9-candidate-r2/smoke/latest_lane/test_lane\nconfigfile: pyproject.toml\nplugins: platformdirs-4.14.5, cov-7.1.0\ncollected 461 items\n\ntests/test_render_snapshots.py ...................                       [  4%]\ntests/test_fixtures.py ................................................. [ 14%]\n..................                                                       [ 18%]\ntests/test_phase3_gate.py ..................................             [ 26%]\ntests/test_phase4_gate.py ..........                                     [ 28%]\ntests/test_tui_app.py .................................                  [ 35%]\ntests/test_tui_session.py ..........................                     [ 40%]\ntests/test_tui_read_only.py ............................................ [ 50%]\n........................................................................ [ 66%]\n.......................                                                  [ 71%]\ntests/test_stage_g_repairs.py ..............                             [ 74%]\ntests/test_tui_packaging.py ............................................ [ 83%]\n.......................                                                  [ 88%]\ntests/test_tui_routing.py .............................................. [ 98%]\n.                                                                        [ 98%]\ntests/test_tui_help.py .....                                             [100%]\n\n======================== 461 passed in 84.44s (0:01:24) ========================\n",
+    "stderr": "",
+    "tests_run_outside_checkout": true,
+    "source_unshadowed": true
+  },
+  "endpoint_overlap": {
+    "min_version": "8.2.8",
+    "latest_version": "8.2.8",
+    "overlap": true,
+    "note": "PyPI latest stable equals declared floor (8.2.8) at current index resolution"
+  },
+  "all_passed": true
+}

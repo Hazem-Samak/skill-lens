@@ -57,8 +57,9 @@ and the build proceeds by phase:
   which revealed that `dsh` was **missing both user-level roots** and that `omp`'s
   managed-skills folder was ranked **above** the folders that should win. All 10
   agents now cite a source, and an enforced invariant guarantees it.
-- [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope, partially
-  implemented through U8; U9 planned.* An optional, additive, read-only
+- [ ] **Phase 7 (0.2) — interactive full-screen TUI** — *new scope; implemented
+  through U8, with the 0.2.0 release candidate prepared locally by U9. Not
+  published: PyPI still serves 0.1.1.* An optional, additive, read-only
   browsing layer built on the existing frozen models, shipped as the opt-in
   `[tui]` extra so the base install gains nothing. Overturns the v1 "no
   full-screen TUI" rule for 0.2. The complete plan — vision, screens, phasing
@@ -85,8 +86,18 @@ and the build proceeds by phase:
   Coordinator technical verification passed and both independent final reviews
   (mcode/MiniMax-M3.1-Flash/xhigh and OpenCode/GLM-5.3-Flash-Free/max) returned
   pass with no blockers on 5 November 2026; the ledger and verbatim reports are
-  under [`docs/validation/u8/coordinator/`](docs/validation/u8/coordinator/). U9 release
-  preparation and 0.2 publishing remain future work.
+  under [`docs/validation/u8/coordinator/`](docs/validation/u8/coordinator/).
+  U9 prepared the 0.2.0 candidate: both version declarations and the lock root
+  read 0.2.0, the archive/installed harness now covers all 12 TUI modules and the
+  U8 browsing/parity selections, and a wheel plus source archive were built from a
+  clean source export and installed into three fresh environments. Frozen plan:
+  [`2026-11-05-tui-u9-release-preparation.md`](docs/plans/2026-11-05-tui-u9-release-preparation.md);
+  evidence, hashes and recorded limits are under
+  [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
+  (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
+  candidate; see the supersession note).
+  **Not published:** no upload, tag or release date exists, and human visual
+  approval plus hosted CI for the candidate commit are still outstanding.
   This does not claim human visual approval, hosted CI acceptance or release. The
   2026-10-04 readiness review recorded two
   engine fixes required before Step 0: P1 (non-object settings robustness) and
@@ -154,7 +165,8 @@ the current tree with local evidence under `docs/validation/u7/implementation/`;
 [parent verification](docs/validation/u7/coordinator/verification.md) passed.
 U8 adds the Help overlay, contextual keymap, covered-screen worker suspension,
 empty/error polish and user documentation; its frozen plan and local evidence are
-linked above. U9 and 0.2 publishing remain a separate feature/release campaign.
+linked above. U9 prepared the unpublished 0.2.0 candidate and is complete as
+*preparation*: publishing remains a separate, explicitly authorized mission.
 
 > The Phase 6 plan is
 > [`PHASE6_PLAN.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/docs/archive/PHASE6_PLAN.md);
@@ -233,16 +245,27 @@ CI workflow never uploads anything.
    under a released heading.
 2. Run the full gate: `pytest --cov=skill_lens`, `mypy`, `ruff check .`,
    `ruff format --check .`.
-3. Build and inspect the artifacts:
+3. Build and inspect the artifacts — **from a clean export, never the live
+   checkout** (`uv build .` packages the whole working directory, untracked
+   files included; see the 0.2.0 candidate qualification checklist below).
+   With `$root` the repository and `$work` a fresh scratch directory you own
+   outside it:
    ```bash
-   uv build --out-dir dist
-   uvx twine check dist/*                    # metadata must PASS
-   unzip -l dist/*.whl | grep registry/agents   # must list all 10 agent TOMLs
+   mkdir -p "$work/src" "$work/artifacts"
+   git -C "$root" archive --format=tar HEAD | tar -x -C "$work/src"
+   # overlay the reviewed changes onto the export, then:
+   uv build "$work/src" --sdist --out-dir "$work/artifacts"
+   uv build "$work/artifacts/skill_lens_cli-<version>.tar.gz" --wheel --out-dir "$work/artifacts"
+   uvx twine check "$work/artifacts"/*                # metadata must PASS
+   unzip -l "$work/artifacts/skill_lens_cli-<version>-py3-none-any.whl" \
+     | grep registry/agents                           # must list all 10 agent TOMLs
    ```
-4. Smoke-test the exact artifact a user would receive:
+4. Smoke-test the exact artifact a user would receive. For a version that ships
+   the TUI, run the full three-lane qualification below instead of only this
+   basic check:
    ```bash
    uv venv /tmp/skill-lens-smoke --python 3.13
-   uv pip install --python /tmp/skill-lens-smoke dist/*.whl
+   uv pip install --python /tmp/skill-lens-smoke "$work/artifacts/skill_lens_cli-<version>-py3-none-any.whl"
    /tmp/skill-lens-smoke/bin/skill-lens --version
    /tmp/skill-lens-smoke/bin/skill-lens --help
    ```
@@ -255,13 +278,96 @@ CI workflow never uploads anything.
    resolves instead of 404ing. The tag name is not free-form: it must be
    `v<version>` to match that link.
    ```bash
-   git tag -a v0.1.1 -m "skill-lens 0.1.1"
-   git push origin v0.1.1
+   git tag -a v0.2.0 -m "skill-lens 0.2.0"
+   git push origin v0.2.0
    ```
 
 > Publishing is irreversible: a version can be yanked on PyPI but never reused.
 > The tag is created in step 6, **after** the upload, so it always points at a
 > commit that was actually released.
+
+### 0.2.0 candidate qualification (U9)
+
+0.2.0 is **prepared, not published**. The steps below produced the candidate on
+macOS with Python 3.11.16; they are the checklist a reviewer re-runs, not a
+release. `$root` is this repository and `$work` is a fresh directory you own
+outside it.
+
+```bash
+# 1. Clean source export: tracked files at the reviewed revision only.
+mkdir -p "$work/src" "$work/artifacts"
+git -C "$root" archive --format=tar HEAD | tar -x -C "$work/src"
+rm -rf "$work/src/docs/validation/u9"        # sidecar evidence, never packaged
+# Overlay exactly the reviewed tracked changes onto the export;
+# qualify_candidate.py records the export manifest and the overlaid input
+# hashes into candidate.json.
+
+# 2. Source archive first, wheel built from that exact archive.
+uv build "$work/src" --sdist --out-dir "$work/artifacts"
+uv build "$work/artifacts/skill_lens_cli-0.2.0.tar.gz" --wheel --out-dir "$work/artifacts"
+uvx twine check "$work/artifacts/skill_lens_cli-0.2.0-py3-none-any.whl" \
+  "$work/artifacts/skill_lens_cli-0.2.0.tar.gz"
+
+# 3. Archive checks plus three fresh installations, outside the checkout.
+.venv/bin/python "$work/src/scripts/smoke_wheel.py" \
+  --wheel "$work/artifacts/skill_lens_cli-0.2.0-py3-none-any.whl" \
+  --sdist "$work/artifacts/skill_lens_cli-0.2.0.tar.gz" \
+  --work-dir "$work/smoke" --receipt-out "$work/receipt.json"
+
+# 4. Version probes for all three preserved lanes (base, min, latest).
+#    The probes must execute each lane's own interpreter and console script
+#    with that lane's directory as the working directory. Running a lane
+#    interpreter with the repository as the working directory instead imports
+#    skill_lens from the source tree and proves nothing about the install;
+#    version_probes.py handles the lane cwd itself, from anywhere.
+.venv/bin/python docs/validation/u9/implementation/version_probes.py \
+  --smoke-dir "$work/smoke" --artifacts "$work/artifacts" \
+  --out "$work/probes.json"
+# asserts, per lane: importlib.metadata version == skill_lens.__version__ ==
+# `skill-lens --version` == 0.2.0, and skill_lens.__file__ sits inside that
+# lane's site-packages
+```
+
+The default `uv build` packages the whole working directory into the source
+archive, including untracked junk, so **always build the export**, never the live
+checkout. Each item below must be recorded with its actual output, not just
+ticked:
+
+- [ ] `pytest --cov=skill_lens`, `mypy`, `ruff check .` and
+      `ruff format --check .` clean, with coverage ≥ 90% and `tui/` measured.
+- [ ] Both source versions and the `uv.lock` root package read 0.2.0;
+      `uv lock --check` passes; the lock diff changes only the root version.
+- [ ] `twine check` PASS for both artifacts; metadata shows distribution
+      `skill-lens-cli`, version 0.2.0, `Requires-Python >=3.11`, the optional
+      Textual extra and the unchanged `skill-lens` console entry point.
+- [ ] Archive contents: all 12 TUI modules, ten registry TOMLs and
+      `skill_lens/py.typed`; the sdist-derived wheel matches the packaged source
+      bytes; the source-archive list contains no unrelated files.
+- [ ] Base lane: Textual absent; a bare **non-interactive** run prints help and
+      exits 0 with no install tip, while an explicit `tui` exits 2 with the extra
+      hint and no traceback. (The help-plus-tip fallback needs an interactive
+      terminal, so check it in a pseudo-terminal, not a captured pipe.)
+- [ ] Minimum (`textual==8.2.8`) and latest (unconstrained) lanes: the installed
+      selections pass with a positive count and no unexpected skips, including
+      the 17 CLI snapshots and 16 JSON goldens.
+- [ ] Per-lane probes (each run from outside the checkout):
+      `importlib.metadata.version`, `skill_lens.__version__` and
+      `skill-lens --version` all report 0.2.0, and the imported
+      `skill_lens.__file__` sits inside that lane's `site-packages`.
+- [ ] Installed terminal smoke at 100×30 and 60×24: Home → Why → Diff → Agents →
+      Compare → Doctor, Help, raw JSON, filters, back navigation, refresh and a
+      normal quit; the cursor and the normal screen come back.
+- [ ] SHA-256 hashes for both artifacts, the export manifest and every overlaid
+      input, retained with the commands that produced them.
+
+**Publication is a separate, explicit decision.** A passing run makes the
+candidate *locally verified*: *locally technically accepted* additionally
+requires the two independent final reviews of the frozen plan, and
+*publication ready* further requires hosted CI green on the candidate's own
+commit and human visual approval of the interface. Neither an upload nor a tag
+is authorized by this checklist. Any packaged source or document change after
+qualification invalidates the recorded hashes, so rebuild and repeat the affected
+checks; keep the tag-after-successful-upload order from step 6 above.
 
 ### One thing that bites first-time maintainers
 

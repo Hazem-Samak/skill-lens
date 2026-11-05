@@ -1,0 +1,78 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k manifest or missing_tui_module -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/manifest-omit-json_view, HOME=/private/tmp/u9-mutations/homes/manifest-omit-json_view)
+exit=1 elapsed=0.21s
+--- STDOUT ---
+F........F...........F....                                               [100%]
+=================================== FAILURES ===================================
+______ test_required_tui_module_manifest_matches_the_hand_maintained_list ______
+
+    def test_required_tui_module_manifest_matches_the_hand_maintained_list() -> None:
+        """The archive manifest must be exactly the 12-module U9 expectation.
+    
+        The expectation above is written out by hand on purpose: comparing the
+        production tuple with itself (or building the fixture from it) cannot catch
+        an omitted screen module.
+        """
+>       assert REQUIRED_TUI_MODULES == EXPECTED_TUI_MODULES, (
+            "scripts/smoke_wheel.REQUIRED_TUI_MODULES drifted from the independent U9 "
+            f"expectation: {REQUIRED_TUI_MODULES!r}"
+        )
+E       AssertionError: scripts/smoke_wheel.REQUIRED_TUI_MODULES drifted from the independent U9 expectation: ('skill_lens/tui/__init__.py', 'skill_lens/tui/app.py', 'skill_lens/tui/session.py', 'skill_lens/tui/_textual_compat.py', 'skill_lens/tui/home.py', 'skill_lens/tui/why.py', 'skill_lens/tui/diff.py', 'skill_lens/tui/agents.py', 'skill_lens/tui/compare.py', 'skill_lens/tui/doctor.py', 'skill_lens/tui/help.py')
+E       assert ('skill_lens/.../why.py', ...) == ('skill_lens/.../why.py', ...)
+E         
+E         At index 7 diff: 'skill_lens/tui/agents.py' != 'skill_lens/tui/json_view.py'
+E         Right contains one more item: 'skill_lens/tui/help.py'
+E         Use -v to get more diff
+
+../../tree/tests/test_tui_packaging.py:369: AssertionError
+__ test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/json_view.py] __
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-212/test_synthetic_wheel_missing_t7')
+omitted_module = 'skill_lens/tui/json_view.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_wheel_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """A disposable wheel missing any single required TUI module fails canonical verification."""
+        wheel_path = tmp_path / f"synthetic_missing_{Path(omitted_module).stem}.whl"
+        with zipfile.ZipFile(wheel_path, "w") as zf:
+            for mod in EXPECTED_TUI_MODULES:
+                if mod != omitted_module:
+                    zf.writestr(mod, "# mock\n")
+            for i in range(10):
+                zf.writestr(f"skill_lens/registry/agents/agent_{i}.toml", "name = 'test'\n")
+            zf.writestr(REQUIRED_TYPED_MARKER, "")
+    
+>       with pytest.raises(ValueError, match=f"missing required TUI module.*{omitted_module}"):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:500: Failed
+__ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/json_view.py] __
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-212/test_synthetic_sdist_missing_t7')
+omitted_module = 'skill_lens/tui/json_view.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_required_tui_module_manifest_matches_the_hand_maintained_list
+FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/json_view.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/json_view.py]
+3 failed, 23 passed, 41 deselected in 0.12s
+
+--- STDERR ---
+

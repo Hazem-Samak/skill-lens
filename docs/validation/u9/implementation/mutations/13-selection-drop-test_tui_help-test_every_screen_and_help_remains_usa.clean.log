@@ -1,0 +1,9 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k selection or manifest or missing_tui_module -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/tree, HOME=/private/tmp/u9-mutations/homes/selection-drop-test_tui_help-test_every_screen_and_help_remains_usa)
+exit=0 elapsed=0.25s
+--- STDOUT ---
+...............................                                          [100%]
+31 passed, 36 deselected in 0.16s
+
+--- STDERR ---
+

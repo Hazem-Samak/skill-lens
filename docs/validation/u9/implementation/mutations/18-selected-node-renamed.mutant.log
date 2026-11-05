@@ -1,0 +1,23 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k installed_selection or manifest -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/selected-node-renamed, HOME=/private/tmp/u9-mutations/homes/selected-node-renamed)
+exit=1 elapsed=0.22s
+--- STDOUT ---
+..F.                                                                     [100%]
+=================================== FAILURES ===================================
+_________ test_every_installed_selection_resolves_to_a_real_test_node __________
+
+    def test_every_installed_selection_resolves_to_a_real_test_node() -> None:
+        """All 14 selections must name an existing file and (where given) test function."""
+>       assert _selected_node_missing(EXPECTED_INSTALLED_TEST_SUITES) == []
+E       AssertionError: assert ['tests/test_..._and_refresh'] == []
+E         
+E         Left contains one more item: 'tests/test_tui_help.py::test_complete_keyboard_browsing_flow_with_help_json_filters_and_refresh'
+E         Use -v to get more diff
+
+../../tree/tests/test_tui_packaging.py:400: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_every_installed_selection_resolves_to_a_real_test_node
+1 failed, 3 passed, 63 deselected in 0.13s
+
+--- STDERR ---
+

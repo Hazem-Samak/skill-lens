@@ -1,0 +1,17 @@
+{
+  "recorded_at": "2026-11-05T19:05:00Z",
+  "owner_decision": "continue with perch",
+  "context": "Owner named the final-review roster on 5 November 2026: reviewer 1 'Minimax M3.1 Flash X High from Mcode'; reviewer 2 'Perch glm-5.3-flash-starter · effort max'. Precheck receipts before dispatch showed: (a) reviewer 1's exec JSON receipt confirms providerId=minimax, modelId=MiniMax-M3.1-Flash, variant=thinking; the receipt does not echo the effort level, so effort xhigh is recorded as flag-configured, provider-unconfirmed; (b) reviewer 2's perch precheck failed twice on stealth/crouton-alpha (quota exhausted) and completed on an unlabeled auto provider, selectedModel=null; the CLI printed that effort control is Pro-only and turns run at high effort on this account.",
+  "disclosed_deviations": [
+    "Reviewer 2 served model identity is unverified: the requested glm-5.3-flash-starter string does not appear in the receipt; the run answered on Perch's auto-selected backend.",
+    "Reviewer 2 effort max is silently capped to high by the non-Pro account.",
+    "Reviewer 1 effort xhigh is flag-configured but not receipt-confirmed."
+  ],
+  "owner_authorization": "After the coordinator stopped and reported these mismatches, the owner instructed: 'continue with perch'. The deviation is disclosed here per council §1.4 and §1.3 (family overlap disclosure), not silently accepted. The implementer is DeepSeek v4.1 (owner-disclosed); reviewer 1 family MiniMax; reviewer 2 family unverified (possibly GLM/Zhipu behind Perch); coordinator family unverified. The owner's naming of this pair is the recorded acceptance of the disclosed overlap.",
+  "permission_modes": "Both critics launched with their CLI defaults for one-shot mode (mcode --permission smart, perch default). No bypass or escalation flags were enabled; instruction-based read-only guard plus before/after fingerprints apply.",
+  "evidence": {
+    "precheck_receipts": "/tmp/u9-precheck/",
+    "briefs": "docs/validation/u9/coordinator/reviews/",
+    "fingerprints": "pre-wave-fingerprint.json, post-wave-fingerprint.json"
+  }
+}

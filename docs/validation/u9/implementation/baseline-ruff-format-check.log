@@ -1,0 +1,3 @@
+$ .venv/bin/ruff format --check .
+425 files already formatted
+exit=0

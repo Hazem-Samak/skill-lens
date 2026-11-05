@@ -1,0 +1,706 @@
+{
+  "repo_root": "/Users/corvette/Documents/Projects Coding/Skill Lens",
+  "python": "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python",
+  "pytest": "/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest",
+  "work_root": "/private/tmp/u9-mutations",
+  "pristine_tree": {
+    "files": 1912,
+    "sha256": "f63e1b8a63c3068080c780d7736434d551b21f6f2c537c063f0f11ea3867e7c2"
+  },
+  "mutations": [
+    {
+      "id": "manifest-omit-home",
+      "title": "remove the home.py entry from the required archive manifest",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "drifted from the independent U9 expectation",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_required_tui_module_manifest_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/home.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/home.py]"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "f891b57ef983fdc0393e7b92d3022c8afe4eb8bcedd9ffae2ee425c14b2e2aa4",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "01-manifest-omit-home.clean.log",
+        "mutant": "01-manifest-omit-home.mutant.log",
+        "restored": "01-manifest-omit-home.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "manifest-omit-why",
+      "title": "remove the why.py entry from the required archive manifest",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "drifted from the independent U9 expectation",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_required_tui_module_manifest_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/why.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/why.py]"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "bffb58079c89ac61c14e8aa29b06fcc12b5bff780687fe3c4292974dba153ad5",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "02-manifest-omit-why.clean.log",
+        "mutant": "02-manifest-omit-why.mutant.log",
+        "restored": "02-manifest-omit-why.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "manifest-omit-diff",
+      "title": "remove the diff.py entry from the required archive manifest",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "drifted from the independent U9 expectation",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_required_tui_module_manifest_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/diff.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/diff.py]"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "0383069aed6879ee8d84700d0771fe15a9483ff6c85604593e4771e3882b22b9",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "03-manifest-omit-diff.clean.log",
+        "mutant": "03-manifest-omit-diff.mutant.log",
+        "restored": "03-manifest-omit-diff.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "manifest-omit-json_view",
+      "title": "remove the json_view.py entry from the required archive manifest",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "drifted from the independent U9 expectation",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_required_tui_module_manifest_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/json_view.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/json_view.py]"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "9e4731ed214166e2f36d8c227857e0d03210a24a527c74ce756d619d69d65727",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "04-manifest-omit-json_view.clean.log",
+        "mutant": "04-manifest-omit-json_view.mutant.log",
+        "restored": "04-manifest-omit-json_view.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "manifest-omit-agents",
+      "title": "remove the agents.py entry from the required archive manifest",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "drifted from the independent U9 expectation",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_required_tui_module_manifest_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/agents.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/agents.py]"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "133d7bc049e8bd0f3776f183ca5d0fb32ab4695cc4e38556195c7081fee37aa9",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "05-manifest-omit-agents.clean.log",
+        "mutant": "05-manifest-omit-agents.mutant.log",
+        "restored": "05-manifest-omit-agents.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "manifest-omit-compare",
+      "title": "remove the compare.py entry from the required archive manifest",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "drifted from the independent U9 expectation",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_required_tui_module_manifest_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/compare.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/compare.py]"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "b40f7e4542d8037e3897a50a05aa9de5ce056553354f97347cf43eb7b3d709af",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "06-manifest-omit-compare.clean.log",
+        "mutant": "06-manifest-omit-compare.mutant.log",
+        "restored": "06-manifest-omit-compare.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "manifest-omit-doctor",
+      "title": "remove the doctor.py entry from the required archive manifest",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "drifted from the independent U9 expectation",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_required_tui_module_manifest_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/doctor.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/doctor.py]"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "072a7b269ef5ab05ef7b591b0816942fb8ff9ce4815fc5cea36fbc0cfbc8471e",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "07-manifest-omit-doctor.clean.log",
+        "mutant": "07-manifest-omit-doctor.mutant.log",
+        "restored": "07-manifest-omit-doctor.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "manifest-omit-help",
+      "title": "remove the help.py entry from the required archive manifest",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "drifted from the independent U9 expectation",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_required_tui_module_manifest_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_wheel_missing_tui_module_fails[skill_lens/tui/help.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/help.py]"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "4e92dab107d7c341290470fdb2deb54385f64386ab495d94f6235e81efc536b2",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "08-manifest-omit-help.clean.log",
+        "mutant": "08-manifest-omit-help.mutant.log",
+        "restored": "08-manifest-omit-help.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "selection-drop-test_tui_routing.py",
+      "title": "remove the installed selection tests/test_tui_routing.py",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "INSTALLED_TUI_TEST_SUITES drifted from the independent",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_installed_tui_test_selection_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_expanded_installed_selection_reaches_the_real_pytest_command"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "selection or manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "1d7f1466050c7c23708c5b541f0872c1dc1424a4926e23e6f51642a5b1d91e1e",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "09-selection-drop-test_tui_routing.py.clean.log",
+        "mutant": "09-selection-drop-test_tui_routing.py.mutant.log",
+        "restored": "09-selection-drop-test_tui_routing.py.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "selection-drop-test_tui_help-test_complete_keyboard_browsing_flow_w",
+      "title": "remove the installed selection tests/test_tui_help.py::test_complete_keyboard_browsing_flow_with_help_json_filters_and_refresh",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "INSTALLED_TUI_TEST_SUITES drifted from the independent",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_installed_tui_test_selection_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_expanded_installed_selection_reaches_the_real_pytest_command"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "selection or manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "d74061951837846e8a2b1a1c09a7f983b7e26ecb79068f2ed51e07f0e809bdac",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "10-selection-drop-test_tui_help-test_complete_keyboard_browsing_flow_w.clean.log",
+        "mutant": "10-selection-drop-test_tui_help-test_complete_keyboard_browsing_flow_w.mutant.log",
+        "restored": "10-selection-drop-test_tui_help-test_complete_keyboard_browsing_flow_w.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "selection-drop-test_tui_help-test_views_stay_on_captured_data_until",
+      "title": "remove the installed selection tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "INSTALLED_TUI_TEST_SUITES drifted from the independent",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_installed_tui_test_selection_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_expanded_installed_selection_reaches_the_real_pytest_command"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "selection or manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "692aabf2602476f6795ba320146c35c13357e717df72370e869d122849755cef",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "11-selection-drop-test_tui_help-test_views_stay_on_captured_data_until.clean.log",
+        "mutant": "11-selection-drop-test_tui_help-test_views_stay_on_captured_data_until.mutant.log",
+        "restored": "11-selection-drop-test_tui_help-test_views_stay_on_captured_data_until.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "selection-drop-test_tui_help-test_all_six_json_views_match_the_cli_",
+      "title": "remove the installed selection tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "INSTALLED_TUI_TEST_SUITES drifted from the independent",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_installed_tui_test_selection_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_expanded_installed_selection_reaches_the_real_pytest_command"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "selection or manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "c6f39f80e053d5587906fe66a5199768082cca68e10951d74d1a4de340b464fd",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "12-selection-drop-test_tui_help-test_all_six_json_views_match_the_cli_.clean.log",
+        "mutant": "12-selection-drop-test_tui_help-test_all_six_json_views_match_the_cli_.mutant.log",
+        "restored": "12-selection-drop-test_tui_help-test_all_six_json_views_match_the_cli_.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "selection-drop-test_tui_help-test_every_screen_and_help_remains_usa",
+      "title": "remove the installed selection tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "INSTALLED_TUI_TEST_SUITES drifted from the independent",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_installed_tui_test_selection_matches_the_hand_maintained_list",
+        "FAILED tests/test_tui_packaging.py::test_expanded_installed_selection_reaches_the_real_pytest_command"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "selection or manifest or missing_tui_module"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "d0fd7ad3948680ee1b49fb91a70dbd8c28d5493506a108b0133df4a508db81b9",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "13-selection-drop-test_tui_help-test_every_screen_and_help_remains_usa.clean.log",
+        "mutant": "13-selection-drop-test_tui_help-test_every_screen_and_help_remains_usa.mutant.log",
+        "restored": "13-selection-drop-test_tui_help-test_every_screen_and_help_remains_usa.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "subprocess-filter-injected",
+      "title": "leave a -k filter on the installed pytest command line",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "does not carry the expected selection",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_expanded_installed_selection_reaches_the_real_pytest_command"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "expanded_installed_selection or override"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "a32788348f5b79331095c92e305cbf7db77b57f52b1eadbe933d0983b17c9d14",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "14-subprocess-filter-injected.clean.log",
+        "mutant": "14-subprocess-filter-injected.mutant.log",
+        "restored": "14-subprocess-filter-injected.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "subprocess-selection-truncated",
+      "title": "silently drop the last selection before the pytest call",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "does not carry the expected selection",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_expanded_installed_selection_reaches_the_real_pytest_command"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "expanded_installed_selection or override"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "3919f27dd371e4c74d5e2d76ce046f910f8dbae2db65088e39bdcb34ca61eb6c",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "15-subprocess-selection-truncated.clean.log",
+        "mutant": "15-subprocess-selection-truncated.mutant.log",
+        "restored": "15-subprocess-selection-truncated.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "sdist-module-loop-removed",
+      "title": "stop checking required TUI modules in the source archive",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "DID NOT RAISE",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/__init__.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/app.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/session.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/_textual_compat.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/home.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/why.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/diff.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/json_view.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/agents.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/compare.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/doctor.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/help.py]"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "sdist"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "1dc00c262d5eb6496795c6e39aded0bf95881307ac752764f0d2e3225aa59a6c",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "16-sdist-module-loop-removed.clean.log",
+        "mutant": "16-sdist-module-loop-removed.mutant.log",
+        "restored": "16-sdist-module-loop-removed.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "sdist-module-missing-not-collected",
+      "title": "detect a missing sdist module but never record it",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "DID NOT RAISE",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/__init__.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/app.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/session.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/_textual_compat.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/home.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/why.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/diff.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/json_view.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/agents.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/compare.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/doctor.py]",
+        "FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/help.py]"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "sdist"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "1e87210599469cdc7ac46d0e86dd6dc8b0a2490ab9253857cc94046dd7916215",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "17-sdist-module-missing-not-collected.clean.log",
+        "mutant": "17-sdist-module-missing-not-collected.mutant.log",
+        "restored": "17-sdist-module-missing-not-collected.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "selected-node-renamed",
+      "title": "rename the selected browsing-flow test in the source suite",
+      "file": "tests/test_tui_help.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "resolves_to_a_real_test_node",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_every_installed_selection_resolves_to_a_real_test_node"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "installed_selection or manifest"
+      ],
+      "pristine_sha256": "230fb44fa7cecc0de69fad5b880d3f9c85a9f8d517478a87534c51cbf64daccd",
+      "mutant_sha256": "ef5859a99b55b4750dd364bcdb1b57bd2a78ae61997d87acb124de3873460052",
+      "restored_sha256": "230fb44fa7cecc0de69fad5b880d3f9c85a9f8d517478a87534c51cbf64daccd",
+      "logs": {
+        "clean": "18-selected-node-renamed.clean.log",
+        "mutant": "18-selected-node-renamed.mutant.log",
+        "restored": "18-selected-node-renamed.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "size-parametrization-shrunk",
+      "title": "run the selected size case at one terminal size only",
+      "file": "tests/test_tui_help.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "size_case_covers_both_terminal_sizes",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_selected_help_size_case_covers_both_terminal_sizes"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "size_case or size_coverage"
+      ],
+      "pristine_sha256": "230fb44fa7cecc0de69fad5b880d3f9c85a9f8d517478a87534c51cbf64daccd",
+      "mutant_sha256": "08b8d42c51e25b6702ee543c31200d2230a0384b8d78450e28502778d3a2cb99",
+      "restored_sha256": "230fb44fa7cecc0de69fad5b880d3f9c85a9f8d517478a87534c51cbf64daccd",
+      "logs": {
+        "clean": "19-size-parametrization-shrunk.clean.log",
+        "mutant": "19-size-parametrization-shrunk.mutant.log",
+        "restored": "19-size-parametrization-shrunk.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "receipt-modern-summary-rejected",
+      "title": "drop the elapsed parenthetical from the pytest summary pattern",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "could not find a pytest summary line",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_pytest_summary_parsing_reads_modern_and_legacy_lines[======================== 451 passed in 84.29s (0:01:24) ========================-expected0]",
+        "FAILED tests/test_tui_packaging.py::test_pytest_summary_parsing_reads_modern_and_legacy_lines[======= 1 failed, 9 passed in 0.50s (0:00:00) =======-expected2]",
+        "FAILED tests/test_tui_packaging.py::test_installed_lane_receipt_records_positive_counts_and_duration"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "summary or counts_and_duration"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "ab882f9f046e8e72bc68435eaca50f6d784a33f794bb11aede60d1a5c93ffe45",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "20-receipt-modern-summary-rejected.clean.log",
+        "mutant": "20-receipt-modern-summary-rejected.mutant.log",
+        "restored": "20-receipt-modern-summary-rejected.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "receipt-legacy-parser-restored",
+      "title": "restore the old parser that defaulted unknown summaries to zero",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "Installed test suites reported no passed tests",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_installed_lane_receipt_records_positive_counts_and_duration",
+        "FAILED tests/test_tui_packaging.py::test_installed_lane_rejects_an_unparsable_summary"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "unparsable or counts_and_duration"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "8dffac9733faf85dd1bf669cb55ab09afbcb12f0237096e44cdda87c01b58ea0",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "21-receipt-legacy-parser-restored.clean.log",
+        "mutant": "21-receipt-legacy-parser-restored.mutant.log",
+        "restored": "21-receipt-legacy-parser-restored.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "receipt-zero-test-accepted",
+      "title": "accept a lane whose summary reports no passed tests",
+      "file": "scripts/smoke_wheel.py",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "DID NOT RAISE",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_installed_lane_rejects_a_run_that_passed_no_tests"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "passed_no_tests"
+      ],
+      "pristine_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "mutant_sha256": "bd1b02b31fd00b2fbffe8005c48a4114aadf167f815971edab5a0dd6782ed912",
+      "restored_sha256": "50b2bf8186399eb322ae2235a90f9065a736db4b3711efb52de08640ac2ee696",
+      "logs": {
+        "clean": "22-receipt-zero-test-accepted.clean.log",
+        "mutant": "22-receipt-zero-test-accepted.mutant.log",
+        "restored": "22-receipt-zero-test-accepted.restored.log"
+      },
+      "disposition": "caught"
+    },
+    {
+      "id": "lock-root-version-stale",
+      "title": "leave the lock root package at the previous version",
+      "file": "uv.lock",
+      "clean_exit": 0,
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "mutant_failure_kind": "behavioral-assertion",
+      "expected_message_seen": true,
+      "expected_message": "uv.lock records skill-lens-cli",
+      "failing_tests": [
+        "FAILED tests/test_tui_packaging.py::test_uv_lock_root_package_version_matches_the_package"
+      ],
+      "tests": [
+        "tests/test_tui_packaging.py",
+        "-k",
+        "uv_lock"
+      ],
+      "pristine_sha256": "b79ed6b414ce51fb5155de0bb9ebc7114915bc1105be8494355cbd328a69b32b",
+      "mutant_sha256": "b5c0d39d9423286b87507dd3bb7482a572c0cf4cb410a609db4f115d445fdb17",
+      "restored_sha256": "b79ed6b414ce51fb5155de0bb9ebc7114915bc1105be8494355cbd328a69b32b",
+      "logs": {
+        "clean": "23-lock-root-version-stale.clean.log",
+        "mutant": "23-lock-root-version-stale.mutant.log",
+        "restored": "23-lock-root-version-stale.restored.log"
+      },
+      "disposition": "caught"
+    }
+  ],
+  "total": 23,
+  "caught": 23,
+  "all_caught": true,
+  "claim_boundary": "These deliberate breakages prove the named guards are load-bearing in disposable copies of the working tree. They are not exhaustive correctness evidence."
+}

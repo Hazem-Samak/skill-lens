@@ -1,0 +1,9 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k uv_lock -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/tree, HOME=/private/tmp/u9-mutations/homes/lock-root-version-stale)
+exit=0 elapsed=0.16s
+--- STDOUT ---
+..                                                                       [100%]
+2 passed, 55 deselected in 0.06s
+
+--- STDERR ---
+

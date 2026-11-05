@@ -1,0 +1,18 @@
+$ UV_CACHE_DIR=/tmp/u9-uv-cache uv lock --check
+Resolved 29 packages in 7ms
+exit=0
+
+# lock diff for the root package (the only lock change):
+diff --git a/uv.lock b/uv.lock
+index 393dc9b..dbad3cb 100644
+--- a/uv.lock
++++ b/uv.lock
+@@ -627,7 +627,7 @@ wheels = [
+ 
+ [[package]]
+ name = "skill-lens-cli"
+-version = "0.1.1"
++version = "0.2.0"
+ source = { editable = "." }
+ dependencies = [
+     { name = "pyyaml" },

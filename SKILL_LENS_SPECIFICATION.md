@@ -370,7 +370,7 @@ Development follows a strict test-first protocol. Tests run against mock fixture
 - **Gate:** `pytest`, `ruff check .` and `ruff format --check .` clean; every new
   guard mutation-tested; every changed golden or snapshot reviewed and explained.
 
-### Phase 7 (0.2): Interactive Full-Screen TUI — implemented in development through U8
+### Phase 7 (0.2): Interactive Full-Screen TUI — implemented through U8; 0.2.0 candidate prepared locally
 
 > **New scope after 0.1.x, owner decision.** Overturns the v1 "no full-screen
 > TUI" rule for 0.2. The full design — purpose, vision, screens, phasing and
@@ -398,9 +398,19 @@ Development follows a strict test-first protocol. Tests run against mock fixture
   makes quit exit `3`.
 - **Gate:** see the plan's success criteria — read-only guard test, no new base
   dependency, full repository gate green, snapshots reviewed. U8 local
-  implementer evidence is under `docs/validation/u8/implementation/`; U9
-  release preparation, installed-wheel qualification and publishing remain
-  separate work.
+  implementer evidence is under `docs/validation/u8/implementation/`.
+- **Release preparation status (U9):** 0.2.0 is synchronized across
+  `pyproject.toml`, `__version__` and the `uv.lock` root package; a wheel and
+  source archive were built from a clean export of the reviewed sources and
+  qualified in fresh base, `textual==8.2.8` and unconstrained-latest
+  installations, with the installed terminal interface exercised at 100×30 and
+  60×24. Evidence:
+  [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
+  (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
+  candidate; see the supersession note).
+  This is an **unpublished candidate**: published PyPI 0.1.1 is unchanged, and
+  no upload, tag, hosted-CI claim or human visual approval exists for 0.2.0.
+  Publishing remains separate work.
 
 ---
 

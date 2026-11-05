@@ -1,0 +1,567 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k unparsable or counts_and_duration -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/receipt-legacy-parser-restored, HOME=/private/tmp/u9-mutations/homes/receipt-legacy-parser-restored)
+exit=1 elapsed=0.22s
+--- STDOUT ---
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______ test_installed_lane_receipt_records_positive_counts_and_duration _______
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_receipt_re0')
+mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_receipt_re0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1076ba010>
+
+    def test_installed_lane_receipt_records_positive_counts_and_duration(
+        tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A passing lane must receipt its real counts, summary line and duration."""
+        invoking_cwd = tmp_path / "invoking_cwd"
+        invoking_cwd.mkdir()
+        wheel_file = invoking_cwd / "skill_lens_cli-0.2.0-py3-none-any.whl"
+        wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
+        monkeypatch.chdir(invoking_cwd)
+    
+        summary = "======================== 451 passed in 84.29s (0:01:24) ========================"
+        runner = _make_packaging_subprocess_runner(pytest_stdout=f"{summary}\n")
+        monkeypatch.setattr(subprocess, "run", runner)
+    
+>       result = verify_tui_endpoint_install(
+            wheel_file,
+            tmp_path / "work_dir",
+            endpoint_name="min",
+            textual_spec="textual==8.2.8",
+            repo_root=REPO_ROOT,
+        )
+
+/private/tmp/u9-mutations/tree/tests/test_tui_packaging.py:1041: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+wheel_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_receipt_re0/invoking_cwd/skill_lens_cli-0.2.0-py3-none-any.whl')
+work_dir = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_receipt_re0/work_dir')
+endpoint_name = 'min', textual_spec = 'textual==8.2.8'
+python_bin = '/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python'
+repo_root = PosixPath('/private/tmp/u9-mutations/runs/receipt-legacy-parser-restored')
+timeout_seconds = 300
+
+    def verify_tui_endpoint_install(
+        wheel_path: pathlib.Path,
+        work_dir: pathlib.Path,
+        endpoint_name: str,
+        textual_spec: str | None = None,
+        python_bin: str = sys.executable,
+        repo_root: pathlib.Path | None = None,
+        # The installed-lane suite runs 360 tests in a cold virtualenv. On the
+        # 2-core runner it finishes in roughly two minutes; 300 s leaves headroom
+        # while still failing a hang quickly. Partial output is preserved below.
+        timeout_seconds: int = 300,
+    ) -> dict[str, Any]:
+        """Verify [tui] installation, lifecycle, and parity in an isolated virtualenv."""
+        wheel_path = pathlib.Path(wheel_path).resolve()
+        work_dir = pathlib.Path(work_dir).resolve()
+        if not wheel_path.exists():
+            raise FileNotFoundError(f"Wheel does not exist: {wheel_path}")
+        if repo_root is None:
+            repo_root = pathlib.Path(__file__).resolve().parent.parent
+        repo_root = pathlib.Path(repo_root).resolve()
+    
+        lane_dir = work_dir / f"{endpoint_name}_lane"
+        lane_dir.mkdir(parents=True, exist_ok=True)
+        home_dir = lane_dir / "home"
+        home_dir.mkdir(parents=True, exist_ok=True)
+        env = _clean_env(home_dir)
+    
+        venv_dir = lane_dir / "venv"
+        if venv_dir.exists():
+            shutil.rmtree(venv_dir)
+        test_lane = lane_dir / "test_lane"
+        if test_lane.exists():
+            shutil.rmtree(test_lane)
+        install_packages = [f"{wheel_path}[tui]"]
+        if textual_spec:
+            install_packages.append(textual_spec)
+        install_packages.extend(["pytest", "pytest-cov", "pyyaml"])
+    
+        if shutil.which("uv"):
+            subprocess.run(
+                ["uv", "venv", str(venv_dir), "--python", python_bin],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            subprocess.run(
+                ["uv", "pip", "install", "--python", str(venv_dir), *install_packages],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            pkg_list_res = subprocess.run(
+                ["uv", "pip", "list", "--python", str(venv_dir), "--format=json"],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            installed_packages = json.loads(pkg_list_res.stdout)
+        else:
+            subprocess.run(
+                [python_bin, "-m", "venv", str(venv_dir)],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            pip_bin = venv_dir / "bin" / "pip"
+            subprocess.run(
+                [str(pip_bin), "install", *install_packages],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            pkg_list_res = subprocess.run(
+                [str(pip_bin), "list", "--format=json"],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            installed_packages = json.loads(pkg_list_res.stdout)
+    
+        py_exe = venv_dir / "bin" / "python"
+        cli_exe = venv_dir / "bin" / "skill-lens"
+        pytest_exe = venv_dir / "bin" / "pytest"
+    
+        # 1. Assert provenance is inside virtualenv
+        prov_res = subprocess.run(
+            [
+                str(py_exe),
+                "-c",
+                (
+                    "import skill_lens, skill_lens.tui; "
+                    "print(skill_lens.__file__); print(skill_lens.tui.__file__)"
+                ),
+            ],
+            cwd=str(lane_dir),
+            env=env,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+        )
+        lines = prov_res.stdout.strip().splitlines()
+        pkg_prov, tui_prov = lines[0], lines[1]
+        if str(venv_dir) not in pkg_prov or str(venv_dir) not in tui_prov:
+            raise AssertionError(f"Expected installed wheel provenance inside {venv_dir}; got: {lines}")
+    
+        # 2. Assert Textual is present and retrieve version
+        txt_res = subprocess.run(
+            [str(py_exe), "-c", "import textual; print(textual.__version__)"],
+            cwd=str(lane_dir),
+            env=env,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+        )
+        textual_ver = txt_res.stdout.strip()
+        if textual_spec and "==" in textual_spec:
+            expected_spec_ver = textual_spec.split("==")[1]
+            if textual_ver != expected_spec_ver:
+                raise AssertionError(
+                    f"Expected textual {expected_spec_ver} for endpoint {endpoint_name}; "
+                    f"got: {textual_ver}"
+                )
+    
+        # 3. Non-interactive explicit tui invocation: must exit 2 (requires interactive terminal)
+        tui_cli_res = subprocess.run(
+            [str(cli_exe), "tui"],
+            cwd=str(lane_dir),
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+        )
+        if tui_cli_res.returncode != 2:
+            raise AssertionError(
+                f"Explicit non-interactive tui returned exit code {tui_cli_res.returncode}; expected 2"
+            )
+        if "requires an interactive terminal" not in tui_cli_res.stderr:
+            raise AssertionError(
+                f"Missing interactive terminal requirement message:\n{tui_cli_res.stderr}"
+            )
+        if "Traceback" in tui_cli_res.stderr:
+            raise AssertionError(
+                f"Explicit non-interactive tui emitted traceback:\n{tui_cli_res.stderr}"
+            )
+    
+        # 4. Prepare isolated test execution directory WITHOUT copying skill_lens source
+        test_lane = lane_dir / "test_lane"
+        test_lane.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(repo_root / "tests", test_lane / "tests")
+        shutil.copytree(repo_root / "scripts", test_lane / "scripts")
+        shutil.copy(repo_root / "pyproject.toml", test_lane / "pyproject.toml")
+        shutil.copy(repo_root / "uv.lock", test_lane / "uv.lock")
+        (test_lane / ".github" / "workflows").mkdir(parents=True, exist_ok=True)
+        shutil.copy(
+            repo_root / ".github" / "workflows" / "ci.yml",
+            test_lane / ".github" / "workflows" / "ci.yml",
+        )
+    
+        # Strictly assert no skill_lens source package exists in test_lane
+        assert not (test_lane / "skill_lens").exists(), (
+            "skill_lens source package must not be copied into test lane"
+        )
+    
+        # 5. Run test suites with bounded timeout
+        test_cmd = [str(pytest_exe), *INSTALLED_TUI_TEST_SUITES, "-ra"]
+        suite_started = time.monotonic()
+        try:
+            test_res = subprocess.run(
+                test_cmd,
+                cwd=str(test_lane),
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=timeout_seconds,
+            )
+        except subprocess.TimeoutExpired as exc:
+            partial_stdout = (
+                exc.stdout
+                if isinstance(exc.stdout, str)
+                else (exc.stdout or b"").decode("utf-8", "replace")
+            )
+            partial_stderr = (
+                exc.stderr
+                if isinstance(exc.stderr, str)
+                else (exc.stderr or b"").decode("utf-8", "replace")
+            )
+            raise AssertionError(
+                f"Installed test suites exceeded the {timeout_seconds}s bound "
+                f"([{', '.join(test_cmd)}]):\n"
+                f"STDOUT (partial):\n{partial_stdout}\n"
+                f"STDERR (partial):\n{partial_stderr}"
+            ) from exc
+        if test_res.returncode != 0:
+            raise AssertionError(
+                f"Installed test suites failed with code {test_res.returncode}:\n"
+                f"STDOUT:\n{test_res.stdout}\n"
+                f"STDERR:\n{test_res.stderr}"
+            )
+    
+        suite_elapsed = round(time.monotonic() - suite_started, 2)
+    
+        # Parse test and skip counts from summary; a lane that ran nothing cannot pass.
+        _summary = re.search("=+\\s*(.*?)\\s+in\\s+[\\d\\.]+s\\s*=+", test_res.stdout)
+        _text = _summary.group(1) if _summary else ""
+        _passed = re.search(r"(\d+)\s+passed", _text)
+        _skipped = re.search(r"(\d+)\s+skipped", _text)
+        test_count = int(_passed.group(1)) if _passed else 0
+        skip_count = int(_skipped.group(1)) if _skipped else 0
+        if test_count <= 0:
+>           raise AssertionError(
+                f"Installed test suites reported no passed tests for endpoint {endpoint_name!r}; "
+                f"the selection must execute:\n{test_res.stdout[-4000:]}"
+            )
+E           AssertionError: Installed test suites reported no passed tests for endpoint 'min'; the selection must execute:
+E           ======================== 451 passed in 84.29s (0:01:24) ========================
+
+/private/tmp/u9-mutations/runs/receipt-legacy-parser-restored/scripts/smoke_wheel.py:630: AssertionError
+______________ test_installed_lane_rejects_an_unparsable_summary _______________
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_rejects_an0')
+mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_rejects_an0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1071764d0>
+
+    def test_installed_lane_rejects_an_unparsable_summary(
+        tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A lane whose output has no summary line must not report zero tests."""
+        invoking_cwd = tmp_path / "invoking_cwd"
+        invoking_cwd.mkdir()
+        wheel_file = invoking_cwd / "skill_lens_cli-0.2.0-py3-none-any.whl"
+        wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
+        monkeypatch.chdir(invoking_cwd)
+    
+        runner = _make_packaging_subprocess_runner(
+            pytest_stdout="collected 0 items\n\nno tests ran in 0.01s\n"
+        )
+        monkeypatch.setattr(subprocess, "run", runner)
+    
+        with pytest.raises(ValueError, match="could not find a pytest summary line"):
+>           verify_tui_endpoint_install(
+                wheel_file,
+                tmp_path / "work_dir",
+                endpoint_name="min",
+                textual_spec="textual==8.2.8",
+                repo_root=REPO_ROOT,
+            )
+
+/private/tmp/u9-mutations/tree/tests/test_tui_packaging.py:1100: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+wheel_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_rejects_an0/invoking_cwd/skill_lens_cli-0.2.0-py3-none-any.whl')
+work_dir = PosixPath('/private/tmp/pytest-of-corvette/pytest-263/test_installed_lane_rejects_an0/work_dir')
+endpoint_name = 'min', textual_spec = 'textual==8.2.8'
+python_bin = '/Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/python'
+repo_root = PosixPath('/private/tmp/u9-mutations/runs/receipt-legacy-parser-restored')
+timeout_seconds = 300
+
+    def verify_tui_endpoint_install(
+        wheel_path: pathlib.Path,
+        work_dir: pathlib.Path,
+        endpoint_name: str,
+        textual_spec: str | None = None,
+        python_bin: str = sys.executable,
+        repo_root: pathlib.Path | None = None,
+        # The installed-lane suite runs 360 tests in a cold virtualenv. On the
+        # 2-core runner it finishes in roughly two minutes; 300 s leaves headroom
+        # while still failing a hang quickly. Partial output is preserved below.
+        timeout_seconds: int = 300,
+    ) -> dict[str, Any]:
+        """Verify [tui] installation, lifecycle, and parity in an isolated virtualenv."""
+        wheel_path = pathlib.Path(wheel_path).resolve()
+        work_dir = pathlib.Path(work_dir).resolve()
+        if not wheel_path.exists():
+            raise FileNotFoundError(f"Wheel does not exist: {wheel_path}")
+        if repo_root is None:
+            repo_root = pathlib.Path(__file__).resolve().parent.parent
+        repo_root = pathlib.Path(repo_root).resolve()
+    
+        lane_dir = work_dir / f"{endpoint_name}_lane"
+        lane_dir.mkdir(parents=True, exist_ok=True)
+        home_dir = lane_dir / "home"
+        home_dir.mkdir(parents=True, exist_ok=True)
+        env = _clean_env(home_dir)
+    
+        venv_dir = lane_dir / "venv"
+        if venv_dir.exists():
+            shutil.rmtree(venv_dir)
+        test_lane = lane_dir / "test_lane"
+        if test_lane.exists():
+            shutil.rmtree(test_lane)
+        install_packages = [f"{wheel_path}[tui]"]
+        if textual_spec:
+            install_packages.append(textual_spec)
+        install_packages.extend(["pytest", "pytest-cov", "pyyaml"])
+    
+        if shutil.which("uv"):
+            subprocess.run(
+                ["uv", "venv", str(venv_dir), "--python", python_bin],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            subprocess.run(
+                ["uv", "pip", "install", "--python", str(venv_dir), *install_packages],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            pkg_list_res = subprocess.run(
+                ["uv", "pip", "list", "--python", str(venv_dir), "--format=json"],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            installed_packages = json.loads(pkg_list_res.stdout)
+        else:
+            subprocess.run(
+                [python_bin, "-m", "venv", str(venv_dir)],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            pip_bin = venv_dir / "bin" / "pip"
+            subprocess.run(
+                [str(pip_bin), "install", *install_packages],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            pkg_list_res = subprocess.run(
+                [str(pip_bin), "list", "--format=json"],
+                cwd=str(lane_dir),
+                env=env,
+                check=True,
+                timeout=timeout_seconds,
+                capture_output=True,
+                text=True,
+            )
+            installed_packages = json.loads(pkg_list_res.stdout)
+    
+        py_exe = venv_dir / "bin" / "python"
+        cli_exe = venv_dir / "bin" / "skill-lens"
+        pytest_exe = venv_dir / "bin" / "pytest"
+    
+        # 1. Assert provenance is inside virtualenv
+        prov_res = subprocess.run(
+            [
+                str(py_exe),
+                "-c",
+                (
+                    "import skill_lens, skill_lens.tui; "
+                    "print(skill_lens.__file__); print(skill_lens.tui.__file__)"
+                ),
+            ],
+            cwd=str(lane_dir),
+            env=env,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+        )
+        lines = prov_res.stdout.strip().splitlines()
+        pkg_prov, tui_prov = lines[0], lines[1]
+        if str(venv_dir) not in pkg_prov or str(venv_dir) not in tui_prov:
+            raise AssertionError(f"Expected installed wheel provenance inside {venv_dir}; got: {lines}")
+    
+        # 2. Assert Textual is present and retrieve version
+        txt_res = subprocess.run(
+            [str(py_exe), "-c", "import textual; print(textual.__version__)"],
+            cwd=str(lane_dir),
+            env=env,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+        )
+        textual_ver = txt_res.stdout.strip()
+        if textual_spec and "==" in textual_spec:
+            expected_spec_ver = textual_spec.split("==")[1]
+            if textual_ver != expected_spec_ver:
+                raise AssertionError(
+                    f"Expected textual {expected_spec_ver} for endpoint {endpoint_name}; "
+                    f"got: {textual_ver}"
+                )
+    
+        # 3. Non-interactive explicit tui invocation: must exit 2 (requires interactive terminal)
+        tui_cli_res = subprocess.run(
+            [str(cli_exe), "tui"],
+            cwd=str(lane_dir),
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+        )
+        if tui_cli_res.returncode != 2:
+            raise AssertionError(
+                f"Explicit non-interactive tui returned exit code {tui_cli_res.returncode}; expected 2"
+            )
+        if "requires an interactive terminal" not in tui_cli_res.stderr:
+            raise AssertionError(
+                f"Missing interactive terminal requirement message:\n{tui_cli_res.stderr}"
+            )
+        if "Traceback" in tui_cli_res.stderr:
+            raise AssertionError(
+                f"Explicit non-interactive tui emitted traceback:\n{tui_cli_res.stderr}"
+            )
+    
+        # 4. Prepare isolated test execution directory WITHOUT copying skill_lens source
+        test_lane = lane_dir / "test_lane"
+        test_lane.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(repo_root / "tests", test_lane / "tests")
+        shutil.copytree(repo_root / "scripts", test_lane / "scripts")
+        shutil.copy(repo_root / "pyproject.toml", test_lane / "pyproject.toml")
+        shutil.copy(repo_root / "uv.lock", test_lane / "uv.lock")
+        (test_lane / ".github" / "workflows").mkdir(parents=True, exist_ok=True)
+        shutil.copy(
+            repo_root / ".github" / "workflows" / "ci.yml",
+            test_lane / ".github" / "workflows" / "ci.yml",
+        )
+    
+        # Strictly assert no skill_lens source package exists in test_lane
+        assert not (test_lane / "skill_lens").exists(), (
+            "skill_lens source package must not be copied into test lane"
+        )
+    
+        # 5. Run test suites with bounded timeout
+        test_cmd = [str(pytest_exe), *INSTALLED_TUI_TEST_SUITES, "-ra"]
+        suite_started = time.monotonic()
+        try:
+            test_res = subprocess.run(
+                test_cmd,
+                cwd=str(test_lane),
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=timeout_seconds,
+            )
+        except subprocess.TimeoutExpired as exc:
+            partial_stdout = (
+                exc.stdout
+                if isinstance(exc.stdout, str)
+                else (exc.stdout or b"").decode("utf-8", "replace")
+            )
+            partial_stderr = (
+                exc.stderr
+                if isinstance(exc.stderr, str)
+                else (exc.stderr or b"").decode("utf-8", "replace")
+            )
+            raise AssertionError(
+                f"Installed test suites exceeded the {timeout_seconds}s bound "
+                f"([{', '.join(test_cmd)}]):\n"
+                f"STDOUT (partial):\n{partial_stdout}\n"
+                f"STDERR (partial):\n{partial_stderr}"
+            ) from exc
+        if test_res.returncode != 0:
+            raise AssertionError(
+                f"Installed test suites failed with code {test_res.returncode}:\n"
+                f"STDOUT:\n{test_res.stdout}\n"
+                f"STDERR:\n{test_res.stderr}"
+            )
+    
+        suite_elapsed = round(time.monotonic() - suite_started, 2)
+    
+        # Parse test and skip counts from summary; a lane that ran nothing cannot pass.
+        _summary = re.search("=+\\s*(.*?)\\s+in\\s+[\\d\\.]+s\\s*=+", test_res.stdout)
+        _text = _summary.group(1) if _summary else ""
+        _passed = re.search(r"(\d+)\s+passed", _text)
+        _skipped = re.search(r"(\d+)\s+skipped", _text)
+        test_count = int(_passed.group(1)) if _passed else 0
+        skip_count = int(_skipped.group(1)) if _skipped else 0
+        if test_count <= 0:
+>           raise AssertionError(
+                f"Installed test suites reported no passed tests for endpoint {endpoint_name!r}; "
+                f"the selection must execute:\n{test_res.stdout[-4000:]}"
+            )
+E           AssertionError: Installed test suites reported no passed tests for endpoint 'min'; the selection must execute:
+E           collected 0 items
+E           
+E           no tests ran in 0.01s
+
+/private/tmp/u9-mutations/runs/receipt-legacy-parser-restored/scripts/smoke_wheel.py:630: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_installed_lane_receipt_records_positive_counts_and_duration
+FAILED tests/test_tui_packaging.py::test_installed_lane_rejects_an_unparsable_summary
+2 failed, 65 deselected in 0.13s
+
+--- STDERR ---
+

@@ -1,0 +1,3 @@
+$ .venv/bin/mypy
+Success: no issues found in 46 source files
+exit=0

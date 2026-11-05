@@ -1,0 +1,287 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k sdist -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/sdist-module-loop-removed, HOME=/private/tmp/u9-mutations/homes/sdist-module-loop-removed)
+exit=1 elapsed=0.26s
+--- STDOUT ---
+..FFFFFFFFFFFF.                                                          [100%]
+=================================== FAILURES ===================================
+__ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/__init__.py] ___
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t0')
+omitted_module = 'skill_lens/tui/__init__.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+_____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/app.py] _____
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t1')
+omitted_module = 'skill_lens/tui/app.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+___ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/session.py] ___
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t2')
+omitted_module = 'skill_lens/tui/session.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+_ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/_textual_compat.py] _
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t3')
+omitted_module = 'skill_lens/tui/_textual_compat.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/home.py] _____
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t4')
+omitted_module = 'skill_lens/tui/home.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+_____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/why.py] _____
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t5')
+omitted_module = 'skill_lens/tui/why.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/diff.py] _____
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t6')
+omitted_module = 'skill_lens/tui/diff.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+__ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/json_view.py] __
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t7')
+omitted_module = 'skill_lens/tui/json_view.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+___ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/agents.py] ____
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t8')
+omitted_module = 'skill_lens/tui/agents.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+___ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/compare.py] ___
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t9')
+omitted_module = 'skill_lens/tui/compare.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+___ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/doctor.py] ____
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t10')
+omitted_module = 'skill_lens/tui/doctor.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+____ test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/help.py] _____
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-248/test_synthetic_sdist_missing_t11')
+omitted_module = 'skill_lens/tui/help.py'
+
+    @pytest.mark.parametrize("omitted_module", EXPECTED_TUI_MODULES)
+    def test_synthetic_sdist_missing_tui_module_fails(tmp_path: Path, omitted_module: str) -> None:
+        """Omitting any single TUI module from the source archive must be rejected.
+    
+        The wheel guard cannot see this: an sdist built without a screen module still
+        produces a wheel that lacks it, and the sdist is the artifact a downstream
+        rebuild starts from.
+        """
+        sdist_path = _synthetic_sdist(
+            tmp_path / f"synthetic_sdist_missing_{Path(omitted_module).stem}.tar.gz",
+            omit=omitted_module,
+        )
+    
+>       with pytest.raises(ValueError, match=re.escape(omitted_module)):
+E       Failed: DID NOT RAISE ValueError
+
+../../tree/tests/test_tui_packaging.py:559: Failed
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/__init__.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/app.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/session.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/_textual_compat.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/home.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/why.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/diff.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/json_view.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/agents.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/compare.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/doctor.py]
+FAILED tests/test_tui_packaging.py::test_synthetic_sdist_missing_tui_module_fails[skill_lens/tui/help.py]
+12 failed, 3 passed, 52 deselected in 0.16s
+
+--- STDERR ---
+

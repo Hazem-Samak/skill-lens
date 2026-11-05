@@ -1,0 +1,187 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k summary or counts_and_duration -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/runs/receipt-modern-summary-rejected, HOME=/private/tmp/u9-mutations/homes/receipt-modern-summary-rejected)
+exit=1 elapsed=0.23s
+--- STDOUT ---
+F.F....F.                                                                [100%]
+=================================== FAILURES ===================================
+_ test_pytest_summary_parsing_reads_modern_and_legacy_lines[======================== 451 passed in 84.29s (0:01:24) ========================-expected0] _
+
+line = '======================== 451 passed in 84.29s (0:01:24) ========================'
+expected = (451, 0)
+
+    @pytest.mark.parametrize(
+        "line,expected",
+        [
+            (
+                "======================== 451 passed in 84.29s (0:01:24) ========================",
+                (451, 0),
+            ),
+            ("================ 10 passed in 0.1s ================", (10, 0)),
+            ("======= 1 failed, 9 passed in 0.50s (0:00:00) =======", (9, 0)),
+            ("==== 3 passed, 2 skipped, 1 warning in 1.20s ====", (3, 2)),
+            ("== 1 passed, 1 skipped in 0.03s ==", (1, 1)),
+        ],
+    )
+    def test_pytest_summary_parsing_reads_modern_and_legacy_lines(
+        line: str, expected: tuple[int, int]
+    ) -> None:
+        """The installed-lane receipt must read pytest's real summary formats.
+    
+        pytest appends an elapsed parenthetical on current versions; the old pattern
+        did not allow for it and silently receipted a 451-test lane as zero tests.
+        """
+        stdout = f"collected 451 items\n\n{line}\n"
+>       assert parse_pytest_summary(stdout) == expected
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../../tree/tests/test_tui_packaging.py:1016: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/smoke_wheel.py:112: in parse_pytest_summary
+    summary = _pytest_summary_match(stdout).group(1)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+stdout = 'collected 451 items\n\n======================== 451 passed in 84.29s (0:01:24) ========================\n'
+
+    def _pytest_summary_match(stdout: str) -> re.Match[str]:
+        """Return the regex match for pytest's final summary line.
+    
+        Raising is deliberate. An earlier version treated an unmatched summary as
+        "zero passed, zero skipped", so a run that really executed 451 tests could be
+        receipted as an empty lane. A receipt must never under-report silently.
+        """
+        match = _PYTEST_SUMMARY_RE.search(stdout)
+        if match is None:
+>           raise ValueError(
+                "could not find a pytest summary line (for example '12 passed in 0.4s') "
+                f"in the installed suite output:\n{stdout[-4000:]}"
+            )
+E           ValueError: could not find a pytest summary line (for example '12 passed in 0.4s') in the installed suite output:
+E           collected 451 items
+E           
+E           ======================== 451 passed in 84.29s (0:01:24) ========================
+
+scripts/smoke_wheel.py:103: ValueError
+_ test_pytest_summary_parsing_reads_modern_and_legacy_lines[======= 1 failed, 9 passed in 0.50s (0:00:00) =======-expected2] _
+
+line = '======= 1 failed, 9 passed in 0.50s (0:00:00) ======='
+expected = (9, 0)
+
+    @pytest.mark.parametrize(
+        "line,expected",
+        [
+            (
+                "======================== 451 passed in 84.29s (0:01:24) ========================",
+                (451, 0),
+            ),
+            ("================ 10 passed in 0.1s ================", (10, 0)),
+            ("======= 1 failed, 9 passed in 0.50s (0:00:00) =======", (9, 0)),
+            ("==== 3 passed, 2 skipped, 1 warning in 1.20s ====", (3, 2)),
+            ("== 1 passed, 1 skipped in 0.03s ==", (1, 1)),
+        ],
+    )
+    def test_pytest_summary_parsing_reads_modern_and_legacy_lines(
+        line: str, expected: tuple[int, int]
+    ) -> None:
+        """The installed-lane receipt must read pytest's real summary formats.
+    
+        pytest appends an elapsed parenthetical on current versions; the old pattern
+        did not allow for it and silently receipted a 451-test lane as zero tests.
+        """
+        stdout = f"collected 451 items\n\n{line}\n"
+>       assert parse_pytest_summary(stdout) == expected
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../../tree/tests/test_tui_packaging.py:1016: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/smoke_wheel.py:112: in parse_pytest_summary
+    summary = _pytest_summary_match(stdout).group(1)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+stdout = 'collected 451 items\n\n======= 1 failed, 9 passed in 0.50s (0:00:00) =======\n'
+
+    def _pytest_summary_match(stdout: str) -> re.Match[str]:
+        """Return the regex match for pytest's final summary line.
+    
+        Raising is deliberate. An earlier version treated an unmatched summary as
+        "zero passed, zero skipped", so a run that really executed 451 tests could be
+        receipted as an empty lane. A receipt must never under-report silently.
+        """
+        match = _PYTEST_SUMMARY_RE.search(stdout)
+        if match is None:
+>           raise ValueError(
+                "could not find a pytest summary line (for example '12 passed in 0.4s') "
+                f"in the installed suite output:\n{stdout[-4000:]}"
+            )
+E           ValueError: could not find a pytest summary line (for example '12 passed in 0.4s') in the installed suite output:
+E           collected 451 items
+E           
+E           ======= 1 failed, 9 passed in 0.50s (0:00:00) =======
+
+scripts/smoke_wheel.py:103: ValueError
+_______ test_installed_lane_receipt_records_positive_counts_and_duration _______
+
+tmp_path = PosixPath('/private/tmp/pytest-of-corvette/pytest-260/test_installed_lane_receipt_re0')
+mock_home = PosixPath('/private/tmp/pytest-of-corvette/pytest-260/test_installed_lane_receipt_re0/home')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b4b38d0>
+
+    def test_installed_lane_receipt_records_positive_counts_and_duration(
+        tmp_path: Path, mock_home: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A passing lane must receipt its real counts, summary line and duration."""
+        invoking_cwd = tmp_path / "invoking_cwd"
+        invoking_cwd.mkdir()
+        wheel_file = invoking_cwd / "skill_lens_cli-0.2.0-py3-none-any.whl"
+        wheel_file.write_bytes(bytes([80, 75, 5, 6]) + bytes(18))
+        monkeypatch.chdir(invoking_cwd)
+    
+        summary = "======================== 451 passed in 84.29s (0:01:24) ========================"
+        runner = _make_packaging_subprocess_runner(pytest_stdout=f"{summary}\n")
+        monkeypatch.setattr(subprocess, "run", runner)
+    
+>       result = verify_tui_endpoint_install(
+            wheel_file,
+            tmp_path / "work_dir",
+            endpoint_name="min",
+            textual_spec="textual==8.2.8",
+            repo_root=REPO_ROOT,
+        )
+
+/private/tmp/u9-mutations/tree/tests/test_tui_packaging.py:1041: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/private/tmp/u9-mutations/runs/receipt-modern-summary-rejected/scripts/smoke_wheel.py:623: in verify_tui_endpoint_install
+    test_count, skip_count = parse_pytest_summary(test_res.stdout)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/private/tmp/u9-mutations/runs/receipt-modern-summary-rejected/scripts/smoke_wheel.py:112: in parse_pytest_summary
+    summary = _pytest_summary_match(stdout).group(1)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+stdout = '======================== 451 passed in 84.29s (0:01:24) ========================\n'
+
+    def _pytest_summary_match(stdout: str) -> re.Match[str]:
+        """Return the regex match for pytest's final summary line.
+    
+        Raising is deliberate. An earlier version treated an unmatched summary as
+        "zero passed, zero skipped", so a run that really executed 451 tests could be
+        receipted as an empty lane. A receipt must never under-report silently.
+        """
+        match = _PYTEST_SUMMARY_RE.search(stdout)
+        if match is None:
+>           raise ValueError(
+                "could not find a pytest summary line (for example '12 passed in 0.4s') "
+                f"in the installed suite output:\n{stdout[-4000:]}"
+            )
+E           ValueError: could not find a pytest summary line (for example '12 passed in 0.4s') in the installed suite output:
+E           ======================== 451 passed in 84.29s (0:01:24) ========================
+
+/private/tmp/u9-mutations/runs/receipt-modern-summary-rejected/scripts/smoke_wheel.py:103: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_tui_packaging.py::test_pytest_summary_parsing_reads_modern_and_legacy_lines[======================== 451 passed in 84.29s (0:01:24) ========================-expected0]
+FAILED tests/test_tui_packaging.py::test_pytest_summary_parsing_reads_modern_and_legacy_lines[======= 1 failed, 9 passed in 0.50s (0:00:00) =======-expected2]
+FAILED tests/test_tui_packaging.py::test_installed_lane_receipt_records_positive_counts_and_duration
+3 failed, 6 passed, 58 deselected in 0.13s
+
+--- STDERR ---
+

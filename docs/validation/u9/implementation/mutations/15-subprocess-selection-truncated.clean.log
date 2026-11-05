@@ -1,0 +1,9 @@
+$ /Users/corvette/Documents/Projects Coding/Skill Lens/.venv/bin/pytest tests/test_tui_packaging.py -k expanded_installed_selection or override -q -p no:cacheprovider
+(cwd=/private/tmp/u9-mutations/tree, HOME=/private/tmp/u9-mutations/homes/subprocess-selection-truncated)
+exit=0 elapsed=0.16s
+--- STDOUT ---
+..                                                                       [100%]
+2 passed, 65 deselected in 0.06s
+
+--- STDERR ---
+
