@@ -1,0 +1,60 @@
+{
+  "observed_at": "2026-11-05",
+  "pytest": {
+    "command": [
+      ".venv/bin/pytest",
+      "--cov=skill_lens"
+    ],
+    "exit_code": 0,
+    "seconds": 274.72,
+    "sha256": "d4e8c0377db534aef6898c734743e0f8afd15175560e84e87b7898054fd9cfc2",
+    "tail": [
+      "skill_lens/tui/session.py               194      6     74      8    95%   109->112, 260, 262, 296, 298, 314, 330->exit, 346",
+      "skill_lens/tui/why.py                   617     55    228     39    89%   371-372, 413, 415, 418, 421-422, 452->454, 479, 482, 488-489, 502-505, 532-535, 540->exit, 557, 604-612, 607->605, 662, 664, 673, 690, 692, 699, 705->709, 711->exit, 718-719, 724, 728->730, 735, 737, 740-742, 747-748, 765->770, 767->769, 791-794, 824-825, 843, 892-896, 973, 976-977, 983, 1014-1016, 1048, 1067->1069, 1081-1082, 1085->1097",
+      "---------------------------------------------------------------------------------",
+      "TOTAL                                  7775    602   2794    375    90%",
+      "Required test coverage of 90.0% reached. Total coverage: 90.02%",
+      "=========================== short test summary info ============================",
+      "SKIPPED [1] tests/test_session_snapshot.py:1979: Filesystem is case-insensitive; dual distinct physical files unsupported.",
+      "================= 1238 passed, 1 skipped in 274.72s (0:04:34) =================="
+    ]
+  },
+  "mypy": {
+    "command": [
+      ".venv/bin/mypy"
+    ],
+    "exit_code": 0,
+    "seconds": null,
+    "sha256": "fdba5b4e396441aaf1ba0d4aee9a2b6de7229057c665772ec81bd032ce1cc3f5",
+    "tail": [
+      "Success: no issues found in 45 source files"
+    ]
+  },
+  "ruff-check": {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "exit_code": 0,
+    "seconds": null,
+    "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "tail": [
+      "All checks passed!"
+    ]
+  },
+  "ruff-format-check": {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "exit_code": 0,
+    "seconds": null,
+    "sha256": "61689733bb114440f657d3f37328814a60d043ca84b7aa1daf4672eb05bda67a",
+    "tail": [
+      "416 files already formatted"
+    ]
+  }
+}

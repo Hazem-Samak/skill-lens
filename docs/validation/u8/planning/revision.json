@@ -1,0 +1,121 @@
+{
+  "date": "2026-11-05",
+  "plan": "docs/plans/2026-11-04-tui-u8-polish-help-docs.md",
+  "baseline": "8edca36b93f8e717f61f82184e6edcf54884a2a2",
+  "coordinator": {
+    "host": "current Qoder session",
+    "requested_model": "Kimi-K3.1-Pro",
+    "requested_effort": "high",
+    "evidence": "owner /model readback in this session"
+  },
+  "independent_reviewers": [],
+  "subagents_or_external_workers": [],
+  "revision_count": 1,
+  "completion_draft_sha256": "2293a84217cf4cca722e0e021596ca0b066c1435f4977013c48059630201a7de",
+  "revised_plan_sha256": "01f6f250be358ed2168170e06513c1908ef616208a204d8f50f9dfa03f0c26de",
+  "completion_draft_corrections_before_the_formal_revision": [
+    "Replaced the previous session's two-revision authorization with the current owner instruction: one self-revision, no planning reviewers, freeze and commit.",
+    "Added the High-risk roster/review record and retained the normal two-commit freeze and later implementation roster boundary.",
+    "Defined F1 as one app-level priority toggle so it can both open Help from Input and dismiss the exact active Help without being preempted by a modal binding.",
+    "Corrected Home g/c key context, Doctor Enter wording, missing-Textual exit documentation, and Help status/fault-detail requirements."
+  ],
+  "formal_revision": {
+    "status": "completed",
+    "unresolved_blockers": [],
+    "rejected_findings": [],
+    "deferred_findings": [],
+    "accepted_findings": [
+      {
+        "id": "U8-R1",
+        "location": "Verified starting facts",
+        "problem": "The phrase 'installed minimum' conflated the dependency constraint with the installed version.",
+        "evidence": "pyproject.toml declares textual>=8.2.8; the baseline interpreter reports Textual 8.2.8.",
+        "resolution": "State the declared minimum and installed baseline separately, and record priority-key dispatch semantics."
+      },
+      {
+        "id": "U8-R2",
+        "location": "Help content and keyboard contract, items 6-7",
+        "problem": "The final keymap did not fully state JSON entry scope or Agents' extra Back step.",
+        "evidence": "Home requires table focus for J; Agents and Doctor require their ordinary table/details; Compare requires result mode. Agents Back moves from details to the table before closing.",
+        "resolution": "Specify the actual J contexts and Agents' details-to-table Back behavior while preserving JSON-first Back precedence."
+      },
+      {
+        "id": "U8-R3",
+        "location": "Acceptance A2",
+        "problem": "The completion draft required F1 to open from Input but did not explicitly test its app-priority dismissal route.",
+        "evidence": "Textual checks priority bindings before modal bindings. A disposable Textual 8.2.8 Pilot probe observed app-f1, not modal-f1, and observed literal '?' inserted into Input.",
+        "resolution": "Require F1 open/close toggle coverage with exact instance identity, no stacking, and preserved Input text/cursor/scroll."
+      },
+      {
+        "id": "U8-R4",
+        "location": "Acceptance A4",
+        "problem": "Fault and retained-data wording was required in the contract but not named explicitly enough in refresh acceptance evidence.",
+        "evidence": "SessionController retains current data on capture errors and keeps accepted unexpected faults sticky; session_explanation exposes distinct loading/refusal/retry/error states.",
+        "resolution": "Require literal Help fault details and accurate retained-data wording during covered refreshes and reconciliation."
+      },
+      {
+        "id": "U8-R5",
+        "location": "Implementation order, step 1",
+        "problem": "The later implementation handoff lacked explicit frozen-reference, checkout, baseline-gate, and role-ownership checks.",
+        "evidence": "docs/process/implementation-loop.md requires both parties to verify the frozen commit and inspect the checkout/baseline; council roles assign code/tests to the implementer and commits to the coordinator.",
+        "resolution": "Require those checks before product edits and state that the implementer does not review, delegate, or commit."
+      },
+      {
+        "id": "U8-R6",
+        "location": "Acceptance A10",
+        "problem": "The evidence list did not explicitly include the frozen hash, complete diff, implementer report fields, execution receipt, and final-review decisions.",
+        "evidence": "docs/process/council.md sections 4 and 6 and docs/process/implementation-loop.md require these acceptance records.",
+        "resolution": "Add the missing evidence requirements without selecting an implementation roster or waiving later review."
+      }
+    ]
+  },
+  "source_verification": {
+    "tracked_files_recorded": 1807,
+    "tracked_files_current": 1807,
+    "tracked_hash_mismatches": [],
+    "tracked_missing_files": [],
+    "tracked_worktree_changes": [],
+    "textual_version": "8.2.8",
+    "priority_probe": {
+      "result": "pass",
+      "observed_priority_events": [
+        "app-f1"
+      ],
+      "input_after_question_mark": "?",
+      "product_files_changed": []
+    },
+    "principal_files_checked": [
+      "skill_lens/tui/app.py",
+      "skill_lens/tui/home.py",
+      "skill_lens/tui/why.py",
+      "skill_lens/tui/diff.py",
+      "skill_lens/tui/agents.py",
+      "skill_lens/tui/compare.py",
+      "skill_lens/tui/doctor.py",
+      "skill_lens/tui/json_view.py",
+      "skill_lens/tui/session.py",
+      "tests/test_tui_app.py",
+      "tests/test_tui_home.py",
+      "tests/test_tui_why.py",
+      "tests/test_tui_diff.py",
+      "tests/test_tui_agents.py",
+      "tests/test_tui_compare.py",
+      "tests/test_tui_doctor.py",
+      "tests/test_tui_read_only.py",
+      "tests/conftest.py"
+    ]
+  },
+  "gate_results": "gates.json",
+  "product_implementation_started": false,
+  "push_authorized": false,
+  "freeze": {
+    "ready": true,
+    "procedure": "Commit planning evidence separately, commit the frozen plan with Reference pending, then record the first plan commit's full hash in a reference-only second plan commit.",
+    "reference": "pending"
+  },
+  "preserved_unrelated_paths": [
+    ".path",
+    ".qoder/",
+    "docs/validation/2026-10-25/"
+  ]
+}
