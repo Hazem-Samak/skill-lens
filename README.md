@@ -207,7 +207,7 @@ fault.
 
 ## Status
 
-Early development, and honest about it: the agent registry tags every precedence
+A published 0.2.0 tool, and still honest about it: the agent registry tags every precedence
 rule `documented`, `empirical`, or `inferred`, and says `ambiguous` rather than
 guessing. Original development Phases 0–6 are complete and reviewed; the separate
 assessment-repair stages A–H are accepted. Stage H documented the snapshot memory

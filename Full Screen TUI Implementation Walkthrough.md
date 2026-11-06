@@ -2,6 +2,13 @@
 
 This document records the step-by-step walkthrough of implementing the Full-Screen TUI (Skill Lens 0.2.0) as specified in `FULL_SCREEN_TUI.md`.
 
+> **Status banner (2026-11-06):** this is a dated development walkthrough,
+> retained unmodified as history. The authoritative design remains
+> `FULL_SCREEN_TUI.md`; the released 0.2.0 implementation record — U3–U8
+> screens, U9 release preparation, reviews, requalification waves r1–r4, the
+> privacy sanitization pass and the publication receipt — lives in
+> `DEVELOPMENT.md` (Phase 7) and `docs/validation/`.
+
 ---
 
 ## 1. Baseline Verification

@@ -210,6 +210,14 @@ rules in them were paid for:
   (`presentation/`), and TUI controller/skeleton (`tui/`): Step 0 input types,
   engine signatures, capture algorithm, and the ordered C1–C5 / U1–U2
   assignments.
+- [`docs/validation/u9/`](./docs/validation/u9/) — the U9 campaign that
+  prepared and **published 0.2.0** (PyPI `skill-lens-cli` 0.2.0, tag
+  `v0.2.0`): frozen plan, implementer evidence, requalification waves r1–r4
+  with the supersession note on live artifact hashes, two independent final
+  reviews, the SANITIZATION.md privacy pass and the publication receipt.
+  Read before touching packaging, `scripts/smoke_wheel.py`,
+  `tests/test_tui_packaging.py`, the release checklist, or any
+  version/status declaration.
 
 They were produced by independent read-only review delegated to other models
 (Phase 4 by two axes: one reviewer per repo standards, one per specification),

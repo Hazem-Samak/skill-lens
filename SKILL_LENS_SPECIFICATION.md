@@ -375,7 +375,7 @@ Development follows a strict test-first protocol. Tests run against mock fixture
 > **New scope after 0.1.x, owner decision.** Overturns the v1 "no full-screen
 > TUI" rule for 0.2. The full design — purpose, vision, screens, phasing and
 > gates — lives in [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md). This section
-> describes the development implementation; the plan remains authoritative.
+> describes the released implementation; the plan remains authoritative.
 
 - The optional **`textual` dependency** is the `[tui]` extra; the base install
   gains no new runtime dependency. It ships from 0.2.0; 0.1.x had no TUI.

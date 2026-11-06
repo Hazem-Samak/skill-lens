@@ -40,7 +40,7 @@
 > **Supersedes:** the "NO full-screen TUI" rule in `AGENTS.md` §1.5 and
 > `SKILL_LENS_SPECIFICATION.md` §5.
 > **Author:** maintainer, 2026-10-04.
-> **Current revision:** 2026-11-05. Original readiness finding dated 2026-10-04
+> **Current revision:** 2026-11-06 (0.2.0 published). Original readiness finding dated 2026-10-04
 > (checked against source, temporary crash reproductions and published dependency
 > metadata at that date) remains a historical record. U3 Home is technically
 > accepted with independent review and local gates:
@@ -55,8 +55,11 @@
 > technical verification are complete in development.
 > U7 implementation and parent technical verification are complete in the
 > current tree. U8 implementation and local evidence are complete in the current
-> working tree. U9 completed the local 0.2.0 release preparation; publishing is a
-> separate, unauthorized mission.
+> working tree. U9 completed release preparation, and **0.2.0 was published to
+> PyPI** (upload 2026-11-06 UTC, tag `v0.2.0`) after two independent final
+> reviews, a green hosted CI on the release commits and the owner's visual
+> approval — the full campaign is recorded under
+> `docs/validation/u9/` with its publication receipt.
 
 > **Q9 confirmed by the maintainer, 2026-10-04:** use Option 1 for 0.2.
 > Catalog, skill contents, settings and diagnostic inputs remain fixed until

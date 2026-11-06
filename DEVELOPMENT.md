@@ -10,7 +10,8 @@ readable for people who only want to install the tool.
 
 ## Build record
 
-Early development. The specification lives in
+`skill-lens-cli` 0.2.0 is **published** (PyPI, tag `v0.2.0`); Phases 0–7 are
+complete and reviewed, and development continues from here. The specification lives in
 [`SKILL_LENS_SPECIFICATION.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/SKILL_LENS_SPECIFICATION.md)
 and the build proceeds by phase:
 
@@ -138,6 +139,9 @@ and the build proceeds by phase:
   and U1–U2 were shipped development work (TUI entrypoint/controller/skeleton),
   with U3–U9 screens and 0.2 publishing remaining future work. Published PyPI
   0.1.1 has no TUI extra; do not recommend released `skill-lens-cli[tui]`.
+  *(Superseded 2026-11-06: `skill-lens-cli` 0.2.0 with the optional
+  `[tui]` extra is now published and installed from PyPI; the sentence above
+  describes the 2026-10-16 state and is kept unmodified as history.)*
 
 Latest dated verification: the U9 review wave and publication receipts under
 [`docs/validation/u9/coordinator/`](docs/validation/u9/coordinator/)
