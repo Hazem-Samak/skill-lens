@@ -1,0 +1,32 @@
+{
+  "release": "skill-lens-cli 0.2.0",
+  "published_at_utc": "2026-11-06T07:43:35Z",
+  "documented_release_date": "2026-11-05 — the date of verification, reviews, CI green and owner visual approval, as recorded across the five status documents (discussed with the owner before publication; the upload itself completed in the early UTC hours of the 6th)",
+  "artifacts_uploaded": {
+    "wheel": "skill_lens_cli-0.2.0-py3-none-any.whl",
+    "wheel_sha256": "8c7e5f64d3b08f518c641e249d4219cfc6328ebcaa4fc5392e4289de55970661",
+    "sdist": "skill_lens_cli-0.2.0.tar.gz",
+    "sdist_sha256": "de5687239d5692cdee466fba9558ec1a868eb901ca76c87cc2a81d1b787f2d6c",
+    "verified_against": "docs/validation/u9/coordinator/precommit/candidate-r4.json (r4 wave)",
+    "pypi_digest_match": "both files' sha256 confirmed against pypi.org/pypi/skill-lens-cli/0.2.0/json on 2026-11-06"
+  },
+  "tag": {"name": "v0.2.0", "points_at": "c675e941a3c4f5ea4c9c2af4613b93ce2520a5b3", "pushed": true, "order": "tag created only after successful upload, per the frozen plan"},
+  "gates_before_upload": {
+    "four_source_gates_r4": "1379 passed, 1 pre-existing skip, 90.10% combined coverage; mypy clean (46 files); ruff check clean; ruff format clean",
+    "archive_qualification": "16/16 checks (12 TUI modules, 10 registry TOMLs, py.typed, metadata, twine PASS, packaged bytes match export, no untracked leakage)",
+    "installed_lanes": "base (no Textual), textual==8.2.8, unconstrained-latest: 461 tests / 0 skips on both TUI lanes; per-lane version probes pass; installed terminal smoke at 100x30 and 60x24 pass",
+    "hosted_ci": {
+      "175d2a9": "run 42099688151 attempt 2 — success (attempt 1 lost only the flaky macOS/py3.12 runner-cancelled job, zero steps)",
+      "c675e94": "run 42101246719 attempt 1 — all nine jobs success"
+    },
+    "independent_final_reviews": "reviewer 1 (mcode/MiniMax-M3.1-Flash) round 2 pass with zero blockers after its blocker closure was re-verified; reviewer 2 (perch) pass with zero blockers, identity deviation disclosed and owner-accepted — see reviews/review-receipt.json",
+    "human_visual_approval": "granted by the owner on 2026-11-05 (chat instruction: 'my visual approval is okay')",
+    "privacy_pass": "docs/validation/u9/SANITIZATION.md — local paths and username removed from U9 evidence; artifacts unaffected (evidence folder excluded from exports)"
+  },
+  "post_publish_realworld_check": {
+    "uv pip install 'skill-lens-cli[tui]==0.2.0' (python 3.13, fresh venv outside repo)": "skill-lens 0.2.0; help lists commands; skill_lens.tui imports from site-packages",
+    "uv pip install 'skill-lens-cli==0.2.0' (python 3.11, fresh venv)": "Textual absent; base install unchanged as promised",
+    "venvs retained": "/tmp/u9-pypi-smoke and /tmp/u9-pypi-base"
+  },
+  "credential_notes": "Project-scoped PyPI API token supplied interactively by the owner for this upload; never written into any repository file; owner advised to revoke it on PyPI immediately. The previously exposed account password should still be rotated (unrelated to the token; see prior disclosure)."
+}
