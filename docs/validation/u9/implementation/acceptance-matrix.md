@@ -6,6 +6,15 @@ Implementation checkout: `da2b8d978d17492e2649d518cc90dea1bcccc4f1`, uncommitted
 changes only. Evidence in this directory; every JSON receipt records the command
 that produced it.
 
+> **Coordinator note (2026-11-06):** this matrix records the **r1** build
+> verification, kept unmodified below. The shipped 0.2.0 artifacts are the
+> **r4 wave** — the wave-by-wave hashes are in
+> [`SUPERSESSION.md`](SUPERSESSION.md), the final evidence set in
+> `docs/validation/u9/coordinator/precommit/`, and the release record in
+> `docs/validation/u9/coordinator/publication-receipt.json`. Rows citing
+> `candidate.json` / `install-receipt.json` here point at first-wave files by
+> design; follow the supersession note for the live hashes.
+
 | ID | Requirement | Evidence | Status |
 | --- | --- | --- | --- |
 | A1 — scope | Only the ten allowed tracked files changed; pre-existing untracked work preserved; no production behaviour, dependency or policy change. | `inputs.json` (`modified_tracked_files`, `changed_file_hashes`, `preservation`); `baseline-git-status.txt`; `git diff --stat` in the report. The production code diff is two version strings; `scripts/`, `tests/` and docs only otherwise. | Pass |

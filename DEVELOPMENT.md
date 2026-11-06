@@ -331,7 +331,7 @@ uvx twine check "$work/artifacts/skill_lens_cli-0.2.0-py3-none-any.whl" \
 #    interpreter with the repository as the working directory instead imports
 #    skill_lens from the source tree and proves nothing about the install;
 #    version_probes.py handles the lane cwd itself, from anywhere.
-.venv/bin/python docs/validation/u9/implementation/version_probes.py \
+.venv/bin/python "$root/docs/validation/u9/implementation/version_probes.py" \
   --smoke-dir "$work/smoke" --artifacts "$work/artifacts" \
   --out "$work/probes.json"
 # asserts, per lane: importlib.metadata version == skill_lens.__version__ ==

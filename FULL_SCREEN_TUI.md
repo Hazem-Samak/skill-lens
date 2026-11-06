@@ -29,7 +29,8 @@
 > tag. Evidence and hashes are
 > under [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
 > (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt waves
-> and publication receipts).
+> and publication receipts; the supersession note in the first folder names
+> the live artifact hashes).
 > The base install gains nothing: the TUI ships only as the opt-in `[tui]`
 > extra, from 0.2.0 (0.1.x had none).
 > It overturns a v1 rule ("no full-screen TUI"), so it is deliberately detailed:
@@ -80,7 +81,8 @@
 > U9 release preparation is recorded under
 > [`docs/validation/u9/implementation/`](docs/validation/u9/implementation/)
 > (first wave) and `docs/validation/u9/coordinator/precommit/` (rebuilt
-> waves), which qualified the 0.2.0 build released on 2026-11-05.
+> waves; see the supersession note), which qualified the 0.2.0 build released
+> on 2026-11-05.
 
 ---
 
@@ -1902,7 +1904,8 @@ verification and both independent final reviews passed on 5 November 2026
 (`docs/validation/u8/coordinator/review-receipt.json`). U9's frozen plan is
 `docs/plans/2026-11-05-tui-u9-release-preparation.md`; its implementation and
 artifact evidence are under `docs/validation/u9/implementation/` (first wave)
-and `docs/validation/u9/coordinator/precommit/` (rebuilt waves), which
+and `docs/validation/u9/coordinator/precommit/` (rebuilt waves; see the
+supersession note), which
 record the released 0.2.0 candidate and the checks the coordinator completed
 before publication.
 
