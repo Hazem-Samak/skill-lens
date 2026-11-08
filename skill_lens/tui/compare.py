@@ -13,7 +13,7 @@ from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
 from textual.widget import Widget
-from textual.widgets import Button, DataTable, Footer, Header, Static
+from textual.widgets import Button, DataTable, Header, Static
 
 from skill_lens.core.compare import validate_compare_agents
 from skill_lens.core.snapshot import snapshot_path
@@ -25,6 +25,7 @@ from skill_lens.registry.loader import AgentDefinition
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
+from skill_lens.tui.theme import KeyBar
 
 Pair = tuple[str, str]
 _LOADING_TEXT = "Loading comparison…"
@@ -87,11 +88,11 @@ class CompareScreen(Screen[None]):
         background: $background;
     }
     #compare-title {
-        height: 2;
+        height: 1;
         padding: 0 2;
-        color: $primary;
+        color: $muted;
         text-style: bold;
-        border-bottom: solid $rule;
+        text-align: center;
     }
     #compare-picker {
         height: 1fr;
@@ -118,6 +119,8 @@ class CompareScreen(Screen[None]):
     }
     #compare-a-table, #compare-b-table {
         height: 1fr;
+        border: round $rule;
+        padding: 0 1;
     }
     #compare-selection, #compare-registry-message, #compare-input-error {
         height: auto;
@@ -175,6 +178,11 @@ class CompareScreen(Screen[None]):
     CompareScreen.narrow .compare-column {
         width: 1fr;
         height: 1fr;
+    }
+    CompareScreen.narrow #compare-a-table,
+    CompareScreen.narrow #compare-b-table {
+        border: none;
+        padding: 0;
     }
     CompareScreen.narrow #compare-column-b {
         border-left: none;
@@ -242,7 +250,7 @@ class CompareScreen(Screen[None]):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield Static("Compare agents", id="compare-title", markup=False)
+        yield Static("COMPARE AGENTS", id="compare-title", markup=False)
         with Vertical(id="compare-picker"):
             with Horizontal(id="compare-columns"):
                 with Vertical(classes="compare-column", id="compare-column-a"):
@@ -262,13 +270,14 @@ class CompareScreen(Screen[None]):
         yield JsonView(id="compare-json")
         yield Static("Initializing...", id="compare-status", markup=False)
         yield Static("", id="compare-error-details", markup=False)
-        yield Footer()
+        yield KeyBar()
 
     def on_mount(self) -> None:
         for table_id in ("#compare-a-table", "#compare-b-table"):
             table = self.query_one(table_id, DataTable)
             table.cursor_type = "row"
             table.zebra_stripes = True
+            table.cell_padding = 2
         self._apply_width(self.size.width)
         self._mounting = True
         try:
@@ -603,6 +612,7 @@ class CompareScreen(Screen[None]):
                     table.add_row(
                         _literal(agent.name),
                         _literal(agent.id),
+                        height=2,
                         key=agent.id,
                     )
                 chosen = highlight or (self._agents[0].id if self._agents else None)

@@ -13,7 +13,7 @@ from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
 from textual.widget import Widget
-from textual.widgets import DataTable, Footer, Header, Static
+from textual.widgets import DataTable, Header, Static
 
 from skill_lens.models import dumps
 from skill_lens.presentation import agents_payload
@@ -21,7 +21,7 @@ from skill_lens.registry.loader import AgentDefinition
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import SessionController
-from skill_lens.tui.theme import fact_block
+from skill_lens.tui.theme import KeyBar, fact_block
 
 
 class _AgentsHost(Protocol):
@@ -117,11 +117,11 @@ class AgentsScreen(Screen[None]):
         background: $background;
     }
     #agents-title {
-        height: 2;
+        height: 1;
         padding: 0 2;
-        color: $primary;
+        color: $muted;
         text-style: bold;
-        border-bottom: solid $rule;
+        text-align: center;
     }
     #agents-body {
         width: 1fr;
@@ -131,6 +131,8 @@ class AgentsScreen(Screen[None]):
     #agents-table {
         width: 2fr;
         height: 1fr;
+        border: round $rule;
+        padding: 0 1;
     }
     #agents-detail-scroll {
         width: 3fr;
@@ -171,6 +173,10 @@ class AgentsScreen(Screen[None]):
         width: 1fr;
         height: 1fr;
     }
+    AgentsScreen.narrow #agents-table {
+        border: none;
+        padding: 0;
+    }
     AgentsScreen.narrow #agents-detail-scroll {
         border-left: none;
         border-top: solid $rule;
@@ -207,7 +213,7 @@ class AgentsScreen(Screen[None]):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield Static("Agents", id="agents-title", markup=False)
+        yield Static("AGENTS", id="agents-title", markup=False)
         with Horizontal(id="agents-body"):
             yield DataTable(id="agents-table")
             with VerticalScroll(id="agents-detail-scroll"):
@@ -216,12 +222,13 @@ class AgentsScreen(Screen[None]):
         yield JsonView(id="agents-json")
         yield Static("Initializing...", id="agents-status", markup=False)
         yield Static("", id="agents-error-details", markup=False)
-        yield Footer()
+        yield KeyBar()
 
     def on_mount(self) -> None:
         table = self.query_one("#agents-table", DataTable)
         table.cursor_type = "row"
         table.zebra_stripes = True
+        table.cell_padding = 2
         self._apply_width(self.size.width)
         self._mounting = True
         try:
@@ -457,6 +464,7 @@ class AgentsScreen(Screen[None]):
                     Content.from_text(agent.collision_policy, markup=False),
                     Content.from_text(agent.policy_evidence.value, markup=False),
                     str(len(agent.roots)),
+                    height=2,
                     key=agent.id,
                 )
             if self._selected_id is not None and self._agents:

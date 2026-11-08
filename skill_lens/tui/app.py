@@ -50,8 +50,14 @@ from skill_lens.tui.session import (
     SessionController,
     ViewName,
 )
-from skill_lens.tui.theme import APP_CSS, PRIMARY, SKILL_LENS_THEME, THEME
+from skill_lens.tui.theme import APP_CSS, SKILL_LENS_THEME, THEME, brand_lockup
 from skill_lens.tui.why import WhyScreen
+
+#: The keys that act on the session itself.
+#:
+#: Textual renders a group as one block, so the session keys read as a unit
+#: next to the keys of the screen.
+_SESSION_GROUP = Binding.Group("Session")
 
 
 class CaptureComplete(Message):
@@ -129,8 +135,8 @@ class SkillLensApp(App[int]):
     COMMANDS: ClassVar[set[Any]] = set()
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("q", "quit", "Quit", show=True),
-        Binding("r", "refresh", "Refresh", show=True),
+        Binding("q", "quit", "Quit", show=True, group=_SESSION_GROUP),
+        Binding("r", "refresh", "Refresh", show=True, group=_SESSION_GROUP),
         Binding("question_mark", "open_help", "Help", show=False),
         Binding("f1", "toggle_help", "Help", show=True, priority=True),
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
@@ -201,12 +207,8 @@ class SkillLensApp(App[int]):
         self._help_origin: Screen[None] | None = None
 
     def format_title(self, title: str, sub_title: str) -> Content:
-        """Render the top bar as a lens mark, the app name and a dim version."""
-        return Content.assemble(
-            Content.styled("\u25c9", f"bold {PRIMARY}"),
-            Content.styled(f"  {title}", "bold"),
-            Content.styled(f"   {sub_title}", "dim"),
-        )
+        """Render the top bar as a centred lens mark, the name and a version."""
+        return brand_lockup(title, sub_title)
 
     def get_default_screen(self) -> Screen[None]:
         """Return the Home screen as the default root screen."""

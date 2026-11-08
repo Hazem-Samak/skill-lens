@@ -12,8 +12,11 @@ different colours.
 
 from __future__ import annotations
 
+from textual.app import ComposeResult
+from textual.binding import Binding
 from textual.content import Content
 from textual.theme import Theme
+from textual.widgets import Footer, Static
 
 from skill_lens.models.enums import HeadlineState
 
@@ -218,11 +221,59 @@ def help_block(text: str) -> Content:
     return Content.assemble(*parts)
 
 
+#: A blank cell that is not whitespace.
+#:
+#: It gives the gap between a key and its action without giving the line
+#: wrapper a place to break, so a narrow terminal wraps between hints and
+#: never splits one in two.  It is the Unicode braille blank, which terminal
+#: fonts draw as an empty cell.
+_BLANK = "\u2800"
+
+
 def keycap(key: str, label: str) -> Content:
-    """One hint in the key bar: the key on a chip, the action dim."""
+    """One hint in the key bar: the key on a chip, the action dim.
+
+    The action is joined to its chip with a blank cell, so the pair can never
+    be split across two lines.
+    """
     return Content.assemble(
-        Content.styled(f" {key} ", f"bold {KEY_TEXT} on {KEYCAP}"),
-        Content.styled(f" {label}", "dim"),
+        Content.styled(f"{_BLANK}{key}{_BLANK}", f"bold {KEY_TEXT} on {KEYCAP}"),
+        Content.styled(f"{label} ", "dim"),
+    )
+
+
+def key_group(*hints: tuple[str, str]) -> Content:
+    """One group of hints in the key bar, e.g. the keys that navigate.
+
+    The hints of a group sit close together; the groups themselves are
+    separated by a rule, so the bar reads as a map instead of a run-on list.
+    """
+    return Content.assemble(*[keycap(key, label) for key, label in hints])
+
+
+def key_bar(*groups: tuple[tuple[str, str], ...]) -> Content:
+    """The whole key bar: groups of hints, separated by a dim rule."""
+    parts: list[Content | str] = []
+    for index, group in enumerate(groups):
+        if index:
+            # The rule is joined to the group behind it, so a wrap never
+            # leaves a dangling separator at the end of a line.
+            parts.append(Content.styled(f"{_BLANK}{_BLANK}\u2502{_BLANK}{_BLANK}", "dim"))
+        parts.append(key_group(*group))
+    return Content.assemble(*parts)
+
+
+def brand_lockup(title: str, version: str) -> Content:
+    """The centred brand mark of the top bar: a lens, the name, the version.
+
+    The name is set in capitals and bold, with the letters spaced out -- in a
+    terminal grid that is what a larger, more deliberate title looks like.
+    """
+    spaced = " ".join(title.upper())
+    return Content.assemble(
+        Content.styled("\u25c9", f"bold {PRIMARY}"),
+        Content.styled(f"  {spaced}", "bold"),
+        Content.styled(f"   {version}", "dim"),
     )
 
 
@@ -232,6 +283,36 @@ def _is_section_heading(line: str) -> bool:
         return False
     letters = [character for character in line if character.isalpha()]
     return bool(letters) and all(character.isupper() for character in letters)
+
+
+class KeyBar(Footer):
+    """The key bar of a screen: its own keys, then the session keys.
+
+    It is a Textual :class:`Footer`, so it keeps the standard position and
+    geometry, but it draws the keys itself: grouped by purpose, with the key
+    on a chip and the action beside it.  The groups are taken from the live
+    bindings, so the bar can never name a key the screen does not have.
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Static(self._bar(), classes="key-bar", markup=False)
+
+    def _bar(self) -> Content:
+        app_actions = {
+            binding.action for binding in self.app.BINDINGS if isinstance(binding, Binding)
+        }
+        own: list[tuple[str, str]] = []
+        session: list[tuple[str, str]] = []
+        for _node, binding, _enabled, _tooltip in self.screen.active_bindings.values():
+            if not isinstance(binding, Binding) or not binding.show:
+                continue
+            entry = (binding.key, binding.description or binding.key)
+            if binding.action.startswith("app.") or binding.action in app_actions:
+                session.append(entry)
+            else:
+                own.append(entry)
+        groups = [tuple(group) for group in (own, session) if group]
+        return key_bar(*groups)
 
 
 #: The chrome every screen shares: bars, tables, inputs, tabs and scrollbars.
@@ -246,7 +327,9 @@ Screen {
 /* -- top bar ---------------------------------------------------------- */
 Header {
     background: $surface;
+    border-bottom: solid $rule;
     color: $muted;
+    height: 2;
     text-style: bold;
 }
 HeaderIcon {
@@ -254,8 +337,12 @@ HeaderIcon {
 }
 HeaderTitle {
     color: $foreground;
-    content-align: left middle;
+    content-align: center middle;
     padding: 0 2;
+    text-style: bold;
+}
+HeaderClockSpace {
+    display: none;
 }
 
 /* -- bottom key bar ---------------------------------------------------- */
@@ -271,6 +358,21 @@ FooterKey > .footer-key--key {
 FooterKey > .footer-key--description {
     color: $muted;
 }
+KeyBar {
+    background: $background;
+}
+KeyBar > .key-bar {
+    width: 1fr;
+    height: 1;
+}
+KeyGroup {
+    border-left: solid $rule;
+    margin: 0 1 0 0;
+    padding-left: 1;
+}
+FooterLabel {
+    margin: 0;
+}
 
 /* -- tables ------------------------------------------------------------ */
 DataTable {
@@ -282,6 +384,7 @@ DataTable > .datatable--header {
     background: $panel;
     color: $muted;
     text-style: bold;
+    border-bottom: solid $rule;
 }
 DataTable > .datatable--even-row {
     background: $surface 40%;

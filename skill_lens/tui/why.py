@@ -27,7 +27,7 @@ from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
 from textual.widget import Widget
-from textual.widgets import Button, Collapsible, Footer, Header, Static
+from textual.widgets import Button, Collapsible, Header, Static
 
 from skill_lens.core.discovery import canonical_key
 from skill_lens.core.exitcodes import ExitCode
@@ -42,7 +42,7 @@ from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.home import AgentOption, agent_display_name
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
-from skill_lens.tui.theme import fact_block
+from skill_lens.tui.theme import KeyBar, fact_block
 
 _NO_AGENT_EXPLANATION = "No agent reaches this installation."
 _UNKNOWN_AGENT_HINT = "Unknown agent IDs: {}"
@@ -237,12 +237,12 @@ class WhyScreen(Screen[None]):
     }
     #why-title {
         height: auto;
-        padding: 1 2;
+        padding: 0 2;
         background: $surface;
         border-bottom: solid $rule;
     }
     #why-agent-strip {
-        height: 3;
+        height: auto;
         layout: horizontal;
         padding: 0 2;
         background: $surface;
@@ -255,6 +255,9 @@ class WhyScreen(Screen[None]):
         height: auto;
         padding: 0 2;
         color: $muted;
+    }
+    #why-status, #why-report-status {
+        background: $surface;
     }
     #why-report-status {
         color: $secondary;
@@ -337,12 +340,14 @@ class WhyScreen(Screen[None]):
         with VerticalScroll(id="why-body"):
             yield Static("", id="why-title", markup=False)
             yield Horizontal(id="why-agent-strip")
-            yield Static("", id="why-status", markup=False)
             yield Static("", id="why-error-details", markup=False)
-            yield Static("", id="why-report-status", markup=False)
             yield VerticalScroll(id="why-candidates", can_focus=False)
+        # The status lines stay pinned: scrolling the report must never hide
+        # what the session is doing.
+        yield Static("", id="why-status", markup=False)
+        yield Static("", id="why-report-status", markup=False)
         yield JsonView(id="why-json")
-        yield Footer()
+        yield KeyBar()
 
     def on_mount(self) -> None:
         strip = self.query_one("#why-agent-strip", Horizontal)

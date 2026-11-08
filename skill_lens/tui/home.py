@@ -27,7 +27,7 @@ from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
 from textual.widget import Widget
-from textual.widgets import DataTable, Footer, Header, Input, Static
+from textual.widgets import DataTable, Header, Input, Static
 from textual.widgets.data_table import CellDoesNotExist
 
 from skill_lens.core.discovery import DiscoveredEntry, canonical_key
@@ -46,7 +46,7 @@ from skill_lens.tui.theme import (
     SUCCESS,
     WARNING,
     field,
-    keycap,
+    key_bar,
     state_cell,
 )
 
@@ -330,19 +330,17 @@ def _hint_bar() -> Content:
     Every key the list answers to is named here, one key cap per action, so
     the bar is a complete map of what the screen can do.
     """
-    return Content.assemble(
-        keycap("q", "quit"),
-        keycap("r", "refresh"),
-        keycap("/", "filter"),
-        keycap("a", "agent"),
-        keycap("enter", "why"),
-        keycap("d", "diff"),
-        keycap("g", "agents"),
-        keycap("c", "compare"),
-        keycap("h", "doctor"),
-        keycap("J", "json"),
-        keycap("tab", "focus"),
-        end="  ",
+    return key_bar(
+        (("q", "quit"), ("r", "refresh")),
+        (("/", "filter"), ("a", "agent")),
+        (
+            ("enter", "why"),
+            ("d", "diff"),
+            ("g", "agents"),
+            ("c", "compare"),
+            ("h", "doctor"),
+        ),
+        (("J", "json"), ("tab", "focus"), ("f1", "help")),
     )
 
 
@@ -354,6 +352,28 @@ def _parse_style(mark: str) -> str:
 def _health_style(label: str) -> str:
     """Green when the skill is healthy, yellow when it needs attention."""
     return SUCCESS if label.lower() in {"ok", "healthy"} else WARNING
+
+
+#: The widest a skill name may be in the table before it is shortened.
+#:
+#: One long name would otherwise stretch the column and push every other
+#: column away from the names.  The full name is always in the preview pane.
+NAME_COLUMN_LIMIT = 40
+
+
+def _shorten(value: str, limit: int = NAME_COLUMN_LIMIT) -> str:
+    """Shorten a value for the table, marking the cut with an ellipsis."""
+    if _display_width(value) <= limit:
+        return value
+    kept: list[str] = []
+    width = 0
+    for character in value:
+        cell_width = _display_width(character)
+        if width + cell_width > limit - 1:
+            break
+        kept.append(character)
+        width += cell_width
+    return "".join(kept) + "\u2026"
 
 
 def _cell(value: str) -> Content:
@@ -404,11 +424,11 @@ class HomeScreen(Screen[None]):
         background: $background;
     }
     #home-title {
-        height: 2;
+        height: 1;
         padding: 0 2;
-        color: $primary;
+        color: $muted;
         text-style: bold;
-        border-bottom: solid $rule;
+        text-align: center;
     }
     #filter-strip {
         height: 2;
@@ -439,6 +459,8 @@ class HomeScreen(Screen[None]):
     #skill-table {
         width: 3fr;
         height: 1fr;
+        border: round $rule;
+        padding: 0 1;
     }
     #preview-scroll {
         width: 2fr;
@@ -504,6 +526,8 @@ class HomeScreen(Screen[None]):
     }
     HomeScreen.narrow #skill-table {
         width: 1fr;
+        border: none;
+        padding: 0;
     }
     HomeScreen.narrow #preview-scroll {
         width: 1fr;
@@ -547,7 +571,7 @@ class HomeScreen(Screen[None]):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield Static("Skill Lens Home", id="home-title", markup=False)
+        yield Static("HOME", id="home-title", markup=False)
         with Vertical(id="filter-strip"):
             yield Input(placeholder="Filter by name or description  (/)", id="filter-input")
             yield Static(f"Agent: {ALL_AGENTS}", id="agent-filter", markup=False)
@@ -568,12 +592,12 @@ class HomeScreen(Screen[None]):
         yield Static("", id="removal-notice", markup=False)
         yield Static("", id="doctor-jump-notice", markup=False)
         yield Static(_hint_bar(), id="footer-help", markup=False)
-        yield Footer()
 
     def on_mount(self) -> None:
         table = self.query_one("#skill-table", DataTable)
         table.cursor_type = "row"
         table.zebra_stripes = True
+        table.cell_padding = 2
         table.focus()
         self._apply_width(self.size.width)
         # ``is_mounted`` only flips after this handler returns (Textual sets it in
@@ -593,7 +617,14 @@ class HomeScreen(Screen[None]):
 
     def _apply_width(self, width: int) -> None:
         """Stack the panes on narrow terminals so every control stays usable."""
-        self.set_class(width < 80, "narrow")
+        narrow = width < 80
+        if self.has_class("narrow") == narrow:
+            return
+        self.set_class(narrow, "narrow")
+        # The rows are taller on a wide screen, so the list has to be rebuilt
+        # when the layout changes: a narrow terminal needs the rows back.
+        with contextlib.suppress(NoMatches):
+            self._rebuild_table()
 
     def on_unmount(self) -> None:
         self._cancel_owned_why()
@@ -1280,16 +1311,24 @@ class HomeScreen(Screen[None]):
                 table.add_column("State", width=widths["state"], key="state")
             for row in self._visible:
                 cells = [
-                    _cell(row.name),
+                    _cell(_shorten(row.name)),
                     _styled_cell(row.scope_label, "dim"),
                     _styled_cell(row.parse_mark, _parse_style(row.parse_mark)),
                 ]
                 if self._agent_id is not None:
                     cells.append(state_cell(self._group_mark(row.key)))
-                table.add_row(*cells, key=row.key)
+                table.add_row(*cells, height=self._row_height(), key=row.key)
         finally:
             self._syncing = False
         self._update_agent_widgets()
+
+    def _row_height(self) -> int:
+        """The height of one skill row.
+
+        A wide terminal has room for a blank line between the skills; a narrow
+        one needs the rows back, so the list stays useful there.
+        """
+        return 1 if self.has_class("narrow") else 2
 
     def _column_widths(self) -> dict[str, int]:
         """Explicit column widths so literal cells are never header-clipped.
@@ -1305,7 +1344,7 @@ class HomeScreen(Screen[None]):
             "state": _display_width("State"),
         }
         for row in self._visible:
-            widths["name"] = max(widths["name"], _display_width(row.name))
+            widths["name"] = max(widths["name"], min(_display_width(row.name), NAME_COLUMN_LIMIT))
             widths["scope"] = max(widths["scope"], _display_width(row.scope_label))
             widths["parse"] = max(widths["parse"], _display_width(row.parse_mark))
             if self._agent_id is not None:

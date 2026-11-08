@@ -27,7 +27,7 @@ from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
 from textual.widget import Widget
-from textual.widgets import Footer, Header, Static
+from textual.widgets import Header, Static
 
 from skill_lens.core.discovery import canonical_key
 from skill_lens.core.exitcodes import ExitCode
@@ -56,6 +56,7 @@ from skill_lens.presentation import (
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
+from skill_lens.tui.theme import KeyBar
 
 _LOADING_TEXT = "Loading report…"
 _NO_REPORT_TEXT = "No report available."
@@ -252,7 +253,7 @@ class DiffScreen(Screen[None]):
             yield Static("", id="diff-error-details", markup=False)
             yield Vertical(id="diff-content")
         yield JsonView(id="diff-json")
-        yield Footer()
+        yield KeyBar()
 
     def on_mount(self) -> None:
         body = self._body_or_none()

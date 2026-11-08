@@ -20,7 +20,7 @@ from textual.coordinate import Coordinate
 from textual.css.query import NoMatches
 from textual.screen import Screen
 from textual.widget import Widget
-from textual.widgets import DataTable, Footer, Header, Static
+from textual.widgets import DataTable, Header, Static
 
 from skill_lens.core.discovery import DiscoveredEntry, canonical_key
 from skill_lens.core.snapshot import snapshot_path, snapshot_same_location
@@ -31,7 +31,7 @@ from skill_lens.models.enums import Severity
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import SessionController
-from skill_lens.tui.theme import fact_block
+from skill_lens.tui.theme import KeyBar, fact_block
 
 _LITERAL_MARKUP = False
 _NONE = "(none)"
@@ -179,11 +179,11 @@ class DoctorScreen(Screen[None]):
         background: $background;
     }
     #doctor-title {
-        height: 2;
+        height: 1;
         padding: 0 2;
-        color: $primary;
+        color: $muted;
         text-style: bold;
-        border-bottom: solid $rule;
+        text-align: center;
     }
     #doctor-summary, #doctor-context, #doctor-navigation,
     #doctor-status, #doctor-error-details {
@@ -208,6 +208,8 @@ class DoctorScreen(Screen[None]):
     #doctor-findings {
         width: 3fr;
         height: 1fr;
+        border: round $rule;
+        padding: 0 1;
     }
     #doctor-detail-scroll {
         width: 2fr;
@@ -244,6 +246,10 @@ class DoctorScreen(Screen[None]):
     DoctorScreen.narrow #doctor-detail-scroll {
         width: 1fr;
         height: 1fr;
+    }
+    DoctorScreen.narrow #doctor-findings {
+        border: none;
+        padding: 0;
     }
     DoctorScreen.narrow #doctor-detail-scroll {
         border-left: none;
@@ -293,7 +299,7 @@ class DoctorScreen(Screen[None]):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield Static("Doctor", id="doctor-title", markup=False)
+        yield Static("DOCTOR", id="doctor-title", markup=False)
         yield Static("", id="doctor-summary", markup=False)
         yield Static("", id="doctor-context", markup=False)
         with Horizontal(id="doctor-body"):
@@ -305,12 +311,13 @@ class DoctorScreen(Screen[None]):
         yield JsonView(id="doctor-json")
         yield Static("Initializing...", id="doctor-status", markup=False)
         yield Static("", id="doctor-error-details", markup=False)
-        yield Footer()
+        yield KeyBar()
 
     def on_mount(self) -> None:
         table = self.query_one("#doctor-findings", DataTable)
         table.cursor_type = "row"
         table.zebra_stripes = True
+        table.cell_padding = 2
         self._apply_width(self.size.width)
         self._mounting = True
         try:
@@ -565,6 +572,7 @@ class DoctorScreen(Screen[None]):
                     _literal(finding.code),
                     _literal(finding.message),
                     _literal(finding.path if finding.path is not None else _NONE),
+                    height=2,
                     key=row_key,
                 )
             if self._selected is not None:

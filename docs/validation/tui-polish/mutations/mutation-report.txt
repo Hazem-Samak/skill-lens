@@ -13,5 +13,10 @@ PASS  fact-block-loses-its-styling  (tests/test_tui_visual.py::test_fact_block_k
 PASS  help-key-loses-its-bold  (tests/test_tui_visual.py::test_help_block_styles_headings_and_keeps_the_text)
 PASS  hint-bar-loses-a-key  (tests/test_tui_visual.py::test_hint_bar_names_every_key)
 PASS  agents-columns-clip-again  (tests/test_tui_visual.py::test_secondary_tables_use_explicit_widths)
+PASS  brand-off-centre-again  (tests/test_tui_visual.py::test_brand_is_centred_in_the_top_bar)
+PASS  keycap-loses-its-padding  (tests/test_tui_visual.py::test_keycap_renders_a_key_on_a_chip)
+PASS  long-name-clips-again  (tests/test_tui_visual.py::test_long_names_are_shortened_in_the_table)
+PASS  rows-lose-their-air  (tests/test_tui_visual.py::test_rows_are_taller_on_a_wide_terminal)
+PASS  status-scrolls-away-again  (tests/test_tui_visual.py::test_why_status_stays_visible_while_the_report_scrolls)
 
-All 15 mutations were caught.
+All 20 mutations were caught.

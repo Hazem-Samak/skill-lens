@@ -42,7 +42,7 @@ from skill_lens.tui.theme import (
     keycap,
     state_cell,
 )
-from tests.fixtures.builders import write_skill
+from tests.fixtures.builders import make_skill, write_skill
 from tests.fixtures.scenarios import build_scenario
 
 
@@ -93,7 +93,7 @@ def test_header_shows_the_lens_mark_and_the_version(
             await _wait_ready(pilot, app)
             rendered = _rendered_text(app)
             assert "◉" in rendered, "the lens mark must be visible in the top bar"
-            assert "Skill Lens" in rendered
+            assert "S K I L L   L E N S" in rendered, "the brand must be set in caps"
             assert app.SUB_TITLE in rendered
             # The stock Textual glyph must not appear next to our own mark.
             assert "⭘" not in rendered
@@ -276,12 +276,25 @@ def test_agent_strip_is_still_a_row_of_buttons(
 
 
 def test_keycap_renders_a_key_on_a_chip() -> None:
-    """A key cap is a chip with bright text, not a bare word."""
+    """A key cap is a chip with bright text, and its action cannot be split."""
     content = keycap("d", "diff")
-    assert str(content) == " d  diff"
+    text = str(content)
+    assert text.startswith("\u2800d\u2800")
+    assert "diff" in text
     styles = [str(span.style) for span in content.spans]
-    assert any("on " in style for style in styles), "the key must sit on a chip"
+    key_style = next(
+        str(span.style)
+        for span in content.spans
+        if content.plain[span.start : span.end].replace("\u2800", "").strip() == "d"
+    )
+    assert "on " in key_style, "the key must sit on a chip"
     assert any("dim" in style for style in styles), "the action must be dim"
+    # The key and its action are joined by a cell that cannot be a break: no
+    # whitespace may sit between them, or the wrapper could split the hint.
+    head = text[: text.index("diff")]
+    assert not any(character.isspace() for character in head), (
+        "the key and its action must not be splittable"
+    )
 
 
 def test_help_body_keeps_one_static_and_the_same_characters(
@@ -333,11 +346,25 @@ def test_hint_bar_names_every_key(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
             bar = app.screen.query_one("#footer-help", Static)
             content = bar.content
             keys = [
-                content.plain[span.start : span.end].strip()
+                content.plain[span.start : span.end].replace("\u2800", "").strip()
                 for span in content.spans
                 if "on" in str(span.style)
+                and content.plain[span.start : span.end].replace("\u2800", "").strip()
             ]
-            assert keys == ["q", "r", "/", "a", "enter", "d", "g", "c", "h", "J", "tab"]
+            assert keys == [
+                "q",
+                "r",
+                "/",
+                "a",
+                "enter",
+                "d",
+                "g",
+                "c",
+                "h",
+                "J",
+                "tab",
+                "f1",
+            ]
 
     asyncio.run(_run())
 
@@ -373,5 +400,120 @@ def test_secondary_tables_use_explicit_widths(
             assert width is not None and width >= 15, (
                 f"the Agent column is {width} cells wide, so names are clipped"
             )
+
+    asyncio.run(_run())
+
+
+def test_brand_is_centred_in_the_top_bar(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The brand sits in the middle of the bar, not left of it."""
+    monkeypatch.setattr(paths, "home", lambda: tmp_path)
+    build_scenario("claude_personal_beats_project", tmp_path)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=tmp_path, cwd=tmp_path)
+        async with app.run_test(size=(140, 30)) as pilot:
+            await _wait_ready(pilot, app)
+            strips = app.screen._compositor.render_strips()
+            brand_row = next(strip.text for strip in strips if "S K I L L" in strip.text)
+            start = brand_row.index("S K I L L")
+            end = brand_row.index("L E N S") + len("L E N S")
+            middle = (start + end) // 2
+            assert abs(middle - len(brand_row) // 2) <= 3, (
+                f"the brand is centred at {middle} of {len(brand_row)} cells"
+            )
+
+    asyncio.run(_run())
+
+
+def test_key_bar_never_splits_a_hint(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A narrow key bar wraps between hints, never inside one."""
+    monkeypatch.setattr(paths, "home", lambda: tmp_path)
+    build_scenario("claude_personal_beats_project", tmp_path)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=tmp_path, cwd=tmp_path)
+        async with app.run_test(size=(60, 24)) as pilot:
+            await _wait_ready(pilot, app)
+            bar = app.screen.query_one("#footer-help", Static)
+            for line in str(bar.content).split("\n"):
+                assert not line.rstrip().endswith("│"), "a rule must not end a line of the key bar"
+            # Every hint is present, and none of them was cut in half.
+            text = str(bar.content)
+            for label in ("quit", "refresh", "filter", "agent", "why", "diff"):
+                assert label in text
+
+    asyncio.run(_run())
+
+
+def test_long_names_are_shortened_in_the_table(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A name that is too long for the column is shortened, not clipped."""
+    monkeypatch.setattr(paths, "home", lambda: tmp_path)
+    long_name = "a-skill-name-that-is-far-longer-than-the-column-allows"
+    make_skill(
+        tmp_path / ".claude" / "skills" / long_name,
+        long_name,
+        "A long name.",
+    )
+
+    async def _run() -> None:
+        app = SkillLensApp(home=tmp_path, cwd=tmp_path)
+        async with app.run_test(size=(140, 30)) as pilot:
+            await _wait_ready(pilot, app)
+            table = app.screen.query_one("#skill-table", DataTable)
+            cell = str(table.get_row_at(0)[0])
+            assert cell.endswith("…"), f"the name was not shortened: {cell!r}"
+            assert len(cell) <= 40
+
+    asyncio.run(_run())
+
+
+def test_rows_are_taller_on_a_wide_terminal(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A wide screen gives the skills room; a narrow one gives the rows back."""
+    monkeypatch.setattr(paths, "home", lambda: tmp_path)
+    build_scenario("claude_personal_beats_project", tmp_path)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=tmp_path, cwd=tmp_path)
+        async with app.run_test(size=(140, 30)) as pilot:
+            await _wait_ready(pilot, app)
+            table = app.screen.query_one("#skill-table", DataTable)
+            wide_height = next(iter(table.rows.values())).height
+            assert wide_height == 2, f"a wide row is {wide_height} cells high"
+
+        app = SkillLensApp(home=tmp_path, cwd=tmp_path)
+        async with app.run_test(size=(60, 24)) as pilot:
+            await _wait_ready(pilot, app)
+            table = app.screen.query_one("#skill-table", DataTable)
+            narrow_height = next(iter(table.rows.values())).height
+            assert narrow_height == 1, "a narrow row must stay one cell high"
+
+    asyncio.run(_run())
+
+
+def test_why_status_stays_visible_while_the_report_scrolls(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The session status is pinned: scrolling the report cannot hide it."""
+    monkeypatch.setattr(paths, "home", lambda: tmp_path)
+    build_scenario("claude_personal_beats_project", tmp_path)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=tmp_path, cwd=tmp_path)
+        async with app.run_test(size=(140, 30)) as pilot:
+            await _wait_ready(pilot, app)
+            await pilot.press("enter")
+            for _ in range(6):
+                await pilot.pause()
+            why = app.screen
+            for _ in range(5):
+                await pilot.press("pagedown")
+                await pilot.pause(0.02)
+            strips = why._compositor.render_strips()
+            composited = "\n".join("".join(seg.text for seg in s) for s in strips)
+            assert "Ready:" in composited or "Report:" in composited
 
     asyncio.run(_run())

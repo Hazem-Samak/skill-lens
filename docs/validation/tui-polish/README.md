@@ -13,16 +13,23 @@ report field, JSON shape or exit code.
 
 ## What changed
 
+Two rounds of visual work are shown here.  The "before" pictures are the
+original interface; the "after" pictures are the current tree, which carries
+both rounds.
+
 | Area | Before | After |
 |---|---|---|
 | Theme | the stock Textual dark theme: saturated blue primary, heavy blue scrollbars, one background for everything | one registered `skill-lens` theme: a deep canvas, two surfaces, a lens teal accent and a semantic palette (green / amber / red / violet) |
 | Top bar | `⭘  Skill Lens — 0.2.0` in the default style | `◉ Skill Lens 0.2.0` — one mark, the name, a dim version |
-| Screen titles | the same bold monospace as everything else | the accent colour, with a hairline rule under them |
+| Screen titles | the same bold monospace as everything else | a centred, dim, upper-case eyebrow under the brand bar |
 | Tables | plain headers, no zebra, cells clipped mid-word (`Antig`, `empirica`) | muted header band, zebra rows, an accent-tinted selected row, padded cells, explicit column widths so names are never clipped, coloured parse marks and severity values |
 | Detail panes | a wall of identical bold `Label: value` lines | dim labels, bright values, muted paths and hashes, a set-apart description |
 | Separators | a solid accent rule between panes | a hairline, and one-column scrollbars in a muted colour |
-| Status and hints | `Ready: 9 skills discovered` floating above the key line | a status band, a keycap hint bar naming every key, and the Textual key bar with chip-shaped keys |
+| Status and hints | `Ready: 9 skills discovered` floating above the key line | a status band, and one key bar: keycaps grouped by purpose and separated by a rule.  Every screen draws its own bar from its own bindings, so the bar cannot name a key the screen does not have |
 | Help | a plain box of monospace | a rounded modal, accented section headings, bright keys, a real Close button |
+| Title bar | `⭘ Skill Lens — 0.2.0`, left aligned, three stacked identity lines | one centred brand lockup over a hairline rule, with a centred page eyebrow under it.  A terminal cannot enlarge its type, so the lockup is set in spaced capitals instead |
+| Long names | one 54-character skill name stretched the Name column and pushed the other columns away | names longer than 40 cells are shortened with an ellipsis in the table; the full name is in the preview and the filter still matches it |
+| Row spacing | one line per skill | the skill list on Home gives each skill a blank line on a wide terminal, and keeps the rows one cell high on a narrow one so the list stays useful |
 
 ## Before and after
 
@@ -83,8 +90,11 @@ shipped artifact.
 
 ## What did not move
 
-- Every key does what it did before; the hint bar names all of them, and it
-  wraps rather than dropping keys on a narrow terminal.
+- Every key does what it did before.  The Home bar names the keys the skill
+  list answers to -- detail, diff, agents, compare, doctor, filter, agent,
+  JSON, focus, quit and refresh; the cursor keys and the escape keys are left
+  to the screen itself, as they were before.  The bar wraps between hints on a
+  narrow terminal and never splits a key from its action.
 - Every report says the same words in the same order: the styling is applied
   with markup-free `Content` spans, so the plain text of every widget is
   byte-for-byte what it was. `tests/test_tui_visual.py` proves this for the
@@ -99,6 +109,7 @@ shipped artifact.
   logs are in [`gates/`](gates/).
 - `mypy` — no issues.
 - `ruff check .` and `ruff format --check .` — clean.
-- `tests/test_tui_visual.py` — new, and mutation-tested: fifteen deliberate
-  mutations were applied to the code it guards, and each one was caught. The
-  report is in [`mutations/mutation-report.txt`](mutations/mutation-report.txt).
+- `tests/test_tui_visual.py` — new, and mutation-tested: twenty deliberate
+  mutations were applied to the code it guards, and every one was caught. The
+  report is in
+  [`mutations/mutation-report.txt`](mutations/mutation-report.txt).

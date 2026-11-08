@@ -29,10 +29,10 @@ from textual.containers import Vertical, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import ModalScreen
-from textual.widgets import Button, Footer, Header, Static
+from textual.widgets import Button, Header, Static
 
 from skill_lens.tui.session import SessionController
-from skill_lens.tui.theme import help_block
+from skill_lens.tui.theme import KeyBar, help_block
 
 _COMMON_ROWS: tuple[tuple[str, str], ...] = (
     (
@@ -283,7 +283,7 @@ class HelpScreen(ModalScreen[None]):
                     markup=False,
                 )
             yield Button("Close", id="help-close", variant="primary")
-        yield Footer()
+        yield KeyBar()
 
     def on_mount(self) -> None:
         body = self.query_one("#help-body", VerticalScroll)

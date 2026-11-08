@@ -464,8 +464,125 @@ read-only. Verdict `changes_required` with five blockers and ten suggestions.
   `river/deepseek-ai/DeepSeek-V4.1-Flash-1017` with thinking `max`).
 - Additional rounds: 0 beyond the planned two; the plan critic's findings
   were resolved in the plan before the freeze.
-- Gates on the final tree: `pytest --cov=skill_lens` (1397 passed, 1 skipped,
-  coverage 90.2%), `mypy` (no issues), `ruff check .` (clean), `ruff format
+- Gates on the final tree: `pytest --cov=skill_lens` (1402 passed, 1 skipped,
+  coverage 90.3%), `mypy` (no issues), `ruff check .` (clean), `ruff format
   --check .` (clean). Logs in `docs/validation/tui-polish/gates/`.
-- Mutation testing: 15 deliberate mutations, all caught
+- Mutation testing: 20 deliberate mutations, all caught
   (`docs/validation/tui-polish/mutations/mutation-report.txt`).
+
+---
+
+# Second visual round (2026-11-08)
+
+The user ran the merged interface, sent three screenshots and asked for a
+second pass. Their words:
+
+  "the footer of the TUI is not that polished or arranged, it's messy with
+  letters assigned to actions (groups are close to each other), also the top
+  title bar needs refactoring and be aligned to the middle with bigger fonts
+  and better Readability the table as well needs some love with better borders
+  and columns and better UI as whole, increase the spaces between skills
+  alittle bit and don't be that compact in the table"
+
+  "go ahead with the changes without planning council (you are the only
+  planner) and only after you finishe the implememnattion you can ask
+  DeepSeek v4.1 river for a review"
+
+The council planning loop was therefore waived by the user for this round; the
+same reviewer was still used, and the same guarantees were kept.
+
+## What changed
+
+- **The key bar.** The hints are now grouped by purpose and the groups are
+  separated by a dim rule: session keys, filtering keys, the navigation keys,
+  and the view keys. Home no longer carries a second, Textual-drawn key bar,
+  so one screen shows one key bar. Every key the list answers to is still
+  named, and the bar wraps instead of dropping keys on a narrow terminal.
+- **The title bar.** `App.format_title` now renders a centred brand lockup --
+  a lens mark, the app name in spaced capitals, a dim version -- over a
+  hairline rule. The decorative per-screen titles became centred, dim,
+  upper-case eyebrows; the screens whose title carries report facts (Why,
+  Diff) keep their content untouched.
+- **The tables.** Every table sizes its columns explicitly, pads its cells,
+  gives each row two rows of height (a blank line between skills) and sits
+  in a rounded hairline frame. On a narrow terminal the frame is dropped,
+  because a narrow terminal has no room for it.
+- **Long names.** One 54-character skill name was stretching the Name column
+  and pushing the other columns away from the names. Names longer than 40
+  cells are shortened with an ellipsis in the table; the full name is in the
+  preview pane and the filter still matches it.
+- **The detail screen.** Its two status lines moved out of the scrolling
+  report area and are pinned below it, so scrolling the report cannot hide
+  what the session is doing.
+
+## Behaviour kept
+
+No key binding, screen, report field, JSON shape, exit code or read-only
+guarantee changed. The pure text builders still return the same strings.
+
+Two attempts were reverted because they broke behaviour rather than looks: a
+one-row agent tab (it stole the focus of the candidate list) and a frame that
+was kept on narrow terminals (it squeezed a row out of the table). Both are
+recorded here because the tempting version is not the correct one.
+
+## Round-2 review (the same reviewer, river DeepSeek-V4.1-Flash-1017, max)
+
+The reviewer ran as a one-shot, read-only job in a Rex tab ("tui-visual-review"),
+dispatched through `rex run` with a `critic_runner` script that kept stdout,
+stderr and the exit status outside the checkout.  The pre- and post-dispatch
+fingerprints of the reviewed files were identical: the reviewer changed
+nothing.
+
+Verdict `changes_required` with six blockers.  How each was resolved:
+
+- **The brand lockup was not centred.** Textual's `HeaderClockSpace` held ten
+  cells on the right of the title, so the lockup sat a few cells left of the
+  middle.  The clock space is now hidden and the title is centred.
+- **`_shorten` was dead code.** The name cell was never shortened.  The cell
+  now uses the helper, and a test covers a name longer than the column.
+- **The grouped key bar was Home-only.** Every screen's own keys are now
+  grouped through Textual's own `Binding.Group`, so the standard key bar groups
+  them the same way, from the bindings themselves -- no hand-written list that
+  could drift.
+- **The narrow key bar split a hint.** A key and its action are now joined by
+  a cell that is not whitespace, so the wrapper cannot break between them, and
+  the rule between groups travels with the group behind it.
+- **The evidence did not describe the code.** The gates were re-run on the
+  final tree, the mutation report was re-run, and this record now lists the
+  composition changes the round made: Home no longer carries the Textual key
+  bar (its own bar names every key the list answers to), and the detail
+  screen's two status lines moved out of the scrolling report area and are
+  pinned below it.
+- **The frozen contract said "no widget is added, removed or re-parented".**
+  The user's round-2 instruction authorised the two composition changes, and
+  they are recorded here.
+
+Suggestions that were taken: the row spacing is now adaptive (a narrow
+terminal keeps the rows one cell high so the list stays useful); the round-2
+tests cover the brand centring, the key-bar wrapping, the adaptive row
+height, the shortened names and the pinned status.
+
+## Round-2 follow-up review (the same reviewer)
+
+The reviewer raised four more blockers on the corrected round.  All four were
+resolved:
+
+- **The key bar could miss a key.**  It was built from the live binding
+  chain, which a focused widget can shadow (the Doctor's `enter`) and which a
+  modal cuts short (the Help overlay loses the app's `f1`).  It is now built
+  from the screen's own bindings plus the app's, with the screen winning for a
+  key both of them show, so every key the screen shows is named.
+- **A rule could still end a line of the narrow bar.**  The key and its action
+  are now joined by a cell that is not whitespace, so the rule and the hint
+  behind it travel together, and the test inspects the *rendered* lines rather
+  than the unwrapped source text.
+- **The gate logs were older than the code.**  All four gates were re-run on
+  the final tree and the logs were replaced.
+- **Five new guards were not mutation-tested.**  Five more mutations were
+  added; twenty deliberate mutations are now all caught.
+
+The reviewer's suggestions were taken as well: the key bar reads the bindings
+themselves, the plan records the third composition change of the round (the
+standard Textual key bar became the Skill Lens key bar on six screens), the
+exported names were completed, and the claims about grouping and row spacing
+were corrected to say what the code actually does.
