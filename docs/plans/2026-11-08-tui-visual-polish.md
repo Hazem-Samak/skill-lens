@@ -22,7 +22,9 @@ Roster:
   river entry with thinking levels `low,high,max`; `omp models` confirms the id).
   Requested by the user; confirmed from the relay receipt at dispatch.
 
-Reference: pending until Step 5 (two-commit freeze)
+Reference: `c085e2284b3b4aab34690c27c8b0c336b0ea6bec` — the freeze commit for
+this plan. The second commit records only this reference; it does not change
+the frozen contract.
 
 Risk and review: **Normal** (council §5). The change is presentation-only inside
 `skill_lens/tui/`: colours, typography, borders, padding and span styling. It
