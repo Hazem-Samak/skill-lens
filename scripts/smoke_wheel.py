@@ -3,8 +3,8 @@
 
 Verifies:
 1. Wheel and sdist archive integrity:
-   - All 12 required TUI modules (entrypoint, controller, compatibility adapter
-     and the eight screen/view modules through U8)
+   - All 13 required TUI modules (entrypoint, controller, theme, compatibility
+     adapter and the eight screen/view modules)
    - All 10 agent registry TOML files
    - py.typed typing marker
 2. Base installation lane (lean fallback without [tui] extra):
@@ -45,6 +45,7 @@ REQUIRED_TUI_MODULES: tuple[str, ...] = (
     "skill_lens/tui/__init__.py",
     "skill_lens/tui/app.py",
     "skill_lens/tui/session.py",
+    "skill_lens/tui/theme.py",
     "skill_lens/tui/_textual_compat.py",
     "skill_lens/tui/home.py",
     "skill_lens/tui/why.py",
@@ -74,6 +75,7 @@ INSTALLED_TUI_TEST_SUITES: tuple[str, ...] = (
     "tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits",
     "tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs",
     "tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes",
+    "tests/test_tui_visual.py",
 )
 
 

@@ -84,11 +84,14 @@ class CompareScreen(Screen[None]):
     DEFAULT_CSS = """
     CompareScreen {
         layout: vertical;
+        background: $background;
     }
     #compare-title {
-        height: 1;
-        padding: 0 1;
+        height: 2;
+        padding: 0 2;
+        color: $primary;
         text-style: bold;
+        border-bottom: solid $rule;
     }
     #compare-picker {
         height: 1fr;
@@ -103,11 +106,14 @@ class CompareScreen(Screen[None]):
         height: 1fr;
     }
     #compare-column-b {
-        border-left: solid $primary;
+        border-left: solid $rule;
         padding-left: 1;
     }
     .compare-column-title {
         height: 1;
+        padding: 0 1;
+        background: $panel;
+        color: $secondary;
         text-style: bold;
     }
     #compare-a-table, #compare-b-table {
@@ -115,7 +121,10 @@ class CompareScreen(Screen[None]):
     }
     #compare-selection, #compare-registry-message, #compare-input-error {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
+    }
+    #compare-selection {
+        color: $muted;
     }
     #compare-registry-message, #compare-input-error {
         color: $warning;
@@ -127,7 +136,7 @@ class CompareScreen(Screen[None]):
     }
     #compare-result-scroll {
         height: 1fr;
-        padding: 0 1;
+        padding: 0 2;
         display: none;
     }
     #compare-result {
@@ -135,7 +144,11 @@ class CompareScreen(Screen[None]):
     }
     #compare-status, #compare-error-details {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
+        color: $muted;
+    }
+    #compare-error-details {
+        color: $error;
     }
     #compare-json {
         display: none;
@@ -165,7 +178,7 @@ class CompareScreen(Screen[None]):
     }
     CompareScreen.narrow #compare-column-b {
         border-left: none;
-        border-top: solid $primary;
+        border-top: solid $rule;
         padding-left: 0;
         padding-top: 1;
     }
@@ -252,8 +265,10 @@ class CompareScreen(Screen[None]):
         yield Footer()
 
     def on_mount(self) -> None:
-        self.query_one("#compare-a-table", DataTable).cursor_type = "row"
-        self.query_one("#compare-b-table", DataTable).cursor_type = "row"
+        for table_id in ("#compare-a-table", "#compare-b-table"):
+            table = self.query_one(table_id, DataTable)
+            table.cursor_type = "row"
+            table.zebra_stripes = True
         self._apply_width(self.size.width)
         self._mounting = True
         try:
@@ -565,6 +580,14 @@ class CompareScreen(Screen[None]):
         self.remove_class("json-mode")
         self._restore_picker_focus()
 
+    def _column_widths(self) -> dict[str, int]:
+        """Explicit column widths so an agent name is never clipped mid-word."""
+        widths = {"name": len("Agent"), "id": len("ID")}
+        for agent in self._agents:
+            widths["name"] = max(widths["name"], len(agent.name))
+            widths["id"] = max(widths["id"], len(agent.id))
+        return widths
+
     def _rebuild_tables(self) -> None:
         self._syncing = True
         try:
@@ -574,7 +597,8 @@ class CompareScreen(Screen[None]):
             ):
                 table = self.query_one(f"#{table_id}", DataTable)
                 table.clear(columns=True)
-                table.add_columns("Agent", "ID")
+                table.add_column("Agent", width=self._column_widths()["name"], key="name")
+                table.add_column("ID", width=self._column_widths()["id"], key="id")
                 for agent in self._agents:
                     table.add_row(
                         _literal(agent.name),

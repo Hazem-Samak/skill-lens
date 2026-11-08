@@ -57,7 +57,8 @@ class JsonView(VerticalScroll):
     JsonView {
         width: 1fr;
         height: 1fr;
-        padding: 0 1;
+        padding: 0 2;
+        background: $background;
     }
     JsonView > Static {
         width: 1fr;

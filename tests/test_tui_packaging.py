@@ -27,9 +27,9 @@ Covers:
      lane that passed no tests is rejected
 8. Relative wheel and harness paths normalized before lane cwd switch
 9. U9 manifest and selection guards (independent of the production tuples):
-   - The 12-module archive manifest equals a hand-maintained expectation and the
+   - The 13-module archive manifest equals a hand-maintained expectation and the
      shipped ``skill_lens/tui`` sources
-   - The 14 installed test selections equal a hand-maintained expectation
+   - The 15 installed test selections equal a hand-maintained expectation
    - Every selected node ID exists, and the selected size case covers 100x30
      and 60x24
    - The full selection reaches the lane's own pytest argv with no silencing filter
@@ -79,6 +79,7 @@ EXPECTED_TUI_MODULES: tuple[str, ...] = (
     "skill_lens/tui/__init__.py",
     "skill_lens/tui/app.py",
     "skill_lens/tui/session.py",
+    "skill_lens/tui/theme.py",
     "skill_lens/tui/_textual_compat.py",
     "skill_lens/tui/home.py",
     "skill_lens/tui/why.py",
@@ -105,6 +106,7 @@ EXPECTED_INSTALLED_TEST_SUITES: tuple[str, ...] = (
     "tests/test_tui_help.py::test_views_stay_on_captured_data_until_refresh_after_fixture_edits",
     "tests/test_tui_help.py::test_all_six_json_views_match_the_cli_serializer_on_same_inputs",
     "tests/test_tui_help.py::test_every_screen_and_help_remains_usable_at_both_sizes",
+    "tests/test_tui_visual.py",
 )
 
 # Options that can narrow a pytest selection while the lane still reports success.
@@ -360,7 +362,7 @@ def test_tui_command_is_registered() -> None:
 
 
 def test_required_tui_module_manifest_matches_the_hand_maintained_list() -> None:
-    """The archive manifest must be exactly the 12-module U9 expectation.
+    """The archive manifest must be exactly the 13-module expectation.
 
     The expectation above is written out by hand on purpose: comparing the
     production tuple with itself (or building the fixture from it) cannot catch

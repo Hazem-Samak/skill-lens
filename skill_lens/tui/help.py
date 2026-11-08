@@ -32,6 +32,7 @@ from textual.screen import ModalScreen
 from textual.widgets import Button, Footer, Header, Static
 
 from skill_lens.tui.session import SessionController
+from skill_lens.tui.theme import help_block
 
 _COMMON_ROWS: tuple[tuple[str, str], ...] = (
     (
@@ -214,7 +215,7 @@ class HelpScreen(ModalScreen[None]):
     DEFAULT_CSS = """
     HelpScreen {
         align: center middle;
-        background: $background 60%;
+        background: $background 70%;
     }
     #help-frame {
         width: 95%;
@@ -222,16 +223,18 @@ class HelpScreen(ModalScreen[None]):
         height: 90%;
         layout: vertical;
         background: $surface;
-        border: solid $primary;
+        border: round $primary;
+        border-title-color: $primary;
     }
     #help-title {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
+        color: $primary;
         text-style: bold;
     }
     #help-body {
         height: 1fr;
-        padding: 0 1;
+        padding: 0 2;
     }
     #help-content {
         width: 1fr;
@@ -241,7 +244,8 @@ class HelpScreen(ModalScreen[None]):
         width: 1fr;
         height: auto;
         padding-top: 1;
-        border-top: solid $primary;
+        border-top: solid $rule;
+        color: $muted;
     }
     #help-close {
         width: auto;
@@ -269,7 +273,7 @@ class HelpScreen(ModalScreen[None]):
             )
             with VerticalScroll(id="help-body"):
                 yield Static(
-                    build_help_body(self.context),
+                    help_block(build_help_body(self.context)),
                     id="help-content",
                     markup=False,
                 )

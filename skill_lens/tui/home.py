@@ -41,6 +41,14 @@ from skill_lens.registry.loader import AgentDefinition
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
+from skill_lens.tui.theme import (
+    ERROR,
+    SUCCESS,
+    WARNING,
+    field,
+    keycap,
+    state_cell,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -258,32 +266,108 @@ def resolution_text(report: ResolutionReport, row_key: str) -> str:
     return ", ".join(states)
 
 
-def preview_text(row: HomeRow, snapshot: SessionSnapshot) -> str:
-    """Plain literal metadata preview for one selected row."""
+def _preview_fields(row: HomeRow, snapshot: SessionSnapshot) -> tuple[tuple[str, str], ...]:
+    """Every preview field of one row, in order, as ``(label, value)`` pairs.
+
+    Both the plain preview text and the styled preview are built from this one
+    list, so the two can never drift apart.
+    """
     agent_names = [agent_display_name(snapshot, agent_id) for agent_id in row.agents]
     agents = ", ".join(agent_names) if agent_names else "none"
     variant = row.variant_label or "-"
-    description = row.description if row.description is not None else "(no description)"
-    return "\n".join(
-        [
-            f"Name: {row.name}",
-            f"Scope: {row.scope_label}",
-            f"Path: {row.display_path}",
-            f"Agents: {agents} ({len(agent_names)})",
-            f"Hash: {row.content_hash or 'none'}",
-            f"Parse: {row.parse_status} ({row.parse_mark})",
-            f"Variant: {variant}",
-            f"Health: {row.health_label}",
-            "",
-            "Description:",
-            description,
-        ]
+    return (
+        ("Name", row.name),
+        ("Scope", row.scope_label),
+        ("Path", row.display_path),
+        ("Agents", f"{agents} ({len(agent_names)})"),
+        ("Hash", row.content_hash or "none"),
+        ("Parse", f"{row.parse_status} ({row.parse_mark})"),
+        ("Variant", variant),
+        ("Health", row.health_label),
     )
+
+
+def _preview_description(row: HomeRow) -> str:
+    """The description of one row, or the placeholder when it has none."""
+    return row.description if row.description is not None else "(no description)"
+
+
+def preview_text(row: HomeRow, snapshot: SessionSnapshot) -> str:
+    """Plain literal metadata preview for one selected row."""
+    lines = [f"{label}: {value}" for label, value in _preview_fields(row, snapshot)]
+    lines.extend(["", "Description:", _preview_description(row)])
+    return "\n".join(lines)
+
+
+def preview_content(row: HomeRow, snapshot: SessionSnapshot) -> Content:
+    """The preview for one selected row, with a dim label and a bright value.
+
+    The characters are exactly the plain preview text -- only the styling
+    differs, so the field names stay where the CLI put them.
+    """
+    styles = {
+        "Name": "bold",
+        "Path": "dim",
+        "Hash": "dim",
+    }
+    parts: list[Content] = []
+    for label, value in _preview_fields(row, snapshot):
+        style = styles.get(label)
+        if label == "Parse":
+            style = _parse_style(row.parse_mark)
+        elif label == "Health":
+            style = _health_style(row.health_label)
+        parts.append(field(label, value, style))
+    parts.append(Content.styled("", ""))
+    parts.append(Content.styled("Description:", "dim"))
+    parts.append(Content.styled(_preview_description(row), "italic"))
+    return Content("\n").join(parts)
+
+
+def _hint_bar() -> Content:
+    """The key hints for the skill list.
+
+    Every key the list answers to is named here, one key cap per action, so
+    the bar is a complete map of what the screen can do.
+    """
+    return Content.assemble(
+        keycap("q", "quit"),
+        keycap("r", "refresh"),
+        keycap("/", "filter"),
+        keycap("a", "agent"),
+        keycap("enter", "why"),
+        keycap("d", "diff"),
+        keycap("g", "agents"),
+        keycap("c", "compare"),
+        keycap("h", "doctor"),
+        keycap("J", "json"),
+        keycap("tab", "focus"),
+        end="  ",
+    )
+
+
+def _parse_style(mark: str) -> str:
+    """Green for a valid skill, red for a malformed one."""
+    return SUCCESS if mark == "*" else ERROR
+
+
+def _health_style(label: str) -> str:
+    """Green when the skill is healthy, yellow when it needs attention."""
+    return SUCCESS if label.lower() in {"ok", "healthy"} else WARNING
 
 
 def _cell(value: str) -> Content:
     """A literal cell value that can never be interpreted as Rich markup."""
     return Content.from_text(value, markup=_LITERAL_CELL_MARKUP)
+
+
+def _styled_cell(value: str, style: str) -> Content:
+    """A literal cell value in a given style -- still never markup.
+
+    ``Content.styled`` takes plain text and never parses markup, so a skill
+    named ``[bold]x[/bold]`` still shows as itself.
+    """
+    return Content.styled(value, style)
 
 
 def _display_width(value: str) -> int:
@@ -317,16 +401,19 @@ class HomeScreen(Screen[None]):
     DEFAULT_CSS = """
     HomeScreen {
         layout: vertical;
+        background: $background;
     }
     #home-title {
-        height: 1;
-        padding: 0 1;
+        height: 2;
+        padding: 0 2;
+        color: $primary;
         text-style: bold;
+        border-bottom: solid $rule;
     }
     #filter-strip {
-        height: auto;
+        height: 2;
         layout: horizontal;
-        padding: 0 1;
+        padding: 0 2;
     }
     #filter-input {
         width: 1fr;
@@ -334,12 +421,16 @@ class HomeScreen(Screen[None]):
     #agent-filter {
         width: auto;
         min-width: 22;
+        height: 1;
         padding: 0 1;
+        background: $panel;
+        color: $secondary;
+        text-style: bold;
     }
     #legend {
         height: auto;
-        padding: 0 1;
-        color: $text-muted;
+        padding: 0 2;
+        color: $muted;
     }
     #home-body {
         height: 1fr;
@@ -352,8 +443,8 @@ class HomeScreen(Screen[None]):
     #preview-scroll {
         width: 2fr;
         height: 1fr;
-        padding: 0 1;
-        border-left: solid $primary;
+        padding: 0 2;
+        border-left: solid $rule;
     }
     #preview-pane {
         width: 1fr;
@@ -361,36 +452,39 @@ class HomeScreen(Screen[None]):
     }
     #empty-state {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
         color: $warning;
     }
     #catalog-note {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
         color: $warning;
     }
     #status-text {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
+        background: $surface;
+        color: $muted;
     }
     #error-details {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
+        color: $error;
     }
     #removal-notice {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
         color: $warning;
     }
     #doctor-jump-notice {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
         color: $warning;
     }
     #footer-help {
-        height: 1;
-        padding: 0 1;
-        color: $text-muted;
+        height: auto;
+        padding: 0 2;
+        color: $muted;
     }
     #home-json {
         display: none;
@@ -415,7 +509,7 @@ class HomeScreen(Screen[None]):
         width: 1fr;
         height: 1fr;
         border-left: none;
-        border-top: solid $primary;
+        border-top: solid $rule;
     }
     """
 
@@ -473,18 +567,13 @@ class HomeScreen(Screen[None]):
         yield Static("", id="error-details", markup=False)
         yield Static("", id="removal-notice", markup=False)
         yield Static("", id="doctor-jump-notice", markup=False)
-        yield Static(
-            "q: Quit   r: Refresh   /: Filter   a: Agent   Enter: Why   d: Diff"
-            "   g: Agents   c: Compare   h: Doctor"
-            "   J: JSON   Tab: Focus",
-            id="footer-help",
-            markup=False,
-        )
+        yield Static(_hint_bar(), id="footer-help", markup=False)
         yield Footer()
 
     def on_mount(self) -> None:
         table = self.query_one("#skill-table", DataTable)
         table.cursor_type = "row"
+        table.zebra_stripes = True
         table.focus()
         self._apply_width(self.size.width)
         # ``is_mounted`` only flips after this handler returns (Textual sets it in
@@ -1192,11 +1281,11 @@ class HomeScreen(Screen[None]):
             for row in self._visible:
                 cells = [
                     _cell(row.name),
-                    _cell(row.scope_label),
-                    _cell(row.parse_mark),
+                    _styled_cell(row.scope_label, "dim"),
+                    _styled_cell(row.parse_mark, _parse_style(row.parse_mark)),
                 ]
                 if self._agent_id is not None:
-                    cells.append(_cell(self._group_mark(row.key)))
+                    cells.append(state_cell(self._group_mark(row.key)))
                 table.add_row(*cells, key=row.key)
         finally:
             self._syncing = False
@@ -1267,7 +1356,7 @@ class HomeScreen(Screen[None]):
         try:
             # ``update_width`` is only needed when the column grew, which keeps
             # the dimension recompute off the per-result hot path.
-            table.update_cell(row_key, "state", _cell(value), update_width=grew)
+            table.update_cell(row_key, "state", state_cell(value), update_width=grew)
         except CellDoesNotExist:
             # Expected: the row or state column was filtered out or rebuilt
             # between the report event and this update.  Any other exception is
@@ -1307,7 +1396,7 @@ class HomeScreen(Screen[None]):
         if row is None or snapshot is None:
             preview.update("")
             return
-        preview.update(preview_text(row, snapshot))
+        preview.update(preview_content(row, snapshot))
 
     def _update_empty_state(self) -> None:
         empty = self.query_one("#empty-state", Static)

@@ -31,6 +31,7 @@ from skill_lens.models.enums import Severity
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import SessionController
+from skill_lens.tui.theme import fact_block
 
 _LITERAL_MARKUP = False
 _NONE = "(none)"
@@ -175,19 +176,29 @@ class DoctorScreen(Screen[None]):
     DEFAULT_CSS = """
     DoctorScreen {
         layout: vertical;
+        background: $background;
     }
     #doctor-title {
-        height: 1;
-        padding: 0 1;
+        height: 2;
+        padding: 0 2;
+        color: $primary;
         text-style: bold;
+        border-bottom: solid $rule;
     }
     #doctor-summary, #doctor-context, #doctor-navigation,
     #doctor-status, #doctor-error-details {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
+        color: $muted;
+    }
+    #doctor-summary {
+        color: $foreground;
     }
     #doctor-navigation {
         color: $warning;
+    }
+    #doctor-error-details {
+        color: $error;
     }
     #doctor-body {
         width: 1fr;
@@ -201,8 +212,8 @@ class DoctorScreen(Screen[None]):
     #doctor-detail-scroll {
         width: 2fr;
         height: 1fr;
-        padding: 0 1;
-        border-left: solid $primary;
+        padding: 0 2;
+        border-left: solid $rule;
     }
     #doctor-detail {
         width: 1fr;
@@ -210,8 +221,8 @@ class DoctorScreen(Screen[None]):
     }
     #doctor-empty {
         height: auto;
-        padding: 0 1;
-        color: $text-muted;
+        padding: 0 2;
+        color: $muted;
     }
     #doctor-json {
         display: none;
@@ -299,6 +310,7 @@ class DoctorScreen(Screen[None]):
     def on_mount(self) -> None:
         table = self.query_one("#doctor-findings", DataTable)
         table.cursor_type = "row"
+        table.zebra_stripes = True
         self._apply_width(self.size.width)
         self._mounting = True
         try:
@@ -549,7 +561,7 @@ class DoctorScreen(Screen[None]):
                 row_key = f"doctor:{identity.generation}:{position}"
                 finding = identity.finding
                 table.add_row(
-                    _literal(finding.severity.value),
+                    _styled(finding.severity.value, _severity_style(finding.severity.value)),
                     _literal(finding.code),
                     _literal(finding.message),
                     _literal(finding.path if finding.path is not None else _NONE),
@@ -665,7 +677,7 @@ class DoctorScreen(Screen[None]):
             if self._selected is not None
             else "No finding selected."
         )
-        widget.update(_literal(text))
+        widget.update(fact_block(text))
         if reset_scroll:
             self._ordinary_detail_scroll = 0
             self.call_after_refresh(self._restore_detail_scroll, 0)
@@ -886,6 +898,20 @@ class DoctorScreen(Screen[None]):
 
 def _literal(value: str) -> Content:
     return Content.from_text(value, markup=_LITERAL_MARKUP)
+
+
+def _styled(value: str, style: str) -> Content:
+    """A literal cell value in a given style -- still never markup."""
+    return Content.styled(value, style)
+
+
+def _severity_style(severity: str) -> str:
+    """The colour that matches a finding's severity."""
+    if severity == Severity.ERROR.value:
+        return "bold red"
+    if severity == Severity.WARNING.value:
+        return "yellow"
+    return "cyan"
 
 
 def _cell_width(value: str) -> int:

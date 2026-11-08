@@ -404,3 +404,68 @@ recorded below with its disposition. The critic's model family is disclosed:
   commit.
 - **S10 — the Help border against the 60×24 body tests.** **Accepted.** The
   Help body is checked at 60×24 before the border is kept.
+
+---
+
+# Execution record (append-only)
+
+This record logs what the implementation actually did and how the final
+review was resolved. It does not alter the frozen contract above.
+
+## Implementation notes
+
+- The Diff title and the `Copies:` / `Baseline:` facts are separated by a
+  surface band on the status line, not by a horizontal rule: a rule under the
+  title would cost a row inside `#diff-body`, and the diff body must keep
+  showing its last metadata line without scrolling.
+- The candidate headings of the detail screen keep the shared
+  `presentation.STATE_STYLE`, because `tests/test_tui_why.py` pins that exact
+  style. The surfaces this change introduced (the Home state column, the
+  report headline) use the Skill Lens palette. This is the explicit
+  resolution of review finding S2.
+- The pure builder `preview_text` and the styled view `preview_content` are
+  built from one shared field list, so they cannot drift apart; the builder
+  still returns the plain string it always did.
+- The Agents and Compare tables size their columns explicitly, like the Home
+  table already did, so an agent name is never clipped mid-word.
+
+## Final review
+
+Critic: `river/deepseek-ai/DeepSeek-V4.1-Flash-1017`, thinking `max`, via OMP,
+read-only. Verdict `changes_required` with five blockers and ten suggestions.
+
+- **The hint bar lost keys.** **Accepted and fixed.** The bar names every key
+  the list answers to (`q r / a enter d g c h J tab`) again, and it wraps on a
+  narrow terminal instead of dropping the keys after the cut.
+- **The Agents, Compare and Doctor tables still clipped values mid-word.**
+  **Accepted and fixed.** The Agents and Compare tables now compute explicit
+  column widths; the Doctor table already did. The evidence was recaptured.
+- **Two state palettes.** **Accepted and resolved** as described in the
+  implementation notes: the pinned surface keeps the shared style, the new
+  surfaces use the palette, and the module documentation now says exactly
+  that.
+- **The evidence set was incomplete and one image was stale.** **Accepted and
+  fixed.** Every screen is captured from the final tree at 140×42, and Home,
+  Why and Help at 60×24.
+- **The "characters unchanged" guard was tautological.** **Accepted and fixed.**
+  The test now pins the whole preview field by field, and a mutation that
+  drops a field is caught.
+- **Suggestions.** Accepted: the stale module counts in the packaging
+  docstrings, the narrow-mode separators (now hairlines), the Compare column
+  headers (now cards), and the missing assertions (the dim version, the
+  `fact_block` styling, the Help key, the secondary tables' widths). The
+  mutation report grew from ten to fifteen deliberate mutations.
+
+## Execution receipt
+
+- Child tasks: 3 — plan critic (OMP, read-only), implementer (this session),
+  final critic (OMP, read-only).
+- Actual dispatches: 2 (both OMP, both read-only, both
+  `river/deepseek-ai/DeepSeek-V4.1-Flash-1017` with thinking `max`).
+- Additional rounds: 0 beyond the planned two; the plan critic's findings
+  were resolved in the plan before the freeze.
+- Gates on the final tree: `pytest --cov=skill_lens` (1397 passed, 1 skipped,
+  coverage 90.2%), `mypy` (no issues), `ruff check .` (clean), `ruff format
+  --check .` (clean). Logs in `docs/validation/tui-polish/gates/`.
+- Mutation testing: 15 deliberate mutations, all caught
+  (`docs/validation/tui-polish/mutations/mutation-report.txt`).

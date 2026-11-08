@@ -42,6 +42,7 @@ from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.home import AgentOption, agent_display_name
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
+from skill_lens.tui.theme import fact_block
 
 _NO_AGENT_EXPLANATION = "No agent reaches this installation."
 _UNKNOWN_AGENT_HINT = "Unknown agent IDs: {}"
@@ -229,30 +230,48 @@ class WhyScreen(Screen[None]):
     DEFAULT_CSS = """
     WhyScreen {
         layout: vertical;
+        background: $background;
     }
     #why-body {
         height: 1fr;
     }
     #why-title {
         height: auto;
-        padding: 0 1;
-        text-style: bold;
+        padding: 1 2;
+        background: $surface;
+        border-bottom: solid $rule;
     }
     #why-agent-strip {
-        height: auto;
+        height: 3;
         layout: horizontal;
-        padding: 0 1;
+        padding: 0 2;
+        background: $surface;
+        border-bottom: solid $rule;
     }
     #why-agent-strip Button {
-        min-width: 14;
-        margin: 0 1;
+        min-width: 12;
     }
     #why-status, #why-error-details, #why-report-status {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
+        color: $muted;
+    }
+    #why-report-status {
+        color: $secondary;
+    }
+    #why-error-details {
+        color: $error;
     }
     #why-candidates {
         height: auto;
+        padding: 0 1;
+    }
+    WhyScreen CollapsibleTitle {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+        padding: 0 1;
+        color: $foreground;
     }
     WhyScreen CollapsibleTitle {
         max-width: 100%;
@@ -926,7 +945,7 @@ class WhyScreen(Screen[None]):
             lines.append(f"Report-wide headline: {self._report.headline.value}")
             for note in self._report.notes:
                 lines.append(f"Note: {note}")
-        title.update(Content.from_text("\n".join(lines), markup=False))
+        title.update(fact_block("\n".join(lines)))
 
     def _refresh_status(self) -> None:
         controller = self._controller_or_none()
@@ -1070,6 +1089,9 @@ class WhyScreen(Screen[None]):
             )
 
         for block in blocks:
+            # The candidate headings keep the shared state style: that widget's
+            # styling is part of the existing contract (tests/test_tui_why.py
+            # pins the exact style), so it does not move with the palette.
             style = STATE_STYLE.get(block.state, "")
             mark = _state_mark(block.state)
             title_content = Content.assemble(
@@ -1080,7 +1102,7 @@ class WhyScreen(Screen[None]):
                 else f"  ({block.state.value})",
             )
             collapsible = Collapsible(
-                Static(block.body, markup=False),
+                Static(fact_block(block.body), markup=False),
                 title=title_content,  # type: ignore[arg-type]
                 collapsed=not block.expanded,
             )

@@ -153,17 +153,28 @@ class DiffScreen(Screen[None]):
     DEFAULT_CSS = """
     DiffScreen {
         layout: vertical;
+        background: $background;
     }
     #diff-body {
         height: 1fr;
-        padding: 0 1;
+        padding: 0 2;
     }
     #diff-title {
         height: auto;
-        text-style: bold;
+        color: $foreground;
     }
     #diff-status, #diff-error-details {
         height: auto;
+        color: $muted;
+    }
+    #diff-status {
+        background: $surface;
+    }
+    #diff-error-details {
+        color: $error;
+    }
+    .diff-block {
+        margin-bottom: 1;
     }
     #diff-content {
         width: 1fr;
@@ -588,8 +599,14 @@ class DiffScreen(Screen[None]):
         else:
             name = self._captured_name or self._key
         installation = snapshot_path(snapshot, self._key) if snapshot is not None else self._key
-        lines = [f"Diff: '{name}'", f"Installation: {installation}"]
-        title.update(Content.from_text("\n".join(lines), markup=False))
+        title.update(
+            Content("\n").join(
+                [
+                    Content.styled(f"Diff: '{name}'", "bold"),
+                    Content.styled(f"Installation: {installation}", "dim"),
+                ]
+            )
+        )
 
     def _refresh_status(self) -> None:
         """Show the session state, keeping old content visible while a refresh runs."""

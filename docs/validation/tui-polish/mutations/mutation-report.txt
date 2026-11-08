@@ -1,0 +1,17 @@
+PASS  theme-not-registered  (tests/test_tui_visual.py::test_app_applies_the_skill_lens_theme)
+PASS  header-glyph-removed  (tests/test_tui_visual.py::test_header_shows_the_lens_mark_and_the_version)
+PASS  table-header-colour-lost  (tests/test_tui_visual.py::test_skill_table_header_uses_the_muted_component_style)
+PASS  pane-separator-loud-again  (tests/test_tui_visual.py::test_pane_separator_uses_the_hairline_rule)
+PASS  preview-loses-its-spans  (tests/test_tui_visual.py::test_preview_keeps_its_characters_and_gains_styled_spans)
+PASS  state-cell-loses-its-colour  (tests/test_tui_visual.py::test_state_cell_colours_each_state_with_the_palette)
+PASS  state-palette-drifts  (tests/test_tui_visual.py::test_state_palette_covers_every_shared_state)
+PASS  help-headings-lose-the-accent  (tests/test_tui_visual.py::test_help_block_styles_headings_and_keeps_the_text)
+PASS  keycap-loses-its-chip  (tests/test_tui_visual.py::test_keycap_renders_a_key_on_a_chip)
+PASS  markup-interpretation-allowed  (tests/test_tui_visual.py::test_markup_looking_names_are_never_interpreted)
+PASS  preview-loses-a-field  (tests/test_tui_visual.py::test_preview_keeps_its_characters_and_gains_styled_spans)
+PASS  fact-block-loses-its-styling  (tests/test_tui_visual.py::test_fact_block_keeps_every_character_and_styles_it)
+PASS  help-key-loses-its-bold  (tests/test_tui_visual.py::test_help_block_styles_headings_and_keeps_the_text)
+PASS  hint-bar-loses-a-key  (tests/test_tui_visual.py::test_hint_bar_names_every_key)
+PASS  agents-columns-clip-again  (tests/test_tui_visual.py::test_secondary_tables_use_explicit_widths)
+
+All 15 mutations were caught.

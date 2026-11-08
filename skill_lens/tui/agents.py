@@ -21,6 +21,7 @@ from skill_lens.registry.loader import AgentDefinition
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import SessionController
+from skill_lens.tui.theme import fact_block
 
 
 class _AgentsHost(Protocol):
@@ -39,6 +40,11 @@ class _AgentsHost(Protocol):
     def action_refresh(self) -> None:
         """Request a session refresh."""
         ...
+
+
+def _cell_width(value: str) -> int:
+    """Terminal cell width of a literal string (wide-character aware)."""
+    return Content.from_text(value, markup=False).cell_length
 
 
 def _optional(value: str | None) -> str:
@@ -108,11 +114,14 @@ class AgentsScreen(Screen[None]):
     DEFAULT_CSS = """
     AgentsScreen {
         layout: vertical;
+        background: $background;
     }
     #agents-title {
-        height: 1;
-        padding: 0 1;
+        height: 2;
+        padding: 0 2;
+        color: $primary;
         text-style: bold;
+        border-bottom: solid $rule;
     }
     #agents-body {
         width: 1fr;
@@ -126,8 +135,8 @@ class AgentsScreen(Screen[None]):
     #agents-detail-scroll {
         width: 3fr;
         height: 1fr;
-        padding: 0 1;
-        border-left: solid $primary;
+        padding: 0 2;
+        border-left: solid $rule;
     }
     #agents-detail {
         width: 1fr;
@@ -135,10 +144,14 @@ class AgentsScreen(Screen[None]):
     }
     #agents-empty, #agents-status, #agents-error-details {
         height: auto;
-        padding: 0 1;
+        padding: 0 2;
+        color: $muted;
     }
     #agents-empty {
         color: $warning;
+    }
+    #agents-error-details {
+        color: $error;
     }
     #agents-json {
         display: none;
@@ -160,7 +173,7 @@ class AgentsScreen(Screen[None]):
     }
     AgentsScreen.narrow #agents-detail-scroll {
         border-left: none;
-        border-top: solid $primary;
+        border-top: solid $rule;
     }
     """
 
@@ -208,6 +221,7 @@ class AgentsScreen(Screen[None]):
     def on_mount(self) -> None:
         table = self.query_one("#agents-table", DataTable)
         table.cursor_type = "row"
+        table.zebra_stripes = True
         self._apply_width(self.size.width)
         self._mounting = True
         try:
@@ -430,7 +444,12 @@ class AgentsScreen(Screen[None]):
         self._syncing = True
         try:
             table.clear(columns=True)
-            table.add_columns("Agent", "ID", "Collision Policy", "Evidence", "Roots")
+            widths = self._column_widths()
+            table.add_column("Agent", width=widths["name"], key="name")
+            table.add_column("ID", width=widths["id"], key="id")
+            table.add_column("Collision Policy", width=widths["policy"], key="policy")
+            table.add_column("Evidence", width=widths["evidence"], key="evidence")
+            table.add_column("Roots", width=widths["roots"], key="roots")
             for agent in self._agents:
                 table.add_row(
                     Content.from_text(agent.name, markup=False),
@@ -452,6 +471,28 @@ class AgentsScreen(Screen[None]):
     def _selected_agent(self) -> AgentDefinition | None:
         return next((agent for agent in self._agents if agent.id == self._selected_id), None)
 
+    def _column_widths(self) -> dict[str, int]:
+        """Explicit column widths so a value is never clipped mid-word.
+
+        The table is narrower than the sum of its columns, so the long ones
+        scroll horizontally -- but a short value such as an agent name must
+        always be readable in full.
+        """
+        widths = {
+            "name": _cell_width("Agent"),
+            "id": _cell_width("ID"),
+            "policy": _cell_width("Collision Policy"),
+            "evidence": _cell_width("Evidence"),
+            "roots": _cell_width("Roots"),
+        }
+        for agent in self._agents:
+            widths["name"] = max(widths["name"], _cell_width(agent.name))
+            widths["id"] = max(widths["id"], _cell_width(agent.id))
+            widths["policy"] = max(widths["policy"], _cell_width(agent.collision_policy))
+            widths["evidence"] = max(widths["evidence"], _cell_width(agent.policy_evidence.value))
+            widths["roots"] = max(widths["roots"], _cell_width(str(len(agent.roots))))
+        return widths
+
     def _update_detail(self) -> None:
         try:
             detail = self.query_one("#agents-detail", Static)
@@ -465,7 +506,7 @@ class AgentsScreen(Screen[None]):
         else:
             agent = self._selected_agent()
             text = agent_detail_text(agent) if agent is not None else "Choose an agent."
-        detail.update(Content.from_text(text, markup=False))
+        detail.update(fact_block(text))
 
     def _update_empty(self) -> None:
         try:

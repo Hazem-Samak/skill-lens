@@ -21,6 +21,7 @@ from typing import Any, ClassVar
 from textual import work
 from textual.app import App, ScreenStackError, UnknownModeError
 from textual.binding import Binding, BindingType
+from textual.content import Content
 from textual.css.query import NoMatches
 from textual.message import Message
 from textual.screen import Screen
@@ -49,6 +50,7 @@ from skill_lens.tui.session import (
     SessionController,
     ViewName,
 )
+from skill_lens.tui.theme import APP_CSS, PRIMARY, SKILL_LENS_THEME, THEME
 from skill_lens.tui.why import WhyScreen
 
 
@@ -120,6 +122,7 @@ class PlaceholderHomeScreen(HomeScreen):
 class SkillLensApp(App[int]):
     """Skill Lens full-screen interactive browsing application."""
 
+    CSS = APP_CSS
     TITLE = "Skill Lens"
     SUB_TITLE = __version__
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = False
@@ -187,6 +190,8 @@ class SkillLensApp(App[int]):
         max_snapshot_bytes: int | None = DEFAULT_MAX_SNAPSHOT_BYTES,
     ) -> None:
         super().__init__()
+        self.register_theme(THEME)
+        self.theme = SKILL_LENS_THEME
         self._home = home
         self._cwd = cwd
         self._max_snapshot_bytes = max_snapshot_bytes
@@ -194,6 +199,14 @@ class SkillLensApp(App[int]):
             controller if controller is not None else SessionController()
         )
         self._help_origin: Screen[None] | None = None
+
+    def format_title(self, title: str, sub_title: str) -> Content:
+        """Render the top bar as a lens mark, the app name and a dim version."""
+        return Content.assemble(
+            Content.styled("\u25c9", f"bold {PRIMARY}"),
+            Content.styled(f"  {title}", "bold"),
+            Content.styled(f"   {sub_title}", "dim"),
+        )
 
     def get_default_screen(self) -> Screen[None]:
         """Return the Home screen as the default root screen."""
