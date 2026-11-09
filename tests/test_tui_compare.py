@@ -27,9 +27,10 @@ from skill_lens.core.compare import validate_compare_agents
 from skill_lens.core.snapshot import SnapshotTooLarge
 from skill_lens.core.snapshot_models import FrozenDiscoveryIndex
 from skill_lens.models import CompareRelation
+from skill_lens.presentation import RELATION_LABEL
 from skill_lens.tui.agents import AgentsScreen
 from skill_lens.tui.app import SkillLensApp
-from skill_lens.tui.compare import CompareScreen
+from skill_lens.tui.compare import CompareScreen, _fit_cell
 from skill_lens.tui.home import HomeScreen
 from skill_lens.tui.json_view import JsonView
 from tests.fixtures.builders import make_skill, symlink
@@ -52,7 +53,7 @@ async def _wait_ready(pilot: Any, app: SkillLensApp) -> None:
         lambda: app.controller.current is not None and app.controller.pending_generation is None,
         "published initial session",
     )
-    await pilot.pause(0.02)
+    await pilot.pause()
 
 
 async def _wait_compare(pilot: Any, app: SkillLensApp) -> CompareScreen:
@@ -65,7 +66,7 @@ async def _wait_compare(pilot: Any, app: SkillLensApp) -> CompareScreen:
         ),
         "accepted comparison report",
     )
-    await pilot.pause(0.02)
+    await pilot.pause()
     screen = app.screen
     assert isinstance(screen, CompareScreen)
     return screen
@@ -181,6 +182,22 @@ async def _select_pair_by_keys(
 def app_focused_id(screen: CompareScreen) -> str | None:
     focused = screen.app.focused
     return focused.id if focused is not None else None
+
+
+@pytest.mark.parametrize(
+    ("text", "width", "expected"),
+    [
+        ("short", 10, "short"),
+        ("abcdefghij", 7, "abc…hij"),
+        ("abcdefghij", 1, "…"),
+        ("abcdefghij", 0, ""),
+    ],
+)
+def test_compare_fit_cell_middle_truncates_to_the_column(
+    text: str, width: int, expected: str
+) -> None:
+    """A truncated cell keeps both ends and never exceeds its column."""
+    assert _fit_cell(text, width) == expected
 
 
 def test_compare_all_registry_agents_keyboard_picker_and_exact_cli_json(mock_home: Path) -> None:
@@ -300,20 +317,34 @@ def test_compare_report_uses_engine_relations_paths_counts_and_literal_notes(
                 CompareRelation.ONLY_B,
             }
             actual_counts = report.counts_by_relation()
-            rendered = "\n".join(
+            statics = "\n".join(
                 str(item.content)
                 for item in screen.query_one("#compare-result", Vertical).query(Static)
             )
-            for label, relation in (
-                ("shared", CompareRelation.SHARED),
-                ("diverged", CompareRelation.DIVERGED),
-                ("A only", CompareRelation.ONLY_A),
-                ("B only", CompareRelation.ONLY_B),
+            for relation in (
+                CompareRelation.SHARED,
+                CompareRelation.DIVERGED,
+                CompareRelation.ONLY_A,
+                CompareRelation.ONLY_B,
             ):
-                assert label in rendered
                 assert actual_counts[relation.value] > 0
-            for entry in report.entries:
-                assert entry.name in rendered
+
+            table = screen.query_one("#compare-table", DataTable)
+            assert [str(column.label) for column in table.columns.values()] == [
+                "Skill",
+                "Relation",
+                "Path A",
+                "Path B",
+            ]
+            assert table.row_count == len(report.entries)
+            assert table.virtual_size.width <= table.size.width
+            assert table.virtual_size.height == table.row_count + 1
+            assert table.size.height == table.row_count + 1
+            for column in table.columns.values():
+                assert column.width >= len(str(column.label))
+            rendered_relations: set[str] = set()
+            for index, entry in enumerate(report.entries):
+                expected_label, _style = RELATION_LABEL[entry.relation]
                 expected_a = (
                     app.controller.current.display_paths.get(entry.path_a, entry.path_a)
                     if entry.path_a
@@ -324,10 +355,12 @@ def test_compare_report_uses_engine_relations_paths_counts_and_literal_notes(
                     if entry.path_b
                     else "-"
                 )
-                assert expected_a in rendered
-                assert expected_b in rendered
-            assert "Diagnostic [red]literal[/red] note." in rendered
-            assert "Diagnostic literal note." not in rendered
+                row = [str(cell) for cell in table.get_row_at(index)]
+                assert row == [entry.name, expected_label, expected_a, expected_b]
+                rendered_relations.add(row[1])
+            assert rendered_relations == {"shared", "diverged", "A only", "B only"}
+            assert "Diagnostic [red]literal[/red] note." in statics
+            assert "Diagnostic literal note." not in statics
             assert "shared-link" in oracle
             await pilot.press("q")
 
@@ -1031,6 +1064,15 @@ def test_compare_result_layout_and_raw_mode_keep_hidden_picker_inert(mock_home: 
                 assert screen.query_one("#compare-b-table", DataTable).display
                 await _select_pair_by_keys(pilot, screen, "claude", "codex")
                 screen = await _wait_compare(pilot, app)
+                table = screen.query_one("#compare-table", DataTable)
+                assert screen.report is not None
+                assert table.row_count == len(screen.report.entries)
+                assert table.virtual_size.width <= table.size.width
+                assert table.virtual_size.height == table.row_count + 1
+                assert table.size.height == table.row_count + 1
+                for column in table.columns.values():
+                    assert column.width >= len(str(column.label))
+                assert table.can_focus is False
                 result_scroll = screen.query_one("#compare-result-scroll", VerticalScroll)
                 result_scroll.focus()
                 await pilot.press(*(["down"] * 30))
@@ -1055,6 +1097,159 @@ def test_compare_result_layout_and_raw_mode_keep_hidden_picker_inert(mock_home: 
                 await pilot.pause()
                 assert result_scroll.scroll_offset.y == offset
                 await pilot.press("q")
+
+    asyncio.run(_run())
+
+
+def test_compare_narrow_table_truncates_paths_but_json_keeps_them(mock_home: Path) -> None:
+    """The table may shorten a path, but `J` keeps the exact stored path."""
+    project = _build_pair_fixture(mock_home)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=mock_home, cwd=project)
+        async with app.run_test(size=(60, 24)) as pilot:
+            await _wait_ready(pilot, app)
+            await pilot.press("c")
+            await pilot.pause()
+            screen = app.screen
+            assert isinstance(screen, CompareScreen)
+            await _select_pair_by_keys(pilot, screen, "claude", "codex")
+            screen = await _wait_compare(pilot, app)
+            assert screen.report is not None
+            entry = next(item for item in screen.report.entries if item.name == "shared-link")
+            assert entry.path_b is not None
+            table = screen.query_one("#compare-table", DataTable)
+            row: list[str] | None = None
+            for index in range(table.row_count):
+                cells = [str(cell) for cell in table.get_row_at(index)]
+                if cells[0] == "shared-link":
+                    row = cells
+                    break
+            assert row is not None
+            assert "…" in row[3]
+            assert entry.path_b not in row[3]
+
+            await pilot.press("J")
+            await pilot.pause()
+            document = screen.query_one("#compare-json", JsonView).document
+            assert document is not None
+            assert entry.path_b in document
+            await pilot.press("q")
+
+    asyncio.run(_run())
+
+
+def test_compare_long_skill_name_keeps_its_identity_at_wide_widths(
+    mock_home: Path,
+) -> None:
+    """A long skill name gets width before paths, and is disclosed when shortened."""
+    project = _build_pair_fixture(mock_home)
+    long_name = "long-skill-name-that-needs-space"
+    make_skill(mock_home / ".claude" / "skills" / long_name, long_name, "Long name.")
+    make_skill(mock_home / ".agents" / "skills" / long_name, long_name, "Long name.")
+
+    async def _run() -> None:
+        app = SkillLensApp(home=mock_home, cwd=project)
+        async with app.run_test(size=(100, 30)) as pilot:
+            await _wait_ready(pilot, app)
+            await pilot.press("c")
+            await pilot.pause()
+            screen = app.screen
+            assert isinstance(screen, CompareScreen)
+            await _select_pair_by_keys(pilot, screen, "claude", "codex")
+            screen = await _wait_compare(pilot, app)
+            table = screen.query_one("#compare-table", DataTable)
+            name_column = next(
+                column for column in table.columns.values() if str(column.label) == "Skill"
+            )
+            assert name_column.width >= len(long_name)
+            row: list[str] | None = None
+            for index in range(table.row_count):
+                cells = [str(cell) for cell in table.get_row_at(index)]
+                if cells[0] == long_name:
+                    row = cells
+                    break
+            assert row is not None
+
+            await pilot.resize_terminal(60, 24)
+            await pilot.pause(0.1)
+            narrow = screen.query_one("#compare-table", DataTable)
+            narrow_name_column = next(
+                column for column in narrow.columns.values() if str(column.label) == "Skill"
+            )
+            assert narrow_name_column.width < len(long_name)
+            shortened: list[str] | None = None
+            for index in range(narrow.row_count):
+                cells = [str(cell) for cell in narrow.get_row_at(index)]
+                if "…" in cells[0]:
+                    shortened = cells
+                    break
+            assert shortened is not None
+            assert long_name not in shortened[0]
+            await pilot.press("J")
+            await pilot.pause()
+            document = screen.query_one("#compare-json", JsonView).document
+            assert document is not None
+            assert long_name in document
+            await pilot.press("q")
+
+    asyncio.run(_run())
+
+
+def test_compare_resize_rebuilds_widths_then_falls_back_when_too_narrow(
+    mock_home: Path,
+) -> None:
+    """A resize reflows the table, and an impossible width keeps full paths."""
+    project = _build_pair_fixture(mock_home, many=18)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=mock_home, cwd=project)
+        async with app.run_test(size=(100, 30)) as pilot:
+            await _wait_ready(pilot, app)
+            await pilot.press("c")
+            await pilot.pause()
+            screen = app.screen
+            assert isinstance(screen, CompareScreen)
+            await _select_pair_by_keys(pilot, screen, "claude", "codex")
+            screen = await _wait_compare(pilot, app)
+            assert screen.report is not None
+            wide = screen.query_one("#compare-table", DataTable)
+            wide_widths = [column.width for column in wide.columns.values()]
+
+            await pilot.resize_terminal(60, 24)
+            await pilot.pause(0.1)
+            narrow = screen.query_one("#compare-table", DataTable)
+            narrow_widths = [column.width for column in narrow.columns.values()]
+            assert narrow_widths != wide_widths
+            assert narrow.row_count == wide.row_count
+            assert narrow.virtual_size.width <= narrow.size.width
+            for column in narrow.columns.values():
+                assert column.width >= len(str(column.label))
+
+            await pilot.resize_terminal(56, 20)
+            await pilot.pause(0.1)
+            boundary = screen.query_one("#compare-table", DataTable)
+            assert boundary.display is True
+            assert boundary.virtual_size.width <= boundary.size.width
+            for column in boundary.columns.values():
+                assert column.width >= len(str(column.label))
+
+            await pilot.resize_terminal(55, 20)
+            await pilot.pause(0.1)
+            assert screen.query_one("#compare-table", DataTable).display is False
+            fallback = screen.query_one("#compare-fallback", Static)
+            assert fallback.display is True
+            rendered = str(fallback.content)
+            assert "Terminal too narrow for the table; showing full paths." in rendered
+            assert "Path B: ~/.agents/skills/shared-link-target" in rendered
+
+            await pilot.resize_terminal(100, 30)
+            await pilot.pause(0.1)
+            restored = screen.query_one("#compare-table", DataTable)
+            assert restored.display is True
+            assert restored.row_count == wide.row_count
+            assert restored.virtual_size.width <= restored.size.width
+            await pilot.press("q")
 
     asyncio.run(_run())
 

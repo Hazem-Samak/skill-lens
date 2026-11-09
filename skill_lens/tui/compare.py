@@ -28,6 +28,8 @@ from skill_lens.tui.session import ReportValue, SessionController, ViewName, Vie
 from skill_lens.tui.theme import KeyBar
 
 Pair = tuple[str, str]
+_MIN_PATH_WIDTH = 10
+_MIN_NAME_WIDTH = 12
 _LOADING_TEXT = "Loading comparison…"
 _NO_REPORT_TEXT = "No comparison report is available. Return to the picker and submit again."
 _INTERNAL_ERROR_TEXT = "Error: Unexpected internal fault. Details in memory only."
@@ -57,6 +59,17 @@ class _CompareHost(Protocol):
 
 def _literal(text: str) -> Content:
     return Content.from_text(text, markup=False)
+
+
+def _fit_cell(text: str, width: int) -> str:
+    """Middle-truncate one cell so a table column never scrolls sideways."""
+    if len(text) <= width:
+        return text
+    if width <= 1:
+        return "…" if width else ""
+    head = (width - 1) // 2
+    tail = width - 1 - head
+    return f"{text[:head]}…{text[-tail:]}"
 
 
 def _name_by_id(agents: tuple[AgentDefinition, ...], agent_id: str | None) -> str | None:
@@ -144,6 +157,12 @@ class CompareScreen(Screen[None]):
     }
     #compare-result {
         height: auto;
+    }
+    #compare-placeholder, #compare-fallback, #compare-notes, #compare-table {
+        display: none;
+    }
+    #compare-table {
+        width: 1fr;
     }
     #compare-status, #compare-error-details {
         height: auto;
@@ -265,8 +284,12 @@ class CompareScreen(Screen[None]):
             yield Static("", id="compare-registry-message", markup=False)
             yield Static("", id="compare-input-error", markup=False)
             yield Button("Compare", id="compare-submit", variant="primary")
-        with VerticalScroll(id="compare-result-scroll"):
-            yield Vertical(id="compare-result")
+        with VerticalScroll(id="compare-result-scroll"), Vertical(id="compare-result"):
+            yield Static("", id="compare-summary", classes="compare-summary", markup=False)
+            yield Static("", id="compare-placeholder", classes="compare-empty", markup=False)
+            yield Static("", id="compare-fallback", classes="compare-fallback", markup=False)
+            yield DataTable(id="compare-table")
+            yield Static("", id="compare-notes", classes="compare-notes", markup=False)
         yield JsonView(id="compare-json")
         yield Static("Initializing...", id="compare-status", markup=False)
         yield Static("", id="compare-error-details", markup=False)
@@ -278,6 +301,12 @@ class CompareScreen(Screen[None]):
             table.cursor_type = "row"
             table.zebra_stripes = True
             table.cell_padding = 2
+        result_table = self.query_one("#compare-table", DataTable)
+        result_table.cursor_type = "none"
+        result_table.show_cursor = False
+        result_table.zebra_stripes = True
+        result_table.cell_padding = 1
+        result_table.can_focus = False
         self._apply_width(self.size.width)
         self._mounting = True
         try:
@@ -290,6 +319,9 @@ class CompareScreen(Screen[None]):
 
     def on_resize(self, event: events.Resize) -> None:
         self._apply_width(event.size.width)
+        # Column widths are computed from the live terminal width.  A resize
+        # must rebuild the result table, not leave it clipped at the old size.
+        self._refresh_result()
 
     def _apply_width(self, width: int) -> None:
         self.set_class(width < 80, "narrow")
@@ -351,6 +383,10 @@ class CompareScreen(Screen[None]):
                         " does not close Compare from result mode.",
                     ),
                 ]
+            )
+            notes.append(
+                "Long skill names and paths may be shortened in the table;"
+                " J shows the exact JSON report."
             )
         else:
             mode = "agent picker"
@@ -901,20 +937,38 @@ class CompareScreen(Screen[None]):
 
     def _refresh_result(self) -> None:
         try:
-            container = self.query_one("#compare-result", Vertical)
+            summary = self.query_one("#compare-summary", Static)
+            placeholder = self.query_one("#compare-placeholder", Static)
+            fallback = self.query_one("#compare-fallback", Static)
+            table = self.query_one("#compare-table", DataTable)
+            notes = self.query_one("#compare-notes", Static)
         except NoMatches:
             return
         pair = self._report_pair or self._submitted_pair
         context = (
+            self._mode,
             self._generation,
             pair,
             id(self._report) if self._report is not None else None,
             self._report_state,
             self._report_error,
+            self.size.width,
         )
         if context == self._rendered_context:
             return
-        container.remove_children()
+
+        # The result widgets stay mounted for the screen's lifetime.  Updating
+        # them in place avoids replacing a DataTable on resize, which is both
+        # wasteful and can briefly duplicate the #compare-table id.
+        summary.update(_literal(""))
+        placeholder.update(_literal(""))
+        placeholder.display = False
+        fallback.update(_literal(""))
+        fallback.display = False
+        table.display = False
+        notes.update(_literal(""))
+        notes.display = False
+
         report = self._report
         snapshot = self._host.controller.current
         if self._mode != "result":
@@ -922,24 +976,52 @@ class CompareScreen(Screen[None]):
             return
         if report is None or snapshot is None:
             if self._report_state == "loading":
-                placeholder = _LOADING_TEXT
+                placeholder_text = _LOADING_TEXT
             elif self._report_state == "error":
-                placeholder = self._report_error or _INTERNAL_ERROR_TEXT
+                placeholder_text = self._report_error or _INTERNAL_ERROR_TEXT
             elif self._report_error:
-                placeholder = self._report_error
+                placeholder_text = self._report_error
             elif snapshot is None:
-                placeholder = session_explanation(self._host.controller)
+                placeholder_text = session_explanation(self._host.controller)
             else:
-                placeholder = _NO_REPORT_TEXT
-            container.mount(Static(_literal(placeholder), markup=False))
+                placeholder_text = _NO_REPORT_TEXT
+            placeholder.update(_literal(placeholder_text))
+            placeholder.display = True
             self._rendered_context = context
             return
-        container.mount(*self._report_blocks(report, snapshot))
+
+        summary.update(_literal(self._summary_text(report)))
+        if not report.entries:
+            placeholder.update(_literal(COMPARE_EMPTY_TEXT))
+            placeholder.display = True
+        else:
+            widths = self._column_widths_for_result(report, snapshot)
+            if widths is None:
+                # A four-column table cannot keep its headers visible at this
+                # width.  Preserve every fact and the full paths instead of
+                # producing a table whose labels are unreadable.
+                fallback.update(self._fallback_content(report, snapshot))
+                fallback.display = True
+            else:
+                self._populate_result_table(table, report, snapshot, widths)
+                table.display = True
+                # The table may have been hidden while its rows were added.
+                # Force both the table and its screen to lay out now, otherwise
+                # the first report can paint the summary with an empty body.
+                table.refresh(layout=True)
+                self.refresh(layout=True)
+        if report.notes:
+            note_lines = [
+                Content.assemble(Content.styled("Note: ", "yellow"), _literal(note))
+                for note in report.notes
+            ]
+            notes.update(Content("\n").join(note_lines))
+            notes.display = True
         self._rendered_context = context
 
-    def _report_blocks(self, report: CompareReport, snapshot: SessionSnapshot) -> list[Static]:
+    def _summary_text(self, report: CompareReport) -> str:
         counts = report.counts_by_relation()
-        header = "\n".join(
+        return "\n".join(
             [
                 f"A: {report.agent_a_name} ({report.agent_a})",
                 f"B: {report.agent_b_name} ({report.agent_b})",
@@ -953,45 +1035,107 @@ class CompareScreen(Screen[None]):
                 ),
             ]
         )
-        blocks = [Static(_literal(header), classes="compare-summary", markup=False)]
-        if not report.entries:
-            blocks.append(
-                Static(_literal(COMPARE_EMPTY_TEXT), classes="compare-empty", markup=False)
+
+    def _populate_result_table(
+        self,
+        table: DataTable[Content],
+        report: CompareReport,
+        snapshot: SessionSnapshot,
+        widths: tuple[int, int, int, int],
+    ) -> None:
+        width_name, width_relation, width_path_a, width_path_b = widths
+        table.clear(columns=True)
+        table.add_column("Skill", width=width_name)
+        table.add_column("Relation", width=width_relation)
+        table.add_column("Path A", width=width_path_a)
+        table.add_column("Path B", width=width_path_b)
+        for entry in report.entries:
+            label, style = RELATION_LABEL[entry.relation]
+            path_a = snapshot_path(snapshot, entry.path_a) if entry.path_a else "-"
+            path_b = snapshot_path(snapshot, entry.path_b) if entry.path_b else "-"
+            table.add_row(
+                _literal(_fit_cell(entry.name, width_name)),
+                Content.styled(label, style),
+                _literal(_fit_cell(path_a, width_path_a)),
+                _literal(_fit_cell(path_b, width_path_b)),
             )
-        else:
-            for entry in report.entries:
-                label, style = RELATION_LABEL[entry.relation]
-                path_a = snapshot_path(snapshot, entry.path_a) if entry.path_a else "-"
-                path_b = snapshot_path(snapshot, entry.path_b) if entry.path_b else "-"
-                lines = [
-                    Content.assemble(Content.styled("Skill: ", "bold"), _literal(entry.name)),
-                    Content.assemble(
-                        Content.styled("Relation: ", "bold"),
-                        Content.styled(label, style),
-                    ),
-                    Content.assemble(Content.styled("Path A: ", "bold"), _literal(path_a)),
-                    Content.assemble(Content.styled("Path B: ", "bold"), _literal(path_b)),
-                ]
-                blocks.append(
-                    Static(
-                        Content("\n").join(lines),
-                        classes="compare-entry",
-                        markup=False,
-                    )
-                )
-        if report.notes:
-            note_lines = [
-                Content.assemble(Content.styled("Note: ", "yellow"), _literal(note))
-                for note in report.notes
+        # The parent scroll owns vertical navigation.  Give the table an
+        # explicit full height rather than relying on auto sizing while the
+        # widget was hidden; otherwise its first layout can be zero.
+        table.styles.height = table.row_count + 1
+        table.styles.max_height = table.row_count + 1
+
+    def _fallback_content(self, report: CompareReport, snapshot: SessionSnapshot) -> Content:
+        """Show full paths when a four-column table cannot fit the terminal."""
+        parts: list[Content | str] = [
+            _literal("Terminal too narrow for the table; showing full paths."),
+            "\n\n",
+        ]
+        for index, entry in enumerate(report.entries):
+            if index:
+                parts.append("\n\n")
+            label, style = RELATION_LABEL[entry.relation]
+            path_a = snapshot_path(snapshot, entry.path_a) if entry.path_a else "-"
+            path_b = snapshot_path(snapshot, entry.path_b) if entry.path_b else "-"
+            lines = [
+                Content.assemble(Content.styled("Skill: ", "bold"), _literal(entry.name)),
+                Content.assemble(
+                    Content.styled("Relation: ", "bold"),
+                    Content.styled(label, style),
+                ),
+                Content.assemble(Content.styled("Path A: ", "bold"), _literal(path_a)),
+                Content.assemble(Content.styled("Path B: ", "bold"), _literal(path_b)),
             ]
-            blocks.append(
-                Static(
-                    Content("\n").join(note_lines),
-                    classes="compare-notes",
-                    markup=False,
-                )
-            )
-        return blocks
+            parts.append(Content("\n").join(lines))
+        return Content.assemble(*parts)
+
+    def _column_widths_for_result(
+        self, report: CompareReport, snapshot: SessionSnapshot
+    ) -> tuple[int, int, int, int] | None:
+        """Allocate table widths, or None when four readable columns cannot fit.
+
+        ``#compare-result-scroll`` pads the result by two cells on each side,
+        and each DataTable column spends two cells on cell padding.  The budget
+        also reserves the vertical scrollbar and a small safety margin.  The
+        table is intentionally not focusable, so every column it draws must fit
+        the width; otherwise the reader has no way to reach a hidden column.
+        """
+        relation_width = max(
+            len("Relation"), *(len(RELATION_LABEL[entry.relation][0]) for entry in report.entries)
+        )
+        name_needed = max(len("Skill"), *(len(entry.name) for entry in report.entries))
+        path_a_needed = max(
+            1,
+            *(
+                len(snapshot_path(snapshot, entry.path_a)) if entry.path_a else 1
+                for entry in report.entries
+            ),
+        )
+        path_b_needed = max(
+            1,
+            *(
+                len(snapshot_path(snapshot, entry.path_b)) if entry.path_b else 1
+                for entry in report.entries
+            ),
+        )
+        # Reserve the result padding, the vertical scrollbar, the four columns'
+        # cell padding, and a two-cell safety margin.
+        budget = max(0, self.size.width - 6 - 8 - 2)
+        available_name = budget - relation_width - 2 * _MIN_PATH_WIDTH
+        if available_name < _MIN_NAME_WIDTH:
+            return None
+
+        # Identity comes first: give the skill name all the width it needs,
+        # then split what remains between the paths.
+        name_width = max(len("Skill"), min(name_needed, available_name))
+        remaining = budget - name_width - relation_width
+        extra = remaining - 2 * _MIN_PATH_WIDTH
+        need_a = max(0, path_a_needed - _MIN_PATH_WIDTH)
+        need_b = max(0, path_b_needed - _MIN_PATH_WIDTH)
+        a_extra = extra * need_a // (need_a + need_b) if need_a + need_b else extra // 2
+        path_a_width = _MIN_PATH_WIDTH + a_extra
+        path_b_width = remaining - path_a_width
+        return name_width, relation_width, path_a_width, path_b_width
 
     def _result_text(self) -> str:
         if self._report_state == "loading":

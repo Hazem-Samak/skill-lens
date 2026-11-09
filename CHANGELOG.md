@@ -18,8 +18,17 @@ dated evidence below distinguishes those results from the historical records.
 
 ## [Unreleased]
 
-Nothing newer than the 0.2.0 release entry is recorded yet. This section is
-kept rather than deleted because the version gate
+### Changed
+
+- The TUI **Compare** result now renders one table row per skill (`Skill`,
+  `Relation`, `Path A`, `Path B`) instead of a stacked four-line block per
+  skill. Column widths follow the terminal width; long skill names and paths
+  are middle-truncated, and terminals too narrow for four readable columns
+  fall back to full-path rows. The table lays out on its first display, so an
+  empty comparison body no longer needs a manual Refresh. `J` still shows the
+  exact JSON report.
+
+This section is kept rather than deleted because the version gate
 (`test_changelog_documents_the_current_version`) treats `[Unreleased]` as *not* a
 released heading, so the next version needs a real section of its own.
 
