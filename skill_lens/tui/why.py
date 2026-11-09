@@ -276,11 +276,6 @@ class WhyScreen(Screen[None]):
         padding: 0 1;
         color: $foreground;
     }
-    WhyScreen CollapsibleTitle {
-        max-width: 100%;
-        width: 100%;
-        height: auto;
-    }
     WhyScreen.narrow #why-agent-strip {
         layout: vertical;
     }

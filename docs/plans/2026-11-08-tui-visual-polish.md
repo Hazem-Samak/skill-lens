@@ -586,3 +586,40 @@ themselves, the plan records the third composition change of the round (the
 standard Textual key bar became the Skill Lens key bar on six screens), the
 exported names were completed, and the claims about grouping and row spacing
 were corrected to say what the code actually does.
+
+## Pre-push review correction (2026-11-09)
+
+A read-only review of the four unpushed commits reproduced three defects that
+the round-2 record above had claimed fixed.  They are recorded here because the
+claim, not the intent, is what a later reader trusts.
+
+- **The key bar still read the live binding chain.**  `KeyBar._bar()` used
+  `screen.active_bindings`, so the focused table shadowed the Doctor's `enter`
+  and the Help modal cut the chain before the app's `f1`.  Both keys were
+  missing from the bar.  It now reads `screen.BINDINGS` plus `app.BINDINGS`,
+  with the screen winning a shared key, exactly as this record already said it
+  did.  A new test opens every screen and compares the drawn key caps with the
+  declared show bindings.
+- **The bar still clipped on a narrow terminal.**  The inner `Static` was
+  pinned to `height: 1`, so at 50 columns the second line was cut and `f1`
+  disappeared.  `KeyBar` and its inner bar are now `height: auto`; the test
+  renders the screen at 50×20 and asserts every drawn key is visible.
+- **Home does not draw its bar from its bindings.**  Its bar is a deliberate,
+  hand-written grouped map.  The claim is corrected in the validation README:
+  the six full screens derive their bar; Home's map is pinned to its bindings
+  by the existing test, which now also asserts that every shown binding appears
+  in the map.
+
+Three mutations were added and all were caught: a dropped `enter`, a dropped
+`f1`, and a restored one-row bar.  The mutation report now lists 23.
+
+Two smaller corrections: the duplicate `WhyScreen CollapsibleTitle` CSS block
+is removed, the Doctor's narrow separator now uses `$rule` like every other
+screen, the severity colours come from the shared palette, `KeyBar` and
+`brand_lockup` are exported, and the one remaining tautological line in the
+preview test now asserts the real Agents value.
+
+The Doctor and Help screenshots predate this correction and were not
+recaptured, because the screenshot harness lived outside the repository and is
+no longer available.  The README says so next to the images.  The gate logs in
+`gates/` were re-run on the corrected tree.

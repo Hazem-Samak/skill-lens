@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from textual.binding import Binding
 from textual.containers import Horizontal
 from textual.widgets import DataTable, Static
 from textual.widgets._header import HeaderTitle
@@ -25,7 +26,7 @@ from skill_lens.core import paths
 from skill_lens.core.snapshot import capture_session
 from skill_lens.presentation.state import STATE_STYLE
 from skill_lens.tui.app import SkillLensApp
-from skill_lens.tui.home import build_home_rows, preview_content, preview_text
+from skill_lens.tui.home import HomeScreen, build_home_rows, preview_content, preview_text
 from skill_lens.tui.theme import (
     ACCENT,
     ERROR,
@@ -37,6 +38,7 @@ from skill_lens.tui.theme import (
     STATE_COLOUR,
     SUCCESS,
     WARNING,
+    KeyBar,
     fact_block,
     help_block,
     keycap,
@@ -61,6 +63,32 @@ async def _wait_ready(pilot: Any, app: SkillLensApp) -> None:
             return
         await pilot.pause(0.01)
     raise AssertionError("timed out waiting for the initial capture")
+
+
+def _bar_keys(content: Any) -> list[str]:
+    """The key caps of a key bar, in the order they are drawn."""
+    keys: list[str] = []
+    for span in content.spans:
+        text = content.plain[span.start : span.end].replace("\u2800", "").strip()
+        if text and "on" in str(span.style):
+            keys.append(text)
+    return keys
+
+
+def _declared_keys(screen: Any, app: SkillLensApp) -> set[str]:
+    """Every key a screen shows: its own bindings, then the app's.
+
+    The screen wins a key both of them declare, exactly as ``KeyBar`` does.
+    """
+    screen_bindings = [binding for binding in screen.BINDINGS if isinstance(binding, Binding)]
+    screen_keys = {binding.key for binding in screen_bindings}
+    shown = {binding.key for binding in screen_bindings if binding.show}
+    shown |= {
+        binding.key
+        for binding in app.BINDINGS
+        if isinstance(binding, Binding) and binding.show and binding.key not in screen_keys
+    }
+    return shown
 
 
 def test_app_applies_the_skill_lens_theme(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -157,11 +185,15 @@ def test_preview_keeps_its_characters_and_gains_styled_spans(
     plain = preview_text(row, snapshot)
     assert isinstance(plain, str)
     # The whole preview is pinned, field by field: dropping one must fail.
-    assert plain.splitlines() == [
+    lines = plain.splitlines()
+    assert lines[:3] == [
         f"Name: {row.name}",
         f"Scope: {row.scope_label}",
         f"Path: {row.display_path}",
-        plain.splitlines()[3],
+    ]
+    assert lines[3].startswith("Agents: ")
+    assert lines[3].endswith(f"({len(row.agents)})")
+    assert lines[4:] == [
         f"Hash: {row.content_hash or 'none'}",
         f"Parse: {row.parse_status} ({row.parse_mark})",
         f"Variant: {row.variant_label or '-'}",
@@ -344,13 +376,7 @@ def test_hint_bar_names_every_key(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
         async with app.run_test(size=(140, 42)) as pilot:
             await _wait_ready(pilot, app)
             bar = app.screen.query_one("#footer-help", Static)
-            content = bar.content
-            keys = [
-                content.plain[span.start : span.end].replace("\u2800", "").strip()
-                for span in content.spans
-                if "on" in str(span.style)
-                and content.plain[span.start : span.end].replace("\u2800", "").strip()
-            ]
+            keys = _bar_keys(bar.content)
             assert keys == [
                 "q",
                 "r",
@@ -365,6 +391,66 @@ def test_hint_bar_names_every_key(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
                 "tab",
                 "f1",
             ]
+            # The hand-written map must still name every key the list shows:
+            # it cannot lose a key when a binding changes.
+            assert {
+                binding.key
+                for binding in HomeScreen.BINDINGS
+                if isinstance(binding, Binding) and binding.show
+            } <= set(keys)
+            assert {
+                binding.key
+                for binding in app.BINDINGS
+                if isinstance(binding, Binding) and binding.show
+            } <= set(keys)
+
+    asyncio.run(_run())
+
+
+def test_every_screen_key_bar_names_every_key_it_answers_to(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """No screen may hide a key, whatever widget happens to hold the focus.
+
+    The bar is read from the screen's own declarations plus the app's.  The
+    live binding chain is wrong here: a focused table shadows the Doctor's
+    ``enter``, and a modal cuts the chain before the app's ``f1``.
+    """
+    monkeypatch.setattr(paths, "home", lambda: tmp_path)
+    build_scenario("claude_personal_beats_project", tmp_path)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=tmp_path, cwd=tmp_path)
+        async with app.run_test(size=(140, 42)) as pilot:
+            await _wait_ready(pilot, app)
+            observed: list[tuple[str, str, set[str], set[str]]] = []
+
+            def _capture(opened_with: str) -> None:
+                screen = app.screen
+                bar = screen.query_one(KeyBar)
+                shown = set(_bar_keys(bar.query_one(".key-bar", Static).content))
+                observed.append(
+                    (opened_with, type(screen).__name__, shown, _declared_keys(screen, app))
+                )
+
+            for key in ("enter", "d", "g", "c", "h"):
+                await pilot.press(key)
+                for _ in range(8):
+                    await pilot.pause()
+                _capture(key)
+                await pilot.press("escape")
+                for _ in range(6):
+                    await pilot.pause()
+            await pilot.press("f1")
+            for _ in range(8):
+                await pilot.pause()
+            _capture("f1")
+
+            for opened_with, name, shown, expected in observed:
+                assert shown == expected, (
+                    f"{name} (opened with {opened_with!r}) shows {sorted(shown)},"
+                    f" expected {sorted(expected)}"
+                )
 
     asyncio.run(_run())
 
@@ -425,8 +511,8 @@ def test_brand_is_centred_in_the_top_bar(tmp_path: Path, monkeypatch: pytest.Mon
     asyncio.run(_run())
 
 
-def test_key_bar_never_splits_a_hint(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """A narrow key bar wraps between hints, never inside one."""
+def test_key_bar_wraps_instead_of_clipping(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A narrow key bar wraps; it never cuts a key off the bottom."""
     monkeypatch.setattr(paths, "home", lambda: tmp_path)
     build_scenario("claude_personal_beats_project", tmp_path)
 
@@ -435,12 +521,27 @@ def test_key_bar_never_splits_a_hint(tmp_path: Path, monkeypatch: pytest.MonkeyP
         async with app.run_test(size=(60, 24)) as pilot:
             await _wait_ready(pilot, app)
             bar = app.screen.query_one("#footer-help", Static)
-            for line in str(bar.content).split("\n"):
-                assert not line.rstrip().endswith("│"), "a rule must not end a line of the key bar"
             # Every hint is present, and none of them was cut in half.
             text = str(bar.content)
             for label in ("quit", "refresh", "filter", "agent", "why", "diff"):
                 assert label in text
+
+        app = SkillLensApp(home=tmp_path, cwd=tmp_path)
+        async with app.run_test(size=(50, 20)) as pilot:
+            await _wait_ready(pilot, app)
+            await pilot.press("h")
+            for _ in range(8):
+                await pilot.pause()
+            screen = app.screen
+            bar = screen.query_one(KeyBar)
+            height = bar.size.height
+            assert height >= 2, "the bar must wrap at 50 columns, not clip"
+            strips = screen._compositor.render_strips()
+            rendered = "\n".join(strip.text for strip in strips[-height:])
+            for key in _bar_keys(bar.query_one(".key-bar", Static).content):
+                assert key in rendered, f"the bar clipped {key!r} at 50 columns"
+            for line in rendered.split("\n"):
+                assert not line.rstrip().endswith("│"), "a rule must not end a rendered line"
 
     asyncio.run(_run())
 

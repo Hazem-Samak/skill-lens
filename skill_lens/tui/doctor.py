@@ -31,7 +31,7 @@ from skill_lens.models.enums import Severity
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import SessionController
-from skill_lens.tui.theme import KeyBar, fact_block
+from skill_lens.tui.theme import ERROR, SECONDARY, WARNING, KeyBar, fact_block
 
 _LITERAL_MARKUP = False
 _NONE = "(none)"
@@ -253,7 +253,7 @@ class DoctorScreen(Screen[None]):
     }
     DoctorScreen.narrow #doctor-detail-scroll {
         border-left: none;
-        border-top: solid $primary;
+        border-top: solid $rule;
     }
     """
 
@@ -914,12 +914,12 @@ def _styled(value: str, style: str) -> Content:
 
 
 def _severity_style(severity: str) -> str:
-    """The colour that matches a finding's severity."""
+    """The colour that matches a finding's severity, from the shared palette."""
     if severity == Severity.ERROR.value:
-        return "bold red"
+        return f"bold {ERROR}"
     if severity == Severity.WARNING.value:
-        return "yellow"
-    return "cyan"
+        return WARNING
+    return SECONDARY
 
 
 def _cell_width(value: str) -> int:

@@ -290,27 +290,33 @@ class KeyBar(Footer):
 
     It is a Textual :class:`Footer`, so it keeps the standard position and
     geometry, but it draws the keys itself: grouped by purpose, with the key
-    on a chip and the action beside it.  The groups are taken from the live
-    bindings, so the bar can never name a key the screen does not have.
+    on a chip and the action beside it.
+
+    The keys come from the screen's own declarations plus the app's, with the
+    screen winning a key both of them show.  The *live* binding chain must not
+    be used: a focused widget can shadow a screen key (a table binds ``enter``
+    for itself) and a modal cuts the chain before the app's keys, so the live
+    chain silently hides keys the screen really answers to.
     """
 
     def compose(self) -> ComposeResult:
         yield Static(self._bar(), classes="key-bar", markup=False)
 
     def _bar(self) -> Content:
-        app_actions = {
-            binding.action for binding in self.app.BINDINGS if isinstance(binding, Binding)
-        }
-        own: list[tuple[str, str]] = []
-        session: list[tuple[str, str]] = []
-        for _node, binding, _enabled, _tooltip in self.screen.active_bindings.values():
-            if not isinstance(binding, Binding) or not binding.show:
-                continue
-            entry = (binding.key, binding.description or binding.key)
-            if binding.action.startswith("app.") or binding.action in app_actions:
-                session.append(entry)
-            else:
-                own.append(entry)
+        screen_bindings = [
+            binding for binding in self.screen.BINDINGS if isinstance(binding, Binding)
+        ]
+        screen_keys = {binding.key for binding in screen_bindings}
+        own = [
+            (binding.key, binding.description or binding.key)
+            for binding in screen_bindings
+            if binding.show
+        ]
+        session = [
+            (binding.key, binding.description or binding.key)
+            for binding in self.app.BINDINGS
+            if isinstance(binding, Binding) and binding.show and binding.key not in screen_keys
+        ]
         groups = [tuple(group) for group in (own, session) if group]
         return key_bar(*groups)
 
@@ -360,10 +366,11 @@ FooterKey > .footer-key--description {
 }
 KeyBar {
     background: $background;
+    height: auto;
 }
 KeyBar > .key-bar {
     width: 1fr;
-    height: 1;
+    height: auto;
 }
 KeyGroup {
     border-left: solid $rule;
@@ -457,6 +464,7 @@ __all__ = [
     "ERROR",
     "KEYCAP",
     "KEY_TEXT",
+    "KeyBar",
     "MUTED",
     "PANEL",
     "PRIMARY",
@@ -469,6 +477,7 @@ __all__ = [
     "THEME",
     "VALUE",
     "WARNING",
+    "brand_lockup",
     "fact_block",
     "field",
     "help_block",

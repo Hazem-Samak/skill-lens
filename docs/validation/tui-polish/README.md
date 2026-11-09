@@ -25,7 +25,7 @@ both rounds.
 | Tables | plain headers, no zebra, cells clipped mid-word (`Antig`, `empirica`) | muted header band, zebra rows, an accent-tinted selected row, padded cells, explicit column widths so names are never clipped, coloured parse marks and severity values |
 | Detail panes | a wall of identical bold `Label: value` lines | dim labels, bright values, muted paths and hashes, a set-apart description |
 | Separators | a solid accent rule between panes | a hairline, and one-column scrollbars in a muted colour |
-| Status and hints | `Ready: 9 skills discovered` floating above the key line | a status band, and one key bar: keycaps grouped by purpose and separated by a rule.  Every screen draws its own bar from its own bindings, so the bar cannot name a key the screen does not have |
+| Status and hints | `Ready: 9 skills discovered` floating above the key line | a status band, and one key bar: keycaps grouped by purpose and separated by a rule.  The six full screens draw their bar from the screen's own bindings plus the app's, so the bar cannot hide a key the screen answers to; Home keeps its hand-written grouped map, and a test pins that map to the bindings.  The bar wraps instead of clipping on a narrow terminal |
 | Help | a plain box of monospace | a rounded modal, accented section headings, bright keys, a real Close button |
 | Title bar | `⭘ Skill Lens — 0.2.0`, left aligned, three stacked identity lines | one centred brand lockup over a hairline rule, with a centred page eyebrow under it.  A terminal cannot enlarge its type, so the lockup is set in spaced capitals instead |
 | Long names | one 54-character skill name stretched the Name column and pushed the other columns away | names longer than 40 cells are shortened with an ellipsis in the table; the full name is in the preview and the filter still matches it |
@@ -103,13 +103,33 @@ shipped artifact.
   network, no log file.
 - The CLI, its JSON and its exit codes are untouched.
 
+## Pre-push correction (2026-11-09)
+
+A pre-push review found that the key bar was built from Textual's live binding
+chain.  A focused table shadows a screen key, and a modal cuts the chain before
+the app's keys, so the Doctor's `enter` and the Help overlay's `f1` were
+missing.  The inner bar was also pinned to one row, so a narrow terminal
+clipped the second line instead of wrapping.
+
+The bar is now built from the screen's own declarations plus the app's, with
+the screen winning a shared key, and its height is automatic.  Three new guards
+pin the result, and each was mutation-tested (a dropped `enter`, a dropped
+`f1`, and a restored one-row bar were all caught).  The mutation report now
+lists 23 mutations.
+
+The Doctor (140×42) and Help (140×42 and 60×24) screenshots were captured
+before this correction, so their key bars do not show the restored `enter` and
+`f1`.  The harness lived outside the repository and is no longer available, so
+they were not recaptured; the corrected bars are pinned by
+`tests/test_tui_visual.py` instead.  No other image is affected.
+
 ## Verification
 
 - `pytest --cov=skill_lens` — the whole suite, coverage gate honoured. The raw
   logs are in [`gates/`](gates/).
 - `mypy` — no issues.
 - `ruff check .` and `ruff format --check .` — clean.
-- `tests/test_tui_visual.py` — new, and mutation-tested: twenty deliberate
+- `tests/test_tui_visual.py` — new, and mutation-tested: twenty-three deliberate
   mutations were applied to the code it guards, and every one was caught. The
   report is in
   [`mutations/mutation-report.txt`](mutations/mutation-report.txt).

@@ -18,5 +18,8 @@ PASS  keycap-loses-its-padding  (tests/test_tui_visual.py::test_keycap_renders_a
 PASS  long-name-clips-again  (tests/test_tui_visual.py::test_long_names_are_shortened_in_the_table)
 PASS  rows-lose-their-air  (tests/test_tui_visual.py::test_rows_are_taller_on_a_wide_terminal)
 PASS  status-scrolls-away-again  (tests/test_tui_visual.py::test_why_status_stays_visible_while_the_report_scrolls)
+PASS  key-bar-drops-enter  (tests/test_tui_visual.py::test_every_screen_key_bar_names_every_key_it_answers_to)
+PASS  key-bar-drops-f1  (tests/test_tui_visual.py::test_every_screen_key_bar_names_every_key_it_answers_to)
+PASS  key-bar-clips-again  (tests/test_tui_visual.py::test_key_bar_wraps_instead_of_clipping)
 
-All 20 mutations were caught.
+All 23 mutations were caught.
