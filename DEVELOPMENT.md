@@ -10,7 +10,7 @@ readable for people who only want to install the tool.
 
 ## Build record
 
-`skill-lens-cli` 0.2.0 is **published** (PyPI, tag `v0.2.0`); Phases 0–7 are
+`skill-lens-cli` 0.2.1 is **published** (PyPI, tag `v0.2.1`); Phases 0–7 are
 complete and reviewed, and development continues from here. The specification lives in
 [`SKILL_LENS_SPECIFICATION.md`](https://github.com/Hazem-Samak/skill-lens/blob/main/SKILL_LENS_SPECIFICATION.md)
 and the build proceeds by phase:

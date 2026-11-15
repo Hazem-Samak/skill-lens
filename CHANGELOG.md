@@ -11,8 +11,9 @@ all clean. Earlier unreleased work (including Stage H) records local-only
 verification. The later CI repair was verified on all nine GitHub jobs; the
 dated evidence below distinguishes those results from the historical records.
 
-`[0.2.0]` below is the **published release**: PyPI `skill-lens-cli` 0.2.0
-(with the optional `[tui]` extra), tagged `v0.2.0`, released 2026-11-05.
+`[0.2.1]` below is the **current published release**: PyPI `skill-lens-cli`
+0.2.1 (with the optional `[tui]` extra), tagged `v0.2.1`, released 2026-11-15.
+`[0.2.0]` was published 2026-11-05.
 
 ---
 
