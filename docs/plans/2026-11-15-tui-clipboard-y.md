@@ -18,7 +18,7 @@ per round is in the execution receipt; each round uses fresh sessions of the
 same user-named routes. Implementer and final critics: unselected; they must be
 named by the user before any implementation dispatch, not inherited from this
 roster.
-Reference: pending until Step 5
+Reference: b838b458482ed3ada8c46e66d5c10c45c32fd89b
 Risk and review: Normal. Additive, presentation-only TUI feature: a new key
 binding, plain-text assembly from already-frozen report models, and one
 escape-sequence emission through Textual's own API. No change to path
