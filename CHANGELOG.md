@@ -16,21 +16,31 @@ dated evidence below distinguishes those results from the historical records.
 
 ---
 
-## [Unreleased]
+## [0.2.1] — 2026-11-15
+
+A TUI visual-polish release. No line-oriented command, flag, JSON shape or exit
+code changed; all changes are presentation-only inside the optional `[tui]`
+extra.
 
 ### Changed
 
-- The TUI **Compare** result now renders one table row per skill (`Skill`,
-  `Relation`, `Path A`, `Path B`) instead of a stacked four-line block per
-  skill. Column widths follow the terminal width; long skill names and paths
-  are middle-truncated, and terminals too narrow for four readable columns
-  fall back to full-path rows. The table lays out on its first display, so an
-  empty comparison body no longer needs a manual Refresh. `J` still shows the
+- **Brand theme and visual hierarchy.** The TUI now registers a dedicated
+  `skill-lens` theme with a semantic state palette, giving the browser a
+  consistent identity instead of inheriting Textual defaults. Panes have
+  clearer hierarchy and readable spacing.
+- **Organised key bar and centred title.** The footer key bar is grouped by
+  function, the screen title is centred, and tables have more room. Every key
+  the current screen answers to is named in the bar, and the bar wraps on
+  narrow terminals instead of clipping.
+- **Compare results render as a readable table.** One table row per skill
+  (`Skill`, `Relation`, `Path A`, `Path B`) instead of a stacked four-line
+  block. Column widths follow the terminal width; long names and paths are
+  middle-truncated, and terminals too narrow for four columns fall back to
+  full-path rows. The table lays out on first display. `J` still shows the
   exact JSON report.
+- **Development Status classifier** updated from Pre-Alpha to Beta.
 
-This section is kept rather than deleted because the version gate
-(`test_changelog_documents_the_current_version`) treats `[Unreleased]` as *not* a
-released heading, so the next version needs a real section of its own.
+[0.2.1]: https://github.com/Hazem-Samak/skill-lens/releases/tag/v0.2.1
 
 ---
 
