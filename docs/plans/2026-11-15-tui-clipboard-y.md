@@ -864,3 +864,133 @@ Implementation mission (2026-11-16):
   freeze follows; the final critics review the manifest change under the
   compatibility axis. The implementer receives the amendment brief with
   the new frozen reference before editing the two files.
+- Implementer r1 complete (2026-11-16): report
+  `/tmp/skill-lens-clipboard-impl/implementer-report-r1.md`; pre-amendment
+  gates 1442 passed / 1 skipped / 1 failed (the packaging manifest,
+  resolved by Amendment 1), coverage 90.19%, mypy/ruff clean; 28
+  mutations, no survivors. Deviations D1–D4 (display-toggled transient
+  notice keeping test_tui_diff.py green; structural non-priority binding
+  assertion after mutation 15 showed Textual 8.2.8 filter typing alone
+  cannot pin priority; shared `_title_lines` builder, output verified
+  identical; shared CLIPBOARD_LIMITATION constant) — coordinator judged
+  acceptable technical details, no behavior/boundary change. Amendment 1
+  applied exactly (one entry per manifest tuple); post-amendment gates
+  1445 passed / 1 skipped, all exit 0 (impl-final-gates.log).
+- Coordinator verification r1: entire diff inspected against the frozen
+  contract (15 modified tracked + 2 new files, all allowed; excluded
+  areas untouched); four gates re-run independently, all exit 0
+  (final-gates-r1.log); before-fingerprints r1-before (2102 tracked
+  files). Diff artifact impl-r1.diff (one source).
+- Review wave r1 (2026-11-16): critic-mcode-r1 (Herdr t10t) and
+  critic-glm-r1 (t10v) launched concurrently, fresh contexts,
+  complementary questions; briefs brief-{mcode,glm}-r1.md (sha256
+  0fbf1a95… / a455d8a9…). Identity: mcode footer "M3.1-Flash · Effort
+  xhigh" + coordinator-read llm-call.json (session 12-00-37-947:
+  provider minimax, model MiniMax-M3.1-Flash, thinkingLevel xhigh, api
+  anthropic-messages); the CLI's pre-existing user-config "Full access"
+  mode recorded, not set by the coordinator. glm footer "Plan ·
+  GLM-5.3-Flash Free Default / OpenCode · max" (env-config model bind +
+  one shift+tab; TUI rejects --model, probe-verified) + session
+  ses_e1bc462f… export (providerID opencode, variant max). Both verdicts
+  **pass**, zero blockers (reports reports/{mcode,glm}-r1.md); mcode
+  re-ran 548 tests across 12 suites, glm re-ran the 32 clipboard tests
+  and proved the oracle mechanics against Textual 8.2.8 source.
+  After-fingerprints r1-after identical to r1-before (status + 2102
+  SHA-256): neither critic touched any file. Elapsed ≈ 12.5 min each
+  (launch→cleanup). Terminals killed/removed after report acceptance.
+- Adjudication r1 (wave-r1-adjudication.md): six suggestions adopted
+  (mcode S1 stale :1381 pointer → title/section citation; S2 explicit
+  "Copied … means sent" spec clause per decision 6; S5 Home em dashes;
+  GLM S1 Home explanation copy test; S2 Agents/Compare explanation Help
+  branches per "EVERY mode branch"; S4 total write-count tightening).
+  Four deferred with rationale (mcode S3 historical U1–U8 paragraph; S4
+  notice-helper duplication; GLM S3 empty-notes Diff tail — an
+  assembler-only guard would break screen equivalence). Plan-text
+  precision notes recorded, frozen text NOT rewritten: GLM S5 (decision
+  2's "Agent only when a snapshot is present" clarification mis-describes
+  the always-emitted Agent line; no reachable behavior difference; do not
+  quote it as a field-visibility rule in future phases) and mcode
+  CONCEDED 4 (installed-wheel selection tuples hold 15 entries, not the
+  "14" in the Amendment 1 note/briefs — coordinator miscount; the
+  operative "unchanged" requirement holds, verified byte-identical).
+- Correction r2: brief-impl-r2.md; implementer-report-r2.md — six
+  changes applied exactly; 4 new mutations (r2-1…r2-4) all caught
+  (r2-4 proves the total-count assertion catches a non-OSC52 write the
+  old filter ignored); total-count stability 3/3 isolated runs; gates
+  1446 passed / 1 skipped, coverage 90.21%, all exit 0
+  (impl-final-gates-r2.log). Coordinator re-ran all four gates, all exit
+  0 (final-gates-r2.log); delta verified by diff-of-diffs (impl-r1.diff
+  vs impl-r2.diff): exactly the six adopted areas; goldens, packaging
+  and deferred items untouched.
+- Review wave r2 (2026-11-16): critic-mcode-r2 (t10x) and critic-glm-r2
+  (t10y), fresh contexts, targeted follow-ups carrying the r1 ledger;
+  briefs brief-{mcode,glm}-r2.md. Both verdicts **pass**, zero blockers
+  (reports reports/{mcode,glm}-r2.md). GLM r2 delivery deviation: its
+  Plan-agent harness restricts file writes to its plan directory, so the
+  report arrived inline via hc send and the coordinator materialized it
+  verbatim at reports/glm-r2.md (provenance note in the file); restraint
+  harness-enforced + verbatim guard + fingerprints. mcode r2 re-ran 204
+  tests and proved the total-count assertion deterministic via headless
+  write-path gating; glm r2 re-ran the 3 changed tests. mcode r2
+  identity: llm-call.json session 12-35-00-953 (minimax,
+  MiniMax-M3.1-Flash, xhigh). After-fingerprints r2-after identical to
+  r2-before. Elapsed ≈ 7.3 min each. Terminals killed/removed after
+  acceptance.
+- Adjudication r2: mcode S1 (Why help row the sole remaining "--" dash
+  after the Home fix) adopted as r3; mcode S2 label clarification
+  recorded — the r{N}-before/after pairs police the CRITIC waves
+  (pre-dispatch vs post-wave; all identical), while the implementer
+  edits are policed by the diff-of-diffs and cross-wave fingerprint
+  comparisons (r1-after→r2-before: exactly the 3 tracked r2 files;
+  r2-after→r3-before: exactly why.py), independently re-derived by
+  mcode; future missions should name pre-edit/post-edit pairs explicitly
+  (mcode r3 S2 hygiene note). GLM r2 S1 (no-session reachability
+  variant) and S2 (writes.clear() comment) deferred: mutation-proven
+  today, rationale durably recorded, AGENTS.md no-comment default.
+- Micro-correction r3: why.py:569 two "--" → em dashes (U+2014), nothing
+  else; implementer-report-r3.md; focused help suite 100 passed, ruff
+  format clean. Coordinator re-ran all four gates on the final tree, all
+  exit 0 (final-gates-r3.log: 1446 passed / 1 skipped, coverage 90.24%,
+  mypy 48 files, ruff clean). GLM r2 scope verified unchanged by the
+  coordinator (delta = two display-string glyphs; no logic/test/golden
+  change) — its pass stands.
+- Review wave r3 (2026-11-16): critic-mcode-r3 (t110), fresh context,
+  micro follow-up (brief-mcode-r3.md); verdict **pass**, zero blockers
+  (reports/mcode-r3.md): byte-level U+2014 ×2, diff-of-diffs = 1 file /
+  2 glyphs, live tree ≡ impl-r3.diff, focused suite 100 passed, untracked
+  product files unchanged. Identity: llm-call.json session 12-53-12-845
+  (minimax, MiniMax-M3.1-Flash, xhigh; the critic's own maxdepth-3 find
+  missed the deeper path — coordinator read it directly). After-
+  fingerprints r3-after identical to r3-before (critic read-only);
+  cross-wave r2-after→r3-after shows exactly why.py (coordinator-
+  verified). Elapsed ≈ 6 min. Suggestions recorded: S1/S2 evidence-
+  labelling hygiene (clarification above), S3 no punctuation convention
+  in the frozen plan (current state consistent; future-touch note), S4
+  doctor.py:1005 internal docstring "--" (never rendered; no action).
+- Acceptance (implementation-loop Step 7): frozen contract + Amendment 1
+  satisfied; all four gates pass on the final tree with current
+  coordinator evidence; 5 independent critic sessions across 3 waves,
+  all pass, zero unresolved blockers; only allowed files changed;
+  planned documentation updated; implementer reports agree with the
+  observed tree; all owned work settled.
+- Execution receipt metrics: expected at planning — 1 implementer +
+  final critic(s) per risk (Normal requires 1; the user named 2).
+  Actual — 1 implementer session (3 turns: r1, r2, r3) + 5 critic
+  sessions (mcode r1/r2/r3, glm r1/r2) = 6 worker sessions, 8 dispatch
+  turns. Extra rounds were coordinator-adopted non-blocking polish (r2)
+  and one cosmetic consistency fix (r3), within council §6; no
+  non-convergence (every round pass). Coordinator-owned helpers:
+  baseline-gates t10m, final-gates-r1 t10s, r2 t10w, r3 t10z; opencode
+  launch probes t10p/t10q (all killed/removed). Elapsed: implementer
+  12:45:49 → r3 done ≈ 14:43 (≈ 1 h 57 m; session retained to acceptance
+  cleanup ≈ 14:59); mission baseline ≈ 12:30 → acceptance ≈ 15:00
+  (≈ 2 h 30 m). Token usage: unavailable (hosts do not expose billed
+  tokens; omp context-% is not a token count).
+- Commit: `651fe85b16a3c0598565f67c1716f585b64b5ae2` —
+  "feat(tui): add y clipboard copy via OSC 52", 17 allowed paths
+  (15 modified tracked + 2 new), 2415 insertions / 40 deletions. This
+  receipt follows as a plan-only record commit. No push, release, or
+  publication (not authorized).
+- Cleanup: implementer t10r and critic t110 killed/removed after
+  acceptance; all owned terminals settled; pre-existing untracked
+  scratch preserved throughout.
