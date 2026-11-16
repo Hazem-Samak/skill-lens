@@ -8,6 +8,7 @@ path relationships when it offers an in-app jump to Home.
 from __future__ import annotations
 
 import contextlib
+import os
 from dataclasses import dataclass
 from typing import ClassVar, Protocol, cast
 
@@ -19,6 +20,7 @@ from textual.content import Content
 from textual.coordinate import Coordinate
 from textual.css.query import NoMatches
 from textual.screen import Screen
+from textual.timer import Timer
 from textual.widget import Widget
 from textual.widgets import DataTable, Header, Static
 
@@ -28,6 +30,7 @@ from skill_lens.core.snapshot_models import SessionSnapshot
 from skill_lens.models import dumps
 from skill_lens.models.doctor import DoctorFinding, DoctorReport
 from skill_lens.models.enums import Severity
+from skill_lens.tui import clipboard
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import SessionController
@@ -168,6 +171,7 @@ class DoctorScreen(Screen[None]):
         Binding("escape", "back", "Back", show=True),
         Binding("backspace", "back", "Back", show=False),
         Binding("J", "toggle_json", "JSON", show=True),
+        Binding("y", "copy", "Copy", show=True),
         Binding("q", "app.quit", "Quit", show=True),
         Binding("ctrl+c", "app.quit", "Quit", show=False, priority=True),
         Binding("r", "app.refresh", "Refresh", show=True),
@@ -196,6 +200,12 @@ class DoctorScreen(Screen[None]):
     }
     #doctor-navigation {
         color: $warning;
+    }
+    #copy-notice {
+        display: none;
+        height: auto;
+        padding: 0 2;
+        color: $secondary;
     }
     #doctor-error-details {
         color: $error;
@@ -267,6 +277,7 @@ class DoctorScreen(Screen[None]):
         self._mounting = False
         self._json_mode = False
         self._json_previous_focus: Widget | None = None
+        self._copy_notice_timer: Timer | None = None
         self._json_previous_identity: FindingIdentity | None = None
         self._json_previous_detail_scroll = 0
         self._ordinary_detail_scroll = 0
@@ -311,6 +322,7 @@ class DoctorScreen(Screen[None]):
         yield JsonView(id="doctor-json")
         yield Static("Initializing...", id="doctor-status", markup=False)
         yield Static("", id="doctor-error-details", markup=False)
+        yield Static("", id="copy-notice", markup=False)
         yield KeyBar()
 
     def on_mount(self) -> None:
@@ -334,11 +346,15 @@ class DoctorScreen(Screen[None]):
     def _apply_width(self, width: int) -> None:
         self.set_class(width < 80, "narrow")
 
+    def on_unmount(self) -> None:
+        self._dismiss_copy_notice()
+
     def _is_active(self) -> bool:
         return self.app.screen is self
 
     def on_screen_suspend(self) -> None:
         """A covering screen (Help) starts; Doctor owns no report workers."""
+        self._dismiss_copy_notice()
         self.suspend_help()
 
     def on_screen_resume(self) -> None:
@@ -354,11 +370,22 @@ class DoctorScreen(Screen[None]):
         if self._json_mode:
             mode = "raw JSON view"
             focus = "JSON document"
+            try:
+                view: JsonView | None = self.query_one("#doctor-json", JsonView)
+            except NoMatches:
+                view = None
             rows.extend(
                 [
                     HelpRow(
                         "↑ ↓ / PageUp / PageDown / Home / End",
                         "Scroll the captured doctor JSON report.",
+                    ),
+                    HelpRow(
+                        "y",
+                        "Copy the displayed raw JSON document to the terminal clipboard."
+                        if view is not None and view.shows_document
+                        else "Copies nothing while this JSON view shows an explanation;"
+                        " an accepted report is needed first.",
                     ),
                     HelpRow(
                         "J / Esc / Backspace",
@@ -392,6 +419,11 @@ class DoctorScreen(Screen[None]):
                         " table or details pane has focus.",
                     ),
                     HelpRow(
+                        "y",
+                        "Copy the selected finding's full details to the terminal"
+                        " clipboard; with no findings it copies nothing.",
+                    ),
+                    HelpRow(
                         "Esc / Backspace",
                         "Close Doctor and return to Home; leave JSON first if it is shown.",
                     ),
@@ -406,6 +438,7 @@ class DoctorScreen(Screen[None]):
                     "Doctor Enter never opens a file, editor or application; it only"
                     " selects an existing captured Home row."
                 )
+        notes.append(clipboard.CLIPBOARD_LIMITATION)
         return HelpContext("Doctor", mode, focus, tuple(rows), tuple(notes))
 
     def _details_focused(self) -> bool:
@@ -478,6 +511,46 @@ class DoctorScreen(Screen[None]):
         except Exception:  # pragma: no cover - only during teardown
             return
         widget.scroll_to(y=offset, animate=False)
+
+    def _copy_text(self, text: str, message: str) -> None:
+        """Emit one OSC 52 copy or show the decision's exact fallback notice."""
+        decision = clipboard.copy_decision(text, os.environ)
+        if decision is clipboard.CopyDecision.SENT:
+            self.app.copy_to_clipboard(text)
+            self._show_copy_notice(message)
+        elif decision is clipboard.CopyDecision.BLOCKED:
+            self._show_copy_notice("Clipboard not supported in this terminal")
+        else:
+            self._show_copy_notice("Too large to copy via terminal clipboard")
+
+    def _show_copy_notice(self, message: str) -> None:
+        """Replace any previous notice and restart its one-shot timer."""
+        self._dismiss_copy_notice()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update(message)
+            notice.display = True
+        self._copy_notice_timer = self.set_timer(
+            clipboard.COPY_NOTICE_SECONDS, self._expire_copy_notice
+        )
+
+    def _expire_copy_notice(self) -> None:
+        self._copy_notice_timer = None
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
+
+    def _dismiss_copy_notice(self) -> None:
+        """Clear the notice and stop a pending timer, if any."""
+        timer = self._copy_notice_timer
+        self._copy_notice_timer = None
+        if timer is not None:
+            timer.stop()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
 
     def _focus_if_active(self, widget: Widget | None) -> None:
         """Complete a deferred focus only while Doctor is still active."""
@@ -778,6 +851,26 @@ class DoctorScreen(Screen[None]):
             action()
         elif focused is not None and focused.id == "doctor-detail-scroll":
             focused.scroll_relative(y=delta, animate=False)
+
+    def action_copy(self) -> None:
+        """Copy the JSON document or the selected finding's exact detail text."""
+        if self._suspended:
+            return
+        if self._json_mode:
+            try:
+                view: JsonView | None = self.query_one("#doctor-json", JsonView)
+            except NoMatches:
+                view = None
+            if view is not None and view.shows_document and view.document is not None:
+                self._copy_text(view.document, "Copied JSON")
+            else:
+                self._show_copy_notice("Nothing to copy yet.")
+            return
+        finding = self._selected.finding if self._selected is not None else None
+        if finding is None:
+            self._show_copy_notice("Nothing to copy yet.")
+            return
+        self._copy_text(finding_detail_text(finding), "Copied finding details")
 
     def action_toggle_json(self) -> None:
         if self._suspended:

@@ -388,6 +388,7 @@ def test_hint_bar_names_every_key(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
                 "c",
                 "h",
                 "J",
+                "y",
                 "tab",
                 "f1",
             ]

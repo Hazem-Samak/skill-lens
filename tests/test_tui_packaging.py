@@ -81,6 +81,7 @@ EXPECTED_TUI_MODULES: tuple[str, ...] = (
     "skill_lens/tui/session.py",
     "skill_lens/tui/theme.py",
     "skill_lens/tui/_textual_compat.py",
+    "skill_lens/tui/clipboard.py",
     "skill_lens/tui/home.py",
     "skill_lens/tui/why.py",
     "skill_lens/tui/diff.py",

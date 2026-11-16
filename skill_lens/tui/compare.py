@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import os
 from typing import ClassVar, Literal, Protocol, cast
 
 from textual import events
@@ -12,6 +13,7 @@ from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
+from textual.timer import Timer
 from textual.widget import Widget
 from textual.widgets import Button, DataTable, Header, Static
 
@@ -22,6 +24,7 @@ from skill_lens.models import dumps
 from skill_lens.models.compare import CompareReport
 from skill_lens.presentation import COMPARE_EMPTY_TEXT, RELATION_LABEL
 from skill_lens.registry.loader import AgentDefinition
+from skill_lens.tui import clipboard
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
@@ -90,6 +93,7 @@ class CompareScreen(Screen[None]):
         Binding("escape", "back", "Back", show=True),
         Binding("backspace", "back", "Back", show=False),
         Binding("J", "toggle_json", "JSON", show=True),
+        Binding("y", "copy", "Copy", show=True),
         Binding("q", "app.quit", "Quit", show=True),
         Binding("ctrl+c", "app.quit", "Quit", show=False, priority=True),
         Binding("r", "app.refresh", "Refresh", show=True),
@@ -144,6 +148,12 @@ class CompareScreen(Screen[None]):
     }
     #compare-registry-message, #compare-input-error {
         color: $warning;
+    }
+    #copy-notice {
+        display: none;
+        height: auto;
+        padding: 0 2;
+        color: $secondary;
     }
     #compare-submit {
         width: auto;
@@ -233,6 +243,7 @@ class CompareScreen(Screen[None]):
         self._json_mode = False
         self._json_previous_focus: Widget | None = None
         self._json_previous_scroll = 0
+        self._copy_notice_timer: Timer | None = None
         self._rendered_context: tuple[object, ...] | None = None
         self._suspended = False
         self._help_focus: Widget | None = None
@@ -293,6 +304,7 @@ class CompareScreen(Screen[None]):
         yield JsonView(id="compare-json")
         yield Static("Initializing...", id="compare-status", markup=False)
         yield Static("", id="compare-error-details", markup=False)
+        yield Static("", id="copy-notice", markup=False)
         yield KeyBar()
 
     def on_mount(self) -> None:
@@ -327,10 +339,12 @@ class CompareScreen(Screen[None]):
         self.set_class(width < 80, "narrow")
 
     def on_unmount(self) -> None:
+        self._dismiss_copy_notice()
         self._cancel_owned_token()
 
     def on_screen_suspend(self) -> None:
         """A covering screen (Help) starts: suspend this screen's own work."""
+        self._dismiss_copy_notice()
         self.suspend_help()
 
     def on_screen_resume(self) -> None:
@@ -346,11 +360,19 @@ class CompareScreen(Screen[None]):
         if self._json_mode:
             mode = "raw JSON view"
             focus = "JSON document"
+            view = self._json_view_or_none()
             rows.extend(
                 [
                     HelpRow(
                         "↑ ↓ / PageUp / PageDown / Home / End",
                         "Scroll the canonical compare JSON document.",
+                    ),
+                    HelpRow(
+                        "y",
+                        "Copy the displayed raw JSON document to the terminal clipboard."
+                        if view is not None and view.shows_document
+                        else "Copies nothing while this JSON view shows an explanation;"
+                        " an accepted comparison is needed first.",
                     ),
                     HelpRow(
                         "J / Esc / Backspace",
@@ -376,6 +398,11 @@ class CompareScreen(Screen[None]):
                     HelpRow(
                         "J",
                         "Toggle the canonical compare --json report for the accepted ordered pair.",
+                    ),
+                    HelpRow(
+                        "y",
+                        "Copies nothing in ordinary result mode; press J, then y to copy"
+                        " the comparison JSON.",
                     ),
                     HelpRow(
                         "Esc / Backspace",
@@ -414,6 +441,13 @@ class CompareScreen(Screen[None]):
                     "Unavailable in the picker; it applies only to result mode.",
                 )
             )
+            rows.append(
+                HelpRow(
+                    "y",
+                    "Copies nothing in the picker; choose two agents and open a"
+                    " comparison result first.",
+                )
+            )
             if self._host.controller.current is None:
                 notes.append(
                     "No captured session is available; refresh to capture registry"
@@ -428,6 +462,7 @@ class CompareScreen(Screen[None]):
                     "Detection is not comparison eligibility: every captured registry"
                     " definition can be chosen, even when it has no detected skills."
                 )
+        notes.append(clipboard.CLIPBOARD_LIMITATION)
         return HelpContext("Compare", mode, focus, tuple(rows), tuple(notes))
 
     def suspend_help(self) -> None:
@@ -521,6 +556,46 @@ class CompareScreen(Screen[None]):
         except Exception:  # pragma: no cover - only during teardown
             return
         widget.scroll_to(y=offset, animate=False)
+
+    def _copy_text(self, text: str, message: str) -> None:
+        """Emit one OSC 52 copy or show the decision's exact fallback notice."""
+        decision = clipboard.copy_decision(text, os.environ)
+        if decision is clipboard.CopyDecision.SENT:
+            self.app.copy_to_clipboard(text)
+            self._show_copy_notice(message)
+        elif decision is clipboard.CopyDecision.BLOCKED:
+            self._show_copy_notice("Clipboard not supported in this terminal")
+        else:
+            self._show_copy_notice("Too large to copy via terminal clipboard")
+
+    def _show_copy_notice(self, message: str) -> None:
+        """Replace any previous notice and restart its one-shot timer."""
+        self._dismiss_copy_notice()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update(message)
+            notice.display = True
+        self._copy_notice_timer = self.set_timer(
+            clipboard.COPY_NOTICE_SECONDS, self._expire_copy_notice
+        )
+
+    def _expire_copy_notice(self) -> None:
+        self._copy_notice_timer = None
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
+
+    def _dismiss_copy_notice(self) -> None:
+        """Clear the notice and stop a pending timer, if any."""
+        timer = self._copy_notice_timer
+        self._copy_notice_timer = None
+        if timer is not None:
+            timer.stop()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
 
     def _focus_if_active(self, widget: Widget | None) -> None:
         """Complete a deferred focus only while this Compare is still active."""
@@ -1173,6 +1248,22 @@ class CompareScreen(Screen[None]):
         status.update(Content.from_text(session_explanation(controller), markup=False))
         error = controller.last_error_details if controller.status == "error" else ""
         details.update(Content.from_text(error or "", markup=False))
+
+    def action_copy(self) -> None:
+        """Copy JSON, or show the sub-mode-specific no-target notice."""
+        if self._suspended:
+            return
+        if self._json_mode:
+            view = self._json_view_or_none()
+            if view is not None and view.shows_document and view.document is not None:
+                self._copy_text(view.document, "Copied JSON")
+            else:
+                self._show_copy_notice("Nothing to copy yet.")
+            return
+        if self._mode == "picker":
+            self._show_copy_notice("Nothing to copy in the picker. Choose two agents first.")
+            return
+        self._show_copy_notice("Nothing to copy here. Press J for JSON, then y.")
 
     def action_toggle_json(self) -> None:
         if self._suspended or self._mode != "result":

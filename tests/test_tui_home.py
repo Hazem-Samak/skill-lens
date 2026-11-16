@@ -496,8 +496,8 @@ def test_home_filter_letters_are_text_and_ctrl_c_quits(
             generation = app.controller.current.generation
 
             await pilot.press("slash")
-            await pilot.press("q", "r", "a", "j", "k")
-            assert app.query_one("#filter-input", Input).value == "qrajk"
+            await pilot.press("q", "r", "a", "j", "k", "y")
+            assert app.query_one("#filter-input", Input).value == "qrajky"
             assert app.controller.current.generation == generation
             assert app.return_code is None
 

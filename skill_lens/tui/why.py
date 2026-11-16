@@ -16,6 +16,7 @@ only on a true miss.
 from __future__ import annotations
 
 import contextlib
+import os
 from dataclasses import dataclass
 from typing import Any, ClassVar, Protocol, cast
 
@@ -26,6 +27,7 @@ from textual.containers import Horizontal, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
+from textual.timer import Timer
 from textual.widget import Widget
 from textual.widgets import Button, Collapsible, Header, Static
 
@@ -38,6 +40,7 @@ from skill_lens.models import dumps
 from skill_lens.models.enums import HeadlineState, ParseStatus, Scope
 from skill_lens.models.resolution import CandidateResolution, ResolutionReport
 from skill_lens.presentation.state import STATE_MARK, STATE_STYLE
+from skill_lens.tui import clipboard
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.home import AgentOption, agent_display_name
 from skill_lens.tui.json_view import JsonView, session_explanation
@@ -210,6 +213,71 @@ def _build_candidate_blocks(
     return blocks
 
 
+def _title_lines(
+    snapshot: SessionSnapshot | None,
+    opening_key: str,
+    agent_id: str | None,
+    unavailable: tuple[str, ...],
+    report: ResolutionReport | None,
+) -> list[str]:
+    """The exact title-block lines, in emission order.
+
+    Shared by the rendered ``#why-title`` and the copy recipe so the two can
+    never disagree about a field or its order.
+    """
+    agent_label = (
+        agent_display_name(snapshot, agent_id)
+        if (snapshot is not None and agent_id is not None)
+        else (agent_id or "—")
+    )
+    installation_display = (
+        snapshot_path(snapshot, opening_key) if snapshot is not None else opening_key
+    )
+    lines = [f"Installation: {installation_display}"]
+    if snapshot is not None:
+        entry = _entry_for_key(snapshot, opening_key)
+        if entry is not None:
+            lines.append(f"Name: {entry.name}")
+        lines.append(f"Working directory: {snapshot_path(snapshot, str(snapshot.cwd))}")
+    lines.append(f"Agent: {agent_label}")
+    if unavailable:
+        lines.append(f"Unavailable agent IDs: {', '.join(unavailable)}")
+    if report is not None:
+        lines.append(f"Lookup name: {report.skill_name}")
+        lines.append(
+            f"Collision policy: {report.collision_policy} ({report.policy_evidence.value})"
+        )
+        lines.append(f"Report-wide headline: {report.headline.value}")
+        for note in report.notes:
+            lines.append(f"Note: {note}")
+    return lines
+
+
+def _ordinary_copy_text(
+    report: ResolutionReport,
+    snapshot: SessionSnapshot,
+    key: str,
+    agent_id: str | None,
+    unavailable: tuple[str, ...],
+) -> str:
+    """One plain string: the title block, then every candidate block.
+
+    A blank line follows the title only when at least one candidate exists; a
+    zero-candidate report is the title alone, with no trailing blank line.
+    Candidates are separated by one blank line, and every candidate is included
+    whether or not it is expanded on screen.
+    """
+    title = "\n".join(_title_lines(snapshot, key, agent_id, unavailable, report))
+    blocks = _build_candidate_blocks(report, snapshot, key)
+    if not blocks:
+        return title
+    candidates = [
+        f"{_state_mark(block.state)} {block.title_name}  ({block.state.value})\n{block.body}"
+        for block in blocks
+    ]
+    return "\n\n".join([title, *candidates])
+
+
 class WhyScreen(Screen[None]):
     """Read-only skill detail screen: one installation, one agent, captured report."""
 
@@ -222,6 +290,7 @@ class WhyScreen(Screen[None]):
         Binding("backspace", "close_why", "Back", show=False),
         Binding("d", "open_diff", "Diff", show=True),
         Binding("J", "toggle_json", "JSON", show=True),
+        Binding("y", "copy", "Copy", show=True),
         Binding("q", "app.quit", "Quit", show=True),
         Binding("ctrl+c", "app.quit", "Quit", show=False, priority=True),
         Binding("r", "app.refresh", "Refresh", show=True),
@@ -260,6 +329,12 @@ class WhyScreen(Screen[None]):
         background: $surface;
     }
     #why-report-status {
+        color: $secondary;
+    }
+    #copy-notice {
+        display: none;
+        height: auto;
+        padding: 0 2;
         color: $secondary;
     }
     #why-error-details {
@@ -315,6 +390,7 @@ class WhyScreen(Screen[None]):
         self._json_mode = False
         self._json_previous_focus: Widget | None = None
         self._json_previous_scroll = 0
+        self._copy_notice_timer: Timer | None = None
         self._help_generation: int | None = None
         self._help_body_scroll = 0
         self._help_json_scroll = 0
@@ -341,6 +417,7 @@ class WhyScreen(Screen[None]):
         # what the session is doing.
         yield Static("", id="why-status", markup=False)
         yield Static("", id="why-report-status", markup=False)
+        yield Static("", id="copy-notice", markup=False)
         yield JsonView(id="why-json")
         yield KeyBar()
 
@@ -362,6 +439,7 @@ class WhyScreen(Screen[None]):
 
     def on_screen_suspend(self) -> None:
         """Textual reports that another screen now covers this detail."""
+        self._dismiss_copy_notice()
         self.suspend_detail()
 
     def on_screen_resume(self) -> None:
@@ -433,11 +511,19 @@ class WhyScreen(Screen[None]):
         if self._json_mode:
             mode = "raw JSON view"
             focus = "JSON document"
+            view = self._json_view_or_none()
             rows.extend(
                 [
                     HelpRow(
                         "↑ ↓ / PageUp / PageDown / Home / End",
                         "Scroll the canonical why JSON document.",
+                    ),
+                    HelpRow(
+                        "y",
+                        "Copy the displayed raw JSON document to the terminal clipboard."
+                        if view is not None and view.shows_document
+                        else "Copies nothing while this JSON view shows an explanation;"
+                        " an accepted report is needed first.",
                     ),
                     HelpRow(
                         "J / Esc / Backspace",
@@ -479,6 +565,11 @@ class WhyScreen(Screen[None]):
                         " It shows the whole report, not a filtered payload.",
                     ),
                     HelpRow(
+                        "y",
+                        "Copy the accepted resolution explanation — the title block and"
+                        " every candidate, expanded or not — to the terminal clipboard.",
+                    ),
+                    HelpRow(
                         "Esc / Backspace",
                         "Close this detail and return to Home. If JSON is shown, leave JSON first.",
                     ),
@@ -496,6 +587,7 @@ class WhyScreen(Screen[None]):
                     notes.append("No agent reaches this installation; no Why report is requested.")
             elif self._report is None and self._owned_request is not None:
                 notes.append("The report for this agent is still loading.")
+        notes.append(clipboard.CLIPBOARD_LIMITATION)
         return HelpContext("Why", mode, focus, tuple(rows), tuple(notes))
 
     def suspend_help(self) -> None:
@@ -549,6 +641,46 @@ class WhyScreen(Screen[None]):
         except Exception:  # pragma: no cover - only during teardown
             return
         widget.scroll_to(y=offset, animate=False)
+
+    def _copy_text(self, text: str, message: str) -> None:
+        """Emit one OSC 52 copy or show the decision's exact fallback notice."""
+        decision = clipboard.copy_decision(text, os.environ)
+        if decision is clipboard.CopyDecision.SENT:
+            self.app.copy_to_clipboard(text)
+            self._show_copy_notice(message)
+        elif decision is clipboard.CopyDecision.BLOCKED:
+            self._show_copy_notice("Clipboard not supported in this terminal")
+        else:
+            self._show_copy_notice("Too large to copy via terminal clipboard")
+
+    def _show_copy_notice(self, message: str) -> None:
+        """Replace any previous notice and restart its one-shot timer."""
+        self._dismiss_copy_notice()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update(message)
+            notice.display = True
+        self._copy_notice_timer = self.set_timer(
+            clipboard.COPY_NOTICE_SECONDS, self._expire_copy_notice
+        )
+
+    def _expire_copy_notice(self) -> None:
+        self._copy_notice_timer = None
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
+
+    def _dismiss_copy_notice(self) -> None:
+        """Clear the notice and stop a pending timer, if any."""
+        timer = self._copy_notice_timer
+        self._copy_notice_timer = None
+        if timer is not None:
+            timer.stop()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
 
     def _focus_if_active(self, widget: Widget | None) -> None:
         """Complete a deferred focus only while this detail is still active."""
@@ -917,34 +1049,13 @@ class WhyScreen(Screen[None]):
         title = self.query_one("#why-title", Static)
         controller = self._controller_or_none()
         snapshot = controller.current if controller is not None else None
-        agent_label = (
-            agent_display_name(snapshot, self._agent_id)
-            if (snapshot is not None and self._agent_id is not None)
-            else (self._agent_id or "—")
+        lines = _title_lines(
+            snapshot,
+            self._opening_key,
+            self._agent_id,
+            self._unavailable,
+            self._report,
         )
-        installation_display = (
-            snapshot_path(snapshot, self._opening_key)
-            if snapshot is not None
-            else self._opening_key
-        )
-        lines = [f"Installation: {installation_display}"]
-        if snapshot is not None:
-            entry = _entry_for_key(snapshot, self._opening_key)
-            if entry is not None:
-                lines.append(f"Name: {entry.name}")
-            lines.append(f"Working directory: {snapshot_path(snapshot, str(snapshot.cwd))}")
-        lines.append(f"Agent: {agent_label}")
-        if self._unavailable:
-            lines.append(f"Unavailable agent IDs: {', '.join(self._unavailable)}")
-        if self._report is not None:
-            lines.append(f"Lookup name: {self._report.skill_name}")
-            lines.append(
-                f"Collision policy: {self._report.collision_policy} "
-                f"({self._report.policy_evidence.value})"
-            )
-            lines.append(f"Report-wide headline: {self._report.headline.value}")
-            for note in self._report.notes:
-                lines.append(f"Note: {note}")
         title.update(fact_block("\n".join(lines)))
 
     def _refresh_status(self) -> None:
@@ -1160,6 +1271,34 @@ class WhyScreen(Screen[None]):
 
     # -- actions ------------------------------------------------------------
 
+    def action_copy(self) -> None:
+        """Copy the JSON document or the accepted resolution explanation."""
+        if self._suspended:
+            return
+        if self._json_mode:
+            view = self._json_view_or_none()
+            if view is not None and view.shows_document and view.document is not None:
+                self._copy_text(view.document, "Copied JSON")
+            else:
+                self._show_copy_notice("Nothing to copy yet.")
+            return
+        controller = self._controller_or_none()
+        snapshot = controller.current if controller is not None else None
+        report = self._report
+        if report is None or snapshot is None:
+            self._show_copy_notice("Nothing to copy yet.")
+            return
+        self._copy_text(
+            _ordinary_copy_text(
+                report,
+                snapshot,
+                self._opening_key,
+                self._agent_id,
+                self._unavailable,
+            ),
+            "Copied resolution explanation",
+        )
+
     def action_close_why(self) -> None:
         """Esc/Backspace restore the ordinary detail first, then close it."""
         if self._json_mode:
@@ -1266,6 +1405,7 @@ class WhyScreen(Screen[None]):
         event.stop()
 
     def on_unmount(self) -> None:
+        self._dismiss_copy_notice()
         self._cancel_owned_token()
 
 
