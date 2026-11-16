@@ -11,6 +11,9 @@ elsewhere, with a payload size guard; (2) keep the issue's "Copied …"
 confirmation wording as explicitly accepted best-effort, with the limitation
 stated in Help, README and spec; (3) do not special-case Terminal.app — emit,
 trusting the macOS 14+ evidence, and record the conflicting Textual docstring.
+Amendment 1 authorization: User (Hazem), 2026-11-16, explicit approval of the
+minimal packaging-manifest scope amendment recorded below ("Authorize minimal
+amendment"). No push, release, or publication is authorized.
 Roster: Coordinator — Qoder (this session; model family unverified, disclosed
 below). Plan critics — Grok CLI `grok-4.7` with `--reasoning-effort high`;
 MCode CLI `minimax/MiniMax-M3.1-Flash` with thinking `xhigh`. Identity evidence
@@ -18,7 +21,7 @@ per round is in the execution receipt; each round uses fresh sessions of the
 same user-named routes. Implementer and final critics: unselected; they must be
 named by the user before any implementation dispatch, not inherited from this
 roster.
-Reference: b838b458482ed3ada8c46e66d5c10c45c32fd89b
+Reference: pending until Step 5 (amendment 1 freeze)
 Risk and review: Normal. Additive, presentation-only TUI feature: a new key
 binding, plain-text assembly from already-frozen report models, and one
 escape-sequence emission through Textual's own API. No change to path
@@ -213,6 +216,12 @@ Allowed files (implementation mission, when authorized):
   prose.
 - `README.md` — key list + limitation sentence (never-writes scope kept).
 - `CHANGELOG.md` — new `## [Unreleased]` section only, at implementation time.
+- `tests/test_tui_packaging.py` — Amendment 1 (2026-11-16): add
+  `"skill_lens/tui/clipboard.py"` to `EXPECTED_TUI_MODULES` only; no other
+  edit to this file.
+- `scripts/smoke_wheel.py` — Amendment 1 (2026-11-16): add
+  `"skill_lens/tui/clipboard.py"` to `REQUIRED_TUI_MODULES` only; no other
+  edit to this file.
 - This plan and its execution record.
 
 Excluded: no change to `core/`, `models/`, `registry/`, `render.py`, the CLI,
@@ -220,6 +229,20 @@ Excluded: no change to `core/`, `models/`, `registry/`, `render.py`, the CLI,
 contexts carry the rows and notes), `tui/json_view.py`, the AST guard,
 `pyproject.toml`, version numbers, the published `[0.2.1]` changelog section,
 or release artifacts. No implementation happens in this mission.
+
+Amendment 1 (2026-11-16, user-authorized): the frozen plan missed that the
+new `tui/clipboard.py` module triggers the U9 packaging manifest guard —
+`EXPECTED_TUI_MODULES` (`tests/test_tui_packaging.py:78`) and
+`REQUIRED_TUI_MODULES` (`scripts/smoke_wheel.py:44`) pin the exact 13-module
+TUI manifest, and `test_manifest_covers_every_shipped_tui_source_module`
+fails with 14 modules on disk (coordinator-reproduced). The U9 guard comment
+(`tests/test_tui_packaging.py:71-77`) prescribes updating both tuples together
+when the manifest legitimately grows; the failing guard is the intended
+alarm. The amendment adds exactly one entry (`"skill_lens/tui/clipboard.py"`)
+to each tuple and carves those two edits out of the exclusions above; every
+other exclusion stands. The guards remain exact hand-maintained pins (now 14
+modules). No behavior, dependency, version, or release-process change; the
+installed-wheel test selection (14 pinned selections) is unchanged.
 
 ## Behaviour decisions
 
@@ -763,3 +786,81 @@ Round 4 (2026-11-15):
 - Planning complete: 8 dispatches over 4 rounds, all settled; council
   agreement recorded; two-commit freeze follows. Terminals killed and
   removed after acceptance of the reports.
+
+Implementation mission (2026-11-16):
+
+- Authorization: user (Hazem), 2026-11-16, direct instruction: start
+  implementation of this frozen plan on `feat/tui-clipboard`. No push,
+  release, or publication is authorized. The planning-mission
+  authorization above is historical; this entry records the new,
+  separate grant. Frozen contract unchanged: Reference
+  `b838b458482ed3ada8c46e66d5c10c45c32fd89b` verified against HEAD
+  `efb0c75b565ec477b06985c10d84d0d393401fe3` (delta is the Reference
+  line only).
+- Roster (user-named 2026-11-16; council §1): coordinator — Qoder, this
+  session (model set to Qwen4-Max, effort xhigh, via /model readback;
+  advertised family Qwen, upstream unverified). Implementer — omp CLI,
+  `river/deepseek-ai/DeepSeek-V4.1-Flash-1017`, thinking `max` (user
+  choice from the live catalog's low/high/max; the user's omp config
+  already pins this model at :max), `--approval-mode yolo` explicitly
+  authorized by the user for this implementer session only (recorded
+  here; no standing waiver). Final critics — mcode CLI
+  `minimax/MiniMax-M3.1-Flash`, effort `xhigh` (user naming; the only
+  M3.1 in the config whitelist is M3.1-Flash; configured effort xhigh
+  via defaultModelThinking, to be verified per round by footer and
+  llm-call.json readback); opencode CLI
+  `opencode/glm-5.3-flash-free#max`, Plan agent (user naming "glm 5.3
+  flash free max"; #variant syntax per project evidence; model bound
+  via OPENCODE_CONFIG_CONTENT, agent via shift+tab, both
+  footer-verified). Family disclosure (council §1): advertised families
+  DeepSeek, MiniMax, GLM (Zhipu), Qwen — distinct from each other;
+  upstream weight identity unverified on the aggregator routes (river,
+  opencode free tier). The user named this set for this mission, which
+  records acceptance of the named set. Risk Normal: one critic
+  required; the user named two, so both review with complementary
+  questions (council §6).
+- Route discovery evidence: `omp models find deepseek/river` (unique
+  match DeepSeek-V4.1-Flash-1017); mcode `~/.minimax/config.yaml`
+  whitelist (MiniMax-M3, MiniMax-M3.1-Flash) and
+  defaultModelThinking.effort xhigh; `opencode models` catalog
+  (opencode/glm-5.3-flash-free) plus the user's own config using the
+  #max variant. opencode TUI rejects `--model` (probe exit 1,
+  "Unrecognized flag"); OPENCODE_CONFIG_CONTENT is honored at runtime
+  (probe footer "Plan · GLM-5.3-Flash Free Default / OpenCode · max"
+  after one shift+tab); both probes killed and removed. hc launches
+  use absolute CLI paths (core does not inherit the coordinator PATH).
+- Baseline (Step 1): tracked tree clean at HEAD efb0c75; pre-existing
+  untracked scratch preserved. Four gates on the baseline tree, all
+  exit 0: pytest --cov=skill_lens 1410 passed, 1 skipped, TOTAL
+  coverage 90% (threshold met); mypy clean; ruff check clean; ruff
+  format --check clean. Log:
+  `/tmp/skill-lens-clipboard-impl/baseline-gates.log`; git state:
+  `/tmp/skill-lens-clipboard-impl/baseline-{status,head}.txt`.
+  Baseline terminal t10m removed after collecting results.
+- Implementer dispatch (2026-11-16): `clipboard-impl` (Herdr `t10r`,
+  parent `t7w`), launched `/Users/corvette/.local/bin/omp --model
+  river/deepseek-ai/DeepSeek-V4.1-Flash-1017 --thinking max
+  --approval-mode yolo --no-skills --no-extensions --no-rules` with
+  brief `/tmp/skill-lens-clipboard-impl/brief-impl-r1.md` as the first
+  message. Identity: requested DeepSeek-V4.1-Flash-1017/max;
+  configured = launch argv; confirmed = session footer "DeepSeek V4.1
+  Flash 1017 (River)" (coordinator readback); thinking max configured
+  via argv, not banner-confirmed; upstream weight identity unverified
+  (river aggregator). runtimeMode/interactionMode n/a (Herdr host).
+  yolo is limited to this session per the user's explicit authorization
+  above. Shown in the "Clipboard impl" tab; focus returned to the
+  coordinator. Baseline gates green before dispatch.
+- Amendment 1 (2026-11-16): implementer `clipboard-impl` reported BLOCKED
+  with reproduction: the packaging manifest pins 13 TUI modules; the
+  plan's new `clipboard.py` makes 14; neither packaging file was in
+  allowed scope; it edited neither and held. Coordinator reproduced:
+  `PYTHONDONTWRITEBYTECODE=1 COVERAGE_FILE=/tmp/... .venv/bin/pytest -p
+  no:cacheprovider tests/test_tui_packaging.py -k
+  manifest_covers_every_shipped` → FAILED at
+  `tests/test_tui_packaging.py:386` (on disk 14 vs EXPECTED 13). The U9
+  design comment prescribes updating both tuples together on legitimate
+  growth. User authorized the minimal amendment explicitly (2026-11-16).
+  Operative amendment applied to Scope and boundaries; new two-commit
+  freeze follows; the final critics review the manifest change under the
+  compatibility axis. The implementer receives the amendment brief with
+  the new frozen reference before editing the two files.
