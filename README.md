@@ -163,10 +163,15 @@ skill-lens tui      # explicit command with the same requirement
   and exits `2`; a non-interactive stream also exits `2`.
 - **Main keys:** `↑`/`↓`/`j`/`k` move, `Enter` opens Why, `d` opens Diff,
   `g` opens Agents, `c` opens Compare, `h` opens Doctor, `J` toggles raw JSON,
+  `y` copies the focused content through the terminal clipboard (OSC 52),
   `/` focuses the Home filter, `a` cycles the agent filter, `r` refreshes,
   `?` opens Help (literal text in the filter), `F1` toggles Help even while
   typing, and `q`/`Ctrl+C` quit. `Esc`/`Backspace` leave Help, then raw JSON,
   then the screen.
+- **Clipboard is best effort.** Copy sends one OSC 52 terminal escape sequence
+  (no file, process or network write); the terminal may ignore it, and tmux or
+  GNU screen block it, so the clipboard can stay unchanged. While the Home
+  filter input is focused, `y` is ordinary filter text.
 - **Help** is read-only and scrollable. It lists the keys that actually work in
   the current screen and focus, shows the live session status, distinguishes an
   initial scan from a refresh with retained data, and keeps any in-memory fault

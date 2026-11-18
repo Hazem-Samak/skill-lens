@@ -17,6 +17,18 @@ dated evidence below distinguishes those results from the historical records.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **TUI clipboard copy (`y`).** In the optional `[tui]` extra, pressing `y`
+  copies the focused content as plain text through the terminal's OSC 52
+  clipboard sequence: the selected canonical skill path on Home, the resolution
+  explanation on Why, the unified diff on Diff, the selected finding on Doctor,
+  or the raw JSON document in any JSON view. The confirmation is best effort:
+  the terminal may ignore OSC 52, and tmux and GNU screen are blocked with a
+  clear notice. No new dependency; no file, process or network write.
+
 ## [0.2.1] — 2026-11-15
 
 A TUI visual-polish release. No line-oriented command, flag, JSON shape or exit

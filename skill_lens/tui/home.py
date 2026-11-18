@@ -16,6 +16,7 @@ helpers but never ``skill_lens.render`` or ``rich``.
 from __future__ import annotations
 
 import contextlib
+import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, ClassVar, Literal, Protocol, cast
 
@@ -26,6 +27,7 @@ from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
+from textual.timer import Timer
 from textual.widget import Widget
 from textual.widgets import DataTable, Header, Input, Static
 from textual.widgets.data_table import CellDoesNotExist
@@ -38,6 +40,7 @@ from skill_lens.models.enums import ParseStatus
 from skill_lens.models.resolution import ResolutionReport
 from skill_lens.presentation.state import SCOPE_LABEL
 from skill_lens.registry.loader import AgentDefinition
+from skill_lens.tui import clipboard
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
@@ -340,7 +343,7 @@ def _hint_bar() -> Content:
             ("c", "compare"),
             ("h", "doctor"),
         ),
-        (("J", "json"), ("tab", "focus"), ("f1", "help")),
+        (("J", "json"), ("y", "copy"), ("tab", "focus"), ("f1", "help")),
     )
 
 
@@ -416,6 +419,7 @@ class HomeScreen(Screen[None]):
         Binding("c", "open_compare", "Compare", show=False),
         Binding("h", "open_doctor", "Doctor", show=True),
         Binding("J", "toggle_json", "JSON", show=False),
+        Binding("y", "copy", "Copy", show=False),
     ]
 
     DEFAULT_CSS = """
@@ -503,6 +507,12 @@ class HomeScreen(Screen[None]):
         padding: 0 2;
         color: $warning;
     }
+    #copy-notice {
+        display: none;
+        height: auto;
+        padding: 0 2;
+        color: $secondary;
+    }
     #footer-help {
         height: auto;
         padding: 0 2;
@@ -560,6 +570,7 @@ class HomeScreen(Screen[None]):
         self._doctor_jump_input_suppressed = False
         self._json_mode = False
         self._json_previous_focus: Widget | None = None
+        self._copy_notice_timer: Timer | None = None
         self._mounting = False
         self._help_focus: Widget | None = None
         self._help_restore_pending = False
@@ -591,6 +602,7 @@ class HomeScreen(Screen[None]):
         yield Static("", id="error-details", markup=False)
         yield Static("", id="removal-notice", markup=False)
         yield Static("", id="doctor-jump-notice", markup=False)
+        yield Static("", id="copy-notice", markup=False)
         yield Static(_hint_bar(), id="footer-help", markup=False)
 
     def on_mount(self) -> None:
@@ -627,6 +639,7 @@ class HomeScreen(Screen[None]):
             self._rebuild_table()
 
     def on_unmount(self) -> None:
+        self._dismiss_copy_notice()
         self._cancel_owned_why()
 
     # -- app integration ---------------------------------------------------
@@ -640,6 +653,7 @@ class HomeScreen(Screen[None]):
 
     def suspend_why(self) -> None:
         """Suspend Home screen activity while detail screen is active."""
+        self._dismiss_copy_notice()
         self._help_focus = None
         self._help_restore_pending = False
         self._suspended = True
@@ -701,11 +715,19 @@ class HomeScreen(Screen[None]):
         if self._json_mode:
             mode = "raw JSON view"
             focus = "JSON document"
+            view = self._json_view_or_none()
             rows.extend(
                 [
                     HelpRow(
                         "↑ ↓ / PageUp / PageDown / Home / End",
                         "Scroll the captured JSON document.",
+                    ),
+                    HelpRow(
+                        "y",
+                        "Copy the displayed raw JSON document to the terminal clipboard."
+                        if view is not None and view.shows_document
+                        else "Copies nothing while this JSON view shows an explanation;"
+                        " a document is needed first.",
                     ),
                     HelpRow(
                         "J / Esc / Backspace",
@@ -730,7 +752,7 @@ class HomeScreen(Screen[None]):
                 [
                     HelpRow(
                         "Typing",
-                        "Edits the filter literally. q, r, h, d, g, c, J and ? are"
+                        "Edits the filter literally. q, r, h, d, g, c, J, y and ? are"
                         " characters here; use F1 for Help.",
                     ),
                     HelpRow(
@@ -763,6 +785,11 @@ class HomeScreen(Screen[None]):
                         "J",
                         "Show raw JSON for the whole captured scan, not the filtered"
                         " rows. It requires the focused ordinary skill table.",
+                    ),
+                    HelpRow(
+                        "y",
+                        "Copy the selected skill's canonical path — the absolute path,"
+                        " not the shortened preview — to the terminal clipboard.",
                     ),
                     HelpRow("g / c", "Open Agents / Compare from ordinary Home."),
                     HelpRow("/", "Focus the filter input."),
@@ -803,6 +830,7 @@ class HomeScreen(Screen[None]):
 
         if current is not None and filter_value and not self._json_mode:
             notes.append(f'Text filter: "{filter_value}".')
+        notes.append(clipboard.CLIPBOARD_LIMITATION)
         return HelpContext("Home", mode, focus, tuple(rows), tuple(notes))
 
     def suspend_help(self) -> None:
@@ -1081,6 +1109,48 @@ class HomeScreen(Screen[None]):
             self._removal_notice = None
             with contextlib.suppress(NoMatches):
                 self.query_one("#removal-notice", Static).update("")
+
+    # -- clipboard copy ----------------------------------------------------
+
+    def _copy_text(self, text: str, message: str) -> None:
+        """Emit one OSC 52 copy or show the decision's exact fallback notice."""
+        decision = clipboard.copy_decision(text, os.environ)
+        if decision is clipboard.CopyDecision.SENT:
+            self.app.copy_to_clipboard(text)
+            self._show_copy_notice(message)
+        elif decision is clipboard.CopyDecision.BLOCKED:
+            self._show_copy_notice("Clipboard not supported in this terminal")
+        else:
+            self._show_copy_notice("Too large to copy via terminal clipboard")
+
+    def _show_copy_notice(self, message: str) -> None:
+        """Replace any previous notice and restart its one-shot timer."""
+        self._dismiss_copy_notice()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update(message)
+            notice.display = True
+        self._copy_notice_timer = self.set_timer(
+            clipboard.COPY_NOTICE_SECONDS, self._expire_copy_notice
+        )
+
+    def _expire_copy_notice(self) -> None:
+        self._copy_notice_timer = None
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
+
+    def _dismiss_copy_notice(self) -> None:
+        """Clear the notice and stop a pending timer, if any."""
+        timer = self._copy_notice_timer
+        self._copy_notice_timer = None
+        if timer is not None:
+            timer.stop()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
 
     def sync_from_controller(self) -> None:
         """Reconcile the screen with the controller's published session."""
@@ -1768,6 +1838,24 @@ class HomeScreen(Screen[None]):
     def action_noop_enter(self) -> None:
         """Backward compatibility alias for enter action."""
         self.action_open_why()
+
+    def action_copy(self) -> None:
+        """Copy the JSON document or the selected canonical path, verbatim."""
+        if self._suspended:
+            return
+        if self._json_mode:
+            view = self._json_view_or_none()
+            if view is not None and view.shows_document and view.document is not None:
+                self._copy_text(view.document, "Copied JSON")
+            else:
+                self._show_copy_notice("Nothing to copy yet.")
+            return
+        controller = self._controller_or_none()
+        key = controller.selected_key if controller is not None else None
+        if key is None:
+            self._show_copy_notice("Nothing to copy yet.")
+            return
+        self._copy_text(key, "Copied skill path")
 
     def action_refresh(self) -> None:
         """Clear removal notice on explicit refresh and request refresh."""

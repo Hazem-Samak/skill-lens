@@ -18,6 +18,8 @@ dispatches only on a true miss.
 
 from __future__ import annotations
 
+import contextlib
+import os
 from typing import ClassVar, Protocol, cast
 
 from textual.app import ComposeResult
@@ -26,6 +28,7 @@ from textual.containers import Vertical, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
+from textual.timer import Timer
 from textual.widget import Widget
 from textual.widgets import Header, Static
 
@@ -53,6 +56,7 @@ from skill_lens.presentation import (
     report_truncation_notice,
     unified_text,
 )
+from skill_lens.tui import clipboard
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import ReportValue, SessionController, ViewName, ViewRequest
@@ -139,6 +143,74 @@ def _entry_name(snapshot: SessionSnapshot, key: str) -> str | None:
     return None
 
 
+def _copy_plain_text(copy: DiffCopy, *, baseline_exists: bool, snapshot: SessionSnapshot) -> str:
+    """One copy block exactly as the screen's ``#diff-content`` renders it."""
+    parts = copy_heading(
+        copy,
+        baseline_exists=baseline_exists,
+        display_path=snapshot_path(snapshot, copy.path),
+    )
+    lines = [
+        f"{parts.mark} {parts.path}{parts.variant} "
+        f"({parts.scope}, {parts.parse_status})  {parts.status}"
+    ]
+    body = copy_body(copy, baseline_exists=baseline_exists)
+    if body is not None:
+        lines.append(f"  {body}")
+    else:
+        for file in copy.files:
+            marker = f" {BINARY_MARKER}" if file.is_binary else ""
+            lines.append(f"  {file.path} {file.change.value}{marker}")
+            notice = file_notice(file)
+            if notice is not None:
+                lines.append(f"    {notice}")
+            else:
+                lines.extend(unified_text(file).split("\n"))
+    truncation = copy_truncation_notice(copy)
+    if truncation is not None:
+        lines.append(f"  {truncation.label}{truncation.body}")
+    return "\n".join(lines)
+
+
+def diff_plain_text(report: DiffReport, snapshot: SessionSnapshot) -> str:
+    """The one-string ``y`` recipe for an accepted Diff report.
+
+    Blocks follow the screen's mount order and are joined by one blank line;
+    only the copy heading and summary paths are snapshot-mapped, while per-file
+    paths stay exactly as the report stores them.
+    """
+    if not report.found:
+        return not_found_message(report)
+
+    blocks: list[str] = []
+    baseline = next((copy for copy in report.copies if copy.is_baseline), None)
+    display = snapshot_path(snapshot, baseline.path) if baseline is not None else None
+    blocks.append(
+        f"{COPIES_LABEL} {len(report.copies)}\n"
+        f"{BASELINE_LABEL} {baseline_text(baseline, display_path=display)}"
+    )
+
+    listing_needed = True
+    if not report.has_differences:
+        notice = no_differences_message(report)
+        blocks.append(f"{notice.label}{notice.body}")
+        listing_needed = needs_listing(report)
+
+    if listing_needed:
+        baseline_exists = report.baseline_path is not None
+        for copy in report.copies:
+            blocks.append(
+                _copy_plain_text(copy, baseline_exists=baseline_exists, snapshot=snapshot)
+            )
+        truncation = report_truncation_notice(report)
+        if truncation is not None:
+            blocks.append(f"{truncation.label}{truncation.body}")
+
+    if report.baseline_path is not None:
+        blocks.append("\n".join(f"{NOTE_LABEL} {note}" for note in report.notes))
+    return "\n\n".join(blocks)
+
+
 class DiffScreen(Screen[None]):
     """Read-only unified diff between the copies that share one folder name."""
 
@@ -146,6 +218,7 @@ class DiffScreen(Screen[None]):
         Binding("escape", "back", "Back", show=True),
         Binding("backspace", "back", "Back", show=False),
         Binding("J", "toggle_json", "JSON", show=True),
+        Binding("y", "copy", "Copy", show=True),
         Binding("q", "app.quit", "Quit", show=True),
         Binding("ctrl+c", "app.quit", "Quit", show=False, priority=True),
         Binding("r", "app.refresh", "Refresh", show=True),
@@ -170,6 +243,12 @@ class DiffScreen(Screen[None]):
     }
     #diff-status {
         background: $surface;
+    }
+    #copy-notice {
+        display: none;
+        height: auto;
+        padding: 0 2;
+        color: $secondary;
     }
     #diff-error-details {
         color: $error;
@@ -208,6 +287,7 @@ class DiffScreen(Screen[None]):
         self._json_mode = False
         self._json_previous_focus: Widget | None = None
         self._json_previous_scroll = 0
+        self._copy_notice_timer: Timer | None = None
         self._rendered_context: tuple[object, ...] | None = None
         self._suspended = False
         self._help_focus: Widget | None = None
@@ -252,6 +332,7 @@ class DiffScreen(Screen[None]):
             yield Static("", id="diff-status", markup=False)
             yield Static("", id="diff-error-details", markup=False)
             yield Vertical(id="diff-content")
+        yield Static("", id="copy-notice", markup=False)
         yield JsonView(id="diff-json")
         yield KeyBar()
 
@@ -267,6 +348,7 @@ class DiffScreen(Screen[None]):
 
     def on_screen_suspend(self) -> None:
         """A covering screen (Help) starts: suspend this screen's own work."""
+        self._dismiss_copy_notice()
         self.suspend_help()
 
     def on_screen_resume(self) -> None:
@@ -282,11 +364,19 @@ class DiffScreen(Screen[None]):
         if self._json_mode:
             mode = "raw JSON view"
             focus = "JSON document"
+            view = self._json_view_or_none()
             rows.extend(
                 [
                     HelpRow(
                         "↑ ↓ / PageUp / PageDown / Home / End",
                         "Scroll the canonical diff JSON document.",
+                    ),
+                    HelpRow(
+                        "y",
+                        "Copy the displayed raw JSON document to the terminal clipboard."
+                        if view is not None and view.shows_document
+                        else "Copies nothing while this JSON view shows an explanation;"
+                        " an accepted report is needed first.",
                     ),
                     HelpRow(
                         "J / Esc / Backspace",
@@ -315,6 +405,11 @@ class DiffScreen(Screen[None]):
                         "Toggle the canonical diff --json report for this installation.",
                     ),
                     HelpRow(
+                        "y",
+                        "Copy the whole report as plain text: the summary, every copy,"
+                        " file notices, truncation totals and notes.",
+                    ),
+                    HelpRow(
                         "Esc / Backspace",
                         "Return to the screen that opened Diff (Home or Why). If JSON is"
                         " shown, leave JSON first.",
@@ -328,6 +423,7 @@ class DiffScreen(Screen[None]):
                     "The captured model found no eligible copies; its exact"
                     " not-found answer is shown and stays scrollable."
                 )
+        notes.append(clipboard.CLIPBOARD_LIMITATION)
         return HelpContext("Diff", mode, focus, tuple(rows), tuple(notes))
 
     def suspend_help(self) -> None:
@@ -404,6 +500,46 @@ class DiffScreen(Screen[None]):
             return
         widget.scroll_to(y=offset, animate=False)
 
+    def _copy_text(self, text: str, message: str) -> None:
+        """Emit one OSC 52 copy or show the decision's exact fallback notice."""
+        decision = clipboard.copy_decision(text, os.environ)
+        if decision is clipboard.CopyDecision.SENT:
+            self.app.copy_to_clipboard(text)
+            self._show_copy_notice(message)
+        elif decision is clipboard.CopyDecision.BLOCKED:
+            self._show_copy_notice("Clipboard not supported in this terminal")
+        else:
+            self._show_copy_notice("Too large to copy via terminal clipboard")
+
+    def _show_copy_notice(self, message: str) -> None:
+        """Replace any previous notice and restart its one-shot timer."""
+        self._dismiss_copy_notice()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update(message)
+            notice.display = True
+        self._copy_notice_timer = self.set_timer(
+            clipboard.COPY_NOTICE_SECONDS, self._expire_copy_notice
+        )
+
+    def _expire_copy_notice(self) -> None:
+        self._copy_notice_timer = None
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
+
+    def _dismiss_copy_notice(self) -> None:
+        """Clear the notice and stop a pending timer, if any."""
+        timer = self._copy_notice_timer
+        self._copy_notice_timer = None
+        if timer is not None:
+            timer.stop()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
+
     def _focus_if_active(self, widget: Widget | None) -> None:
         """Complete a deferred focus only while this Diff is still active."""
         if widget is None or not self.is_mounted:
@@ -420,6 +556,7 @@ class DiffScreen(Screen[None]):
         widget.focus()
 
     def on_unmount(self) -> None:
+        self._dismiss_copy_notice()
         self._cancel_owned_token()
 
     # -- synchronization ----------------------------------------------------
@@ -874,6 +1011,25 @@ class DiffScreen(Screen[None]):
             return None
 
     # -- actions ------------------------------------------------------------
+
+    def action_copy(self) -> None:
+        """Copy the JSON document or the report's exact plain-text recipe."""
+        if self._suspended:
+            return
+        if self._json_mode:
+            view = self._json_view_or_none()
+            if view is not None and view.shows_document and view.document is not None:
+                self._copy_text(view.document, "Copied JSON")
+            else:
+                self._show_copy_notice("Nothing to copy yet.")
+            return
+        controller = self._controller_or_none()
+        snapshot = controller.current if controller is not None else None
+        report = self._report
+        if report is None or snapshot is None:
+            self._show_copy_notice("Nothing to copy yet.")
+            return
+        self._copy_text(diff_plain_text(report, snapshot), "Copied diff")
 
     def action_back(self) -> None:
         """Leave JSON mode first, otherwise return to the origin screen."""

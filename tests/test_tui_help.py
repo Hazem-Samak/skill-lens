@@ -38,6 +38,7 @@ from skill_lens.core.snapshot import (
 from skill_lens.models import dumps
 from skill_lens.models.doctor import DoctorFinding, DoctorReport
 from skill_lens.models.enums import Evidence, Severity
+from skill_lens.tui import clipboard
 from skill_lens.tui.agents import AgentsScreen
 from skill_lens.tui.app import (
     SkillLensApp,
@@ -427,7 +428,7 @@ def test_help_no_session_over_agents_and_compare_picker(
 def test_home_filter_typing_is_literal_and_f1_preserves_text_and_cursor(
     mock_home: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """``?qrahdgc/J`` types literally; F1 opens/closes without touching it."""
+    """``?qrahdgc/Jy`` types literally; F1 opens/closes without touching it."""
     build_scenario("claude_personal_beats_project", mock_home)
 
     async def _run() -> None:
@@ -437,7 +438,7 @@ def test_home_filter_typing_is_literal_and_f1_preserves_text_and_cursor(
             await pilot.press("slash")
             await pilot.pause()
             assert _focused_id(app) == "filter-input"
-            typed = "?qrahdgc/J"
+            typed = "?qrahdgc/Jy"
             for character in typed:
                 await pilot.press(character)
             await pilot.pause()
@@ -453,7 +454,7 @@ def test_home_filter_typing_is_literal_and_f1_preserves_text_and_cursor(
             await pilot.press("left")
             assert filter_input.cursor_position == len(typed) - 2
             await pilot.press("backspace")
-            assert filter_input.value == "?qrahdg/"
+            assert filter_input.value == "?qrahdgcJ"
             await pilot.press("end")
             assert filter_input.cursor_position == len(filter_input.value)
 
@@ -2118,6 +2119,172 @@ def test_help_over_home_json_refresh_replaces_the_document_without_stale_data(
             assert view.document != old_document
             assert "fresh-skill" in view.document
             assert view.document == dumps(snapshot.scan.to_dict())
+            await pilot.press("q")
+
+    asyncio.run(_run())
+
+
+# ---------------------------------------------------------------------------
+# A6 — Clipboard Help rows are mode-specific and truthful
+# ---------------------------------------------------------------------------
+
+
+def _y_action(context: Any) -> str | None:
+    return next((row.action for row in context.rows if row.keys == "y"), None)
+
+
+def _assert_limitation(context: Any) -> None:
+    assert clipboard.CLIPBOARD_LIMITATION in context.notes
+
+
+def test_every_help_mode_branch_names_copy_truthfully(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Ordinary, JSON-document, JSON-explanation and both Compare sub-modes."""
+    build_scenario("claude_personal_beats_project", mock_home)
+    filter_sentence = (
+        "Edits the filter literally. q, r, h, d, g, c, J, y and ? are characters"
+        " here; use F1 for Help."
+    )
+
+    async def _run() -> None:
+        app = SkillLensApp(home=mock_home, cwd=mock_home / "project")
+        async with app.run_test(size=(100, 30)) as pilot:
+            await _wait_ready(pilot, app)
+            home = app.screen
+            assert isinstance(home, HomeScreen)
+
+            ordinary = home.help_context()
+            assert "canonical path" in (_y_action(ordinary) or "")
+            _assert_limitation(ordinary)
+
+            await pilot.press("slash")
+            await pilot.pause()
+            filter_context = home.help_context()
+            typing = next(row.action for row in filter_context.rows if row.keys == "Typing")
+            assert typing == filter_sentence
+            assert _y_action(filter_context) is None
+            _assert_limitation(filter_context)
+            await pilot.press("escape")
+            await pilot.pause()
+
+            home.enter_json_mode()
+            document_context = home.help_context()
+            assert "displayed raw JSON" in (_y_action(document_context) or "")
+            _assert_limitation(document_context)
+            home.query_one("#home-json", JsonView).show_explanation("No document.")
+            explanation_context = home.help_context()
+            assert "Copies nothing" in (_y_action(explanation_context) or "")
+            _assert_limitation(explanation_context)
+            home.leave_json_mode()
+            await pilot.pause()
+
+            await pilot.press("enter")
+            await _until(pilot, lambda: isinstance(app.screen, WhyScreen), "Why")
+            why = app.screen
+            await _until(pilot, lambda: why._report is not None, "Why report")
+            ordinary = why.help_context()
+            assert "resolution explanation" in (_y_action(ordinary) or "")
+            _assert_limitation(ordinary)
+            why.enter_json_mode()
+            document_context = why.help_context()
+            assert "displayed raw JSON" in (_y_action(document_context) or "")
+            _assert_limitation(document_context)
+            why.leave_json_mode()
+            why._report = None
+            app.controller.cache.clear()
+            why.enter_json_mode()
+            explanation_context = why.help_context()
+            assert "Copies nothing" in (_y_action(explanation_context) or "")
+            _assert_limitation(explanation_context)
+            why.leave_json_mode()
+            await pilot.press("escape")
+            await _until(pilot, lambda: isinstance(app.screen, HomeScreen), "Home")
+
+            await pilot.press("d")
+            await _until(pilot, lambda: isinstance(app.screen, DiffScreen), "Diff")
+            diff = app.screen
+            await _until(pilot, lambda: diff.report is not None, "Diff report")
+            ordinary = diff.help_context()
+            assert "whole report" in (_y_action(ordinary) or "")
+            _assert_limitation(ordinary)
+            diff.enter_json_mode()
+            document_context = diff.help_context()
+            assert "displayed raw JSON" in (_y_action(document_context) or "")
+            _assert_limitation(document_context)
+            diff.leave_json_mode()
+            diff._report = None
+            app.controller.cache.clear()
+            diff.enter_json_mode()
+            explanation_context = diff.help_context()
+            assert "Copies nothing" in (_y_action(explanation_context) or "")
+            _assert_limitation(explanation_context)
+            diff.leave_json_mode()
+            await pilot.press("escape")
+            await _until(pilot, lambda: isinstance(app.screen, HomeScreen), "Home")
+
+            await pilot.press("g")
+            await _until(pilot, lambda: isinstance(app.screen, AgentsScreen), "Agents")
+            agents = app.screen
+            ordinary = agents.help_context()
+            assert "press J, then y" in (_y_action(ordinary) or "")
+            _assert_limitation(ordinary)
+            agents.enter_json_mode()
+            document_context = agents.help_context()
+            assert "displayed raw JSON" in (_y_action(document_context) or "")
+            _assert_limitation(document_context)
+            agents.query_one("#agents-json", JsonView).show_explanation("No payload.")
+            explanation_context = agents.help_context()
+            assert "Copies nothing" in (_y_action(explanation_context) or "")
+            _assert_limitation(explanation_context)
+            agents.leave_json_mode()
+            await pilot.press("escape")
+            await _until(pilot, lambda: isinstance(app.screen, HomeScreen), "Home")
+
+            await pilot.press("h")
+            await _until(pilot, lambda: isinstance(app.screen, DoctorScreen), "Doctor")
+            doctor = app.screen
+            ordinary = doctor.help_context()
+            assert "selected finding" in (_y_action(ordinary) or "")
+            _assert_limitation(ordinary)
+            doctor.enter_json_mode()
+            document_context = doctor.help_context()
+            assert "displayed raw JSON" in (_y_action(document_context) or "")
+            _assert_limitation(document_context)
+            doctor.leave_json_mode()
+            await pilot.press("escape")
+            await _until(pilot, lambda: isinstance(app.screen, HomeScreen), "Home")
+
+            await pilot.press("c")
+            await _until(pilot, lambda: isinstance(app.screen, CompareScreen), "Compare")
+            compare = app.screen
+            picker = compare.help_context()
+            picker_row = _y_action(picker) or ""
+            assert "picker" in picker_row and "choose two agents" in picker_row
+            assert "J" not in picker_row
+            _assert_limitation(picker)
+
+            await _choose_table_key(
+                pilot, compare.query_one("#compare-a-table", DataTable), "claude"
+            )
+            await _choose_table_key(
+                pilot, compare.query_one("#compare-b-table", DataTable), "codex"
+            )
+            await _until(pilot, lambda: compare.report is not None, "Compare report")
+            result = compare.help_context()
+            result_row = _y_action(result) or ""
+            assert "Copies nothing" in result_row and "J" in result_row
+            _assert_limitation(result)
+
+            compare.enter_json_mode()
+            document_context = compare.help_context()
+            assert "displayed raw JSON" in (_y_action(document_context) or "")
+            _assert_limitation(document_context)
+            compare.query_one("#compare-json", JsonView).show_explanation("No report.")
+            explanation_context = compare.help_context()
+            assert "Copies nothing" in (_y_action(explanation_context) or "")
+            _assert_limitation(explanation_context)
+            compare.leave_json_mode()
             await pilot.press("q")
 
     asyncio.run(_run())

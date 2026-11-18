@@ -137,7 +137,8 @@ Picture the experience:
 - Pressing **`c`** opens the two-agent comparison view, with both agents chosen
   from a picker.
 - Pressing **`J`** displays the raw JSON of whatever you are looking at.
-  Clipboard support is deferred; 0.2 adds no copy action.
+  Clipboard support is deferred; 0.2 adds no copy action; lifted after 0.2.1 by
+  the 2026-11-15 amendment, issue #8 (`y` copies through OSC 52).
 - Pressing **`?`** shows a help overlay; **`q`** quits.
 
 The whole thing is **the existing reports, made navigable**. It is not a new
@@ -480,6 +481,7 @@ Home (Skill list)
 | `g` | Open Agents |
 | `c` | Open compare |
 | `J` | Toggle raw JSON for the current view |
+| `y` | Copy the focused content as plain text through the terminal clipboard (OSC 52) |
 | `r` | Request a new catalog/session |
 | `?` | Help overlay |
 | `F1` | Toggle the Help overlay (app-level priority; works even while typing) |
@@ -500,9 +502,19 @@ the published report, supports exact raw JSON, and offers only frozen in-app
 catalog selection. Its local technical verification passed; see
 [U7 parent verification](docs/validation/u7/coordinator/verification.md).
 
+Since the 2026-11-15 amendment (issue #8), non-priority `y` copies the focused
+content as plain text through OSC 52: the canonical path on Home, the resolution
+explanation on Why, the unified diff on Diff, the selected finding on Doctor,
+the raw JSON document in any JSON mode, and nothing in ordinary Agents or
+Compare mode. tmux and GNU screen are blocked with a clear notice; other
+terminals may ignore the sequence. The on-screen "Copied …" line means the
+OSC 52 sequence was sent, not that the terminal confirmed a clipboard change.
+
 Since U8, `?` opens one read-only Help modal over Home, Why, Diff, Agents,
 Compare or Doctor, including ordinary, raw JSON, initial-loading and no-session
 states. It is non-priority, so it stays literal filter text in Home's input.
+The same is true of the non-priority `y` copy key: in the focused Home filter
+input, `y` is an ordinary character, exactly like `?`.
 The app-level priority `F1` toggles the exact active Help even while typing.
 Help has a scrollable body, a visible Close button, live session status and
 literal in-memory fault details; `Esc`, `Backspace`, `?`, `F1` and Close
@@ -675,7 +687,9 @@ shells out, never opens a file — `subprocess` is forbidden outright.
   finding's path corresponds to a known entry.
 - When the path is **not** in the catalog (a dangling symlink, an unreadable
   root, a cycle), the panel explains that there is no matching catalog entry and
-  displays the path as literal text. There is no clipboard action in 0.2 (Q3).
+  displays the path as literal text. There is no clipboard action in 0.2 (Q3);
+  0.2 adds no copy action, lifted after 0.2.1 by the 2026-11-15 amendment,
+  issue #8 (`y` copies the selected finding's details through OSC 52).
 
 ### 8.7 Compare — the picker and its edge cases
 
@@ -1313,6 +1327,21 @@ shows the raw JSON in the UI; copying to the clipboard is deferred to a later
 version. *(The reviewer noted Textual can copy via OSC 52 with no extra
 dependency, so a `y` key would be cheap to add — but display-only stands for
 0.2.)*
+
+*Amendment 2026-11-15 (issue #8):* after the published 0.2.1 release, the owner
+lifted the deferral for the TUI with three decisions: (1) block known blockers —
+tmux and GNU screen — and emit elsewhere behind a 75,000-byte payload guard;
+(2) keep the issue's "Copied …" confirmation as explicitly best-effort, with the
+limitation stated in Help, README and this specification; (3) do not special-case
+Terminal.app — emit and trust the macOS 14+ report. The evidence conflicts are
+recorded rather than hidden: Textual's `App.copy_to_clipboard` docstring says it
+does not work on macOS Terminal, while community evidence reports Terminal.app
+accepting OSC 52 writes from macOS 14; the tmux wiki says it forbids inner
+applications, while VTE 0.76+ is reported to support OSC 52. VTE, xterm and
+iTerm2 settings are undetectable and remain documented limitations. The
+historical readiness row "Doctor offered clipboard support despite Q3" (the
+§20 readiness checklist) remains a record of the 0.2 decision, not a current
+prohibition.
 
 **Q4 — Add a `--plain` flag.** ✅ *Decided: yes.* `skill-lens --plain` forces the
 old line-oriented behaviour (printing help rather than opening the UI) for

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import os
 from typing import ClassVar, Protocol, cast
 
 from textual import events
@@ -12,12 +13,14 @@ from textual.containers import Horizontal, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.screen import Screen
+from textual.timer import Timer
 from textual.widget import Widget
 from textual.widgets import DataTable, Header, Static
 
 from skill_lens.models import dumps
 from skill_lens.presentation import agents_payload
 from skill_lens.registry.loader import AgentDefinition
+from skill_lens.tui import clipboard
 from skill_lens.tui.help import HelpContext, HelpRow
 from skill_lens.tui.json_view import JsonView, session_explanation
 from skill_lens.tui.session import SessionController
@@ -106,6 +109,7 @@ class AgentsScreen(Screen[None]):
         Binding("escape", "back", "Back", show=True),
         Binding("backspace", "back", "Back", show=False),
         Binding("J", "toggle_json", "JSON", show=True),
+        Binding("y", "copy", "Copy", show=True),
         Binding("q", "app.quit", "Quit", show=True),
         Binding("ctrl+c", "app.quit", "Quit", show=False, priority=True),
         Binding("r", "app.refresh", "Refresh", show=True),
@@ -152,6 +156,12 @@ class AgentsScreen(Screen[None]):
     #agents-empty {
         color: $warning;
     }
+    #copy-notice {
+        display: none;
+        height: auto;
+        padding: 0 2;
+        color: $secondary;
+    }
     #agents-error-details {
         color: $error;
     }
@@ -193,6 +203,7 @@ class AgentsScreen(Screen[None]):
         self._json_mode = False
         self._json_previous_focus: Widget | None = None
         self._json_previous_scroll = 0
+        self._copy_notice_timer: Timer | None = None
         self._suspended = False
         self._help_focus: Widget | None = None
         self._help_generation: int | None = None
@@ -222,6 +233,7 @@ class AgentsScreen(Screen[None]):
         yield JsonView(id="agents-json")
         yield Static("Initializing...", id="agents-status", markup=False)
         yield Static("", id="agents-error-details", markup=False)
+        yield Static("", id="copy-notice", markup=False)
         yield KeyBar()
 
     def on_mount(self) -> None:
@@ -246,12 +258,13 @@ class AgentsScreen(Screen[None]):
         self.set_class(width < 80, "narrow")
 
     def on_unmount(self) -> None:
-        # Agents owns no background report work; the method is here to make the
-        # screen's lifecycle boundary explicit and easy to audit.
-        return
+        # Agents owns no background report work; the copy notice timer is the
+        # only pending callback this screen can leave behind.
+        self._dismiss_copy_notice()
 
     def on_screen_suspend(self) -> None:
         """A covering screen (Help) starts; no report work runs here."""
+        self._dismiss_copy_notice()
         self.suspend_help()
 
     def on_screen_resume(self) -> None:
@@ -267,11 +280,19 @@ class AgentsScreen(Screen[None]):
         if self._json_mode:
             mode = "raw JSON view"
             focus = "JSON document"
+            view = self._json_view_or_none()
             rows.extend(
                 [
                     HelpRow(
                         "↑ ↓ / PageUp / PageDown / Home / End",
                         "Scroll the captured agents JSON payload.",
+                    ),
+                    HelpRow(
+                        "y",
+                        "Copy the displayed raw JSON document to the terminal clipboard."
+                        if view is not None and view.shows_document
+                        else "Copies nothing while this JSON view shows an explanation;"
+                        " an accepted payload is needed first.",
                     ),
                     HelpRow(
                         "J / Esc / Backspace",
@@ -305,6 +326,11 @@ class AgentsScreen(Screen[None]):
                         " details pane has focus.",
                     ),
                     HelpRow(
+                        "y",
+                        "Copies nothing in this ordinary browser; press J, then y to copy"
+                        " the agents JSON.",
+                    ),
+                    HelpRow(
                         "Esc / Backspace",
                         "Leave JSON if shown, then leave the details pane for the table,"
                         " then close Agents and return to Home.",
@@ -324,6 +350,7 @@ class AgentsScreen(Screen[None]):
                     "Captured registry definitions are listed, including agents with"
                     " no detected skills."
                 )
+        notes.append(clipboard.CLIPBOARD_LIMITATION)
         return HelpContext("Agents", mode, focus, tuple(rows), tuple(notes))
 
     def _details_focused(self) -> bool:
@@ -396,6 +423,52 @@ class AgentsScreen(Screen[None]):
         except Exception:  # pragma: no cover - only during teardown
             return
         widget.scroll_to(y=offset, animate=False)
+
+    def _copy_text(self, text: str, message: str) -> None:
+        """Emit one OSC 52 copy or show the decision's exact fallback notice."""
+        decision = clipboard.copy_decision(text, os.environ)
+        if decision is clipboard.CopyDecision.SENT:
+            self.app.copy_to_clipboard(text)
+            self._show_copy_notice(message)
+        elif decision is clipboard.CopyDecision.BLOCKED:
+            self._show_copy_notice("Clipboard not supported in this terminal")
+        else:
+            self._show_copy_notice("Too large to copy via terminal clipboard")
+
+    def _show_copy_notice(self, message: str) -> None:
+        """Replace any previous notice and restart its one-shot timer."""
+        self._dismiss_copy_notice()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update(message)
+            notice.display = True
+        self._copy_notice_timer = self.set_timer(
+            clipboard.COPY_NOTICE_SECONDS, self._expire_copy_notice
+        )
+
+    def _expire_copy_notice(self) -> None:
+        self._copy_notice_timer = None
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
+
+    def _dismiss_copy_notice(self) -> None:
+        """Clear the notice and stop a pending timer, if any."""
+        timer = self._copy_notice_timer
+        self._copy_notice_timer = None
+        if timer is not None:
+            timer.stop()
+        with contextlib.suppress(NoMatches):
+            notice = self.query_one("#copy-notice", Static)
+            notice.update("")
+            notice.display = False
+
+    def _json_view_or_none(self) -> JsonView | None:
+        try:
+            return self.query_one("#agents-json", JsonView)
+        except NoMatches:
+            return None
 
     def _focus_if_active(self, widget: Widget | None) -> None:
         """Complete a deferred focus only while Agents is still active."""
@@ -595,6 +668,19 @@ class AgentsScreen(Screen[None]):
             return
         with contextlib.suppress(NoMatches):
             self.query_one("#agents-detail-scroll", VerticalScroll).focus()
+
+    def action_copy(self) -> None:
+        """Copy the JSON document, or explain that ordinary Agents has no target."""
+        if self._suspended:
+            return
+        if self._json_mode:
+            view = self._json_view_or_none()
+            if view is not None and view.shows_document and view.document is not None:
+                self._copy_text(view.document, "Copied JSON")
+            else:
+                self._show_copy_notice("Nothing to copy yet.")
+            return
+        self._show_copy_notice("Nothing to copy here. Press J for JSON, then y.")
 
     def action_toggle_json(self) -> None:
         if self._suspended:

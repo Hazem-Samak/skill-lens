@@ -894,7 +894,9 @@ def test_synthetic_target_preservation_across_lifecycle(
             "populated Home table",
         )
 
-        # 1b. Home raw JSON: a real document, scrolled, then back to the table.
+        # 1b. Home raw JSON: a real document, copied, scrolled, then back to the table.
+        await pilot.press("y")
+        await pilot.pause()
         await pilot.press("J")
         await wait_for(
             lambda: (
@@ -904,6 +906,8 @@ def test_synthetic_target_preservation_across_lifecycle(
             ),
             "Home JSON document",
         )
+        await pilot.press("y")
+        await pilot.pause()
         await pilot.press("end")
         await pilot.pause()
         await pilot.press("escape")
@@ -918,6 +922,8 @@ def test_synthetic_target_preservation_across_lifecycle(
         await wait_for(lambda: isinstance(app.screen, DoctorScreen), "Doctor screen")
         doctor = app.screen
         assert isinstance(doctor, DoctorScreen)
+        await pilot.press("y")
+        await pilot.pause()
         await pilot.press("J")
         await wait_for(
             lambda: (
@@ -925,6 +931,8 @@ def test_synthetic_target_preservation_across_lifecycle(
             ),
             "Doctor JSON document",
         )
+        await pilot.press("y")
+        await pilot.pause()
         await pilot.press("escape")
         doctor_table = doctor.query_one("#doctor-findings")
         doctor_table.move_cursor(row=1, column=0, animate=False)
@@ -949,6 +957,8 @@ def test_synthetic_target_preservation_across_lifecycle(
         diff = app.screen
         assert isinstance(diff, DiffScreen)
         assert diff.opening_key, "Diff must be opened for a canonical installation"
+        await pilot.press("y")
+        await pilot.pause()
         await pilot.press("J")
         await wait_for(
             lambda: (
@@ -958,6 +968,8 @@ def test_synthetic_target_preservation_across_lifecycle(
             ),
             "Diff JSON document",
         )
+        await pilot.press("y")
+        await pilot.pause()
         await pilot.press("end")
         await pilot.pause()
         await pilot.press("escape")
@@ -974,6 +986,8 @@ def test_synthetic_target_preservation_across_lifecycle(
             lambda: isinstance(app.screen, WhyScreen) and app.screen._report is not None,
             "accepted Why report",
         )
+        await pilot.press("y")
+        await pilot.pause()
         await pilot.press("J")
         await wait_for(
             lambda: (
@@ -983,6 +997,8 @@ def test_synthetic_target_preservation_across_lifecycle(
             ),
             "Why JSON document",
         )
+        await pilot.press("y")
+        await pilot.pause()
         await pilot.press("home")
         await pilot.pause()
         await pilot.press("escape")
