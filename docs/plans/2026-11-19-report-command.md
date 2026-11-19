@@ -915,3 +915,72 @@ dispatch terminal losses, 0 extra rounds beyond the owner-approved targeted
 round 3; grok quota exhausted after r2 delivery (402), owner named the agy
 replacement; token usage unavailable (CLIs do not expose it). Freeze, branch
 link and push receipts: appended below after execution.
+
+
+## Acceptance receipt — planning mission (append-only, 2026-11-19)
+
+- Mission boundary honored: planning only. No product code or test was
+  written; the only repository change is this plan file. Implementation
+  remains unauthorized.
+- Review history: round 1 both changes_required (13 blockers + 21
+  suggestions, all coordinator-reproduced and accepted); round 2 both
+  changes_required (all round-1 findings confirmed resolved; 5 new precision
+  blockers, all coordinator-reproduced with verified remedies); council §5
+  escalation triggered and resolved by the owner (option 2: replacement
+  second reviewer; wording package approved); round 3 BOTH PASS (0 blockers;
+  mcode's 10 non-blocking suggestions S-J..S-S incorporated verbatim).
+- Roster evidence (requested vs configured vs confirmed):
+  coordinator nous/qwen4-max:free (session header; terminal t7w → t128
+  mid-mission, screen-verified). mcode minimax/MiniMax-M3.1-Flash @ xhigh
+  (owner "yes m3.1F"; banner readback every round + critic self-reports;
+  effort confirmed by coordinator readback, honestly marked not
+  self-observable by the critic). grok grok-4.7 @ high rounds 1-2 (banner
+  readback; 402 weekly-quota exhaustion AFTER complete r2 delivery; no
+  silent substitute). agy gemini-3.8-flash-high round 3 (owner-named; live
+  `agy models` catalog; /model picker readback "Gemini 3.8 Flash (current)",
+  effort slider high, status "Gemini 3.8 Flash · high"; self-report confirms
+  model, effort coordinator-confirmed).
+- Permission modes: pre-existing user defaults only (mcode "Full access",
+  grok "always-approve", agy "auto"); the coordinator added no bypass flags.
+  Restraint instruction-based (verbatim council §2 guard in every brief) +
+  fingerprint detection.
+- Fingerprint evidence: rounds 1, 2 and 3 before/after diffs CLEAN (SHA-256
+  of every tracked and untracked non-ignored file + git status; no critic
+  modified the repository). Files: fingerprints-{before,after}{,-r2,-r3}.txt
+  under ~/.hermes/cache/scratch/sl-report-plan/.
+- Evidence preserved outside the checkout: all six verbatim critic reports,
+  all six briefs, amendments-r1-draft.md, round2-ledger.md, cycle-probe/
+  (ImportError reproduction + TYPE_CHECKING control), baseline-gates.log.
+- Baseline gates (unchanged tree, before dispatch): pytest 1446 passed /
+  1 skipped, coverage 90.23% (≥90); mypy clean (48 files); ruff check clean;
+  ruff format clean (447 files).
+- Two-commit freeze:
+  commit 1 f182f22861942c2a2940960ae2caed13b4c4583d
+    "docs: freeze plan 2026-11-19-report-command" (Status: Agreed,
+    Reference pending; plan file only, 917 insertions).
+  commit 2 cceeed4f39c78d2b67e96f879bc958be7c005984
+    "docs: record plan 2026-11-19-report-command frozen reference"
+    (diff verified: ONLY the Reference line changed; frozen contract
+    untouched).
+- Branch + issue link: `gh issue develop 6 --name feat/issue-6-report
+  --base main` created the remote branch from main and linked it to issue
+  #6; verified via `gh issue develop --list 6`. Push b22dbe7..cceeed4;
+  `git ls-remote` HEAD == local HEAD == cceeed4f39c78d2b67e96f879bc958be7c005984.
+  Branch: https://github.com/Hazem-Samak/skill-lens/tree/feat/issue-6-report
+  Issue:  https://github.com/Hazem-Samak/skill-lens/issues/6
+- Resource settlement: all owned terminals killed+removed one at a time
+  (gate job t113; critics t116/t115 pre-dispatch losses, t129/t12b,
+  t12c/t12d, t12f/t12g); the user's unrelated terminals untouched; no
+  reclaimable owned worker remains.
+- Council §6 receipt: expected at planning = 2 plan critics; actual = 6
+  successful dispatches across 3 rounds (+2 pre-dispatch terminal losses,
+  no task lost), 1 owner-approved targeted round after escalation, 0
+  unapproved rounds. Elapsed: mission ~3.5 h (r1 wave ~30 min, r2 ~35 min,
+  r3 ~25 min). Token usage: unavailable (the CLIs do not expose it).
+- Next mission (NOT authorized here): the owner names the implementer and
+  final critics; implementation follows the frozen Reference above; the
+  owner-approved wording package (spec, project-profile, Help paragraph)
+  lands together with the implementation; all four gates plus the recorded
+  mutation controls apply.
+- This receipt is append-only: the operative contract above is an unchanged
+  prefix of this file (verified by diff before committing).
