@@ -44,7 +44,7 @@ Roster: (user-named, this mission only; requested vs configured vs confirmed kep
   restraint is instruction-based (verbatim council §2 guard) plus
   before/after SHA-256 fingerprints (council §2.3). Rounds 1 AND 2
   fingerprint results: CLEAN (no repository change by any critic).
-Reference: pending until Step 5 (two-commit freeze)
+Reference: f182f22861942c2a2940960ae2caed13b4c4583d
 Risk and review: HIGH — new public JSON data format (`models/report.py`)
   that scripted users will parse (project-profile §7). Two user-named
   critics per round, complementary questions:
