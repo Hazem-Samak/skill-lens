@@ -20,7 +20,7 @@ Roster (named by the requester for this mission only):
   - Family disclosure (council §1): coordinator and critic are both Anthropic
     Claude models. No model-family diversity is claimed; the requester named
     this pairing, which records acceptance of it.
-Reference: pending
+Reference: 4b15862983fad503871387a150951369494f0f62
 Risk and review: **High** (council §5; project-profile §7). The plan adds a
 new public JSON shape (`models/search.py`) that scripts will parse, and
 project-profile §7 lists public JSON shapes as high risk (the issue #6 plan
