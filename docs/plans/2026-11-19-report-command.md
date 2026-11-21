@@ -1154,7 +1154,9 @@ and removed before the critic wave (no task lost). mcode post-report provider er
 CLIs do not expose it).
 
 ### Acceptance commit
-Acceptance commit: pending (recorded in the provenance successor commit). Only
+Acceptance commit: d23216ee174542eb5c6bcf4957bff3c01697815e
+("feat(report): exportable diagnostic report command + TUI R export (issue #6)"),
+recorded in this provenance successor commit. Only
 allowed paths staged (the 20 modified files + 7 new report paths + this plan
 receipt); the 13 pre-existing untracked debris paths and ignored .coverage/
 .pytest_cache NOT committed. This receipt is append-only: the operative contract
