@@ -241,6 +241,26 @@ Performs hygiene and ecosystem health diagnostics:
 - ⚠️ Traversal hazards (e.g. `node_modules/**/SKILL.md`).
 - ℹ️ Symlink farm health and installer lockfile (`~/.agents/.skill-lock.json`) status.
 
+### 7. `skill-lens search <query> [--agent <agent_id>] [--cwd <dir>] [--sandbox <dir>] [--json]`
+Answers "which of my skills can help with X?" over one discovery pass (no skill file is read again).
+
+- **Rows.** Exactly the `scan` rows: one per skill copy, same scopes, agents and order.
+  Plugin and system skills are searched and keep their scope.
+- **Matching.** Case-insensitive (`casefold`) substring of the stripped query, as one
+  phrase; no fuzzy, regex or semantic matching. Searched fields, in rank order: name
+  (folder name, and the frontmatter `name` when it differs), description, then the
+  `SKILL.md` body after the frontmatter. Other files in a skill directory are not
+  searched. A copy appears once, in the tier of the first field that matched.
+- **Order.** Name > description > body; inside the name tier, exact name, then prefix,
+  then other name matches; ties keep `scan` order.
+- **Excerpt.** One cleaned line (control characters removed, whitespace collapsed) of at
+  most 80 characters around the match, or the description for a name match.
+- **`--agent`.** Keeps only copies that agent reaches and adds each copy's resolution
+  state, resolved through the agent's lookup name (`resolve_skill`). Without `--agent`
+  the state is `null`: a copy only has a state for one agent at a time.
+- **Exit codes.** `0` whenever the search ran, including zero results; `2` for an empty
+  query or an unknown agent, both rejected before any filesystem walk. No `--fail-on`.
+
 ---
 
 ## 7. Implementation Roadmap & Acceptance Gates

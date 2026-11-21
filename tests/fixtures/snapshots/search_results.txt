@@ -1,0 +1,14 @@
+┌─────── Skill Lens: Search 'database' ───────┐
+│ Matches: 6  (name 3, description 1, body 2) │
+└─────────────────────────────────────────────┘
+
+┌──────────────────────────┬─────────────┬─────────┬──────────────────┬────────────────────────────┐
+│ Skill                    │ Match       │ Scope   │ Agents           │ Excerpt                    │
+├──────────────────────────┼─────────────┼─────────┼──────────────────┼────────────────────────────┤
+│ database                 │ name        │ Global  │ claude, opencode │ Talk to the [bold]store[/… │
+│ database-tools           │ name        │ Global  │ claude, opencode │ Helpers.                   │
+│ alias-one (shared-datab… │ name        │ Global  │ codex            │ Codex alias.               │
+│ db-migrate               │ description │ Global  │ codex, dsh, omp… │ Plan DATABASE moves.       │
+│ deploy                   │ body        │ Global  │ claude, opencode │ …ry database check in the… │
+│ plugskill                │ body        │ Plugin  │ codex            │ Uses the database driver.  │
+└──────────────────────────┴─────────────┴─────────┴──────────────────┴────────────────────────────┘

@@ -7,6 +7,7 @@ it into terminal output. Descriptions are escaped with
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 
 from rich.console import Console
@@ -18,11 +19,13 @@ from rich.text import Text
 
 from skill_lens.core import paths
 from skill_lens.core.scanner import ScanReport
+from skill_lens.core.search import refit
 from skill_lens.models.compare import CompareReport
 from skill_lens.models.diff import DiffCopy, DiffFile, DiffReport
 from skill_lens.models.doctor import DoctorReport
 from skill_lens.models.enums import Severity
 from skill_lens.models.resolution import ResolutionReport
+from skill_lens.models.search import SearchReport
 from skill_lens.presentation import (
     BASELINE_LABEL,
     BINARY_MARKER,
@@ -391,3 +394,95 @@ def render_compare(report: CompareReport, console: Console | None = None) -> Non
 
     for note in report.notes:
         console.print(f"[yellow]Note:[/yellow] {escape(note)}")
+
+
+#: Control characters (C0, DEL, C1), ESC included. Rich ``Text`` keeps them, so
+#: they are replaced before any search text reaches the terminal.
+_CONTROL_CHARS = re.compile(r"[\x00-\x1f\x7f-\x9f]")
+
+
+def _safe(value: str) -> str:
+    """Skill-derived text with control characters shown as ``?``, never emitted."""
+    return _CONTROL_CHARS.sub("?", value)
+
+
+def render_search(report: SearchReport, console: Console | None = None) -> None:
+    """Render search results as a summary panel plus one table row per matching copy.
+
+    Every piece of skill text, every path and the query itself goes into a
+    ``Text`` object, never a markup string, so nothing a skill file contains can
+    restyle the output or reach the terminal as an escape sequence. Rows never
+    wrap: long cells end with an ellipsis, so one match is always one line,
+    and the excerpt is re-cut to its column so the matched words stay visible.
+    Control characters (an ESC sequence hidden in a folder name, say) are
+    replaced by ``?`` first, because ``Text`` alone would pass them through.
+    """
+    console = console or Console()
+    counts = report.counts()
+    header = Text()
+    header.append("Matches: ", style="bold")
+    header.append(
+        f"{report.total}  (name {counts['name']}, description {counts['description']}, "
+        f"body {counts['body']})"
+    )
+    if report.agent is not None:
+        header.append("\n")
+        header.append("Agent: ", style="bold")
+        header.append(_safe(f"{report.agent_name or report.agent} ({report.agent})"))
+    query = _safe(report.query)
+    title = Text.assemble("Skill Lens: Search '", query, "'")
+    console.print(Panel(header, title=title, expand=False))
+    console.print()
+
+    if not report.results:
+        console.print(Text.assemble("No skills match '", query, "'.", style="dim"))
+    else:
+        rows: list[tuple[Text, Text, Text, Text, str]] = []
+        for hit in report.results:
+            skill = Text(_safe(hit.name))
+            if hit.frontmatter_name is not None:
+                skill.append(_safe(f" ({hit.frontmatter_name})"), style="dim")
+            if report.agent is not None:
+                fourth = Text(_safe(hit.state or "unknown"))
+            else:
+                fourth = Text(_safe(", ".join(hit.agents)) or "-")
+            rows.append(
+                (
+                    skill,
+                    Text(hit.match.value),
+                    Text(SCOPE_LABEL.get(hit.scope, hit.scope.value)),
+                    fourth,
+                    hit.snippet,
+                )
+            )
+        fourth_header = "State" if report.agent is not None else "Agents"
+        # Fixed widths keep every match on one line at any terminal width: the
+        # short columns get what their content needs (capped), the excerpt the rest.
+        widths = [
+            min(24, max(len("Skill"), *(r[0].cell_len for r in rows))),
+            max(len("description"), *(r[1].cell_len for r in rows)),
+            max(len("Project"), *(r[2].cell_len for r in rows)),
+            min(16, max(len(fourth_header), *(r[3].cell_len for r in rows))),
+        ]
+        borders = 3 * 5 + 1
+        excerpt = max(12, console.width - sum(widths) - borders)
+        table = Table(show_header=True, header_style="bold")
+        for heading, width in zip(("Skill", "Match", "Scope", fourth_header), widths, strict=True):
+            table.add_column(heading, no_wrap=True, overflow="ellipsis", width=width)
+        table.add_column("Excerpt", no_wrap=True, overflow="ellipsis", width=excerpt)
+        for skill_cell, match_cell, scope_cell, fourth_cell, excerpt_text in rows:
+            table.add_row(
+                skill_cell,
+                match_cell,
+                scope_cell,
+                fourth_cell,
+                Text(_safe(refit(excerpt_text, report.query, excerpt)), style="dim"),
+            )
+        console.print(table)
+
+    if report.unreadable:
+        console.print(Text("Unreadable roots (not searched):", style="yellow"))
+        for item in report.unreadable:
+            line = Text("  ! ", style="yellow")
+            line.append(_safe(f"{item['path']} ({item['detail']})"))
+            console.print(line)

@@ -474,7 +474,7 @@ Home (Skill list)
 | `Esc` / `Backspace` | Back |
 | `Tab` / `Shift+Tab` | Move focus forward / backward between controls and panes on every screen |
 | `←` / `→` on the focused agent strip | Choose the previous / next detail agent |
-| `/` | Filter the current list |
+| `/` | Filter the current list (on Home: name, frontmatter name, description and `SKILL.md` text) |
 | `a` | Cycle the agent filter |
 | `d` | Open diff for the selected skill |
 | `h` | Open Doctor |
@@ -563,6 +563,12 @@ Detected: Codex, Claude, Antigravity, Pi, Grok, Qoder, Windsurf           0.2.0
 ```
 
 * `*` = parse status valid, `x` = invalid (malformed YAML / missing description).
+* `/` filters Home by text: a row matches when the query (case-insensitive) is in its
+  name, frontmatter `name`, description or `SKILL.md` body (the same fields as
+  `skill-lens search`). The body is read from the captured index only when the
+  cheaper fields did not match, and no second copy of it is kept. Limits, by design:
+  matches are not ranked (rows keep scan order), the preview does not say which field
+  matched, and a short query can match many rows; `skill-lens search` ranks.
 * `a` cycles an agent filter. **Only while an agent is selected** does the list
   gain a per-agent resolution mark, produced by calling `resolve_skill()` for
   that *one* agent — never for all ten at once (which would also blow the startup

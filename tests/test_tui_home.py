@@ -49,6 +49,7 @@ from skill_lens.tui.home import (
     build_home_rows,
     detected_agent_ids,
     filter_home_rows,
+    home_bodies,
     preview_text,
     resolution_text,
 )
@@ -1795,5 +1796,58 @@ def test_initial_capture_completing_before_home_mount_still_populates_table(
             assert _row_texts(app)[0][0] == "alpha"
             await pilot.press("q")
             assert app.return_code == int(ExitCode.OK)
+
+    asyncio.run(_run())
+
+
+# ---------------------------------------------------------------------------
+# Issue #7: the Home filter also searches frontmatter names and SKILL.md text
+# ---------------------------------------------------------------------------
+
+
+def test_home_filter_matches_frontmatter_name_and_body_text(mock_home: Path) -> None:
+    claude = mock_home / ".claude" / "skills"
+    make_skill(claude / "alpha", "alpha", "First.", body="Contains the word zebracorn.\n")
+    make_skill(claude / "beta", "beta", "Second.")
+    make_skill(mock_home / ".codex" / "skills" / "alias-one", "shared", "Alias.")
+    snapshot = capture_session(generation=1, home=paths.home(), cwd=mock_home)
+
+    rows = build_home_rows(snapshot)
+    bodies = home_bodies(snapshot)
+    alpha = next(row for row in rows if row.name == "alpha")
+    alias = next(row for row in rows if row.name == "alias-one")
+
+    # A body-only word is found when the captured bodies are supplied ...
+    assert filter_home_rows(rows, "ZEBRACORN", None, bodies) == (alpha,)
+    # ... the old three-argument call behaves exactly as before ...
+    assert filter_home_rows(rows, "zebracorn", None) == ()
+    # ... and the agent filter still applies to body matches.
+    assert filter_home_rows(rows, "zebracorn", "codex", bodies) == ()
+    assert filter_home_rows(rows, "zebracorn", "claude", bodies) == (alpha,)
+    # A frontmatter name that differs from the folder name is searchable too.
+    assert filter_home_rows(rows, "shared", None) == (alias,)
+
+    # Bodies are referenced, not copied into the rows.
+    assert "zebracorn" not in alpha.search_text
+    entry = next(e for e in snapshot.index.entries if e.name == "alpha")
+    assert entry.parse is not None
+    assert bodies[alpha.key] is entry.parse.body
+
+
+def test_home_filter_input_names_text_and_finds_body_words(mock_home: Path) -> None:
+    claude = mock_home / ".claude" / "skills"
+    make_skill(claude / "alpha", "alpha", "First.", body="Contains the word zebracorn.\n")
+    make_skill(claude / "beta", "beta", "Second.")
+
+    async def _run() -> None:
+        app = SkillLensApp(home=mock_home, cwd=mock_home)
+        async with app.run_test(size=(100, 30)) as pilot:
+            await _wait_ready(pilot, app)
+            field = app.query_one("#filter-input", Input)
+            assert field.placeholder == "Filter by name, description or text  (/)"
+            assert _table(app).row_count == 2
+            await pilot.press("slash")
+            await pilot.press(*"zebracorn")
+            assert _table(app).row_count == 1
 
     asyncio.run(_run())
