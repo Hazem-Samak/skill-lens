@@ -365,11 +365,12 @@ Three consequences:
    extra's combined constraints; do not raise the base floor merely because
    an optional dependency needs more. Re-check metadata before scaffolding.
 2. **Our pinned output can move for an unrelated reason.** There are 17 plain-text
-   Rich snapshots in `tests/fixtures/snapshots/` and 16 JSON goldens. A
-   transitive constraint from an *optional* feature could change `render.py`'s
-   output and fail our own snapshot gate, for a cause that has nothing to do with
-   the TUI. **No test currently asserts that installing `[tui]` leaves existing
-   output byte-identical** — one must be added.
+   Rich snapshots in `tests/fixtures/snapshots/` and 16 JSON goldens (both
+   top-level; the report fixtures live in subdirectories the count globs do not
+   see). A transitive constraint from an *optional* feature could change
+   `render.py`'s output and fail our own snapshot gate, for a cause that has
+   nothing to do with the TUI. **No test currently asserts that installing
+   `[tui]` leaves existing output byte-identical** — one must be added.
 3. **Select the current stable floor, then lock the resolved version.**
    `textual>=0.80.0` is an unnecessarily old minimum, not an exact pin; it also
    permits 8.x. The selected baseline floor is **8.2.8**, verified against
@@ -482,6 +483,7 @@ Home (Skill list)
 | `c` | Open compare |
 | `J` | Toggle raw JSON for the current view |
 | `y` | Copy the focused content as plain text through the terminal clipboard (OSC 52) |
+| `R` | Export the captured session as a Markdown report through the terminal clipboard (OSC 52); the Compare screen's selected pair is not included |
 | `r` | Request a new catalog/session |
 | `?` | Help overlay |
 | `F1` | Toggle the Help overlay (app-level priority; works even while typing) |
@@ -509,6 +511,18 @@ the raw JSON document in any JSON mode, and nothing in ordinary Agents or
 Compare mode. tmux and GNU screen are blocked with a clear notice; other
 terminals may ignore the sequence. The on-screen "Copied …" line means the
 OSC 52 sequence was sent, not that the terminal confirmed a clipboard change.
+
+Since issue #6, non-priority `R` exports the published session snapshot as one
+Markdown report through the same OSC 52 channel and decision rules. It never
+re-runs discovery or report computation, and it works on Home, Why, Diff,
+Agents, Compare and Doctor — including every raw JSON mode, where it still
+exports the Markdown report rather than the visible JSON. The export always
+uses the captured scan, doctor findings and detected agents and never includes
+the Compare screen's selected pair. An explicit `R` binding on the Help modal
+makes the key work while Help is open, like its existing `q` and `r` rebinds;
+while Home's filter input has focus, `R` is ordinary filter text. A payload
+over 75,000 UTF-8 bytes reports the normal clipboard limit and points to
+`skill-lens report --output <file>`.
 
 Since U8, `?` opens one read-only Help modal over Home, Why, Diff, Agents,
 Compare or Doctor, including ordinary, raw JSON, initial-loading and no-session

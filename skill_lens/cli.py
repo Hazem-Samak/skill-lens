@@ -18,18 +18,19 @@ from rich.console import Console
 
 from skill_lens import __version__
 from skill_lens.core import paths
-from skill_lens.core.compare import run_compare
+from skill_lens.core.compare import run_compare, validate_compare_agents
 from skill_lens.core.diff import build_diff_report
 from skill_lens.core.doctor import run_doctor
 from skill_lens.core.exitcodes import ExitCode, FailOn, exit_code_for, fail_on_help
 from skill_lens.core.hasher import IncompleteTreeError
+from skill_lens.core.report import run_report
 from skill_lens.core.resolver import resolve_skill
 from skill_lens.core.scanner import build_scan_report, scan_severities
 from skill_lens.core.snapshot import DEFAULT_MAX_SNAPSHOT_BYTES
 from skill_lens.models import dumps
 from skill_lens.models.enums import Severity
-from skill_lens.presentation import agents_payload
-from skill_lens.registry.loader import list_agents
+from skill_lens.presentation import agents_payload, markdown_text
+from skill_lens.registry.loader import AgentDefinition, list_agents, load_registry
 from skill_lens.render import (
     render_agents,
     render_compare,
@@ -128,6 +129,23 @@ def _emit_json(payload: object) -> None:
     corrupt the output, so wrapping and markup are disabled explicitly.
     """
     console.print(dumps(payload), soft_wrap=True, markup=False, highlight=False)
+
+
+def _emit_report_bytes(data: bytes) -> None:
+    """Write one report buffer to stdout verbatim.
+
+    Rich is deliberately bypassed: its console printer substitutes emoji
+    shortcodes (``:100:``) and expands tabs, so the bytes would differ from
+    the same buffer written by ``--output``. This writes the exact UTF-8 bytes
+    under both a real terminal and CliRunner's captured stream.
+    """
+    buffer = getattr(sys.stdout, "buffer", None)
+    if buffer is not None:
+        buffer.write(data)
+        buffer.flush()
+        return
+    sys.stdout.write(data.decode("utf-8"))
+    sys.stdout.flush()
 
 
 def _version_callback(value: bool) -> None:
@@ -499,6 +517,127 @@ def compare(
         _emit_json(report.to_dict())
         return
     render_compare(report, console)
+
+
+@app.command()
+def report(
+    sandbox: Annotated[
+        Path | None,
+        typer.Option("--sandbox", help="Treat this directory as a mock $HOME."),
+    ] = None,
+    cwd: Annotated[
+        Path | None,
+        typer.Option("--cwd", help=_CWD_HELP),
+    ] = None,
+    output_format: Annotated[
+        str,
+        typer.Option("--format", help="Report format. Only 'md' is supported."),
+    ] = "md",
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Emit one combined machine-readable JSON document."),
+    ] = False,
+    output: Annotated[
+        Path | None,
+        typer.Option("--output", help="Write the report to this new file instead of stdout."),
+    ] = None,
+    agents: Annotated[
+        list[str] | None,
+        typer.Option("--agent", help="Agent id to compare. Pass zero or exactly twice."),
+    ] = None,
+) -> None:
+    """Export one shareable diagnostic report: agents, scan, doctor and compare."""
+    if output_format != "md":
+        raise typer.BadParameter(
+            f"unsupported --format '{output_format}'; only 'md' is supported (use --json for JSON)."
+        )
+
+    selected = list(agents or ())
+    if len(selected) not in (0, 2):
+        raise typer.BadParameter(
+            "pass --agent zero times (no compare) or exactly twice (two agents to compare); "
+            f"got {len(selected)}."
+        )
+
+    compare_agents: tuple[str, str] | None = None
+    registry: dict[str, AgentDefinition] | None = None
+    if selected:
+        registry = load_registry()
+        try:
+            validate_compare_agents(selected[0], selected[1], registry)
+        except (KeyError, ValueError) as exc:
+            error_console.print(
+                f"Error: {exc.args[0]}",
+                soft_wrap=True,
+                markup=False,
+                highlight=False,
+            )
+            raise typer.Exit(code=int(ExitCode.USAGE)) from None
+        compare_agents = (selected[0], selected[1])
+
+    if output is not None:
+        if output.is_dir():
+            error_console.print(
+                f"Error: --output {output} is a directory; choose a file path.",
+                soft_wrap=True,
+                markup=False,
+                highlight=False,
+            )
+            raise typer.Exit(code=int(ExitCode.USAGE))
+        if output.exists() or output.is_symlink():
+            error_console.print(
+                f"Error: --output {output} already exists; choose a new path.",
+                soft_wrap=True,
+                markup=False,
+                highlight=False,
+            )
+            raise typer.Exit(code=int(ExitCode.USAGE))
+        if not output.parent.exists():
+            error_console.print(
+                f"Error: --output parent directory {output.parent} does not exist; "
+                "create it first.",
+                soft_wrap=True,
+                markup=False,
+                highlight=False,
+            )
+            raise typer.Exit(code=int(ExitCode.USAGE))
+
+    _apply_sandbox(sandbox)
+    home = _effective_home()
+    working_dir = _effective_cwd(cwd, sandbox)
+    if sandbox is not None:
+        _assert_inside_sandbox(working_dir, home)
+
+    try:
+        model = run_report(
+            cwd=working_dir,
+            compare_agents=compare_agents,
+            registry=registry,
+        )
+    except (KeyError, ValueError) as exc:
+        error_console.print(
+            f"Error: {exc.args[0]}",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
+        raise typer.Exit(code=int(ExitCode.USAGE)) from None
+
+    text = dumps(model.to_dict()) if as_json else markdown_text(model, paths.display)
+    data = (text + "\n").encode("utf-8")
+    if output is not None:
+        try:
+            output.write_bytes(data)
+        except OSError as exc:
+            error_console.print(
+                f"Error: could not write the report: {exc}",
+                soft_wrap=True,
+                markup=False,
+                highlight=False,
+            )
+            raise typer.Exit(code=int(ExitCode.USAGE)) from None
+        return
+    _emit_report_bytes(data)
 
 
 if __name__ == "__main__":  # pragma: no cover

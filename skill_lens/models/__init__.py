@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from skill_lens.models.agents import AgentSummary, agents_payload
 from skill_lens.models.compare import CompareEntry, CompareReport
 from skill_lens.models.diff import (
     DiffChange,
@@ -37,9 +38,11 @@ from skill_lens.models.parsing import (
     CanonicalStatus,
     ParseResult,
 )
+from skill_lens.models.report import ReportMeta, ReportModel
 from skill_lens.models.resolution import CandidateResolution, ResolutionReport
 
 __all__ = [
+    "AgentSummary",
     "CandidateResolution",
     "CanonicalResult",
     "CanonicalStatus",
@@ -61,11 +64,14 @@ __all__ = [
     "ParseResult",
     "ParseStatus",
     "PermissionEffect",
+    "ReportMeta",
+    "ReportModel",
     "ResolutionReport",
     "Scope",
     "Severity",
     "SkillInstallation",
     "Visibility",
+    "agents_payload",
     "dumps",
 ]
 

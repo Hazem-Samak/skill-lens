@@ -1,0 +1,128 @@
+# Skill Lens Report
+
+| Field | Value |
+| --- | --- |
+| Generated (UTC) | 2026-11-19T14:20:00+00:00 |
+| Skill Lens version | 0.2.1 |
+| Platform | TestPlatform-1.0 |
+| Home | ~ |
+| Cwd | ~ |
+
+## Detected agents
+
+| Agent | Name | Collision policy | Evidence | Roots |
+| --- | --- | --- | --- | --- |
+| claude | Claude Code | Personal \> Project | documented | 2 |
+| codex | OpenAI Codex | Unverified / Merged | empirical | 6 |
+| dsh | DSH | Shadow (Project \> User) | documented | 5 |
+| omp | Oh My Pi | Namespace (higher precedence keeps the bare name) | documented | 5 |
+| opencode | OpenCode V2 | Shadow (Later-registered source wins) | documented | 6 |
+| pi | Pi Agent | Shadow (User \> Project) | documented | 4 |
+| qoder | Qoder CLI | Shadow (User \> Project) | documented | 3 |
+
+## Known agents and precedence
+
+| Agent | Name | Collision policy | Evidence | Roots | Detected |
+| --- | --- | --- | --- | --- | --- |
+| antigravity | Antigravity CLI | Shadow (Project \> User \> Builtin) | empirical | 5 | no |
+| claude | Claude Code | Personal \> Project | documented | 2 | yes |
+| codex | OpenAI Codex | Unverified / Merged | empirical | 6 | yes |
+| dsh | DSH | Shadow (Project \> User) | documented | 5 | yes |
+| grok | Grok CLI | Shadow (Project \> Global) | empirical | 3 | no |
+| omp | Oh My Pi | Namespace (higher precedence keeps the bare name) | documented | 5 | yes |
+| opencode | OpenCode V2 | Shadow (Later-registered source wins) | documented | 6 | yes |
+| pi | Pi Agent | Shadow (User \> Project) | documented | 4 | yes |
+| qoder | Qoder CLI | Shadow (User \> Project) | documented | 3 | yes |
+| windsurf | Windsurf | Shadow (Project \> Global) | empirical | 3 | no |
+
+## Canonical library summary
+
+| Measure | Value |
+| --- | --- |
+| Canonical library (user-scope skills) | 5 |
+| Project skills | 0 |
+| System skills | 1 |
+| Plugin skills | 1 |
+| Total skills (all scopes) | 7 |
+| Symlink entrypoints | 15 |
+
+## Per-agent skill inventory
+
+### claude
+
+| Name | Scope | Variant | State | Description | Canonical path |
+| --- | --- | --- | --- | --- | --- |
+| alpha | Global | A | valid | Canonical alpha capability. | ~/.agents/skills/alpha |
+| beta | Global | A | valid | Canonical beta capability. | ~/.agents/skills/beta |
+| delta | Global | A | valid | Canonical delta capability. | ~/.agents/skills/delta |
+| epsilon | Global | A | valid | Canonical epsilon capability. | ~/.agents/skills/epsilon |
+| gamma | Global | A | valid | Canonical gamma capability. | ~/.agents/skills/gamma |
+
+### codex
+
+| Name | Scope | Variant | State | Description | Canonical path |
+| --- | --- | --- | --- | --- | --- |
+| alpha | Global | A | valid | Canonical alpha capability. | ~/.agents/skills/alpha |
+| beta | Global | A | valid | Canonical beta capability. | ~/.agents/skills/beta |
+| delta | Global | A | valid | Canonical delta capability. | ~/.agents/skills/delta |
+| epsilon | Global | A | valid | Canonical epsilon capability. | ~/.agents/skills/epsilon |
+| gamma | Global | A | valid | Canonical gamma capability. | ~/.agents/skills/gamma |
+| omega | System | A | valid | Bundled Codex system skill. | ~/.codex/skills/.system/omega |
+| plugskill | Plugin | A | valid | Plugin-downloaded skill. | ~/.codex/.tmp/plugins/plug/skills/plugskill |
+
+### dsh
+
+| Name | Scope | Variant | State | Description | Canonical path |
+| --- | --- | --- | --- | --- | --- |
+| alpha | Global | A | valid | Canonical alpha capability. | ~/.agents/skills/alpha |
+| beta | Global | A | valid | Canonical beta capability. | ~/.agents/skills/beta |
+| delta | Global | A | valid | Canonical delta capability. | ~/.agents/skills/delta |
+| epsilon | Global | A | valid | Canonical epsilon capability. | ~/.agents/skills/epsilon |
+| gamma | Global | A | valid | Canonical gamma capability. | ~/.agents/skills/gamma |
+
+### omp
+
+| Name | Scope | Variant | State | Description | Canonical path |
+| --- | --- | --- | --- | --- | --- |
+| alpha | Global | A | valid | Canonical alpha capability. | ~/.agents/skills/alpha |
+| beta | Global | A | valid | Canonical beta capability. | ~/.agents/skills/beta |
+| delta | Global | A | valid | Canonical delta capability. | ~/.agents/skills/delta |
+| epsilon | Global | A | valid | Canonical epsilon capability. | ~/.agents/skills/epsilon |
+| gamma | Global | A | valid | Canonical gamma capability. | ~/.agents/skills/gamma |
+
+### opencode
+
+| Name | Scope | Variant | State | Description | Canonical path |
+| --- | --- | --- | --- | --- | --- |
+| alpha | Global | A | valid | Canonical alpha capability. | ~/.agents/skills/alpha |
+| beta | Global | A | valid | Canonical beta capability. | ~/.agents/skills/beta |
+| delta | Global | A | valid | Canonical delta capability. | ~/.agents/skills/delta |
+| epsilon | Global | A | valid | Canonical epsilon capability. | ~/.agents/skills/epsilon |
+| gamma | Global | A | valid | Canonical gamma capability. | ~/.agents/skills/gamma |
+
+### pi
+
+| Name | Scope | Variant | State | Description | Canonical path |
+| --- | --- | --- | --- | --- | --- |
+| alpha | Global | A | valid | Canonical alpha capability. | ~/.agents/skills/alpha |
+| beta | Global | A | valid | Canonical beta capability. | ~/.agents/skills/beta |
+| delta | Global | A | valid | Canonical delta capability. | ~/.agents/skills/delta |
+| epsilon | Global | A | valid | Canonical epsilon capability. | ~/.agents/skills/epsilon |
+| gamma | Global | A | valid | Canonical gamma capability. | ~/.agents/skills/gamma |
+
+### qoder
+
+| Name | Scope | Variant | State | Description | Canonical path |
+| --- | --- | --- | --- | --- | --- |
+| alpha | Global | A | valid | Canonical alpha capability. | ~/.agents/skills/alpha |
+| beta | Global | A | valid | Canonical beta capability. | ~/.agents/skills/beta |
+| delta | Global | A | valid | Canonical delta capability. | ~/.agents/skills/delta |
+| epsilon | Global | A | valid | Canonical epsilon capability. | ~/.agents/skills/epsilon |
+| gamma | Global | A | valid | Canonical gamma capability. | ~/.agents/skills/gamma |
+
+## Doctor findings
+
+| Severity | Evidence | Rule | Code | Message | Path | Detail |
+| --- | --- | --- | --- | --- | --- | --- |
+| info | empirical | doctor\_installer\_lockfile | installer\_lockfile | No installer lockfile at '~/.agents/.skill-lock.json' (normal if you never ran one). | ~/.agents/.skill-lock.json | missing |
+| info | empirical | doctor\_symlink\_farm | symlink\_farm | 5 skills are shared through symlink farms (15 links point into one library) -- that is the installer's normal layout, not a defect. |  | library=~/.agents/skills |

@@ -82,11 +82,56 @@ each agent actually resolves skills.
 | `skill-lens diff <skill>` | Unified diff of diverging variants of one skill. |
 | `skill-lens compare --agent A --agent B` | Compare two agents' capability surfaces: shared, diverged, or one-sided. |
 | `skill-lens doctor` | Hygiene checks: broken links, bad frontmatter, budget warnings, permission blocks. |
+| `skill-lens report` | Export one shareable Markdown or JSON diagnostic report. |
 
-All six commands are built and tested.
+All seven commands are built and tested.
 
 Every command accepts `--json`. `doctor` and `scan` also accept `--fail-on` to
 gate a pipeline — see [Exit codes and CI use](https://github.com/Hazem-Samak/skill-lens/blob/main/README.md#exit-codes-and-ci-use).
+
+### Diagnostic report
+
+`skill-lens report` combines the detected agents, the known-agent precedence
+catalog, the canonical-library summary, the per-agent skill inventory, every
+doctor finding, and an optional pairwise compare section into one shareable
+document. Markdown is the default; `--json` emits one combined canonical JSON
+document.
+
+```bash
+skill-lens report                                  # Markdown to stdout
+skill-lens report --json                           # one combined JSON document
+skill-lens report --agent claude --agent codex     # add a compare section
+skill-lens report --output diagnostics.md          # write a new file instead
+```
+
+- **Timestamp.** `meta.generated_at` (and the Markdown metadata block) uses one
+  pinned spelling: ISO 8601 UTC with a `+00:00` offset, for example
+  `2026-11-19T14:20:00+00:00`.
+- **`compare` is always present in JSON.** It is `null` when `--agent` is not
+  passed and an object when exactly two ids are given. Zero or two ids are the
+  only legal counts; one, three, an unknown id, or a duplicate id exits `2`.
+- **Where the arrays live.** The `agents` key is the full known-agent catalog
+  (as `agents --json`). The machine's detected set is
+  `scan.summary.detected_agents`; the Markdown "Detected agents" section is
+  derived from it.
+- **Counts are derived.** `counts_by_relation` and `counts_by_severity` are
+  views over the nested payloads, exactly as in `compare --json` and
+  `doctor --json`; the report does not serialize a second copy of them.
+- **`--output` is exact.** The file receives the same UTF-8 bytes as stdout,
+  including the single trailing newline, and stdout stays empty. An existing
+  file, a directory, or a missing parent directory is refused with exit `2`;
+  nothing is created or overwritten. `--sandbox` governs reads only, so an
+  explicitly requested output path outside the sandbox is allowed.
+- **Exit code.** `report` is informational: it exits `0` even when findings
+  exist, and has no `--fail-on`. Only bad usage or an unwritable destination
+  exits `2`.
+- **TUI export.** Press `R` in the optional TUI to copy the captured session's
+  Markdown report through the same OSC 52 clipboard channel as `y`. `R` uses
+  only the published snapshot — the scan, doctor findings and detected agents —
+  and never includes the Compare screen's selected pair. While the Home filter
+  has focus, `R` is ordinary filter text; `F1` opens Help, and Help carries its
+  own `R` binding. Large reports usually exceed the terminal clipboard limit;
+  the notice points to `skill-lens report --output <file>`.
 
 ## Install
 

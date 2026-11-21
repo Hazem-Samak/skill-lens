@@ -334,7 +334,7 @@ def _hint_bar() -> Content:
     the bar is a complete map of what the screen can do.
     """
     return key_bar(
-        (("q", "quit"), ("r", "refresh")),
+        (("q", "quit"), ("r", "refresh"), ("R", "export")),
         (("/", "filter"), ("a", "agent")),
         (
             ("enter", "why"),
@@ -752,8 +752,13 @@ class HomeScreen(Screen[None]):
                 [
                     HelpRow(
                         "Typing",
-                        "Edits the filter literally. q, r, h, d, g, c, J, y and ? are"
+                        "Edits the filter literally. q, r, R, h, d, g, c, J, y and ? are"
                         " characters here; use F1 for Help.",
+                    ),
+                    HelpRow(
+                        "R",
+                        "Types a capital R in the filter; it does not export. Leave the"
+                        " filter (Enter or Esc) to press R.",
                     ),
                     HelpRow(
                         "F1",
@@ -771,7 +776,7 @@ class HomeScreen(Screen[None]):
                 ]
             )
             notes.append(
-                "q and r are ordinary filter text while the input has focus. Ctrl+C"
+                "q, r and R are ordinary filter text while the input has focus. Ctrl+C"
                 " keeps the application's existing quit behaviour."
             )
         else:

@@ -360,7 +360,9 @@ ticked:
       terminal, so check it in a pseudo-terminal, not a captured pipe.)
 - [ ] Minimum (`textual==8.2.8`) and latest (unconstrained) lanes: the installed
       selections pass with a positive count and no unexpected skips, including
-      the 17 CLI snapshots and 16 JSON goldens.
+      the 17 top-level CLI snapshots and 16 JSON goldens (top-level plus
+      `phase4/`; the report fixtures live in subdirectories the count globs do
+      not see).
 - [ ] Per-lane probes (each run from outside the checkout):
       `importlib.metadata.version`, `skill_lens.__version__` and
       `skill-lens --version` all report 0.2.0, and the imported

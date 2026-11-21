@@ -16,11 +16,12 @@ reports what each agent would actually load. Read-only by design.
 
 ```
 skill_lens/            the package
-├── cli.py             Typer commands: scan, why, agents, diff, doctor, compare
+├── cli.py             Typer commands: scan, why, agents, diff, doctor, compare, report
 ├── render.py          all Rich output — presentation only
-├── models/            frozen dataclasses
+├── models/            frozen dataclasses, including the report contract
 ├── core/              engines: paths, parser, hasher, discovery, resolver,
-│                      scanner, diff, doctor, compare, system, exitcodes
+│                      scanner, diff, doctor, compare, system, exitcodes,
+│                      report (composition only)
 └── registry/agents/   10 agent TOML files (claude, codex, opencode, pi, …)
 ```
 
@@ -73,6 +74,10 @@ No exceptions, no "just this one" flags. This is promise number one to users.
 
 Anything that would break it — a cache write, a fix command, a cleanup, a migration —
 is out of scope unless the user explicitly approved it.
+
+**Amended for issue #6 (2026-11-19, owner decision):** the single exception is
+the explicitly requested report output (`skill-lens report --output <file>`);
+every other operation remains strictly read-only.
 
 ### Tests never touch the real `$HOME`
 

@@ -984,3 +984,179 @@ link and push receipts: appended below after execution.
   mutation controls apply.
 - This receipt is append-only: the operative contract above is an unchanged
   prefix of this file (verified by diff before committing).
+
+
+## Implementation mission acceptance receipt (append-only, 2026-11-21)
+
+Mission: implement the frozen report-command contract above (GitHub issue #6).
+Authorization: owner Hazem, 2026-11-21 ("I would like you to start the
+implementation"), naming the roster below. Push/publication NOT authorized by
+this mission (separate owner decision pending).
+
+### Owner-approved amendment 1 — allowed-path extension (2026-11-21)
+tests/test_tui_visual.py added to the allowed edit list for ONE line only:
+inserting "R" after "r" in test_hint_bar_names_every_key's pinned key list.
+Rationale: the agreed app-level R Binding(show=True) (step 5a) necessarily adds
+R to the Home hint bar; the pinned list must name it. Owner approval: the
+coordinator's ask form timed out, the question was re-asked in plain text, and
+the owner replied "yes go ahead" (2026-11-21). The implementer first applied the
+line, reverted it pending approval (tree stayed within allowed paths), then
+re-applied exactly that one line after approval (git diff --numstat = 1 0).
+The frozen operative contract above is otherwise unchanged.
+
+### Adjudicated emission deviation (defect fix fulfilling the contract)
+Plan step 4 names the "_emit_json idiom" (Rich console.print with soft_wrap=True,
+markup=False, highlight=False) as the report stdout mechanism. Round-1 final
+review (mcode) proved that mechanism CANNOT satisfy the plan's own Acceptance
+invariant "stdout == file bytes == markdown_text/dumps + one newline, no ANSI":
+Rich substitutes emoji shortcodes (:100: → 💯) and expands tabs by default, and
+the pinned escaper does not neutralize ':' or tab. Coordinator reproduced the
+divergence (scratch fixture: stdout != --output, first diff byte 1781). Fix
+(report-scoped ONLY): the report command builds one buffer
+data = (text + "\n").encode("utf-8"); --output uses Path.write_bytes(data);
+stdout uses a new _emit_report_bytes(data) (cli.py) writing raw UTF-8 to
+sys.stdout.buffer, bypassing Rich. _emit_json and EVERY existing command are
+untouched (mcode proved agents/scan/doctor/compare/why --json bytes identical to
+a pristine HEAD tree; --help differs only by the additive report entry). A new
+raw-CliRunner regression test
+(test_report_stdout_bytes_equal_file_with_shortcodes_and_tab) pins byte identity
+with :100:/:smile:/tab content and was mutation-verified to fail under Rich
+emission (implementer and mcode independently). This is a defect fix fulfilling
+the existing invariant, not a behavior/scope change; erratum recorded per mcode
+r2 suggestion 2 so a future reader does not "restore _emit_json consistency" and
+reintroduce the defect. --output write_bytes (not write_text) is locale-independent
+and byte-identical (implementer deviation 1).
+
+### Roster (requested vs configured vs confirmed; user-named this mission)
+- coordinator: nous/qwen4-max:free (session header; Herdr terminal t12j, verified
+  by hc get foreground argv + hc read screen match).
+- implementer (requested "DeepSeek v4.1 flash 1017 River from OMP max effort"):
+  omp 19.0.1, provider river, model deepseek-ai/DeepSeek-V4.1-Flash-1017,
+  --thinking max (live catalog: omp models find). Confirmed by launch banner
+  "DeepSeek V4.1 Flash 1017 (River)"; effort max passed (valid per catalog; omp
+  defaultThinkingLevel=max pre-existing); effort not self-observable (implementer
+  marked unverified). tools.approvalMode=yolo PRE-EXISTING user default (omp config
+  get); no bypass flag added. Isolation flags --no-extensions --no-skills
+  --no-rules; AGENTS.md auto-loaded. Terminal t12t.
+- final critic 1 (requested "Minimax 3.1 Flash XHigh from MCode"): mcode 0.7.6,
+  -m minimax/MiniMax-M3.1-Flash; banner "M3.1-Flash · Effort xhigh" both rounds
+  (xhigh is the install's pre-existing default; config defaultModelThinking.effort
+  xhigh). Permission "Full access"/bypassPermissions PRE-EXISTING user default; no
+  bypass added. Round 1 t134, round 2 t13b.
+- final critic 2 (requested "Grok 4.7 High from Grok CLI"): grok 1.0.89,
+  -m grok-4.7 --reasoning-effort high --no-subagents; banner "Grok 4.7 (high)" both
+  rounds. Permission "always-approve" PRE-EXISTING user default; no bypass added.
+  Round 1 t135, round 2 t13c. No weekly-quota indicator visible this mission; no
+  402 (the 2026-11-19 planning exhaustion had reset).
+Family disclosure (council §1): coordinator Qwen (Alibaba via Nous); implementer
+DeepSeek; critic 1 MiniMax; critic 2 Grok (xAI). All four distinct families; no
+critic shares the coordinator's or implementer's family. Owner named the set
+explicitly → acceptance recorded.
+
+### Permission modes
+Pre-existing user defaults only (omp yolo, mcode Full access/bypassPermissions,
+grok always-approve). The coordinator added NO bypass flags. Critic restraint
+instruction-based (verbatim council §2 guard in every brief) + fingerprint detection.
+
+### Fingerprint evidence (read-only proof)
+Round 1: fingerprints-before.txt == fingerprints-after.txt (2968 lines, diff empty)
+→ CLEAN. Round 2: fingerprints-before-r2.txt == fingerprints-after-r2.txt (2968
+lines, diff empty) → CLEAN. No critic modified the repository in either round.
+Files under ~/.hermes/cache/scratch/sl-report-impl/.
+
+### Gates (coordinator-run, venv executables)
+- Baseline (unchanged tree, t12n): pytest 1446 passed / 1 skipped, coverage 90.24%;
+  mypy 48 clean; ruff check clean; ruff format 447 clean.
+- Final after corrections (t139, coordinator-gates-r2.log): pytest 1514 passed /
+  1 skipped in 457.45s, coverage 90.44% (>=90); mypy Success 52 files; ruff check
+  All checks passed; ruff format 452 files already formatted. ALL GREEN. (mcode's
+  independent read-only re-run: 1514/1 skipped, coverage 90.42% — the 0.02pp
+  difference is two uncovered fallback lines cli.py:147-148, suggestion 1, not a
+  behavior difference.)
+
+### Review history
+- Round 1 (fresh critics, one wave): grok PASS (0 blockers, 7 non-blocking
+  suggestions); mcode changes_required (2 blockers: B1 stdout-vs-file Rich emoji/tab
+  divergence; B2 lane docstrings "15" vs actual 16). mcode withdrew 12 concerns
+  after reproduction. Coordinator reproduced BOTH blockers (B1 probe first diff
+  byte 1781; B2 tuple len 16). Fingerprints CLEAN.
+- Correction round: one batched brief to implementer (B1 raw-byte report-scoped
+  emission + raw-CliRunner regression; B2 docstrings→16; grok #2 resolved-home
+  absence test; grok #3 six-binding discovery-forbid). Implementer r2 delivered;
+  coordinator re-ran B1 probe (stdout==file True) and all four gates (green).
+- Round 2 (fresh targeted critics, one wave, prior-findings ledger): BOTH PASS, 0
+  blockers. mcode independently reproduced both fixes (HEAD-tree comparison;
+  pytest-plugin mutation of the regression) and re-verified all withdrawn points.
+  grok re-applied the Rich mutation in memory and confirmed the regression fails;
+  verified both test strengthenings exercise their branches. Fingerprints CLEAN.
+- mcode round-2 post-report incident: AFTER writing and sending its complete PASS
+  report, mcode hit a transient provider error (code 50113 "model provider
+  temporarily unavailable") on a trailing read-only-proof turn. The complete report
+  was already delivered and counts as evidence (same principle as the planning grok
+  402-after-delivery). No retry needed; terminal settled at cleanup.
+- Two-round convergence reached (round 2 both PASS); no council §5 escalation.
+
+### Mutation controls (project-profile §2; all killed, none survived)
+Ledger entries 1–9 (four one-pass index/live breaks; planted TUI write → AST guard;
+golden deletion; renderer perturbation; escaper | removal; runtime registry import
+→ cycle probe) plus entry 10 (Rich stdout restoration → new byte regression).
+Implementer recorded all; mcode independently re-verified entry 10 (pytest plugin)
+and the cycle/oracle; grok independently re-applied entry 10 in memory. Evidence:
+impl/mutation-ledger.md.
+
+### Deviations recorded (adjudicated)
+1. Emission mechanism: _emit_report_bytes raw buffer (above) — defect fix fulfilling
+   the byte-identity invariant; report-scoped; existing commands untouched.
+2. --output Path.write_bytes(data) instead of write_text(encoding="utf-8") —
+   byte-identical, locale-independent (the plan's actual requirement).
+3. models/agents.py agents_payload annotated Iterable[AgentDefinition] (plan said
+   Sequence) so registry.values() type-checks under mypy strict; runtime/JSON
+   unchanged; mypy still rejects the registry dict (both critics verified).
+4. Lane docstrings corrected to 16 (plan S-S said "15"; the baseline tuple already
+   had 15 entries, so insertion makes 16 — plan arithmetic error; intent = true
+   count). Three places (module :32, :396, :404).
+5. Installed-lane duration measured in the dev venv (519 passed + the then-pending
+   key-bar failure, 95.52s < 300s bound); the isolated wheel lane was NOT rebuilt
+   (no network/install step). Tuple-equality + node-existence guards pass. The 300s
+   bound governs the isolated wheel lane (release/CI gate); limitation recorded.
+6. Unpinned exit-2 wording chosen for non-md/existing-file/directory/missing-parent/
+   write-failure; pinned unknown/duplicate/cardinality sentences verbatim; the
+   directory sentence says "directory".
+
+### Deferred non-blocking suggestions (recorded, not done this mission)
+- mcode r2 #1: cli.py:147-148 sys.stdout-no-.buffer fallback uncovered (cannot fire
+  on macOS/Linux); optional 3-line test or drop branch.
+- mcode r2 #4: redundant CLI+engine pair validation (harmless).
+- mcode r2 #5: Iterable annotation (recorded deviation 3).
+- mcode r2 #6: isolated-wheel duration (recorded deviation 5).
+- mcode r2 #7: pre-existing repo-wide Rich emoji/tab rewrite in OTHER commands'
+  --json stdout (scan/doctor/compare/agents) — explicitly excluded by the plan;
+  worth its own future mission (scripted users parse that JSON).
+- grok r1 #4/#5/#6: initial-retry same branch; TERM=screen in copy_decision;
+  optional report.discover spy binding for build_report-without-index.
+
+### Resource settlement
+Owned terminals settled one at a time after acceptance (kill + rm): implementer
+t12t; round-1 critics t134/t135 (removed before round 2); round-2 critics t13b
+(mcode, post-report provider error, report delivered)/t13c (grok). Gate/probe jobs
+t12n/t131/t133/t136/t137/t138/t139 removed after exit. The user's unrelated
+terminals (t9b OpenCode/Home, t12k Hermes/Agent Lens) untouched. No reclaimable
+owned worker remains.
+
+### Council §6 execution receipt
+Expected for one High-risk separately-planned phase: implementer + 2 final critics.
+Actual: implementer 1 dispatch + 1 correction turn (t12t); final critics 2 rounds ×
+2 = 4 successful dispatches (r1 t134/t135, r2 t13b/t13c), 0 extra rounds beyond the
+correction follow-up, 0 unapproved rounds. Two identity probes (t12p/t12q) launched
+and removed before the critic wave (no task lost). mcode post-report provider error
+50113 (after complete delivery). Elapsed: implementation ~1 h (first turn ~63 min)
++ correction ~20 min; reviews r1 ~35 min, r2 ~25 min. Token usage: unavailable (the
+CLIs do not expose it).
+
+### Acceptance commit
+Acceptance commit: pending (recorded in the provenance successor commit). Only
+allowed paths staged (the 20 modified files + 7 new report paths + this plan
+receipt); the 13 pre-existing untracked debris paths and ignored .coverage/
+.pytest_cache NOT committed. This receipt is append-only: the operative contract
+and the planning receipt above are an unchanged prefix (verified by diff before
+committing).

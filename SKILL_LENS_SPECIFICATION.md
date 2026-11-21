@@ -124,7 +124,7 @@ On modern developer setups, agents share a canonical library via symlinks (e.g. 
 
 ### Forbidden in v1
 - ❌ **NO Full-Screen TUI / Textual:** v1 is strictly line-oriented CLI. **Amended for 0.2:** an optional, additive, read-only full-screen TUI is permitted from 0.2 as the `[tui]` extra; the line-oriented CLI stays primary. See [`FULL_SCREEN_TUI.md`](./FULL_SCREEN_TUI.md).
-- ❌ **NO Write Operations:** Zero file installations, deletions, or modifications.
+- ❌ **NO Write Operations:** Zero file installations, deletions, or modifications. **Amended for issue #6 (2026-11-19, owner decision):** the only file Skill Lens ever writes is the explicitly requested report output (`skill-lens report --output <file>`); every other operation remains strictly read-only.
 - ❌ **NO Script Execution:** Never runs executable scripts inside skill folders.
 - ❌ **NO Unbounded Crawling:** Strictly registry roots and `$HOME/.*/skills` up to depth 4.
 
@@ -240,6 +240,34 @@ Performs hygiene and ecosystem health diagnostics:
 - ⚠️ TCC permission-blocked search roots.
 - ⚠️ Traversal hazards (e.g. `node_modules/**/SKILL.md`).
 - ℹ️ Symlink farm health and installer lockfile (`~/.agents/.skill-lock.json`) status.
+
+### 7. `skill-lens report [--sandbox <dir>] [--cwd <dir>] [--format md] [--json] [--output <file>] [--agent <id> --agent <id>]`
+Exports one shareable diagnostic document: the detected agents, the known-agent
+precedence catalog, the canonical-library summary, the per-agent skill inventory,
+every doctor finding with severity, and — when exactly two `--agent` ids are
+given — a pairwise compare section.
+
+- **Format.** `--format` accepts `md` only; any other value (including `html`) is
+  a usage error. `--json` overrides `--format md` and emits one combined
+  canonical JSON document whose `compare` key is always present (`null` without
+  a pair).
+- **Agents.** `--agent` may be passed zero times (no compare) or exactly twice.
+  One or three ids, an unknown id, or a duplicate id is a usage error, decided
+  before any discovery walk.
+- **Timestamp.** The Markdown metadata block and `meta.generated_at` use ISO
+  8601 UTC with a pinned `+00:00` offset, for example
+  `2026-11-19T14:20:00+00:00`.
+- **Sections (fixed order).** Metadata (timestamp, version, platform, home,
+  cwd); detected agents; known agents and precedence; canonical library summary;
+  per-agent skill inventory; doctor findings (every field, engine order);
+  compare highlights (only with a pair). All displayed paths are home-collapsed
+  (`~`), and every interpolated value is escaped for Markdown.
+- **Destination.** Without `--output` the document goes to stdout and the
+  command exits `0` even when findings exist. `--output` writes exactly the same
+  UTF-8 bytes, including one trailing newline, to one new file and refuses an
+  existing file, a directory, or a missing parent directory; nothing is created
+  or overwritten. The destination is explicitly user-named and is not clamped
+  by `--sandbox`, which governs reads only. No `--fail-on`.
 
 ---
 
@@ -416,6 +444,6 @@ Development follows a strict test-first protocol. Tests run against mock fixture
 
 ## 8. Safety & Explainability Contract
 
-1. **Strictly Read-Only:** Skill Lens never modifies, creates, moves, or deletes user files.
+1. **Strictly Read-Only:** Skill Lens never modifies, creates, moves, or deletes user files. **Amended for issue #6 (2026-11-19, owner decision):** the single exception is the explicitly requested report output file; no skill, agent file, or directory is ever created, modified, moved, or deleted.
 2. **Deterministic & Machine-Checkable:** Every resolution reason cites a specific `rule_id` and provenance level (`documented`, `empirical`, `inferred`).
 3. **Transparent Divergence:** Skill Lens clearly flags documented vs observed agent quirks rather than making false claims of perfection.

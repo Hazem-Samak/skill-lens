@@ -1,35 +1,12 @@
-"""Shared plain data helpers for the known-agent presentation."""
+"""Compatibility re-export for the agent-summary helper.
+
+The implementation moved to :mod:`skill_lens.models.agents` so report
+composition can share it without a model-to-presentation import. Callers keep
+their existing import path and output stays byte-identical.
+"""
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-from typing import TypedDict
-
-from skill_lens.registry.loader import AgentDefinition
-
-
-class AgentSummary(TypedDict):
-    """The stable summary fields emitted by ``skill-lens agents --json``."""
-
-    id: str
-    name: str
-    collision_policy: str
-    policy_evidence: str
-    roots: int
-
-
-def agents_payload(definitions: Sequence[AgentDefinition]) -> list[AgentSummary]:
-    """Return sorted CLI-compatible agent summaries without loading or reading data."""
-    return [
-        {
-            "id": agent.id,
-            "name": agent.name,
-            "collision_policy": agent.collision_policy,
-            "policy_evidence": agent.policy_evidence.value,
-            "roots": len(agent.roots),
-        }
-        for agent in sorted(definitions, key=lambda agent: agent.id)
-    ]
-
+from skill_lens.models.agents import AgentSummary, agents_payload
 
 __all__ = ["AgentSummary", "agents_payload"]

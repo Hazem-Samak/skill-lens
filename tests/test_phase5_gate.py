@@ -96,14 +96,14 @@ def test_console_script_is_declared_and_importable() -> None:
 
 
 def test_every_spec_command_is_wired() -> None:
-    """The six commands the spec and README promise must all be registered."""
+    """Every report command in the spec, plus the TUI entry point, must be registered."""
     from skill_lens.cli import app  # noqa: PLC0415
 
     # ``CommandInfo.name`` is still None at registration time; Typer derives the
     # command name from the callback when it builds the Click command, so the
     # callback is the only reliable source here.
     registered = {info.callback.__name__ for info in app.registered_commands}
-    expected = {"scan", "why", "agents", "diff", "doctor", "compare", "tui"}
+    expected = {"scan", "why", "agents", "diff", "doctor", "compare", "report", "tui"}
     assert expected <= registered, f"missing CLI commands: {sorted(expected - registered)}"
 
 

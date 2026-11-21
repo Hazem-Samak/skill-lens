@@ -4,11 +4,20 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
+import skill_lens.core.report as report_module
 from skill_lens.cli import app
+from skill_lens.core import paths
+from skill_lens.core.report import build_report
+from skill_lens.models import dumps
+from skill_lens.presentation.report import markdown_text
+from tests.fixtures.builders import write_skill
+from tests.fixtures.farm import build_acceptance_farm
 from tests.fixtures.scenarios import build_scenario
 
 _ANSI_ESCAPE = re.compile(rb"\x1b\[[0-9;]*m")
@@ -488,3 +497,324 @@ def test_help_lists_the_phase4_commands() -> None:
     result = runner.invoke(app, ["--help"])
     assert "doctor" in result.stdout
     assert "compare" in result.stdout
+
+
+# ---------------------------------------------------------------------------
+# report (issue #6)
+# ---------------------------------------------------------------------------
+
+_FIXED_NOW = datetime(2026, 11, 19, 14, 20, tzinfo=UTC)
+
+
+class _FrozenDatetime(datetime):
+    @classmethod
+    def now(cls, tz=None):  # type: ignore[no-untyped-def]
+        return _FIXED_NOW
+
+
+def _freeze_report_clock(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(report_module, "datetime", _FrozenDatetime)
+
+
+def _scan_tree(root: Path) -> list[tuple[str, str]]:
+    return [
+        (path.relative_to(root).as_posix(), path.read_bytes().hex() if path.is_file() else "dir")
+        for path in sorted(root.rglob("*"))
+    ]
+
+
+def test_report_default_markdown_is_plain_and_unwrapped(mock_home: Path) -> None:
+    build_acceptance_farm(mock_home)
+    description = "A deliberately long description " + "x" * 140
+    _make_skill(mock_home / ".claude" / "skills" / "longdesc", "longdesc", description)
+    result = runner.invoke(app, ["report", "--sandbox", str(mock_home)])
+    assert result.exit_code == 0
+    assert result.stdout.startswith("# Skill Lens Report\n")
+    assert result.stdout.endswith("\n") and not result.stdout.endswith("\n\n")
+    assert "\x1b" not in result.stdout
+    assert description in result.stdout
+    line = next(line for line in result.stdout.splitlines() if description in line)
+    assert len(line) > 100
+    assert line.count("|") >= 7
+
+
+def test_report_explicit_format_md_matches_the_default(mock_home: Path) -> None:
+    build_acceptance_farm(mock_home)
+    result = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--format", "md"])
+    assert result.exit_code == 0
+    assert result.stdout.startswith("# Skill Lens Report")
+
+
+def test_report_json_is_canonical_and_overrides_format(mock_home: Path) -> None:
+    build_acceptance_farm(mock_home)
+    result = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--json", "--format", "md"])
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert payload["compare"] is None
+    assert result.stdout_bytes == dumps(payload).encode("utf-8") + b"\n"
+    assert b"\x1b" not in result.stdout_bytes
+
+
+def test_report_output_writes_exact_stdout_bytes(
+    mock_home: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    build_acceptance_farm(mock_home)
+    _freeze_report_clock(monkeypatch)
+    stdout_run = runner.invoke(app, ["report", "--sandbox", str(mock_home)])
+    assert stdout_run.exit_code == 0
+    target = tmp_path / "outside.md"
+    file_run = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--output", str(target)])
+    assert file_run.exit_code == 0
+    assert file_run.stdout_bytes == b""
+    assert target.read_bytes() == stdout_run.stdout_bytes
+    assert target.read_bytes().endswith(b"\n")
+    assert not target.read_bytes().endswith(b"\n\n")
+
+
+def test_report_json_output_writes_canonical_bytes(
+    mock_home: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    build_acceptance_farm(mock_home)
+    _freeze_report_clock(monkeypatch)
+    target = tmp_path / "outside.json"
+    result = runner.invoke(
+        app,
+        ["report", "--sandbox", str(mock_home), "--json", "--output", str(target)],
+    )
+    assert result.exit_code == 0
+    assert result.stdout_bytes == b""
+    text = target.read_text(encoding="utf-8")
+    assert text == dumps(json.loads(text)) + "\n"
+    assert text.endswith("\n") and not text.endswith("\n\n")
+
+
+def test_report_rejects_a_non_md_format(mock_home: Path) -> None:
+    result = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--format", "html"])
+    assert result.exit_code == 2
+    assert "only 'md' is supported" in result.stderr
+
+
+def test_report_agent_cardinality_sentence_is_exact(mock_home: Path) -> None:
+    for count in (1, 3):
+        agents = ["claude", "codex", "pi"][:count]
+        args = ["report", "--sandbox", str(mock_home)]
+        for agent in agents:
+            args.extend(["--agent", agent])
+        result = runner.invoke(app, args)
+        assert result.exit_code == 2
+        normalized = " ".join(re.sub(r"[│╭╮╰╯─]", " ", result.stderr).split())
+        assert (
+            "pass --agent zero times (no compare) or exactly twice "
+            f"(two agents to compare); got {count}."
+        ) in normalized
+
+
+def test_report_zero_and_two_agents_are_legal(mock_home: Path) -> None:
+    build_acceptance_farm(mock_home)
+    zero = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--json"])
+    assert zero.exit_code == 0
+    assert json.loads(zero.stdout)["compare"] is None
+    two = runner.invoke(
+        app,
+        [
+            "report",
+            "--sandbox",
+            str(mock_home),
+            "--json",
+            "--agent",
+            "claude",
+            "--agent",
+            "codex",
+        ],
+    )
+    assert two.exit_code == 0
+    assert json.loads(two.stdout)["compare"] is not None
+
+
+def test_report_unknown_and_duplicate_agents_use_the_shared_sentences(mock_home: Path) -> None:
+    unknown = runner.invoke(
+        app,
+        ["report", "--sandbox", str(mock_home), "--agent", "nope", "--agent", "claude"],
+    )
+    assert unknown.exit_code == 2
+    assert "Error: unknown agent 'nope'. Known agents:" in unknown.stderr
+    duplicate = runner.invoke(
+        app,
+        ["report", "--sandbox", str(mock_home), "--agent", "claude", "--agent", "claude"],
+    )
+    assert duplicate.exit_code == 2
+    assert "Error: cannot compare agent 'claude' with itself" in duplicate.stderr
+
+
+def test_report_output_refusals(mock_home: Path, tmp_path: Path) -> None:
+    existing = tmp_path / "existing.md"
+    existing.write_text("keep me", encoding="utf-8")
+    refused = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--output", str(existing)])
+    assert refused.exit_code == 2
+    assert "already exists" in refused.stderr
+    assert existing.read_text(encoding="utf-8") == "keep me"
+
+    directory = tmp_path / "folder"
+    directory.mkdir()
+    refused = runner.invoke(
+        app, ["report", "--sandbox", str(mock_home), "--output", str(directory)]
+    )
+    assert refused.exit_code == 2
+    assert "is a directory" in refused.stderr
+    assert list(directory.iterdir()) == []
+
+    missing = tmp_path / "missing" / "report.md"
+    refused = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--output", str(missing)])
+    assert refused.exit_code == 2
+    assert "does not exist" in refused.stderr
+    assert not missing.parent.exists()
+
+
+def test_report_write_failure_exits_2(
+    mock_home: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def fail_write(self: Path, *args: object, **kwargs: object) -> int:
+        raise OSError("disk full")
+
+    monkeypatch.setattr(Path, "write_bytes", fail_write)
+    result = runner.invoke(
+        app, ["report", "--sandbox", str(mock_home), "--output", str(tmp_path / "out.md")]
+    )
+    assert result.exit_code == 2
+    assert "could not write the report: disk full" in result.stderr
+
+
+def test_report_refusals_happen_before_discovery(
+    mock_home: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[Path | None] = []
+
+    def spy(cwd=None, registry=None, *, cancelled=None):
+        calls.append(cwd)
+        raise AssertionError("discovery must not run for a refused invocation")
+
+    monkeypatch.setattr(report_module, "live_discovery", spy)
+    existing = tmp_path / "existing.md"
+    existing.write_text("x", encoding="utf-8")
+    directory = tmp_path / "folder"
+    directory.mkdir()
+    invocations = [
+        ["--format", "html"],
+        ["--agent", "claude"],
+        ["--agent", "nope", "--agent", "claude"],
+        ["--agent", "claude", "--agent", "claude"],
+        ["--output", str(existing)],
+        ["--output", str(directory)],
+        ["--output", str(tmp_path / "missing" / "out.md")],
+    ]
+    for extra in invocations:
+        result = runner.invoke(app, ["report", "--sandbox", str(mock_home), *extra])
+        assert result.exit_code == 2, extra
+    assert calls == []
+
+
+def test_report_sandbox_clamps_reads_but_not_the_output(mock_home: Path, tmp_path: Path) -> None:
+    build_acceptance_farm(mock_home)
+    escaped = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--cwd", "/etc"])
+    assert escaped.exit_code == 2
+    assert "--cwd must stay inside --sandbox" in escaped.stderr
+
+    target = tmp_path / "outside-the-sandbox.md"
+    result = runner.invoke(
+        app, ["report", "--sandbox", str(mock_home), "--json", "--output", str(target)]
+    )
+    assert result.exit_code == 0
+    payload = json.loads(target.read_text(encoding="utf-8"))
+    assert payload["scan"]["home"] == str(mock_home.resolve())
+
+
+def test_report_exits_zero_even_with_findings(mock_home: Path) -> None:
+    build_scenario("malformed_frontmatter", mock_home)
+    result = runner.invoke(app, ["report", "--sandbox", str(mock_home)])
+    assert result.exit_code == 0
+    assert "## Doctor findings" in result.stdout
+    assert "malformed" in result.stdout or "invalid" in result.stdout
+
+
+def test_report_is_read_only_around_the_fixture(mock_home: Path, tmp_path: Path) -> None:
+    build_acceptance_farm(mock_home)
+    before = _scan_tree(mock_home)
+    result = runner.invoke(app, ["report", "--sandbox", str(mock_home)])
+    assert result.exit_code == 0
+    assert _scan_tree(mock_home) == before
+
+    target = tmp_path / "outside-the-sandbox.md"
+    before_outside = set(tmp_path.iterdir())
+    result = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--output", str(target)])
+    assert result.exit_code == 0
+    assert _scan_tree(mock_home) == before
+    assert set(tmp_path.iterdir()) - before_outside == {target}
+    assert target.read_bytes().startswith(b"# Skill Lens Report")
+
+
+def _write_shortcode_skill(home: Path) -> None:
+    """A valid skill whose description carries Rich shortcodes and a literal tab."""
+    document = (
+        "---\n"
+        "name: shortcodes\n"
+        "description: |-\n"
+        "  Reaches :100: coverage and :smile: here\tand tab\n"
+        "---\n"
+        "# Instructions\n\n"
+        "Do the thing.\n"
+    )
+    write_skill(home / ".claude" / "skills" / "shortcodes", document)
+
+
+def test_report_stdout_bytes_equal_file_with_shortcodes_and_tab(
+    mock_home: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Rich must not rewrite report bytes: no emoji substitution, no tab expansion."""
+    home = mock_home.resolve()
+    build_acceptance_farm(home)
+    _write_shortcode_skill(home)
+    _freeze_report_clock(monkeypatch)
+    monkeypatch.setattr(report_module.platform, "platform", lambda: "TestPlatform-1.0")
+    model = build_report(
+        home,
+        home,
+        generated_at=_FIXED_NOW,
+        platform_text="TestPlatform-1.0",
+    )
+    raw_runner = CliRunner()
+    expected_markdown = markdown_text(model, paths.display).encode("utf-8") + b"\n"
+
+    stdout_run = raw_runner.invoke(app, ["report", "--sandbox", str(home)])
+    assert stdout_run.exit_code == 0
+    markdown_file = tmp_path / "shortcodes.md"
+    file_run = raw_runner.invoke(
+        app, ["report", "--sandbox", str(home), "--output", str(markdown_file)]
+    )
+    assert file_run.exit_code == 0
+    assert file_run.stdout_bytes == b""
+    assert stdout_run.stdout_bytes == expected_markdown
+    assert markdown_file.read_bytes() == expected_markdown
+    assert b"\x1b" not in stdout_run.stdout_bytes
+    assert b":100:" in stdout_run.stdout_bytes
+    assert b":smile:" in stdout_run.stdout_bytes
+    assert b"\t" in stdout_run.stdout_bytes
+    assert "💯".encode() not in stdout_run.stdout_bytes
+    assert "😄".encode() not in stdout_run.stdout_bytes
+    observed = next(line for line in stdout_run.stdout_bytes.splitlines() if b"Reaches" in line)
+    assert len(observed) > 100, "the >80-column row must stay on one line"
+
+    expected_json = dumps(model.to_dict()).encode("utf-8") + b"\n"
+    json_stdout = raw_runner.invoke(app, ["report", "--sandbox", str(home), "--json"])
+    assert json_stdout.exit_code == 0
+    json_file = tmp_path / "shortcodes.json"
+    json_file_run = raw_runner.invoke(
+        app,
+        ["report", "--sandbox", str(home), "--json", "--output", str(json_file)],
+    )
+    assert json_file_run.exit_code == 0
+    assert json_file_run.stdout_bytes == b""
+    assert json_stdout.stdout_bytes == expected_json
+    assert json_file.read_bytes() == expected_json
+    assert b":100:" in json_stdout.stdout_bytes
+    assert b"\\t" in json_stdout.stdout_bytes
+    assert "💯".encode() not in json_stdout.stdout_bytes

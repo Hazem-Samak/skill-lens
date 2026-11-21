@@ -29,6 +29,18 @@ dated evidence below distinguishes those results from the historical records.
   the terminal may ignore OSC 52, and tmux and GNU screen are blocked with a
   clear notice. No new dependency; no file, process or network write.
 
+- **Combined diagnostic report (`skill-lens report`).** One shareable document
+  combining the detected agents, the known-agent precedence catalog, the
+  canonical-library summary, the per-agent skill inventory, every doctor
+  finding and an optional pairwise compare section — Markdown by default or one
+  combined canonical JSON document with `--json`. `--output <file>` writes
+  exactly the stdout bytes to one explicitly requested new file (the only write
+  Skill Lens ever performs); an existing file, a directory or a missing parent
+  is refused. The TUI `R` key copies the captured session's Markdown report
+  through the existing OSC 52 clipboard path, without re-running discovery and
+  without the Compare screen's selected pair. No new dependency; no change to
+  any existing command, JSON shape or exit code.
+
 ## [0.2.1] — 2026-11-15
 
 A TUI visual-polish release. No line-oriented command, flag, JSON shape or exit
