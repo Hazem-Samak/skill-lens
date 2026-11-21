@@ -433,3 +433,93 @@ frontmatter name; the #6 plan's `README.md:225` edit noted.
 ## Execution receipt
 
 (Append-only; filled during the mission.)
+
+**2026-11-21 — planning.** Round 1 (Fable 5.2): `changes_required`, 4
+blockers, all accepted. Round 2 (fresh Fable 5.2 session): `pass`. Both
+critics left the checkout unchanged (`git status --porcelain` and SHA-256 of the
+plan, `cli.py` and `tui/home.py` identical before and after each dispatch).
+Frozen at `4b15862983fad503871387a150951369494f0f62`; reference recorded in
+`6a1291d`.
+
+**Environment.** The contributor's laptop runs Windows 11, Python 3.13.14,
+which this project does not support (`AGENTS.md` rule 5). Tools were pinned to
+the `uv.lock` versions in a local `.venv`: ruff 0.16.9, mypy 2.3.1,
+pytest 9.1.1, typer 0.27.2, textual 8.2.8, rich 15.0.0. (A newer ruff, 0.17.6,
+reports one pre-existing `SIM102` in `core/discovery.py:606`; the locked
+0.16.9 does not.)
+
+**Baseline on `main` (Windows).** `ruff check .` clean; `ruff format --check .`
+clean; `mypy` clean. `pytest` stops at collection in `tests/test_parser.py`
+(`os.geteuid` does not exist on Windows), so the suite was run with
+`--ignore=tests/test_parser.py`: 249 failed + 1 coverage error, 1171 passed,
+2 skipped, coverage 79.18%. All of these are Windows-only (symlinks, POSIX
+permissions, paths); none touch this change's behaviour.
+
+**Implementation** — commit `229e7b6` (coordinator implemented and committed,
+per the recorded requester exception).
+
+- Gates after the change (Windows, same pins): `ruff check .` clean,
+  `ruff format --check .` clean, `mypy` clean (50 source files).
+- New and touched tests: `tests/test_search.py`, the three search snapshot
+  tests and the two new Home tests — 39 passed, 2 skipped. Both skips are
+  Windows-only (creating a symlink; an ESC character in a folder name) and
+  run on CI.
+- Full suite, same flags as the baseline: 250 failed, 1205 passed, 4 skipped.
+  Against the baseline list, the failures are the same set except three
+  timing-sensitive TUI tests that swapped places
+  (`test_tui_app.py::test_headless_report_worker_unexpected_error_marks_failed_and_quits_with_3`,
+  `test_tui_app.py::test_real_worker_refresh3_finishes_before_refresh2_stale_error_rejected`,
+  `test_tui_routing.py::test_explicit_tui_piped_subprocess_exits_promptly`);
+  re-running those three gave 3/3, 3/3 and 2/3 passes, so they are flaky on
+  Windows, not caused by this change. Every failure in the five touched or new
+  test files (`test_search`, `test_render_snapshots`, `test_tui_home`,
+  `test_cli`, `test_tui_read_only`; 30 in all) is in the baseline list. The
+  coverage gate cannot be judged on Windows (79% on the untouched baseline);
+  new modules: `core/search.py` 97%, `models/search.py` 100%. **The pull
+  request's macOS/Ubuntu CI run is the authoritative gate.**
+- Mutation checks (project-profile §2): 19 mutations, all killed, none
+  survive — tier order; exact/prefix order inside the name tier; body field
+  dropped; frontmatter name dropped; folder name used instead of the lookup
+  name for state; canonical-then-entrypoint state match (survived the first
+  run, killed after adding `test_copy_state_prefers_canonical_then_entrypoint`);
+  agent filter ignored; validation moved after the walk; empty-query check
+  removed; casefold fallback removed; snippet from the wrong field;
+  control-character stripping (snippet); control-character replacement
+  (renderer); `Text` replaced by a markup string; unreadable-roots note
+  dropped; excerpt refit removed; TUI body check dropped; TUI frontmatter name
+  dropped.
+- Home filter measurement (`FULL_SCREEN_TUI.md` §9), 600 rows with 4 KB bodies,
+  30 runs each, Intel Core (family 6 model 126) laptop: old filter 0.12 ms
+  median; new filter with a name hit on every row 0.10 ms; new filter with a
+  body-only word (every body scanned) 3.18 ms median, 5.53 ms worst — well under
+  one 16 ms frame per keystroke.
+
+**Deviations found during implementation (no behaviour, scope or JSON change):**
+
+1. Rich `Text` does **not** remove control characters, contrary to the
+   expectation recorded in plan round 2. `render.py` therefore replaces C0,
+   DEL and C1 characters with `?` in every search-derived string (`_safe`);
+   tests pin that ESC sequences in a name, the query and a real folder name are
+   not emitted. This makes decision 5's "not emitted" promise hold.
+2. The terminal excerpt is re-cut to its column (`core/search.refit`) so a
+   mid-line match stays visible at 80 columns; the JSON keeps the full
+   80-character excerpt. Pure presentation.
+3. When casefolding lengthens the cleaned excerpt text, the window is still
+   placed on the (approximate) match rather than falling back to the first 80
+   characters, matching decision 5's "find it again" wording more closely.
+
+**Final review — Fable 5.2: `pass`, no blockers**, checkout unchanged. Of its
+12 suggestions: adopted — keep the matched word visible in narrow columns (2
+above); approximate re-find for length-changing casefold (3 above); a
+`build_search_report` test with an unreadable root; "no skill file is read
+again" wording in `CHANGELOG.md` and the spec (`--agent` reads that agent's
+settings once, like `why`); `render.py` line in the `AGENTS.md` tree; committed
+snapshots checked as LF (`git ls-files --eol`: `i/lf`); this receipt. Not
+adopted, recorded for the owner: a long folder name can still truncate the
+`(frontmatter-name)` part of the Skill cell at 100 columns (the JSON
+`frontmatter_name` field is complete); Unicode format characters such as
+U+202E (right-to-left override) are not removed — outside this plan's C0/C1
+scope, suggested as a follow-up; the engine accepts `DiscoveryIndex` only (no
+snapshot-backed caller exists yet); `cli.py` maps any `KeyError`/`ValueError`
+to exit 2, the same pre-existing pattern as `compare`; consoles narrower than
+about 60 columns squeeze the Scope column (no crash, no line overflow).
