@@ -698,17 +698,17 @@ def test_report_inaccessible_output_is_refused_before_discovery(
     mock_home: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     target = tmp_path / "out.md"
-    original_stat = Path.stat
+    original_lstat = Path.lstat
 
-    def deny_inspection(path: Path, *args, **kwargs):
+    def deny_inspection(path: Path):
         if path == target:
             raise PermissionError("permission denied")
-        return original_stat(path, *args, **kwargs)
+        return original_lstat(path)
 
     def unexpected_discovery(*args, **kwargs):
         raise AssertionError("discovery ran after an output inspection error")
 
-    monkeypatch.setattr(Path, "stat", deny_inspection)
+    monkeypatch.setattr(Path, "lstat", deny_inspection)
     monkeypatch.setattr(report_module, "live_discovery", unexpected_discovery)
     result = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--output", str(target)])
 
