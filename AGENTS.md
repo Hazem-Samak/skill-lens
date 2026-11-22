@@ -130,8 +130,8 @@ once per session and `herdr-app --skill` before window actions.
 ```text
 skill_lens/
 ├── __init__.py
-├── cli.py                  # Typer commands (scan, why, agents, diff, doctor, compare)
-├── render.py               # All Rich layout (scan, why, diff, agents, doctor, compare)
+├── cli.py                  # Typer commands (scan, why, agents, diff, doctor, compare, search)
+├── render.py               # All Rich layout (scan, why, diff, agents, doctor, compare, search)
 ├── models/                 # Frozen dataclasses (SkillInstallation, DiffReport, ...)
 ├── core/
 │   ├── paths.py            # Lazy environment & path resolution
@@ -143,6 +143,7 @@ skill_lens/
 │   ├── diff.py             # Unified diff computation (pure; no Rich)
 │   ├── doctor.py           # Phase 4: diagnostics & hygiene checks
 │   ├── compare.py          # Phase 4: pairwise capability comparison (pure; no Rich)
+│   ├── search.py           # Issue #7: name/description/body search over one pass (pure; no Rich)
 │   ├── config.py           # Resolved agent controls and config-path collection
 │   ├── health.py           # Health checks
 │   ├── system.py           # Phase 4: TCC-resilient live discovery adapter

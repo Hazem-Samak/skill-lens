@@ -20,11 +20,13 @@ from skill_lens import __version__
 from skill_lens.core import paths
 from skill_lens.core.compare import run_compare
 from skill_lens.core.diff import build_diff_report
+from skill_lens.core.discovery import SearchRefused
 from skill_lens.core.doctor import run_doctor
 from skill_lens.core.exitcodes import ExitCode, FailOn, exit_code_for, fail_on_help
 from skill_lens.core.hasher import IncompleteTreeError
 from skill_lens.core.resolver import resolve_skill
 from skill_lens.core.scanner import build_scan_report, scan_severities
+from skill_lens.core.search import run_search
 from skill_lens.core.snapshot import DEFAULT_MAX_SNAPSHOT_BYTES
 from skill_lens.models import dumps
 from skill_lens.models.enums import Severity
@@ -36,6 +38,7 @@ from skill_lens.render import (
     render_diff,
     render_doctor,
     render_scan,
+    render_search,
     render_why,
 )
 
@@ -499,6 +502,69 @@ def compare(
         _emit_json(report.to_dict())
         return
     render_compare(report, console)
+
+
+@app.command()
+def search(
+    query: Annotated[
+        str,
+        typer.Argument(
+            help=(
+                "Words to look for in skill names, descriptions and SKILL.md text. "
+                "A query starting with '-' goes after '--'."
+            )
+        ),
+    ],
+    agent: Annotated[
+        str | None,
+        typer.Option("--agent", help="Only skills this agent can reach, with its state."),
+    ] = None,
+    sandbox: Annotated[
+        Path | None,
+        typer.Option("--sandbox", help="Treat this directory as a mock $HOME."),
+    ] = None,
+    cwd: Annotated[
+        Path | None,
+        typer.Option("--cwd", help=_CWD_HELP),
+    ] = None,
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Emit machine-readable JSON."),
+    ] = False,
+) -> None:
+    """Find skills by name, description or SKILL.md text, ranked in that order."""
+    _apply_sandbox(sandbox)
+    home = _effective_home()
+    working_dir = _effective_cwd(cwd, sandbox)
+    if sandbox is not None:
+        _assert_inside_sandbox(working_dir, home)
+    try:
+        report = run_search(
+            query,
+            cwd=working_dir,
+            agent_id=agent,
+            max_payload_bytes=DEFAULT_MAX_SNAPSHOT_BYTES,
+        )
+    except SearchRefused as exc:
+        error_console.print(
+            f"Error: {exc}",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
+        raise typer.Exit(code=int(ExitCode.USAGE)) from None
+    except (KeyError, ValueError) as exc:
+        error_console.print(
+            f"Error: {exc.args[0]}",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
+        raise typer.Exit(code=int(ExitCode.USAGE)) from None
+    if as_json:
+        _emit_json(report.to_dict())
+        return
+    render_search(report, console)
 
 
 if __name__ == "__main__":  # pragma: no cover

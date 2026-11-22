@@ -38,6 +38,7 @@ from skill_lens.models.parsing import (
     ParseResult,
 )
 from skill_lens.models.resolution import CandidateResolution, ResolutionReport
+from skill_lens.models.search import LookupState, MatchField, SearchHit, SearchReport
 
 __all__ = [
     "CandidateResolution",
@@ -58,11 +59,15 @@ __all__ = [
     "HeadlineState",
     "InvocationPolicy",
     "LoadabilityStatus",
+    "LookupState",
+    "MatchField",
     "ParseResult",
     "ParseStatus",
     "PermissionEffect",
     "ResolutionReport",
     "Scope",
+    "SearchHit",
+    "SearchReport",
     "Severity",
     "SkillInstallation",
     "Visibility",

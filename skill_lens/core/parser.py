@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import os
 import stat
+from collections.abc import Callable
 from pathlib import Path
 
 import yaml
@@ -31,6 +32,20 @@ from skill_lens.models.parsing import (
 
 FRONTMATTER_DELIM = "---"
 _SKILL_FILENAMES = ("SKILL.md", "skill.md")
+
+
+class DocumentTooLarge(Exception):
+    """A bounded read found more bytes than the caller allowed.
+
+    Deliberately not an ``OSError``: callers that map filesystem refusals to an
+    ``UNREADABLE`` parse result must not turn a deliberate size bound into a
+    silent, successful-looking read. The search budget treats it as a refusal.
+    """
+
+    def __init__(self, path: Path, limit_bytes: int) -> None:
+        self.path = path
+        self.limit_bytes = limit_bytes
+        super().__init__(f"'{path}' is larger than the {limit_bytes}-byte read limit")
 
 
 # --- Discovery -------------------------------------------------------------
@@ -173,16 +188,76 @@ def _parse_skill_text(raw: str, *, source_path: str) -> ParseResult:
     )
 
 
-def parse_skill_document(path: Path) -> ParseResult:
+def _read_document_text(
+    path: Path, max_bytes: int | None, count_bytes: Callable[[int], None] | None
+) -> str:
+    """Read a skill document, optionally refusing to read more than ``max_bytes``.
+
+    The bounded path first checks the open file's size and then reads in chunks,
+    so a short document does not allocate a buffer as large as its limit. It
+    still reads at most ``max_bytes + 1`` bytes, so a file that grew after the
+    size check cannot turn into an unbounded read. Binary mode plus the shared
+    parser's own newline normalisation keeps CRLF/LF results identical to
+    ``Path.read_text``.
+    """
+    if max_bytes is None:
+        return path.read_text(encoding="utf-8")
+    with path.open("rb") as handle:
+        try:
+            size = os.fstat(handle.fileno()).st_size
+        except OSError:
+            size = None
+        if size is not None and size > max_bytes:
+            raise DocumentTooLarge(path, max_bytes)
+        data = bytearray()
+        remaining = max_bytes + 1
+        while remaining > 0:
+            chunk = handle.read(min(64 * 1024, remaining))
+            if not chunk:
+                break
+            data.extend(chunk)
+            remaining -= len(chunk)
+    if len(data) > max_bytes:
+        raise DocumentTooLarge(path, max_bytes)
+    if count_bytes is not None:
+        count_bytes(len(data))
+    return data.decode("utf-8")
+
+
+def frontmatter_has_description(frontmatter_text: str) -> bool:
+    """True when frontmatter is a mapping with a usable ``description``.
+
+    Used by bounded standalone qualification to decide from a document prefix,
+    without needing to parse a potentially huge body. The rules match
+    :func:`_parse_skill_text` exactly, including empty/whitespace descriptions.
+    """
+    try:
+        loaded = yaml.safe_load(frontmatter_text)
+    except yaml.YAMLError:
+        return False
+    if not isinstance(loaded, dict):
+        return False
+    return _coerce_description(loaded.get("description")) is not None
+
+
+def parse_skill_document(
+    path: Path,
+    *,
+    max_document_bytes: int | None = None,
+    count_bytes: Callable[[int], None] | None = None,
+) -> ParseResult:
     """Parse one skill document into a :class:`ParseResult`.
 
-    Never raises: unreadable files become ``UNREADABLE`` results so a single
-    bad file can never abort a scan.
+    Never raises for filesystem or decoding failures: those become
+    ``UNREADABLE`` results so a single bad file can never abort a scan. A
+    bounded read that exceeds ``max_document_bytes`` raises
+    :class:`DocumentTooLarge`, because the caller asked for a hard size bound.
+    After a successful bounded read, ``count_bytes`` receives the raw size.
     """
     directory_name = _document_identity(path)
 
     try:
-        raw = path.read_text(encoding="utf-8")
+        raw = _read_document_text(path, max_document_bytes, count_bytes)
     except UnicodeDecodeError:
         return ParseResult(
             status=ParseStatus.UNREADABLE,
@@ -226,12 +301,19 @@ def parse_skill_bytes(data: bytes, *, source_path: str) -> ParseResult:
     return _parse_skill_text(raw, source_path=source_path)
 
 
-def parse_skill(entrypoint: Path) -> ParseResult | None:
+def parse_skill(
+    entrypoint: Path,
+    *,
+    max_document_bytes: int | None = None,
+    count_bytes: Callable[[int], None] | None = None,
+) -> ParseResult | None:
     """Discover and parse the document behind ``entrypoint``.
 
     Returns ``None`` when the entrypoint holds no skill document at all. A
     directory that exists but cannot be listed (e.g. blocked by macOS TCC) is
-    reported as ``UNREADABLE`` rather than silently dropped.
+    reported as ``UNREADABLE`` rather than silently dropped. When
+    ``max_document_bytes`` is set, the document read is hard-bounded; a larger
+    file raises :class:`DocumentTooLarge` instead of being read in full.
     """
     document = find_skill_document(entrypoint)
     if document is None:
@@ -244,7 +326,9 @@ def parse_skill(entrypoint: Path) -> ParseResult | None:
                 errors=(ERR_PERMISSION_DENIED,),
             )
         return None
-    return parse_skill_document(document)
+    return parse_skill_document(
+        document, max_document_bytes=max_document_bytes, count_bytes=count_bytes
+    )
 
 
 def is_unreadable_directory(path: Path) -> bool:

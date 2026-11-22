@@ -54,7 +54,7 @@ from skill_lens.tui.theme import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Mapping, Sequence
 
 ALL_AGENTS = "All agents"
 _LITERAL_CELL_MARKUP = False
@@ -176,8 +176,12 @@ def build_home_rows(snapshot: SessionSnapshot) -> tuple[HomeRow, ...]:
     """
     rows: list[HomeRow] = []
     display_paths = snapshot.display_paths
+    discovered = {canonical_key(item): item for item in snapshot.index.entries}
     for entry in snapshot.scan.skills:
         description = entry.description
+        found = discovered.get(entry.canonical_path)
+        alias = found.parse.frontmatter_name if found is not None and found.parse else None
+        names = entry.name if not alias or alias == entry.name else f"{entry.name}\n{alias}"
         rows.append(
             HomeRow(
                 key=entry.canonical_path,
@@ -191,7 +195,7 @@ def build_home_rows(snapshot: SessionSnapshot) -> tuple[HomeRow, ...]:
                 variant_label=entry.variant_label,
                 display_path=display_paths.get(entry.canonical_path, entry.canonical_path),
                 health_label=_health_label(entry.condition),
-                search_text=f"{entry.name}\n{description or ''}".casefold(),
+                search_text=f"{names}\n{description or ''}".casefold(),
             )
         )
     return tuple(rows)
@@ -224,18 +228,40 @@ def build_agent_options(snapshot: SessionSnapshot) -> tuple[AgentOption, ...]:
     return tuple(options)
 
 
+def home_bodies(snapshot: SessionSnapshot) -> dict[str, str]:
+    """Row key -> the captured ``SKILL.md`` body, for the Home text filter.
+
+    The values are the body strings discovery already holds, not copies, so the
+    filter costs no extra memory per skill.
+    """
+    return {
+        canonical_key(entry): entry.parse.body
+        for entry in snapshot.index.entries
+        if entry.parse is not None and entry.parse.body
+    }
+
+
 def filter_home_rows(
     rows: Sequence[HomeRow],
     query: str,
     agent_id: str | None,
+    bodies: Mapping[str, str] | None = None,
 ) -> tuple[HomeRow, ...]:
-    """Apply the combined case-insensitive text and agent filters."""
+    """Apply the combined case-insensitive text and agent filters.
+
+    The text filter matches a row's name, frontmatter name and description, and
+    -- when ``bodies`` is given -- its ``SKILL.md`` body. The body is only looked
+    at when the cheaper fields did not match.
+    """
     needle = query.strip().casefold()
+
+    def text_matches(row: HomeRow) -> bool:
+        if not needle or needle in row.search_text:
+            return True
+        return bodies is not None and needle in bodies.get(row.key, "").casefold()
+
     return tuple(
-        row
-        for row in rows
-        if (not needle or needle in row.search_text)
-        and (agent_id is None or agent_id in row.agents)
+        row for row in rows if (agent_id is None or agent_id in row.agents) and text_matches(row)
     )
 
 
@@ -554,6 +580,7 @@ class HomeScreen(Screen[None]):
         self._rows: tuple[HomeRow, ...] = ()
         self._visible: tuple[HomeRow, ...] = ()
         self._entry_by_key: dict[str, DiscoveredEntry] = {}
+        self._bodies: dict[str, str] = {}
         self._agent_options: tuple[AgentOption, ...] = (AgentOption(None, ALL_AGENTS),)
         self._agent_index = 0
         self._agent_id: str | None = None
@@ -584,7 +611,7 @@ class HomeScreen(Screen[None]):
         yield Header()
         yield Static("HOME", id="home-title", markup=False)
         with Vertical(id="filter-strip"):
-            yield Input(placeholder="Filter by name or description  (/)", id="filter-input")
+            yield Input(placeholder="Filter by name, description or text  (/)", id="filter-input")
             yield Static(f"Agent: {ALL_AGENTS}", id="agent-filter", markup=False)
         yield Static(
             "Parse: * valid, x invalid.  State appears only while an agent filter is active.",
@@ -1244,6 +1271,7 @@ class HomeScreen(Screen[None]):
         self._generation = snapshot.generation
         self._rows = build_home_rows(snapshot)
         self._entry_by_key = {canonical_key(entry): entry for entry in snapshot.index.entries}
+        self._bodies = home_bodies(snapshot)
         self._agent_options = build_agent_options(snapshot)
         self._inflight = None
         self._groups = {}
@@ -1297,7 +1325,7 @@ class HomeScreen(Screen[None]):
         query_widget = self.query_one("#filter-input", Input)
         query = query_widget.value
         self._last_query = query
-        self._visible = filter_home_rows(self._rows, query, self._agent_id)
+        self._visible = filter_home_rows(self._rows, query, self._agent_id, self._bodies)
         self._refresh_lookup_map()
         self._ensure_groups()
         previous = controller.selected_key
@@ -1876,6 +1904,7 @@ __all__ = [
     "build_home_rows",
     "detected_agent_ids",
     "filter_home_rows",
+    "home_bodies",
     "preview_text",
     "resolution_text",
 ]
