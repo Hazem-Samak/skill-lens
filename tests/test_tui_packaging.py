@@ -29,7 +29,7 @@ Covers:
 9. U9 manifest and selection guards (independent of the production tuples):
    - The 13-module archive manifest equals a hand-maintained expectation and the
      shipped ``skill_lens/tui`` sources
-   - The 15 installed test selections equal a hand-maintained expectation
+   - The 16 installed test selections equal a hand-maintained expectation
    - Every selected node ID exists, and the selected size case covers 100x30
      and 60x24
    - The full selection reaches the lane's own pytest argv with no silencing filter
@@ -97,6 +97,7 @@ EXPECTED_INSTALLED_TEST_SUITES: tuple[str, ...] = (
     "tests/test_fixtures.py",
     "tests/test_phase3_gate.py",
     "tests/test_phase4_gate.py",
+    "tests/test_report.py",
     "tests/test_tui_app.py",
     "tests/test_tui_session.py",
     "tests/test_tui_read_only.py",
@@ -391,7 +392,8 @@ def test_manifest_covers_every_shipped_tui_source_module() -> None:
 
 
 def test_installed_tui_test_selection_matches_the_hand_maintained_list() -> None:
-    """The installed lane must keep the nine original suites and the five U9 additions."""
+    """The installed lane keeps every selection, including the issue-#6 report suite
+    at index 4: 16 selections."""
     assert smoke_wheel.INSTALLED_TUI_TEST_SUITES == EXPECTED_INSTALLED_TEST_SUITES, (
         "scripts/smoke_wheel.INSTALLED_TUI_TEST_SUITES drifted from the independent "
         f"U9 expectation: {smoke_wheel.INSTALLED_TUI_TEST_SUITES!r}"
@@ -399,7 +401,7 @@ def test_installed_tui_test_selection_matches_the_hand_maintained_list() -> None
 
 
 def test_every_installed_selection_resolves_to_a_real_test_node() -> None:
-    """All 14 selections must name an existing file and (where given) test function."""
+    """All 16 selections must name an existing file and (where given) test function."""
     assert _selected_node_missing(EXPECTED_INSTALLED_TEST_SUITES) == []
 
 

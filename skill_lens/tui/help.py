@@ -46,6 +46,12 @@ _COMMON_ROWS: tuple[tuple[str, str], ...] = (
         "refresh; a failed refresh can keep the previous catalog.",
     ),
     (
+        "R",
+        "Export the captured session as a Markdown report to the terminal clipboard."
+        " It contains the captured scan, doctor and detected-agent data; the Compare"
+        " screen's selected pair is not included.",
+    ),
+    (
         "? / Esc / Backspace",
         "Close this Help. ? is non-priority, so it stays ordinary filter text while "
         "the Home filter input is focused.",
@@ -132,8 +138,9 @@ def build_help_body(context: HelpContext) -> str:
             " capture is refused for this home; retrying unchanged inputs cannot help.",
             "",
             "READ-ONLY",
-            "  Skill Lens never writes, creates, moves or deletes files, never opens an"
-            " editor, never runs processes and never uses the network. Opening Help"
+            "  Skill Lens never changes your skills or agent files. The only file it ever"
+            " writes is a report you explicitly request with `skill-lens report --output"
+            " <file>`; the TUI's R export is clipboard-only (no file). Opening Help"
             " starts no capture, no report computation and no filesystem discovery.",
             "  Doctor Enter selects a matching captured row in Home; it never opens the"
             " file or another application.",
@@ -209,6 +216,7 @@ class HelpScreen(ModalScreen[None]):
         Binding("shift+tab", "focus_previous", "Previous", show=False),
         Binding("q", "app.quit", "Quit", show=True),
         Binding("r", "app.refresh", "Refresh", show=True),
+        Binding("R", "app.export_report", "Export", show=True),
         Binding("ctrl+c", "app.quit", "Quit", show=False, priority=True),
     ]
 

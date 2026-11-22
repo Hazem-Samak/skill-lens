@@ -380,6 +380,7 @@ def test_hint_bar_names_every_key(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
             assert keys == [
                 "q",
                 "r",
+                "R",
                 "/",
                 "a",
                 "enter",

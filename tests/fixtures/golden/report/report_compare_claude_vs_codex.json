@@ -1,0 +1,344 @@
+{
+  "agents": [
+    {
+      "collision_policy": "Shadow (Project > User > Builtin)",
+      "id": "antigravity",
+      "name": "Antigravity CLI",
+      "policy_evidence": "empirical",
+      "roots": 5
+    },
+    {
+      "collision_policy": "Personal > Project",
+      "id": "claude",
+      "name": "Claude Code",
+      "policy_evidence": "documented",
+      "roots": 2
+    },
+    {
+      "collision_policy": "Unverified / Merged",
+      "id": "codex",
+      "name": "OpenAI Codex",
+      "policy_evidence": "empirical",
+      "roots": 6
+    },
+    {
+      "collision_policy": "Shadow (Project > User)",
+      "id": "dsh",
+      "name": "DSH",
+      "policy_evidence": "documented",
+      "roots": 5
+    },
+    {
+      "collision_policy": "Shadow (Project > Global)",
+      "id": "grok",
+      "name": "Grok CLI",
+      "policy_evidence": "empirical",
+      "roots": 3
+    },
+    {
+      "collision_policy": "Namespace (higher precedence keeps the bare name)",
+      "id": "omp",
+      "name": "Oh My Pi",
+      "policy_evidence": "documented",
+      "roots": 5
+    },
+    {
+      "collision_policy": "Shadow (Later-registered source wins)",
+      "id": "opencode",
+      "name": "OpenCode V2",
+      "policy_evidence": "documented",
+      "roots": 6
+    },
+    {
+      "collision_policy": "Shadow (User > Project)",
+      "id": "pi",
+      "name": "Pi Agent",
+      "policy_evidence": "documented",
+      "roots": 4
+    },
+    {
+      "collision_policy": "Shadow (User > Project)",
+      "id": "qoder",
+      "name": "Qoder CLI",
+      "policy_evidence": "documented",
+      "roots": 3
+    },
+    {
+      "collision_policy": "Shadow (Project > Global)",
+      "id": "windsurf",
+      "name": "Windsurf",
+      "policy_evidence": "empirical",
+      "roots": 3
+    }
+  ],
+  "compare": {
+    "agent_a": "claude",
+    "agent_a_name": "Claude Code",
+    "agent_b": "codex",
+    "agent_b_name": "OpenAI Codex",
+    "cwd": ".",
+    "entries": [
+      {
+        "canonical_a": ".agents/skills/alpha",
+        "canonical_b": ".agents/skills/alpha",
+        "name": "alpha",
+        "path_a": ".claude/skills/alpha",
+        "path_b": ".agents/skills/alpha",
+        "relation": "shared"
+      },
+      {
+        "canonical_a": ".agents/skills/beta",
+        "canonical_b": ".agents/skills/beta",
+        "name": "beta",
+        "path_a": ".claude/skills/beta",
+        "path_b": ".agents/skills/beta",
+        "relation": "shared"
+      },
+      {
+        "canonical_a": ".agents/skills/delta",
+        "canonical_b": ".agents/skills/delta",
+        "name": "delta",
+        "path_a": ".claude/skills/delta",
+        "path_b": ".agents/skills/delta",
+        "relation": "shared"
+      },
+      {
+        "canonical_a": ".agents/skills/epsilon",
+        "canonical_b": ".agents/skills/epsilon",
+        "name": "epsilon",
+        "path_a": ".claude/skills/epsilon",
+        "path_b": ".agents/skills/epsilon",
+        "relation": "shared"
+      },
+      {
+        "canonical_a": ".agents/skills/gamma",
+        "canonical_b": ".agents/skills/gamma",
+        "name": "gamma",
+        "path_a": ".claude/skills/gamma",
+        "path_b": ".agents/skills/gamma",
+        "relation": "shared"
+      },
+      {
+        "canonical_a": null,
+        "canonical_b": ".codex/skills/.system/omega",
+        "name": "omega",
+        "path_a": null,
+        "path_b": ".codex/skills/.system/omega",
+        "relation": "only_b"
+      },
+      {
+        "canonical_a": null,
+        "canonical_b": ".codex/.tmp/plugins/plug/skills/plugskill",
+        "name": "plugskill",
+        "path_a": null,
+        "path_b": ".codex/.tmp/plugins/plug/skills/plugskill",
+        "relation": "only_b"
+      }
+    ],
+    "home": ".",
+    "notes": []
+  },
+  "doctor": {
+    "cwd": ".",
+    "findings": [
+      {
+        "code": "installer_lockfile",
+        "detail": "missing",
+        "evidence": "empirical",
+        "message": "No installer lockfile at '~/.agents/.skill-lock.json' (normal if you never ran one).",
+        "path": ".agents/.skill-lock.json",
+        "rule_id": "doctor_installer_lockfile",
+        "severity": "info"
+      },
+      {
+        "code": "symlink_farm",
+        "detail": "library=~/.agents/skills",
+        "evidence": "empirical",
+        "message": "5 skills are shared through symlink farms (15 links point into one library) -- that is the installer's normal layout, not a defect.",
+        "path": null,
+        "rule_id": "doctor_symlink_farm",
+        "severity": "info"
+      }
+    ],
+    "home": "."
+  },
+  "meta": {
+    "generated_at": "2026-11-19T14:20:00+00:00",
+    "platform": "TestPlatform-1.0",
+    "skill_lens_version": "0.2.1"
+  },
+  "scan": {
+    "cwd": ".",
+    "home": ".",
+    "skills": [
+      {
+        "agents": [
+          "claude",
+          "codex",
+          "dsh",
+          "omp",
+          "opencode",
+          "pi",
+          "qoder"
+        ],
+        "canonical_path": ".agents/skills/alpha",
+        "content_hash": "sha256:41cf521b4c5e4df90fcd9315dd9199e102be0f0fc6402f2235bb226e70a79525",
+        "description": "Canonical alpha capability.",
+        "entrypoint_count": 4,
+        "error_reason": null,
+        "health_status": "ok",
+        "is_symlink": true,
+        "name": "alpha",
+        "parse_status": "valid",
+        "scope": "user",
+        "traversal_complete": true,
+        "variant_label": "A"
+      },
+      {
+        "agents": [
+          "claude",
+          "codex",
+          "dsh",
+          "omp",
+          "opencode",
+          "pi",
+          "qoder"
+        ],
+        "canonical_path": ".agents/skills/beta",
+        "content_hash": "sha256:b83c380574ac97ecb6d6925940022d3173d197731e4ed0d75a982042127aa6e7",
+        "description": "Canonical beta capability.",
+        "entrypoint_count": 4,
+        "error_reason": null,
+        "health_status": "ok",
+        "is_symlink": true,
+        "name": "beta",
+        "parse_status": "valid",
+        "scope": "user",
+        "traversal_complete": true,
+        "variant_label": "A"
+      },
+      {
+        "agents": [
+          "claude",
+          "codex",
+          "dsh",
+          "omp",
+          "opencode",
+          "pi",
+          "qoder"
+        ],
+        "canonical_path": ".agents/skills/delta",
+        "content_hash": "sha256:93b459123c33e7d48b2a4803f533b807c3684204268f26e9bf6372763cf00f34",
+        "description": "Canonical delta capability.",
+        "entrypoint_count": 4,
+        "error_reason": null,
+        "health_status": "ok",
+        "is_symlink": true,
+        "name": "delta",
+        "parse_status": "valid",
+        "scope": "user",
+        "traversal_complete": true,
+        "variant_label": "A"
+      },
+      {
+        "agents": [
+          "claude",
+          "codex",
+          "dsh",
+          "omp",
+          "opencode",
+          "pi",
+          "qoder"
+        ],
+        "canonical_path": ".agents/skills/epsilon",
+        "content_hash": "sha256:0d667b7ef8fe9fa4809d872dbbb7ee315ea9f703124672a90eca03d339670c6d",
+        "description": "Canonical epsilon capability.",
+        "entrypoint_count": 4,
+        "error_reason": null,
+        "health_status": "ok",
+        "is_symlink": true,
+        "name": "epsilon",
+        "parse_status": "valid",
+        "scope": "user",
+        "traversal_complete": true,
+        "variant_label": "A"
+      },
+      {
+        "agents": [
+          "claude",
+          "codex",
+          "dsh",
+          "omp",
+          "opencode",
+          "pi",
+          "qoder"
+        ],
+        "canonical_path": ".agents/skills/gamma",
+        "content_hash": "sha256:064c4573b9f01a58798d5d74b47e236385ea81279da483fbc1197a1e2a7baa6b",
+        "description": "Canonical gamma capability.",
+        "entrypoint_count": 4,
+        "error_reason": null,
+        "health_status": "ok",
+        "is_symlink": true,
+        "name": "gamma",
+        "parse_status": "valid",
+        "scope": "user",
+        "traversal_complete": true,
+        "variant_label": "A"
+      },
+      {
+        "agents": [
+          "codex"
+        ],
+        "canonical_path": ".codex/skills/.system/omega",
+        "content_hash": "sha256:ba112c960089bfaaa6ead4ff5f6129c5767b532ebdd51dc78739dfb60a483744",
+        "description": "Bundled Codex system skill.",
+        "entrypoint_count": 1,
+        "error_reason": null,
+        "health_status": "ok",
+        "is_symlink": false,
+        "name": "omega",
+        "parse_status": "valid",
+        "scope": "system",
+        "traversal_complete": true,
+        "variant_label": "A"
+      },
+      {
+        "agents": [
+          "codex"
+        ],
+        "canonical_path": ".codex/.tmp/plugins/plug/skills/plugskill",
+        "content_hash": "sha256:e5d8b74f149768d62fab12e96888e6d50686a9f464d7e94dc2b9ba7100da3bf0",
+        "description": "Plugin-downloaded skill.",
+        "entrypoint_count": 1,
+        "error_reason": null,
+        "health_status": "ok",
+        "is_symlink": false,
+        "name": "plugskill",
+        "parse_status": "valid",
+        "scope": "plugin",
+        "traversal_complete": true,
+        "variant_label": "A"
+      }
+    ],
+    "summary": {
+      "canonical_skill_count": 5,
+      "detected_agents": [
+        "claude",
+        "codex",
+        "dsh",
+        "omp",
+        "opencode",
+        "pi",
+        "qoder"
+      ],
+      "plugin_skills": 1,
+      "project_skills": 0,
+      "symlink_entrypoints": 15,
+      "system_skills": 1,
+      "total_skills": 7,
+      "user_skills": 5
+    },
+    "unreadable": []
+  }
+}

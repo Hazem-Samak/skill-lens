@@ -13,8 +13,11 @@ Provides:
 from __future__ import annotations
 
 import contextlib
+import os
+import platform
 import threading
 from collections.abc import Iterable
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, ClassVar
 
@@ -30,14 +33,20 @@ from textual.widgets import DataTable, Static
 from skill_lens import __version__
 from skill_lens.core.cancellation import CaptureCancelled
 from skill_lens.core.exitcodes import ExitCode
+from skill_lens.core.report import assemble_report, utc_timestamp
 from skill_lens.core.snapshot import (
     DEFAULT_MAX_SNAPSHOT_BYTES,
     capture_session,
     snapshot_compare,
     snapshot_diff,
+    snapshot_path,
     snapshot_why,
 )
 from skill_lens.core.snapshot_models import SessionSnapshot
+from skill_lens.models.report import ReportMeta, ReportModel
+from skill_lens.presentation.agents import agents_payload
+from skill_lens.presentation.report import markdown_text
+from skill_lens.tui import clipboard
 from skill_lens.tui._textual_compat import record_unhandled_fault
 from skill_lens.tui.agents import AgentsScreen
 from skill_lens.tui.compare import CompareScreen
@@ -116,6 +125,32 @@ class ViewReportFailed(Message):
         self.error = error
 
 
+def export_report_model(
+    snapshot: SessionSnapshot,
+    *,
+    generated_at: datetime | None = None,
+    platform_text: str | None = None,
+) -> ReportModel:
+    """Build the TUI's Markdown report payload from the published snapshot only.
+
+    No discovery, no capture and no compare pair: the export can never disagree
+    with the screen it was taken from. The clock and platform are injectable so
+    pinned tests do not depend on the machine.
+    """
+    stamp = generated_at if generated_at is not None else datetime.now(UTC)
+    return assemble_report(
+        scan_payload=snapshot.scan.to_dict(),
+        doctor=snapshot.doctor,
+        agents=tuple(agents_payload(snapshot.registry)),
+        compare=None,
+        meta=ReportMeta(
+            generated_at=utc_timestamp(stamp),
+            skill_lens_version=__version__,
+            platform=platform_text if platform_text is not None else platform.platform(),
+        ),
+    )
+
+
 class PlaceholderHomeScreen(HomeScreen):
     """Compatibility alias for the former U2 placeholder screen.
 
@@ -137,6 +172,7 @@ class SkillLensApp(App[int]):
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("q", "quit", "Quit", show=True, group=_SESSION_GROUP),
         Binding("r", "refresh", "Refresh", show=True, group=_SESSION_GROUP),
+        Binding("R", "export_report", "Export", show=True, group=_SESSION_GROUP),
         Binding("question_mark", "open_help", "Help", show=False),
         Binding("f1", "toggle_help", "Help", show=True, priority=True),
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
@@ -232,6 +268,45 @@ class SkillLensApp(App[int]):
             gen, event = req
             self._update_ui()
             self._run_capture(gen, self._home, self._cwd, event)
+
+    def action_export_report(self) -> None:
+        """Copy the published snapshot's Markdown report through OSC 52.
+
+        Gates on ``current is not None``, never on ``status == "ready"``: a
+        retained snapshot is still the session the user sees under loading,
+        retry, refusal, sticky-fault and closed states. With no published
+        snapshot nothing is copied and no discovery is started.
+        """
+        snapshot = self.controller.current
+        if snapshot is None:
+            self.notify("Nothing to copy yet.", markup=False)
+            return
+
+        text = markdown_text(
+            export_report_model(snapshot),
+            lambda raw: snapshot_path(snapshot, raw),
+        )
+        decision = clipboard.copy_decision(text, os.environ)
+        if decision is clipboard.CopyDecision.SENT:
+            self.copy_to_clipboard(text)
+            self.notify(
+                "Copied Markdown report",
+                markup=False,
+                timeout=clipboard.COPY_NOTICE_SECONDS,
+            )
+        elif decision is clipboard.CopyDecision.BLOCKED:
+            self.notify(
+                "Clipboard not supported in this terminal",
+                markup=False,
+                timeout=clipboard.COPY_NOTICE_SECONDS,
+            )
+        else:
+            self.notify(
+                "Too large to copy via terminal clipboard\n"
+                "For large reports use: skill-lens report --output <file>",
+                markup=False,
+                timeout=clipboard.COPY_NOTICE_SECONDS,
+            )
 
     # -- Help overlay -------------------------------------------------------
 
@@ -723,4 +798,5 @@ __all__ = [
     "CompareScreen",
     "DoctorScreen",
     "HelpScreen",
+    "export_report_model",
 ]

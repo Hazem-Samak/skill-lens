@@ -33,6 +33,7 @@ import skill_lens.tui as tui
 import skill_lens.tui.app as app_module
 from skill_lens.core.discovery import canonical_key
 from skill_lens.core.exitcodes import ExitCode
+from skill_lens.core.snapshot import capture_session
 from skill_lens.models.doctor import DoctorFinding, DoctorReport
 from skill_lens.models.enums import Evidence, Severity
 from skill_lens.tui.agents import AgentsScreen
@@ -1359,3 +1360,31 @@ def test_u8_synthetic_target_preservation_across_help_navigation_fault_and_quit(
 
     after = _snapshot_tree_state(mock_home)
     assert before == after, "U8 Help, navigation, refresh fault or quit modified targets"
+
+
+def test_r_export_preserves_synthetic_targets(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The R export reads the published snapshot; it must never write a target."""
+    from skill_lens.tui.session import SessionController
+
+    build_scenario("symlink_farm_multi_agent", mock_home)
+    home = mock_home.resolve()
+    snapshot = capture_session(generation=1, home=home, cwd=home)
+    controller = SessionController()
+    controller.current = snapshot
+    app = tui.SkillLensApp(home=home, cwd=home, controller=controller)
+    monkeypatch.setattr(app, "action_refresh", lambda: None)
+
+    before = _snapshot_tree_state(mock_home)
+
+    async def _run() -> None:
+        async with app.run_test(size=(100, 30)) as pilot:
+            await pilot.pause()
+            await pilot.press("R")
+            await pilot.pause()
+
+    asyncio.run(_run())
+
+    after = _snapshot_tree_state(mock_home)
+    assert before == after, "the R export modified synthetic targets"

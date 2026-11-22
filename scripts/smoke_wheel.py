@@ -66,6 +66,7 @@ INSTALLED_TUI_TEST_SUITES: tuple[str, ...] = (
     "tests/test_fixtures.py",
     "tests/test_phase3_gate.py",
     "tests/test_phase4_gate.py",
+    "tests/test_report.py",
     "tests/test_tui_app.py",
     "tests/test_tui_session.py",
     "tests/test_tui_read_only.py",

@@ -1,0 +1,49 @@
+# Skill Lens Report
+
+| Field | Value |
+| --- | --- |
+| Generated (UTC) | 2026-11-19T14:20:00+00:00 |
+| Skill Lens version | 0.2.1 |
+| Platform | TestPlatform-1.0 |
+| Home | ~ |
+| Cwd | ~ |
+
+## Detected agents
+
+No agents detected on this machine.
+
+## Known agents and precedence
+
+| Agent | Name | Collision policy | Evidence | Roots | Detected |
+| --- | --- | --- | --- | --- | --- |
+| antigravity | Antigravity CLI | Shadow (Project \> User \> Builtin) | empirical | 5 | no |
+| claude | Claude Code | Personal \> Project | documented | 2 | no |
+| codex | OpenAI Codex | Unverified / Merged | empirical | 6 | no |
+| dsh | DSH | Shadow (Project \> User) | documented | 5 | no |
+| grok | Grok CLI | Shadow (Project \> Global) | empirical | 3 | no |
+| omp | Oh My Pi | Namespace (higher precedence keeps the bare name) | documented | 5 | no |
+| opencode | OpenCode V2 | Shadow (Later-registered source wins) | documented | 6 | no |
+| pi | Pi Agent | Shadow (User \> Project) | documented | 4 | no |
+| qoder | Qoder CLI | Shadow (User \> Project) | documented | 3 | no |
+| windsurf | Windsurf | Shadow (Project \> Global) | empirical | 3 | no |
+
+## Canonical library summary
+
+| Measure | Value |
+| --- | --- |
+| Canonical library (user-scope skills) | 0 |
+| Project skills | 0 |
+| System skills | 0 |
+| Plugin skills | 0 |
+| Total skills (all scopes) | 0 |
+| Symlink entrypoints | 0 |
+
+## Per-agent skill inventory
+
+No skills detected on this machine.
+
+## Doctor findings
+
+| Severity | Evidence | Rule | Code | Message | Path | Detail |
+| --- | --- | --- | --- | --- | --- | --- |
+| info | empirical | doctor\_installer\_lockfile | installer\_lockfile | No installer lockfile at '~/.agents/.skill-lock.json' (normal if you never ran one). | ~/.agents/.skill-lock.json | missing |

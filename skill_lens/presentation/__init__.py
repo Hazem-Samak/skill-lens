@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from skill_lens.presentation.agents import AgentSummary, agents_payload
+from skill_lens.presentation.report import escape_markdown, markdown_text
 from skill_lens.presentation.state import RELATION_LABEL, SCOPE_LABEL, STATE_MARK, STATE_STYLE
 from skill_lens.presentation.text import (
     BASELINE_ABSENT_TEXT,
@@ -58,7 +59,9 @@ __all__ = [
     "copy_body",
     "copy_heading",
     "copy_truncation_notice",
+    "escape_markdown",
     "file_notice",
+    "markdown_text",
     "needs_listing",
     "no_differences_message",
     "not_found_message",

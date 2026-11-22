@@ -11,10 +11,12 @@ threading events and bounded waits, never timing sleeps as proof.
 from __future__ import annotations
 
 import asyncio
+import base64
 import json
 import threading
 import time
 from dataclasses import replace
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +26,7 @@ from textual.widgets import Button, DataTable, Input, Static
 from typer.testing import CliRunner
 
 import skill_lens.tui.app as app_module
+from skill_lens import __version__
 from skill_lens.cli import app as cli_app
 from skill_lens.core.cancellation import CaptureCancelled
 from skill_lens.core.exitcodes import ExitCode
@@ -48,9 +51,10 @@ from skill_lens.tui.app import (
 from skill_lens.tui.compare import CompareScreen
 from skill_lens.tui.diff import DiffScreen
 from skill_lens.tui.doctor import DoctorScreen
-from skill_lens.tui.help import HelpScreen
+from skill_lens.tui.help import HelpContext, HelpScreen, build_help_body
 from skill_lens.tui.home import HomeScreen
 from skill_lens.tui.json_view import JsonView
+from skill_lens.tui.session import SessionController
 from skill_lens.tui.why import WhyScreen
 from tests.fixtures.builders import make_skill
 from tests.fixtures.scenarios import build_scenario
@@ -2143,7 +2147,7 @@ def test_every_help_mode_branch_names_copy_truthfully(
     """Ordinary, JSON-document, JSON-explanation and both Compare sub-modes."""
     build_scenario("claude_personal_beats_project", mock_home)
     filter_sentence = (
-        "Edits the filter literally. q, r, h, d, g, c, J, y and ? are characters"
+        "Edits the filter literally. q, r, R, h, d, g, c, J, y and ? are characters"
         " here; use F1 for Help."
     )
 
@@ -3275,3 +3279,374 @@ def test_help_from_home_preview_names_the_actual_focus(
             await pilot.press("q")
 
     asyncio.run(_run())
+
+
+# ---------------------------------------------------------------------------
+# R export (issue #6)
+# ---------------------------------------------------------------------------
+
+_OSC52_PREFIX = "\x1b]52;c;"
+_EXPORT_NOW = datetime(2026, 11, 19, 14, 20, tzinfo=UTC)
+
+
+class _ExportClock(datetime):
+    @classmethod
+    def now(cls, tz=None):  # type: ignore[no-untyped-def]
+        return _EXPORT_NOW
+
+
+def _spy_app_writes(app: SkillLensApp, monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    writes: list[str] = []
+    driver = app._driver
+    assert driver is not None
+    monkeypatch.setattr(driver, "write", writes.append)
+    return writes
+
+
+def _decode_osc52(payload: str) -> str:
+    assert payload.startswith(_OSC52_PREFIX), payload[:20]
+    assert payload.endswith("\a")
+    return base64.b64decode(payload[len(_OSC52_PREFIX) : -1]).decode("utf-8")
+
+
+def _record_notices(app: SkillLensApp, monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    notices: list[str] = []
+    monkeypatch.setattr(app, "notify", lambda message, **kwargs: notices.append(message))
+    return notices
+
+
+def _pin_export_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(app_module, "datetime", _ExportClock)
+    monkeypatch.setattr(app_module.platform, "platform", lambda: "TestPlatform-1.0")
+    monkeypatch.setenv("TMUX", "")
+    monkeypatch.setenv("TERM", "xterm-256color")
+
+
+def _captured_snapshot(home: Path, *, ghost: bool = False):
+    build_scenario("claude_personal_beats_project", home)
+    snapshot = capture_session(generation=1, home=home, cwd=home)
+    if ghost:
+        first = snapshot.scan.skills[0]
+        skill = replace(first, name="ghost-skill-not-on-disk", agents=("claude",))
+        snapshot = replace(snapshot, scan=replace(snapshot.scan, skills=(skill,)))
+    return snapshot
+
+
+def _preloaded_export_app(
+    monkeypatch: pytest.MonkeyPatch,
+    home: Path,
+    snapshot: Any,
+    *,
+    pending: int | None = None,
+    retry: str | None = None,
+    refused: str | None = None,
+    failed: bool = False,
+    closed: bool = False,
+) -> SkillLensApp:
+    controller = SessionController()
+    controller.current = snapshot
+    controller.pending_generation = pending
+    controller.retry_message = retry
+    controller.refusal_message = refused
+    controller.failed = failed
+    controller.closed = closed
+    app = SkillLensApp(home=home, cwd=home, controller=controller)
+    monkeypatch.setattr(app, "on_mount", lambda: None)
+    monkeypatch.setattr(app, "action_refresh", lambda: None)
+    return app
+
+
+def _forbid_discovery(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fail(*args: object, **kwargs: object) -> None:
+        raise AssertionError("the R export must not run discovery")
+
+    for target in (
+        "skill_lens.core.report.live_discovery",
+        "skill_lens.core.report.discover",
+        "skill_lens.core.snapshot.live_discovery",
+        "skill_lens.core.scanner.discover",
+        "skill_lens.core.doctor.discover",
+        "skill_lens.core.compare.discover",
+    ):
+        monkeypatch.setattr(target, fail)
+
+
+def test_r_export_copies_the_captured_snapshot_without_discovery(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    home = mock_home.resolve()
+    snapshot = _captured_snapshot(home, ghost=True)
+    _pin_export_environment(monkeypatch)
+    _forbid_discovery(monkeypatch)
+    app = _preloaded_export_app(monkeypatch, home, snapshot)
+    notices = _record_notices(app, monkeypatch)
+
+    async def _run() -> None:
+        async with app.run_test(size=(100, 30)) as pilot:
+            await pilot.pause()
+            writes = _spy_app_writes(app, monkeypatch)
+            await pilot.press("R")
+            await pilot.pause()
+            assert len(writes) == 1
+            body = _decode_osc52(writes[0])
+            assert "ghost-skill-not-on-disk" in body
+            assert __version__ in body
+            assert "2026-11-19T14:20:00+00:00" in body
+            assert "TestPlatform-1.0" in body
+            assert "## Compare highlights" not in body
+            assert body.startswith("# Skill Lens Report")
+            assert app.clipboard == body
+            assert notices == ["Copied Markdown report"]
+            assert isinstance(app.screen, HomeScreen)
+
+    asyncio.run(_run())
+
+
+def test_r_export_in_home_json_view_still_exports_markdown(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    home = mock_home.resolve()
+    snapshot = _captured_snapshot(home, ghost=True)
+    _pin_export_environment(monkeypatch)
+    app = _preloaded_export_app(monkeypatch, home, snapshot)
+    _record_notices(app, monkeypatch)
+
+    async def _run() -> None:
+        async with app.run_test(size=(100, 30)) as pilot:
+            await pilot.pause()
+            home_screen = app.screen
+            assert isinstance(home_screen, HomeScreen)
+            await pilot.press("J")
+            await pilot.pause()
+            assert home_screen.json_mode
+            writes = _spy_app_writes(app, monkeypatch)
+            await pilot.press("R")
+            await pilot.pause()
+            assert len(writes) == 1
+            body = _decode_osc52(writes[0])
+            assert body.startswith("# Skill Lens Report")
+            assert "ghost-skill-not-on-disk" in body
+            assert home_screen.json_mode
+
+    asyncio.run(_run())
+
+
+def test_r_export_on_another_screens_json_view_still_exports_markdown(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    home = mock_home.resolve()
+    snapshot = _captured_snapshot(home, ghost=True)
+    _pin_export_environment(monkeypatch)
+    app = _preloaded_export_app(monkeypatch, home, snapshot)
+    _record_notices(app, monkeypatch)
+
+    async def _run() -> None:
+        async with app.run_test(size=(100, 30)) as pilot:
+            await pilot.pause()
+            await _goto(pilot, app, "agents")
+            await pilot.press("J")
+            await pilot.pause()
+            writes = _spy_app_writes(app, monkeypatch)
+            await pilot.press("R")
+            await pilot.pause()
+            assert len(writes) == 1
+            body = _decode_osc52(writes[0])
+            assert body.startswith("# Skill Lens Report")
+            assert "ghost-skill-not-on-disk" in body
+            assert isinstance(app.screen, AgentsScreen)
+
+    asyncio.run(_run())
+
+
+def test_r_export_while_help_is_open_uses_the_modal_binding(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    home = mock_home.resolve()
+    snapshot = _captured_snapshot(home, ghost=True)
+    _pin_export_environment(monkeypatch)
+    app = _preloaded_export_app(monkeypatch, home, snapshot)
+    notices = _record_notices(app, monkeypatch)
+
+    async def _run() -> None:
+        async with app.run_test(size=(100, 30)) as pilot:
+            await pilot.pause()
+            await _open_help(pilot)
+            writes = _spy_app_writes(app, monkeypatch)
+            await pilot.press("R")
+            await pilot.pause()
+            assert isinstance(app.screen, HelpScreen)
+            assert len(writes) == 1
+            body = _decode_osc52(writes[0])
+            assert "ghost-skill-not-on-disk" in body
+            assert notices == ["Copied Markdown report"]
+
+    asyncio.run(_run())
+
+
+@pytest.mark.parametrize("state", ["idle", "loading", "refused", "error"])
+def test_r_export_without_a_published_snapshot_copies_nothing(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch, state: str
+) -> None:
+    home = mock_home.resolve()
+    _pin_export_environment(monkeypatch)
+    controller = SessionController()
+    if state == "loading":
+        controller.pending_generation = 2
+    elif state == "refused":
+        controller.refusal_message = "Snapshot refused: test."
+    elif state == "error":
+        controller.failed = True
+        controller.last_error_details = "fault"
+    app = SkillLensApp(home=home, cwd=home, controller=controller)
+    monkeypatch.setattr(app, "on_mount", lambda: None)
+    monkeypatch.setattr(app, "action_refresh", lambda: None)
+    notices = _record_notices(app, monkeypatch)
+
+    async def _run() -> None:
+        async with app.run_test(size=(100, 30)) as pilot:
+            await pilot.pause()
+            writes = _spy_app_writes(app, monkeypatch)
+            await pilot.press("R")
+            await pilot.pause()
+            assert writes == []
+            assert notices == ["Nothing to copy yet."]
+
+    asyncio.run(_run())
+
+
+@pytest.mark.parametrize("state", ["loading", "retry", "refused", "error", "closed"])
+def test_r_export_uses_a_retained_snapshot_in_any_status(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch, state: str
+) -> None:
+    home = mock_home.resolve()
+    snapshot = _captured_snapshot(home, ghost=True)
+    _pin_export_environment(monkeypatch)
+    app = _preloaded_export_app(
+        monkeypatch,
+        home,
+        snapshot,
+        pending=3 if state == "loading" else None,
+        retry="Files changed while scanning. Press r to retry." if state == "retry" else None,
+        refused="Snapshot refused: test." if state == "refused" else None,
+        failed=state == "error",
+        closed=state == "closed",
+    )
+    notices = _record_notices(app, monkeypatch)
+
+    async def _run() -> None:
+        async with app.run_test(size=(100, 30)) as pilot:
+            await pilot.pause()
+            writes = _spy_app_writes(app, monkeypatch)
+            await pilot.press("R")
+            await pilot.pause()
+            assert len(writes) == 1
+            assert "ghost-skill-not-on-disk" in _decode_osc52(writes[0])
+            assert notices == ["Copied Markdown report"]
+
+    asyncio.run(_run())
+
+
+def test_r_export_reports_blocked_clipboard(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    home = mock_home.resolve()
+    snapshot = _captured_snapshot(home)
+    _pin_export_environment(monkeypatch)
+    monkeypatch.setenv("TMUX", "1")
+    app = _preloaded_export_app(monkeypatch, home, snapshot)
+    notices = _record_notices(app, monkeypatch)
+
+    async def _run() -> None:
+        async with app.run_test(size=(100, 30)) as pilot:
+            await pilot.pause()
+            writes = _spy_app_writes(app, monkeypatch)
+            await pilot.press("R")
+            await pilot.pause()
+            assert writes == []
+            assert notices == ["Clipboard not supported in this terminal"]
+
+    asyncio.run(_run())
+
+
+def test_r_export_reports_too_large_with_guidance(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    home = mock_home.resolve()
+    snapshot = _captured_snapshot(home)
+    first = snapshot.scan.skills[0]
+    huge = replace(first, description="x" * 80_000)
+    snapshot = replace(snapshot, scan=replace(snapshot.scan, skills=(huge,)))
+    _pin_export_environment(monkeypatch)
+    app = _preloaded_export_app(monkeypatch, home, snapshot)
+    notices = _record_notices(app, monkeypatch)
+
+    async def _run() -> None:
+        async with app.run_test(size=(100, 30)) as pilot:
+            await pilot.pause()
+            writes = _spy_app_writes(app, monkeypatch)
+            await pilot.press("R")
+            await pilot.pause()
+            assert writes == []
+            assert len(notices) == 1
+            assert "Too large to copy via terminal clipboard" in notices[0]
+            assert "For large reports use: skill-lens report --output <file>" in notices[0]
+
+    asyncio.run(_run())
+
+
+def test_r_export_excludes_a_selected_compare_pair(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    home = mock_home.resolve()
+    build_scenario("claude_personal_beats_project", home)
+    _pin_export_environment(monkeypatch)
+
+    async def _run() -> None:
+        app = SkillLensApp(home=home, cwd=home)
+        async with app.run_test(size=(100, 30)) as pilot:
+            await _wait_ready(pilot, app)
+            await _goto(pilot, app, "compare-result")
+            writes = _spy_app_writes(app, monkeypatch)
+            await pilot.press("R")
+            await pilot.pause()
+            assert len(writes) == 1
+            body = _decode_osc52(writes[0])
+            assert "## Compare highlights" not in body
+            assert "## Per-agent skill inventory" in body
+
+    asyncio.run(_run())
+
+
+def test_r_is_filter_text_while_the_home_filter_has_focus(
+    mock_home: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    home = mock_home.resolve()
+    snapshot = _captured_snapshot(home)
+    _pin_export_environment(monkeypatch)
+    app = _preloaded_export_app(monkeypatch, home, snapshot)
+    _record_notices(app, monkeypatch)
+
+    async def _run() -> None:
+        async with app.run_test(size=(100, 30)) as pilot:
+            await pilot.pause()
+            await pilot.press("slash")
+            await pilot.pause()
+            writes = _spy_app_writes(app, monkeypatch)
+            await pilot.press("R")
+            await pilot.pause()
+            filter_input = app.query_one("#filter-input", Input)
+            assert filter_input.has_focus
+            assert filter_input.value == "R"
+            assert writes == []
+
+    asyncio.run(_run())
+
+
+def test_help_documents_r_and_the_compare_limitation_for_a_non_home_origin() -> None:
+    body = build_help_body(HelpContext("Why", "ordinary detail", "detail table", (), ()))
+    assert "  R — " in body
+    assert "Compare screen's selected pair is not included" in body
+    assert (
+        "The only file it ever writes is a report you explicitly request with "
+        "`skill-lens report --output <file>`; the TUI's R export is clipboard-only (no file)."
+    ) in body
