@@ -576,7 +576,7 @@ def test_installed_extra_output_parity(mock_home: Path, monkeypatch: pytest.Monk
     """Focused in-process output parity check: verifying core command renders
     and goldens remain unchanged with Textual installed.
 
-    Full comprehensive parity across all 17 snapshots and 16 goldens is executed
+    Full comprehensive parity across all 20 snapshots and 16 goldens is executed
     by the installed wheel packaging lanes in CI and smoke_wheel.py.
     """
     assert importlib.util.find_spec("textual") is not None, (
@@ -602,6 +602,15 @@ def test_installed_extra_output_parity(mock_home: Path, monkeypatch: pytest.Monk
         test_render_snapshots.test_compare_snapshot_farm(
             _make_home("snap_compare"), update_snapshots=False
         )
+        test_render_snapshots.test_search_results_snapshot(
+            _make_home("snap_search_results"), update_snapshots=False
+        )
+        test_render_snapshots.test_search_agent_snapshot(
+            _make_home("snap_search_agent"), update_snapshots=False
+        )
+        test_render_snapshots.test_search_no_results_snapshot(
+            _make_home("snap_search_no_results"), update_snapshots=False
+        )
 
         test_fixtures.test_golden_installations_match_the_scan(
             "variant_hash_detection", _make_home("golden_scan_1")
@@ -618,7 +627,7 @@ def test_installed_extra_output_parity(mock_home: Path, monkeypatch: pytest.Monk
         )
 
         snapshots = list(SNAPSHOT_DIR.glob("*.txt"))
-        assert len(snapshots) == 17, f"Expected 17 snapshots; found {len(snapshots)}"
+        assert len(snapshots) == 20, f"Expected 20 snapshots; found {len(snapshots)}"
 
         goldens = list(GOLDEN_DIR.glob("*.json")) + list((GOLDEN_DIR / "phase4").glob("*.json"))
         assert len(goldens) == 16, f"Expected 16 golden JSON files; found {len(goldens)}"

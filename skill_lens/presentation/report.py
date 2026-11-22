@@ -26,11 +26,11 @@ _SCOPE_LABELS = {scope.value: label for scope, label in SCOPE_LABEL.items()}
 def escape_markdown(value: str) -> str:
     """Escape the Markdown-significant characters in one dynamic string.
 
-    ``\r\n`` is normalised first, then every remaining newline becomes one
-    space. The replacement backslashes are never re-scanned, so the operation
-    is one pass: escaping an already escaped string would double its slashes.
+    Each line ending becomes one space, including a standalone carriage return.
+    The replacement backslashes are never re-scanned, so the operation is one
+    pass: escaping an already escaped string would double its slashes.
     """
-    normalized = value.replace("\r\n", "\n").replace("\n", " ")
+    normalized = value.replace("\r\n", "\n").replace("\r", "\n").replace("\n", " ")
     return "".join("\\" + char if char in _ESCAPE_CHARS else char for char in normalized)
 
 

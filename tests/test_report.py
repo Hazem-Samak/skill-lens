@@ -106,6 +106,10 @@ def test_escaper_is_single_pass() -> None:
     assert escape_markdown("a\r\nb\nc") == "a b c"
 
 
+def test_escaper_flattens_standalone_carriage_returns() -> None:
+    assert escape_markdown("a\rb\r\nc\nd") == "a b c d"
+
+
 # ---------------------------------------------------------------------------
 # Timestamp
 # ---------------------------------------------------------------------------

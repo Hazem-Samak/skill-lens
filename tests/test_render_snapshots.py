@@ -29,6 +29,7 @@ from skill_lens.core.diff import build_diff_report
 from skill_lens.core.doctor import build_doctor_report
 from skill_lens.core.resolver import resolve_skill
 from skill_lens.core.scanner import build_scan_report
+from skill_lens.core.search import build_search_report
 from skill_lens.models.enums import Evidence
 from skill_lens.registry.loader import AgentDefinition, load_registry
 from skill_lens.render import (
@@ -37,6 +38,7 @@ from skill_lens.render import (
     render_diff,
     render_doctor,
     render_scan,
+    render_search,
     render_why,
 )
 from tests.fixtures.builders import make_skill
@@ -444,3 +446,59 @@ def test_render_agents_escapes_markup(mock_home: Path) -> None:
     )
     rendered = _render(render_agents, [markup_agent])
     assert rendered == EXPECTED_MARKUP_AGENT_TABLE
+
+
+# --- search (issue #7) -----------------------------------------------------------
+
+
+def _search_library(home: Path) -> None:
+    claude = home / ".claude" / "skills"
+    make_skill(claude / "database", "database", "Talk to the [bold]store[/bold].")
+    make_skill(claude / "database-tools", "database-tools", "Helpers.")
+    make_skill(home / ".agents" / "skills" / "db-migrate", "db-migrate", "Plan DATABASE moves.")
+    make_skill(
+        claude / "deploy",
+        "deploy",
+        "Ship it.",
+        body="# Deploy\n\nFirst run every database check in the release checklist, then "
+        "publish the build to the production servers and watch the dashboards closely.\n",
+    )
+    make_skill(home / ".codex" / "skills" / "alias-one", "shared-database", "Codex alias.")
+    plugin = home / ".codex" / ".tmp" / "plugins" / "plug" / "skills" / "plugskill"
+    make_skill(plugin, "plugskill", "Plugin helper.", body="Uses the database driver.\n")
+
+
+def test_search_results_snapshot(mock_home: Path, update_snapshots: bool) -> None:
+    _search_library(mock_home)
+    home = mock_home.resolve()
+    _check(
+        "search_results",
+        update_snapshots,
+        lambda: _render(render_search, build_search_report("database", home, home)),
+        home,
+    )
+
+
+def test_search_agent_snapshot(mock_home: Path, update_snapshots: bool) -> None:
+    build_scenario("claude_personal_beats_project", mock_home)
+    home = mock_home.resolve()
+    _check(
+        "search_agent",
+        update_snapshots,
+        lambda: _render(
+            render_search,
+            build_search_report("deploy", home, home / "project", agent_id="claude"),
+        ),
+        home,
+    )
+
+
+def test_search_no_results_snapshot(mock_home: Path, update_snapshots: bool) -> None:
+    _search_library(mock_home)
+    home = mock_home.resolve()
+    _check(
+        "search_no_results",
+        update_snapshots,
+        lambda: _render(render_search, build_search_report("zzz-nothing", home, home)),
+        home,
+    )

@@ -670,16 +670,67 @@ def test_report_output_refusals(mock_home: Path, tmp_path: Path) -> None:
     assert not missing.parent.exists()
 
 
+@pytest.mark.parametrize("use_symlink", [False, True])
+def test_report_preserves_destination_created_during_discovery(
+    mock_home: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, use_symlink: bool
+) -> None:
+    target = tmp_path / "out.md"
+    protected = tmp_path / "existing.md" if use_symlink else target
+    original_discovery = report_module.live_discovery
+
+    def create_destination(*args, **kwargs):
+        protected.write_bytes(b"keep me")
+        if use_symlink:
+            target.symlink_to(protected)
+        return original_discovery(*args, **kwargs)
+
+    monkeypatch.setattr(report_module, "live_discovery", create_destination)
+    result = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--output", str(target)])
+
+    assert result.exit_code == 2
+    assert result.stdout_bytes == b""
+    assert "could not write the report" in result.stderr
+    assert protected.read_bytes() == b"keep me"
+    assert target.is_symlink() is use_symlink
+
+
+def test_report_inaccessible_output_is_refused_before_discovery(
+    mock_home: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    target = tmp_path / "out.md"
+    original_stat = Path.stat
+
+    def deny_inspection(path: Path, *args, **kwargs):
+        if path == target:
+            raise PermissionError("permission denied")
+        return original_stat(path, *args, **kwargs)
+
+    def unexpected_discovery(*args, **kwargs):
+        raise AssertionError("discovery ran after an output inspection error")
+
+    monkeypatch.setattr(Path, "stat", deny_inspection)
+    monkeypatch.setattr(report_module, "live_discovery", unexpected_discovery)
+    result = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--output", str(target)])
+
+    assert result.exit_code == 2
+    assert result.stdout_bytes == b""
+    assert "permission denied" in result.stderr
+    assert target not in list(tmp_path.iterdir())
+
+
 def test_report_write_failure_exits_2(
     mock_home: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    def fail_write(self: Path, *args: object, **kwargs: object) -> int:
-        raise OSError("disk full")
+    target = tmp_path / "out.md"
+    original_open = Path.open
 
-    monkeypatch.setattr(Path, "write_bytes", fail_write)
-    result = runner.invoke(
-        app, ["report", "--sandbox", str(mock_home), "--output", str(tmp_path / "out.md")]
-    )
+    def fail_write(path: Path, *args, **kwargs):
+        if path == target:
+            raise OSError("disk full")
+        return original_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", fail_write)
+    result = runner.invoke(app, ["report", "--sandbox", str(mock_home), "--output", str(target)])
     assert result.exit_code == 2
     assert "could not write the report: disk full" in result.stderr
 

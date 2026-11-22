@@ -40,6 +40,7 @@ from skill_lens.models.parsing import (
 )
 from skill_lens.models.report import ReportMeta, ReportModel
 from skill_lens.models.resolution import CandidateResolution, ResolutionReport
+from skill_lens.models.search import LookupState, MatchField, SearchHit, SearchReport
 
 __all__ = [
     "AgentSummary",
@@ -61,6 +62,8 @@ __all__ = [
     "HeadlineState",
     "InvocationPolicy",
     "LoadabilityStatus",
+    "LookupState",
+    "MatchField",
     "ParseResult",
     "ParseStatus",
     "PermissionEffect",
@@ -68,6 +71,8 @@ __all__ = [
     "ReportModel",
     "ResolutionReport",
     "Scope",
+    "SearchHit",
+    "SearchReport",
     "Severity",
     "SkillInstallation",
     "Visibility",

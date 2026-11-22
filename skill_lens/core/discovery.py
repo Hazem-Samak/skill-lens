@@ -13,13 +13,27 @@ from __future__ import annotations
 
 import os
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 from skill_lens.core import paths
 from skill_lens.core.cancellation import check_cancelled
-from skill_lens.core.hasher import IncompleteTreeError, hash_path
-from skill_lens.core.parser import canonicalize, find_skill_document, parse_skill
+from skill_lens.core.hasher import (
+    IncompleteTreeError,
+    PayloadLimitExceeded,
+    hash_path,
+    hash_path_bounded,
+    iter_files,
+)
+from skill_lens.core.parser import (
+    FRONTMATTER_DELIM,
+    DocumentTooLarge,
+    canonicalize,
+    find_skill_document,
+    frontmatter_has_description,
+    parse_skill,
+    split_frontmatter,
+)
 from skill_lens.models.enums import EntryFormat, ParseStatus, RootBase, Scope
 from skill_lens.models.parsing import (
     ERR_DANGLING_SYMLINK,
@@ -34,6 +48,69 @@ from skill_lens.registry.loader import AgentDefinition, AgentRoot, load_registry
 MAX_WALK_DEPTH = 4
 MAX_OPENCODE_WALK_DEPTH = 32
 MAX_PI_WALK_DEPTH = 16
+
+#: How much of an incidental standalone Markdown file discovery may read to decide
+#: whether it is a skill. The frontmatter and description sit at the top, so this
+#: is far more than a qualification check needs; the point is that a multi-megabyte
+#: README can never be read in full just to be skipped.
+MAX_STANDALONE_QUALIFICATION_BYTES = 1024 * 1024
+
+_MIB = 1024 * 1024
+
+
+class SearchRefused(Exception):
+    """Base for a deliberate, reported refusal before search results are built."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
+class SkillPayloadTooLarge(SearchRefused):
+    """A search inventory exceeds its payload budget before any skill text was read.
+
+    Raised only by the budgeted discovery path used by ``skill-lens search``.
+    ``scan``, ``why``, ``compare`` and the TUI do not pass a budget and keep their
+    existing behaviour.
+    """
+
+    def __init__(self, *, total_bytes: int, limit_bytes: int) -> None:
+        self.total_bytes = total_bytes
+        self.limit_bytes = limit_bytes
+        super().__init__(
+            f"Search refused: this home holds {_format_bytes(total_bytes)} "
+            f"({total_bytes} bytes) of skill payload, above the "
+            f"{_format_bytes(limit_bytes)} ({limit_bytes} bytes) search limit. "
+            "Nothing was searched."
+        )
+
+
+class StandaloneQualificationTooLarge(SearchRefused):
+    """A bounded qualification read could not tell whether a file is a skill.
+
+    The file opens a frontmatter fence, but the closing fence is beyond the
+    qualification prefix. Treating it as a skill would promote incidental
+    Markdown; dropping it silently would hide a possible valid skill. Report the
+    deliberate bound instead.
+    """
+
+    def __init__(self, path: Path, limit_bytes: int) -> None:
+        self.path = path
+        self.limit_bytes = limit_bytes
+        super().__init__(
+            f"Search refused: cannot qualify {str(path)!r} because its frontmatter is "
+            f"larger than the {_format_bytes(limit_bytes)} ({limit_bytes} bytes) "
+            "qualification limit. Nothing was searched."
+        )
+
+
+def _format_bytes(count: int) -> str:
+    """Short human-readable size, matching the snapshot budget's wording."""
+    if count >= _MIB:
+        return f"{count / _MIB:.1f} MiB"
+    if count >= 1024:
+        return f"{count / 1024:.1f} KiB"
+    return f"{count} B"
+
 
 #: Most specific scope first. Used for stable ordering of scan rows and of
 #: Variant A / B labels, so both commands agree on what "first" means.
@@ -365,18 +442,96 @@ def _is_skill_dir(path: Path) -> bool:
     return find_skill_document(path) is not None
 
 
-def _is_declared_or_qualified_standalone_md(path: Path) -> bool:
+def _read_qualification_prefix(path: Path, max_bytes: int) -> tuple[str, bool] | None:
+    """Read a standalone document prefix and say whether the file was truncated.
+
+    ``None`` means the file could not be read at all. A truncated prefix can
+    still hold a complete frontmatter block; that is enough to qualify a skill
+    whose body is larger than the prefix.
+    """
+    try:
+        with path.open("rb") as handle:
+            data = bytearray()
+            remaining = max_bytes + 1
+            while remaining > 0:
+                chunk = handle.read(min(64 * 1024, remaining))
+                if not chunk:
+                    break
+                data.extend(chunk)
+                remaining -= len(chunk)
+    except OSError:
+        return None
+    truncated = len(data) > max_bytes
+    if truncated:
+        del data[max_bytes:]
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError as err:
+        # A prefix can end inside a multi-byte character. Trim at most three
+        # bytes only when the cutoff split a character; malformed UTF-8 in a
+        # complete file must still fail qualification.
+        if not truncated or err.reason != "unexpected end of data":
+            return None
+        text = data[: err.start].decode("utf-8")
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    return text, truncated
+
+
+def _qualified_standalone_prefix(path: Path, max_bytes: int) -> bool:
+    """Qualify a standalone Markdown file from a bounded frontmatter prefix.
+
+    Incidental Markdown is never promoted: without a frontmatter fence at the
+    top the rest of the file cannot change the answer. A complete valid
+    frontmatter block qualifies even when the body is much larger than the
+    prefix, because the real payload budget is enforced afterwards. If the
+    prefix ends while a frontmatter block is still open, the bound is reported
+    instead of guessing in either direction.
+    """
+    read = _read_qualification_prefix(path, max_bytes)
+    if read is None:
+        return False
+    text, truncated = read
+    complete_text = text
+    if truncated:
+        # A cutoff partway through a line can make the first part look like a
+        # closing YAML fence. Only complete lines can qualify the document.
+        complete_text = text[: text.rfind("\n") + 1]
+    frontmatter_text, _body = split_frontmatter(complete_text)
+    if frontmatter_text is not None:
+        return frontmatter_has_description(frontmatter_text)
+    stripped = text.lstrip("\ufeff")
+    first_line = stripped.split("\n", 1)[0]
+    if (
+        truncated
+        and stripped.startswith(FRONTMATTER_DELIM)
+        and first_line.strip() == FRONTMATTER_DELIM
+    ):
+        raise StandaloneQualificationTooLarge(path, max_bytes)
+    return False
+
+
+def _is_declared_or_qualified_standalone_md(
+    path: Path, *, max_prefix_bytes: int | None = None
+) -> bool:
     """True when ``path`` is an explicit skill document or a qualified standalone .md.
 
     For Pi-style discovery: declared skill documents (``SKILL.md``) are always
     discovered so malformed declarations can be diagnosed. Other standalone
     markdown files (e.g. ``README.md``) are incidental unless they contain valid
     frontmatter with a non-empty description.
+
+    With ``max_prefix_bytes``, only the frontmatter prefix is read. A valid
+    header qualifies even when the body is oversized; the caller then enforces
+    the real payload budget. Incidental Markdown without a header is skipped
+    without reading its body. An inconclusive header bound is reported through
+    :class:`StandaloneQualificationTooLarge` rather than guessed.
     """
     if path.name == "SKILL.md":
         return True
     if path.suffix.lower() != ".md":
         return False
+    if max_prefix_bytes is not None:
+        return _qualified_standalone_prefix(path, max_prefix_bytes)
     try:
         parse = parse_skill(path)
         return bool(parse and parse.description and parse.description.strip())
@@ -384,11 +539,13 @@ def _is_declared_or_qualified_standalone_md(path: Path) -> bool:
         return False
 
 
-def _is_standalone_md_allowed(fmt: EntryFormat | str, path: Path) -> bool:
+def _is_standalone_md_allowed(
+    fmt: EntryFormat | str, path: Path, *, max_prefix_bytes: int | None = None
+) -> bool:
     if fmt in (EntryFormat.STANDALONE_MD, EntryFormat.OPENCODE_V2):
         return True
     if fmt == EntryFormat.QUALIFIED_STANDALONE_MD:
-        return _is_declared_or_qualified_standalone_md(path)
+        return _is_declared_or_qualified_standalone_md(path, max_prefix_bytes=max_prefix_bytes)
     return False
 
 
@@ -397,6 +554,7 @@ def _list_entries(
     *,
     cancelled: Callable[[], bool] | None = None,
     root: AgentRoot | None = None,
+    max_prefix_bytes: int | None = None,
 ) -> list[tuple[Path, bool]]:
     """List skill entrypoints directly under ``base`` as ``(path, is_file)``.
 
@@ -442,7 +600,9 @@ def _list_entries(
                 elif fmt == EntryFormat.QUALIFIED_STANDALONE_MD:
                     is_exact_or_qual = child.name == "SKILL.md" or (
                         child.suffix.lower() == ".md"
-                        and _is_declared_or_qualified_standalone_md(target)
+                        and _is_declared_or_qualified_standalone_md(
+                            target, max_prefix_bytes=max_prefix_bytes
+                        )
                     )
                     if is_exact_or_qual:
                         results.append((child, True))
@@ -453,7 +613,9 @@ def _list_entries(
             else:
                 if _is_skill_dir(child) or _unreadable(child):
                     results.append((child, False))
-        elif child.suffix.lower() == ".md" and _is_standalone_md_allowed(fmt, child):
+        elif child.suffix.lower() == ".md" and _is_standalone_md_allowed(
+            fmt, child, max_prefix_bytes=max_prefix_bytes
+        ):
             results.append((child, True))
     return results
 
@@ -493,6 +655,7 @@ def _list_recursive_entries(
     root: AgentRoot | None = None,
     truncated_collector: list[UnreadableRoot] | None = None,
     agent_id: str = "",
+    max_prefix_bytes: int | None = None,
 ) -> list[tuple[Path, bool]]:
     """Find skill directories under ``base``."""
     check_cancelled(cancelled)
@@ -599,7 +762,9 @@ def _list_recursive_entries(
                     found.append((child, False))
                     continue
                 if target.is_file() and (child.suffix.lower() == ".md" or child.name == "SKILL.md"):
-                    if _is_declared_or_qualified_standalone_md(target):
+                    if _is_declared_or_qualified_standalone_md(
+                        target, max_prefix_bytes=max_prefix_bytes
+                    ):
                         found.append((child, True))
                 elif target.is_dir() and (_has_exact_skill_md(target) or _unreadable(target)):
                     found.append((child, False))
@@ -607,7 +772,9 @@ def _list_recursive_entries(
                 if child.name in (
                     "SKILL.md",
                     "skill.md",
-                ) or _is_declared_or_qualified_standalone_md(child):
+                ) or _is_declared_or_qualified_standalone_md(
+                    child, max_prefix_bytes=max_prefix_bytes
+                ):
                     found.append((child, True))
 
         visited_real_pi: set[Path] = set()
@@ -664,7 +831,14 @@ def _list_recursive_entries(
             continue
 
         if current.name == "skills":
-            found.extend(_list_entries(current, cancelled=cancelled, root=root))
+            found.extend(
+                _list_entries(
+                    current,
+                    cancelled=cancelled,
+                    root=root,
+                    max_prefix_bytes=max_prefix_bytes,
+                )
+            )
             dirnames[:] = []
         elif depth >= MAX_WALK_DEPTH:
             if dirnames and truncated_collector is not None and root is not None:
@@ -676,18 +850,112 @@ def _list_recursive_entries(
 # --- Main discovery --------------------------------------------------------
 
 
+@dataclass(frozen=True, slots=True)
+class _PendingEntry:
+    """One discovered entrypoint whose payload has not been read yet."""
+
+    entrypoint: Path
+    is_file: bool
+    hit: RootHit
+    canonical: CanonicalResult
+
+
+def _measure_pending_payload(
+    pending: list[_PendingEntry],
+    *,
+    limit_bytes: int,
+    cancelled: Callable[[], bool] | None = None,
+) -> None:
+    """Refuse a known-oversized payload before any skill text is read.
+
+    Only ``stat``/directory listing is used, so an oversized file is sized
+    without reading it. The running total is checked after every measurable
+    file: a known lower bound above the budget is refused even when some other
+    file in the inventory cannot be measured. An unreadable file that does not
+    itself prove overage is left to the existing incomplete-tree reporting, so
+    an under-budget home keeps its health information.
+    """
+    seen: set[str] = set()
+    total = 0
+    for item in pending:
+        check_cancelled(cancelled)
+        if item.canonical.status is not CanonicalStatus.OK:
+            continue
+        root = Path(item.canonical.resolved_path or item.entrypoint)
+        key = str(root)
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            is_directory = root.is_dir()
+        except OSError:
+            continue
+        if is_directory:
+            try:
+                relatives = iter_files(root, cancelled=cancelled)
+            except OSError:
+                continue
+            for relative in relatives:
+                check_cancelled(cancelled)
+                try:
+                    size = (root / relative).stat().st_size
+                except OSError:
+                    continue
+                total += size
+                if total > limit_bytes:
+                    raise SkillPayloadTooLarge(total_bytes=total, limit_bytes=limit_bytes)
+        else:
+            try:
+                total += root.stat().st_size
+            except OSError:
+                continue
+            if total > limit_bytes:
+                raise SkillPayloadTooLarge(total_bytes=total, limit_bytes=limit_bytes)
+
+
+class _PayloadBudget:
+    """Actual payload consumed while building budgeted discovery entries."""
+
+    def __init__(self, limit_bytes: int) -> None:
+        self.limit_bytes = limit_bytes
+        self.consumed = 0
+
+    @property
+    def remaining(self) -> int:
+        return max(0, self.limit_bytes - self.consumed)
+
+    def add(self, count: int) -> None:
+        self.consumed += count
+        if self.consumed > self.limit_bytes:
+            raise SkillPayloadTooLarge(total_bytes=self.consumed, limit_bytes=self.limit_bytes)
+
+
 def discover(
     home: Path,
     cwd: Path,
     registry: dict[str, AgentDefinition] | None = None,
     *,
     cancelled: Callable[[], bool] | None = None,
+    max_payload_bytes: int | None = None,
 ) -> DiscoveryIndex:
-    """Scan every agent's roots and return a tagged :class:`DiscoveryIndex`."""
+    """Scan every agent's roots and return a tagged :class:`DiscoveryIndex`.
+
+    When ``max_payload_bytes`` is a positive number, the walk first lists and
+    canonicalises every entrypoint, measures each canonical copy's payload, and
+    refuses an oversized inventory with :class:`SkillPayloadTooLarge` before any
+    skill document or support file is read. Reads made while deciding whether a
+    standalone Markdown file qualifies are bounded too. A value of ``None`` or
+    ``0`` keeps the existing unbounded discovery behaviour.
+    """
     check_cancelled(cancelled)
     agents = registry if registry is not None else load_registry()
     cwd = normalize_cwd(cwd, home)
     index = DiscoveryIndex(home=str(home), cwd=str(cwd))
+    budgeted = max_payload_bytes is not None and max_payload_bytes > 0
+    qualification_bytes: int | None = None
+    if budgeted and max_payload_bytes is not None:
+        qualification_bytes = min(max_payload_bytes, MAX_STANDALONE_QUALIFICATION_BYTES)
+    pending: list[_PendingEntry] = []
 
     seen: set[tuple[str, str, str]] = set()
     for agent in agents.values():
@@ -726,9 +994,15 @@ def discover(
                         root=root,
                         truncated_collector=index.unreadable_roots,
                         agent_id=agent.id,
+                        max_prefix_bytes=qualification_bytes,
                     )
                     if root.recursive or root.entry_format == EntryFormat.OPENCODE_V2
-                    else _list_entries(base, cancelled=cancelled, root=root)
+                    else _list_entries(
+                        base,
+                        cancelled=cancelled,
+                        root=root,
+                        max_prefix_bytes=qualification_bytes,
+                    )
                 )
                 for entrypoint, is_file in listing:
                     check_cancelled(cancelled)
@@ -753,9 +1027,55 @@ def discover(
                         is_file=is_file,
                         loadability=root.loadability,
                     )
-                    index.entries.append(
-                        _build_entry(entrypoint, is_file, hit, cancelled=cancelled)
+                    if budgeted:
+                        pending.append(
+                            _PendingEntry(
+                                entrypoint=entrypoint,
+                                is_file=is_file,
+                                hit=hit,
+                                canonical=canonicalize(entrypoint),
+                            )
+                        )
+                    else:
+                        index.entries.append(
+                            _build_entry(entrypoint, is_file, hit, cancelled=cancelled)
+                        )
+
+    if budgeted:
+        assert max_payload_bytes is not None
+        _measure_pending_payload(pending, limit_bytes=max_payload_bytes, cancelled=cancelled)
+        budget = _PayloadBudget(max_payload_bytes)
+        built: dict[str, DiscoveredEntry] = {}
+        for item in pending:
+            check_cancelled(cancelled)
+            copy_key = item.canonical.resolved_path or f"@{item.entrypoint}"
+            cached = built.get(copy_key)
+            if cached is not None:
+                # Another entrypoint reaches the same physical copy. Reuse its
+                # parsed text and fingerprint instead of reading the payload a
+                # second time; the merge below still records every alias.
+                index.entries.append(
+                    replace(
+                        cached,
+                        entrypoint_path=str(item.entrypoint),
+                        is_file=item.is_file,
+                        is_symlink=item.entrypoint.is_symlink(),
+                        hits=(item.hit,),
+                        entrypoint_paths=(str(item.entrypoint),),
+                        variant_label=None,
                     )
+                )
+                continue
+            entry = _build_entry(
+                item.entrypoint,
+                item.is_file,
+                item.hit,
+                canonical=item.canonical,
+                budget=budget,
+                cancelled=cancelled,
+            )
+            built[copy_key] = entry
+            index.entries.append(entry)
 
     index.entries = _merge_entries(index.entries)
     return index
@@ -774,24 +1094,63 @@ def _build_entry(
     is_file: bool,
     hit: RootHit,
     *,
+    canonical: CanonicalResult | None = None,
+    budget: _PayloadBudget | None = None,
     cancelled: Callable[[], bool] | None = None,
 ) -> DiscoveredEntry:
     check_cancelled(cancelled)
-    canonical = canonicalize(entrypoint)
+    canonical = canonical if canonical is not None else canonicalize(entrypoint)
     parse: ParseResult | None = None
     content_hash: str | None = None
     traversal_complete = True
     traversal_error: str | None = None
+    document_bytes = 0
+    fingerprint_bytes = 0
+
+    def record_document_size(count: int) -> None:
+        nonlocal document_bytes
+        document_bytes = count
+
     if canonical.status is CanonicalStatus.OK:
         check_cancelled(cancelled)
-        parse = parse_skill(entrypoint)
+        if budget is None:
+            parse = parse_skill(entrypoint)
+        else:
+            try:
+                parse = parse_skill(
+                    entrypoint,
+                    max_document_bytes=budget.remaining,
+                    count_bytes=record_document_size,
+                )
+            except DocumentTooLarge as err:
+                # The document grew after pre-flight (or the previous copies
+                # used the remaining allowance). Refuse instead of reading an
+                # unbounded file or exceeding the aggregate budget.
+                raise SkillPayloadTooLarge(
+                    total_bytes=budget.consumed + err.limit_bytes + 1,
+                    limit_bytes=budget.limit_bytes,
+                ) from err
         check_cancelled(cancelled)
         try:
-            content_hash = hash_path(entrypoint, cancelled=cancelled)
+            if budget is None:
+                content_hash = hash_path(entrypoint, cancelled=cancelled)
+            else:
+                content_hash, fingerprint_bytes = hash_path_bounded(
+                    entrypoint,
+                    max_bytes=budget.remaining,
+                    cancelled=cancelled,
+                )
+        except PayloadLimitExceeded as err:
+            consumed = budget.consumed if budget is not None else 0
+            raise SkillPayloadTooLarge(
+                total_bytes=consumed + err.total_bytes,
+                limit_bytes=budget.limit_bytes if budget is not None else err.limit_bytes,
+            ) from err
         except IncompleteTreeError as err:
             content_hash = None
             traversal_complete = False
             traversal_error = err.reason
+            fingerprint_bytes = err.payload_bytes
         except OSError as err:
             content_hash = None
             traversal_complete = False
@@ -800,6 +1159,10 @@ def _build_entry(
                 if isinstance(err, PermissionError)
                 else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
             )
+        if budget is not None:
+            # Keep charging the parsed document if the fingerprint was partial
+            # or the document shrank. Both phases normally read the same bytes.
+            budget.add(max(document_bytes, fingerprint_bytes))
 
     name = _entry_name(entrypoint, is_file, parse)
     return DiscoveredEntry(

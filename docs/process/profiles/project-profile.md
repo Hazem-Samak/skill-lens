@@ -16,12 +16,12 @@ reports what each agent would actually load. Read-only by design.
 
 ```
 skill_lens/            the package
-├── cli.py             Typer commands: scan, why, agents, diff, doctor, compare, report
+├── cli.py             Typer commands: scan, why, agents, diff, doctor, compare, search, report
 ├── render.py          all Rich output — presentation only
 ├── models/            frozen dataclasses, including the report contract
 ├── core/              engines: paths, parser, hasher, discovery, resolver,
 │                      scanner, diff, doctor, compare, system, exitcodes,
-│                      report (composition only)
+│                      search, report (composition only)
 └── registry/agents/   10 agent TOML files (claude, codex, opencode, pi, …)
 ```
 

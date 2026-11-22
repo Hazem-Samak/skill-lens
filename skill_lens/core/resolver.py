@@ -207,6 +207,23 @@ def lookup_name_for_entry(
     return chosen
 
 
+def lookup_names_for_entry(entry: DiscoveredEntry, agent: AgentDefinition) -> tuple[str, ...]:
+    """Every lookup name this agent can use for ``entry``, in discovery order.
+
+    A copy reached through several roots can have several aliases for one agent
+    (for example ``~/.claude/skills/working-alias`` and a symlink named
+    ``primary`` in ``~/.agents/skills``). Resolution is per name, and those names
+    can have different states, so callers that report a copy's state need all of
+    them -- not only the highest-ranked representative alias.
+    """
+    names: list[str] = []
+    for hit in _searched_hits(agent, entry):
+        for name in sorted(_hit_identity_names(agent, entry, hit)):
+            if name not in names:
+                names.append(name)
+    return tuple(names)
+
+
 def disabled_overrides_from_bytes(agent: AgentDefinition, data: bytes | None) -> frozenset[str]:
     """Decode disabled skill overrides from raw configuration file bytes.
 
@@ -885,4 +902,10 @@ def resolve_skill(
     )
 
 
-__all__ = ["Candidate", "entrypoint_alias", "lookup_name_for_entry", "resolve_skill"]
+__all__ = [
+    "Candidate",
+    "entrypoint_alias",
+    "lookup_name_for_entry",
+    "lookup_names_for_entry",
+    "resolve_skill",
+]

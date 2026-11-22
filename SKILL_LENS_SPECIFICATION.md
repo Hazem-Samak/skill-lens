@@ -241,7 +241,45 @@ Performs hygiene and ecosystem health diagnostics:
 - ⚠️ Traversal hazards (e.g. `node_modules/**/SKILL.md`).
 - ℹ️ Symlink farm health and installer lockfile (`~/.agents/.skill-lock.json`) status.
 
-### 7. `skill-lens report [--sandbox <dir>] [--cwd <dir>] [--format md] [--json] [--output <file>] [--agent <id> --agent <id>]`
+### 7. `skill-lens search <query> [--agent <agent_id>] [--cwd <dir>] [--sandbox <dir>] [--json]`
+Answers "which of my skills can help with X?" over one discovery pass (no skill file is read again).
+
+- **Rows.** Exactly the `scan` rows: one per skill copy, same scopes, agents and order.
+  Plugin and system skills are searched and keep their scope.
+- **Matching.** Case-insensitive (`casefold`) substring of the stripped query, as one
+  phrase; no fuzzy, regex or semantic matching. Searched fields, in rank order: name
+  (folder name, and the frontmatter `name` when it differs), description, then the
+  `SKILL.md` body after the frontmatter. Other files in a skill directory are not
+  searched. A copy appears once, in the tier of the first field that matched.
+- **Order.** Name > description > body; inside the name tier, exact name, then prefix,
+  then other name matches; ties keep `scan` order.
+- **Excerpt.** One cleaned line (control characters removed, whitespace collapsed) of at
+  most 80 characters around the match, or the description for a name match. A casefold
+  that expands earlier characters (`ß` becomes `ss`) is mapped back to the original
+  offsets, so the match stays in the excerpt.
+- **`--agent`.** Keeps only copies that agent reaches and adds the selected agent's
+  resolution state. When the query matched a name that is one of that agent's usable
+  aliases, the state is that alias's state, so it agrees with `why`; a
+  description/body match reports every distinct state across the copy's aliases
+  (`"ACTIVE, SHADOWED"`) rather than inventing a representative winner. The `states`
+  array always carries the evidence as `{"agent", "name", "state"}` objects.
+- **States without `--agent`.** `state` is `null` (a copy's state belongs to one agent),
+  and `states` lists every reachable agent and lookup name with its state, because one
+  physical copy can resolve differently through different aliases.
+- **Payload limit.** Search applies the same **256 MiB** skill-payload limit as TUI
+  capture. The inventory is measured once per canonical copy, support files included,
+  before any skill document is read; actual reads share the remaining aggregate
+  allowance, and a standalone qualification read is hard-bounded to its frontmatter
+  prefix. A valid frontmatter header qualifies a large-body skill; incidental Markdown
+  without one is not promoted. An inconclusive frontmatter bound is reported rather
+  than guessed. An oversized home is refused on stderr with exit `2` and no partial
+  output. The other line-oriented commands keep their existing, unbounded discovery
+  behaviour.
+- **Exit codes.** `0` whenever the search ran, including zero results; `2` for an empty
+  query, an unknown agent (both rejected before any filesystem walk), or an oversized
+  inventory refused before reading it. No `--fail-on`.
+
+### 8. `skill-lens report [--sandbox <dir>] [--cwd <dir>] [--format md] [--json] [--output <file>] [--agent <id> --agent <id>]`
 Exports one shareable diagnostic document: the detected agents, the known-agent
 precedence catalog, the canonical-library summary, the per-agent skill inventory,
 every doctor finding with severity, and — when exactly two `--agent` ids are
