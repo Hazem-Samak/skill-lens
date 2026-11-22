@@ -86,6 +86,7 @@ def live_discovery(
     registry: dict[str, AgentDefinition] | None = None,
     *,
     cancelled: Callable[[], bool] | None = None,
+    max_payload_bytes: int | None = None,
 ) -> DiscoveryIndex:
     """Run a full discovery pass against the live (or sandboxed) environment.
 
@@ -98,4 +99,10 @@ def live_discovery(
     """
     home = paths.home()
     working_dir = cwd if cwd is not None else paths.terminal_cwd()
-    return discover(home, working_dir, registry, cancelled=cancelled)
+    return discover(
+        home,
+        working_dir,
+        registry,
+        cancelled=cancelled,
+        max_payload_bytes=max_payload_bytes,
+    )

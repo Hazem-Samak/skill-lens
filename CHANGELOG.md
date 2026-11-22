@@ -24,12 +24,17 @@ dated evidence below distinguishes those results from the historical records.
 - **`skill-lens search <words>` (issue #7).** Finds skills by name (folder
   name or frontmatter `name`), description and `SKILL.md` body text,
   case-insensitively, ranked name > description > body, with a one-line
-  excerpt per result, its scope (plugin skills included and labelled), the
-  agents that reach it, and `--agent <id>` to keep only that agent's skills
-  with each copy's resolution state (`ACTIVE`, `SHADOWED`, ...). `--json`
-  emits the new `SearchReport` shape. Zero results exit `0`; an empty query
-  or unknown agent exits `2` before any filesystem walk. Read-only; no skill
-  file is read again (it reuses the discovery pass); no new dependency.
+  excerpt per result, its scope (plugin skills included and labelled), and
+  `--agent <id>` to keep only that agent's skills. The selected agent's state
+  follows the alias the query matched (so it agrees with `why`), and mixed
+  alias states are reported explicitly; without `--agent` each result lists
+  every reachable agent and lookup name with its state. `--json` emits the new
+  `SearchReport` shape. Search applies the same 256 MiB skill-payload limit as
+  TUI capture and refuses an oversized inventory, before reading an oversized
+  skill document, with exit `2` and no partial output. Zero results exit `0`;
+  an empty query or unknown agent exits `2` before any filesystem walk.
+  Read-only; no skill file is read again (it reuses the discovery pass); no new
+  dependency.
 - **TUI Home filter searches text too.** The `/` filter now also matches
   a skill's frontmatter `name` and its `SKILL.md` body, without holding a
   second copy of the bodies. Row order and every other Home behaviour are

@@ -10,6 +10,8 @@ from __future__ import annotations
 import re
 from collections.abc import Sequence
 
+from rich import box
+from rich.cells import cell_len
 from rich.console import Console
 from rich.markup import escape
 from rich.panel import Panel
@@ -25,7 +27,7 @@ from skill_lens.models.diff import DiffCopy, DiffFile, DiffReport
 from skill_lens.models.doctor import DoctorReport
 from skill_lens.models.enums import Severity
 from skill_lens.models.resolution import ResolutionReport
-from skill_lens.models.search import SearchReport
+from skill_lens.models.search import LookupState, SearchHit, SearchReport
 from skill_lens.presentation import (
     BASELINE_LABEL,
     BINARY_MARKER,
@@ -406,14 +408,46 @@ def _safe(value: str) -> str:
     return _CONTROL_CHARS.sub("?", value)
 
 
+def _widest_line(cell: Text) -> int:
+    """Display width of the longest line in a possibly multi-line cell."""
+    return max((cell_len(line) for line in cell.plain.split("\n")), default=0)
+
+
+def _state_cell(report: SearchReport, hit: SearchHit) -> Text:
+    """The State or Agents/States cell, keeping aliases distinguishable.
+
+    A selected agent's ordinary single-name answer stays the familiar compact
+    state. When the copy resolves differently through several aliases, each
+    alias name is shown, because a bare list of states would hide which name
+    produced which answer. Without ``--agent``, one alias per agent keeps the
+    compact ``agent: STATE`` form; several aliases are all named.
+    """
+    if report.agent is not None:
+        selected = [state for state in hit.states if state.agent == report.agent]
+        if len({state.state for state in selected}) > 1:
+            return Text("\n".join(_safe(f"{state.name}: {state.state}") for state in selected))
+        return Text(_safe(hit.state or "unknown"))
+    if not hit.states:
+        return Text(_safe(", ".join(hit.agents)) or "-")
+    lines: list[str] = []
+    by_agent: dict[str, list[LookupState]] = {}
+    for state in hit.states:
+        by_agent.setdefault(state.agent, []).append(state)
+    for agent, aliases in by_agent.items():
+        if len(aliases) == 1:
+            lines.append(_safe(f"{agent}: {aliases[0].state}"))
+        else:
+            lines.extend(_safe(f"{agent}: {alias.name} {alias.state}") for alias in aliases)
+    return Text("\n".join(lines))
+
+
 def render_search(report: SearchReport, console: Console | None = None) -> None:
     """Render search results as a summary panel plus one table row per matching copy.
 
     Every piece of skill text, every path and the query itself goes into a
     ``Text`` object, never a markup string, so nothing a skill file contains can
-    restyle the output or reach the terminal as an escape sequence. Rows never
-    wrap: long cells end with an ellipsis, so one match is always one line,
-    and the excerpt is re-cut to its column so the matched words stay visible.
+    restyle the output or reach the terminal as an escape sequence. Excerpts
+    are cut to the column width and state cells can use more than one line.
     Control characters (an ESC sequence hidden in a folder name, say) are
     replaced by ``?`` first, because ``Text`` alone would pass them through.
     """
@@ -431,7 +465,7 @@ def render_search(report: SearchReport, console: Console | None = None) -> None:
         header.append(_safe(f"{report.agent_name or report.agent} ({report.agent})"))
     query = _safe(report.query)
     title = Text.assemble("Skill Lens: Search '", query, "'")
-    console.print(Panel(header, title=title, expand=False))
+    console.print(Panel(header, title=title, expand=False, box=box.SQUARE))
     console.print()
 
     if not report.results:
@@ -442,10 +476,7 @@ def render_search(report: SearchReport, console: Console | None = None) -> None:
             skill = Text(_safe(hit.name))
             if hit.frontmatter_name is not None:
                 skill.append(_safe(f" ({hit.frontmatter_name})"), style="dim")
-            if report.agent is not None:
-                fourth = Text(_safe(hit.state or "unknown"))
-            else:
-                fourth = Text(_safe(", ".join(hit.agents)) or "-")
+            fourth = _state_cell(report, hit)
             rows.append(
                 (
                     skill,
@@ -455,20 +486,31 @@ def render_search(report: SearchReport, console: Console | None = None) -> None:
                     hit.snippet,
                 )
             )
-        fourth_header = "State" if report.agent is not None else "Agents"
-        # Fixed widths keep every match on one line at any terminal width: the
-        # short columns get what their content needs (capped), the excerpt the rest.
+        fourth_header = "State" if report.agent is not None else "Agents / States"
+        # Short columns get what their content needs, with the skill column capped
+        # only where the frontmatter suffix can be abbreviated. The agent/state
+        # column has no permanent cap: at a narrow width it folds, so every
+        # reachable agent and state stays visible instead of disappearing behind
+        # an ellipsis.
         widths = [
             min(24, max(len("Skill"), *(r[0].cell_len for r in rows))),
             max(len("description"), *(r[1].cell_len for r in rows)),
             max(len("Project"), *(r[2].cell_len for r in rows)),
-            min(16, max(len(fourth_header), *(r[3].cell_len for r in rows))),
         ]
+        fourth_width = max(len(fourth_header), *(_widest_line(r[3]) for r in rows))
         borders = 3 * 5 + 1
-        excerpt = max(12, console.width - sum(widths) - borders)
-        table = Table(show_header=True, header_style="bold")
-        for heading, width in zip(("Skill", "Match", "Scope", fourth_header), widths, strict=True):
+        available = console.width - sum(widths) - borders - 12
+        fourth_width = max(1, min(fourth_width, available))
+        excerpt = max(12, console.width - sum(widths) - borders - fourth_width)
+        table = Table(show_header=True, header_style="bold", box=box.SQUARE)
+        for heading, width in zip(("Skill", "Match", "Scope"), widths, strict=True):
             table.add_column(heading, no_wrap=True, overflow="ellipsis", width=width)
+        table.add_column(
+            fourth_header,
+            no_wrap=False,
+            overflow="fold",
+            width=fourth_width,
+        )
         table.add_column("Excerpt", no_wrap=True, overflow="ellipsis", width=excerpt)
         for skill_cell, match_cell, scope_cell, fourth_cell, excerpt_text in rows:
             table.add_row(

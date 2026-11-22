@@ -89,10 +89,14 @@ Every command in the table above is built and tested.
 `search` answers "which of my skills can help with X?": it matches
 case-insensitively, lists name matches first, then description, then
 body-text matches, and shows a one-line excerpt of where the words were
-found. With `--agent` it shows only skills that agent can reach and whether
-each copy is the one it actually runs. A query that starts with `-` goes
-after `--` (`skill-lens search -- -verbose`). Like every command it only
-reads: nothing is written and nothing leaves your machine.
+found. With `--agent` it shows only skills that agent can reach and that
+agent's state for the matched alias, so it agrees with `why`; without it, each
+result lists every reachable agent and alias with its state. A query that
+starts with `-` goes after `--` (`skill-lens search -- -verbose`). Search
+refuses an inventory above the same **256 MiB** skill-payload limit as the TUI
+capture, before reading an oversized skill document, and exits `2` with a clear
+message. Like every command it only reads: nothing is written and nothing
+leaves your machine.
 
 Every command accepts `--json`. `doctor` and `scan` also accept `--fail-on` to
 gate a pipeline — see [Exit codes and CI use](https://github.com/Hazem-Samak/skill-lens/blob/main/README.md#exit-codes-and-ci-use).

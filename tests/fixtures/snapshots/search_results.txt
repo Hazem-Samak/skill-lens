@@ -3,12 +3,18 @@
 └─────────────────────────────────────────────┘
 
 ┌──────────────────────────┬─────────────┬─────────┬──────────────────┬────────────────────────────┐
-│ Skill                    │ Match       │ Scope   │ Agents           │ Excerpt                    │
+│ Skill                    │ Match       │ Scope   │ Agents / States  │ Excerpt                    │
 ├──────────────────────────┼─────────────┼─────────┼──────────────────┼────────────────────────────┤
-│ database                 │ name        │ Global  │ claude, opencode │ Talk to the [bold]store[/… │
-│ database-tools           │ name        │ Global  │ claude, opencode │ Helpers.                   │
-│ alias-one (shared-datab… │ name        │ Global  │ codex            │ Codex alias.               │
-│ db-migrate               │ description │ Global  │ codex, dsh, omp… │ Plan DATABASE moves.       │
-│ deploy                   │ body        │ Global  │ claude, opencode │ …ry database check in the… │
-│ plugskill                │ body        │ Plugin  │ codex            │ Uses the database driver.  │
+│ database                 │ name        │ Global  │ claude: ACTIVE   │ Talk to the [bold]store[/… │
+│                          │             │         │ opencode: ACTIVE │                            │
+│ database-tools           │ name        │ Global  │ claude: ACTIVE   │ Helpers.                   │
+│                          │             │         │ opencode: ACTIVE │                            │
+│ alias-one (shared-datab… │ name        │ Global  │ codex: ACTIVE    │ Codex alias.               │
+│ db-migrate               │ description │ Global  │ codex: ACTIVE    │ Plan DATABASE moves.       │
+│                          │             │         │ dsh: ACTIVE      │                            │
+│                          │             │         │ omp: ACTIVE      │                            │
+│                          │             │         │ opencode: ACTIVE │                            │
+│ deploy                   │ body        │ Global  │ claude: ACTIVE   │ …ry database check in the… │
+│                          │             │         │ opencode: ACTIVE │                            │
+│ plugskill                │ body        │ Plugin  │ codex: ACTIVE    │ Uses the database driver.  │
 └──────────────────────────┴─────────────┴─────────┴──────────────────┴────────────────────────────┘

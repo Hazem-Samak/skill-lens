@@ -31,14 +31,33 @@ MATCH_RANK: dict[MatchField, int] = {
 
 
 @dataclass(frozen=True, slots=True)
+class LookupState:
+    """One agent's state for one lookup name of a copy.
+
+    A copy can be reached through several aliases by the same agent, and those
+    aliases can resolve differently (one ACTIVE, another SHADOWED). Keeping the
+    name beside the state makes that explicit instead of collapsing it into one
+    invented winner.
+    """
+
+    agent: str
+    name: str
+    state: str
+
+    def to_dict(self) -> dict[str, str]:
+        return {"agent": self.agent, "name": self.name, "state": self.state}
+
+
+@dataclass(frozen=True, slots=True)
 class SearchHit:
     """One skill copy that matched, with the evidence of why.
 
     ``name`` is the folder (or file) name every other command uses;
     ``frontmatter_name`` is the ``name:`` field when it exists and differs, so a
-    match on it is visible. ``state`` is the copy's resolution state for the
-    requested agent, and ``None`` when no agent was given: a copy has a state
-    only for one agent at a time.
+    match on it is visible. ``state`` is the selected agent's state for the match
+    (``None`` when no agent was given); ``states`` carries the per-agent,
+    per-lookup-name evidence behind it, and without ``--agent`` is the only place
+    states appear.
     """
 
     name: str
@@ -51,6 +70,7 @@ class SearchHit:
     frontmatter_name: str | None = None
     variant_label: str | None = None
     state: str | None = None
+    states: tuple[LookupState, ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -63,6 +83,7 @@ class SearchHit:
             "scope": self.scope.value,
             "snippet": self.snippet,
             "state": self.state,
+            "states": [item.to_dict() for item in self.states],
             "variant_label": self.variant_label,
         }
 
@@ -110,4 +131,4 @@ class SearchReport:
         }
 
 
-__all__ = ["MATCH_RANK", "MatchField", "SearchHit", "SearchReport"]
+__all__ = ["MATCH_RANK", "LookupState", "MatchField", "SearchHit", "SearchReport"]

@@ -885,10 +885,12 @@ owner's chosen policy is **explicit refusal**, frozen in
   refusal, so a fault is never masked by it.
 - A tree that cannot be read keeps its existing `IncompleteTreeError`. The budget
   never pre-empts it.
-- The line-oriented commands are unaffected by this refusal policy and remain the
-  fallback for a home the TUI refuses. They are not a memory guarantee in their
-  own right: discovery still retains each parsed source document, and `diff`
-  reads complete text files for the copies it compares.
+- The other line-oriented commands are unaffected by this refusal policy and remain
+  the fallback for a home the TUI refuses; `search` opts into the same 256 MiB
+  payload limit, measured once per canonical copy before it reads a skill document.
+  The line-oriented commands are not a memory guarantee in their own right:
+  discovery still retains each parsed source document, and `diff` reads complete
+  text files for the copies it compares.
 - No temporary files, no disk cache, no silent truncation and no hash-only
   degraded mode. A degraded *text* file would need a third render state and would
   change diff output, so refusing to publish is the honest choice.

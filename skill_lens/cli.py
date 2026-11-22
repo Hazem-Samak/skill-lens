@@ -20,6 +20,7 @@ from skill_lens import __version__
 from skill_lens.core import paths
 from skill_lens.core.compare import run_compare
 from skill_lens.core.diff import build_diff_report
+from skill_lens.core.discovery import SearchRefused
 from skill_lens.core.doctor import run_doctor
 from skill_lens.core.exitcodes import ExitCode, FailOn, exit_code_for, fail_on_help
 from skill_lens.core.hasher import IncompleteTreeError
@@ -538,7 +539,20 @@ def search(
     if sandbox is not None:
         _assert_inside_sandbox(working_dir, home)
     try:
-        report = run_search(query, cwd=working_dir, agent_id=agent)
+        report = run_search(
+            query,
+            cwd=working_dir,
+            agent_id=agent,
+            max_payload_bytes=DEFAULT_MAX_SNAPSHOT_BYTES,
+        )
+    except SearchRefused as exc:
+        error_console.print(
+            f"Error: {exc}",
+            soft_wrap=True,
+            markup=False,
+            highlight=False,
+        )
+        raise typer.Exit(code=int(ExitCode.USAGE)) from None
     except (KeyError, ValueError) as exc:
         error_console.print(
             f"Error: {exc.args[0]}",

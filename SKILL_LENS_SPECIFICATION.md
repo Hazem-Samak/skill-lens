@@ -254,12 +254,30 @@ Answers "which of my skills can help with X?" over one discovery pass (no skill 
 - **Order.** Name > description > body; inside the name tier, exact name, then prefix,
   then other name matches; ties keep `scan` order.
 - **Excerpt.** One cleaned line (control characters removed, whitespace collapsed) of at
-  most 80 characters around the match, or the description for a name match.
-- **`--agent`.** Keeps only copies that agent reaches and adds each copy's resolution
-  state, resolved through the agent's lookup name (`resolve_skill`). Without `--agent`
-  the state is `null`: a copy only has a state for one agent at a time.
+  most 80 characters around the match, or the description for a name match. A casefold
+  that expands earlier characters (`ß` becomes `ss`) is mapped back to the original
+  offsets, so the match stays in the excerpt.
+- **`--agent`.** Keeps only copies that agent reaches and adds the selected agent's
+  resolution state. When the query matched a name that is one of that agent's usable
+  aliases, the state is that alias's state, so it agrees with `why`; a
+  description/body match reports every distinct state across the copy's aliases
+  (`"ACTIVE, SHADOWED"`) rather than inventing a representative winner. The `states`
+  array always carries the evidence as `{"agent", "name", "state"}` objects.
+- **States without `--agent`.** `state` is `null` (a copy's state belongs to one agent),
+  and `states` lists every reachable agent and lookup name with its state, because one
+  physical copy can resolve differently through different aliases.
+- **Payload limit.** Search applies the same **256 MiB** skill-payload limit as TUI
+  capture. The inventory is measured once per canonical copy, support files included,
+  before any skill document is read; actual reads share the remaining aggregate
+  allowance, and a standalone qualification read is hard-bounded to its frontmatter
+  prefix. A valid frontmatter header qualifies a large-body skill; incidental Markdown
+  without one is not promoted. An inconclusive frontmatter bound is reported rather
+  than guessed. An oversized home is refused on stderr with exit `2` and no partial
+  output. The other line-oriented commands keep their existing, unbounded discovery
+  behaviour.
 - **Exit codes.** `0` whenever the search ran, including zero results; `2` for an empty
-  query or an unknown agent, both rejected before any filesystem walk. No `--fail-on`.
+  query, an unknown agent (both rejected before any filesystem walk), or an oversized
+  inventory refused before reading it. No `--fail-on`.
 
 ---
 

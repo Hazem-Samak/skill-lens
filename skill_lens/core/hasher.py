@@ -12,6 +12,7 @@ Rules from the specification (section 4):
 
 from __future__ import annotations
 
+import codecs
 import hashlib
 import os
 from collections.abc import Callable, Sequence
@@ -32,10 +33,21 @@ _IGNORED_FILES = frozenset({".DS_Store"})
 class IncompleteTreeError(OSError):
     """Raised when directory traversal or file reading is incomplete."""
 
-    def __init__(self, path: Path | str, reason: str = "denied") -> None:
+    def __init__(self, path: Path | str, reason: str = "denied", *, payload_bytes: int = 0) -> None:
         self.path = Path(path)
         self.reason = reason
+        self.payload_bytes = payload_bytes
         super().__init__(f"Cannot read '{self.path}': {self.reason}")
+
+
+class PayloadLimitExceeded(Exception):
+    """A bounded fingerprint read crossed the byte allowance it was given."""
+
+    def __init__(self, path: Path, limit_bytes: int, total_bytes: int) -> None:
+        self.path = path
+        self.limit_bytes = limit_bytes
+        self.total_bytes = total_bytes
+        super().__init__(f"'{path}' read past the {limit_bytes}-byte payload limit")
 
 
 def _is_ignored(relative: Path) -> bool:
@@ -191,6 +203,106 @@ def hash_path(path: Path, *, cancelled: Callable[[], bool] | None = None) -> str
     if path.is_dir():
         return hash_directory(path, cancelled=cancelled)
     return hash_file(path, cancelled=cancelled)
+
+
+def _hash_file_bounded(
+    path: Path, *, max_bytes: int, cancelled: Callable[[], bool] | None = None
+) -> tuple[str, int]:
+    """Fingerprint one file while counting and bounding the raw bytes read.
+
+    One pass feeds both a text hash (UTF-8, CRLF normalised) and a binary hash.
+    The text hash is kept only when the whole file decodes, which is exactly
+    :func:`hash_file`'s choice; non-document files are never buffered in memory.
+    """
+    check_cancelled(cancelled)
+    text_hasher = hashlib.sha256()
+    binary_hasher = hashlib.sha256()
+    decoder = codecs.getincrementaldecoder("utf-8")()
+    text_ok = True
+    pending_cr = False
+    total = 0
+    try:
+        with path.open("rb") as handle:
+            while True:
+                check_cancelled(cancelled)
+                chunk = handle.read(min(_CHUNK_SIZE, max_bytes - total + 1))
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > max_bytes:
+                    raise PayloadLimitExceeded(path, max_bytes, total)
+                binary_hasher.update(chunk)
+                if not text_ok:
+                    continue
+                try:
+                    decoded = decoder.decode(chunk)
+                except UnicodeDecodeError:
+                    text_ok = False
+                    continue
+                if pending_cr:
+                    decoded = "\r" + decoded
+                    pending_cr = False
+                if decoded.endswith("\r"):
+                    decoded = decoded[:-1]
+                    pending_cr = True
+                text_hasher.update(decoded.replace("\r\n", "\n").encode("utf-8"))
+            if text_ok:
+                try:
+                    tail = decoder.decode(b"", final=True)
+                except UnicodeDecodeError:
+                    text_ok = False
+                else:
+                    if pending_cr:
+                        tail = "\r" + tail
+                    text_hasher.update(tail.replace("\r\n", "\n").encode("utf-8"))
+    except PayloadLimitExceeded:
+        raise
+    except IncompleteTreeError:
+        raise
+    except OSError as err:
+        reason = (
+            "denied"
+            if isinstance(err, PermissionError)
+            else ("disappeared" if isinstance(err, FileNotFoundError) else "io")
+        )
+        raise IncompleteTreeError(path=path, reason=reason, payload_bytes=total) from err
+    hasher = text_hasher if text_ok else binary_hasher
+    return HASH_PREFIX + hasher.hexdigest(), total
+
+
+def hash_path_bounded(
+    path: Path, *, max_bytes: int, cancelled: Callable[[], bool] | None = None
+) -> tuple[str, int]:
+    """Fingerprint a file or directory, refusing to read past ``max_bytes``.
+
+    Returns ``(fingerprint, raw_payload_bytes)``. The fingerprint matches
+    :func:`hash_path`; the count is the payload size, counted once per file even
+    when its text hash needed a decode attempt. Support files are streamed, so a
+    file that grew after a pre-flight measurement cannot be read without bound.
+    """
+    check_cancelled(cancelled)
+    if max_bytes < 0:
+        raise ValueError("max_bytes must not be negative")
+    if path.is_dir():
+        hasher = hashlib.sha256()
+        total = 0
+        for relative in iter_files(path, cancelled=cancelled):
+            check_cancelled(cancelled)
+            remaining = max_bytes - total
+            try:
+                file_hash, size = _hash_file_bounded(
+                    path / relative, max_bytes=remaining, cancelled=cancelled
+                )
+            except PayloadLimitExceeded as err:
+                raise PayloadLimitExceeded(err.path, max_bytes, total + err.total_bytes) from err
+            except IncompleteTreeError as err:
+                raise IncompleteTreeError(
+                    err.path, err.reason, payload_bytes=total + err.payload_bytes
+                ) from err
+            total += size
+            hasher.update(format_directory_entry(relative.as_posix(), file_hash))
+        return HASH_PREFIX + hasher.hexdigest(), total
+    return _hash_file_bounded(path, max_bytes=max_bytes, cancelled=cancelled)
 
 
 def normalized_text(data: bytes) -> str | None:
